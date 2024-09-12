@@ -72,7 +72,7 @@ function Login() {
                 password: (document.getElementById('passwordUserInput') as HTMLInputElement).value
             });
 
-            const conn = new Connection('15', true);
+            const conn = new Connection('18', true);
             let req: any = await conn.post({ user: user.getLogin(), password: user.getPassword() }, "CCPP/Login.php");
 
             if (!req) throw new Error('No response from server');
