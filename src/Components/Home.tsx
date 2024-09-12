@@ -6,7 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function Home(): JSX.Element {
-    const { setIsLogged } = useMyContext();
+    const { setIsLogged,setTitleHead } = useMyContext();
+    React.useEffect(()=>{
+        setTitleHead({title:'Home - GIPP',icon:'fa fa-home'});
+    },[]);
     const navigate = useNavigate();
     return (
         <div className='d-flex flex-row w-100 h-100'>

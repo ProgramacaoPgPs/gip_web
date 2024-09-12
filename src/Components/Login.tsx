@@ -8,8 +8,11 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const navigate = useNavigate();
-    const { setIsLogged, setLoading, setModal, setMessage } = useMyContext();
+    const { setIsLogged, setLoading, setModal, setMessage,setTitleHead } = useMyContext();
 
+    React.useEffect(()=>{
+        setTitleHead({title:'Gestão Integrada Peg Pese - GIPP',icon:''});
+    },[]);
     const fieldsetsData = [
         {
             attributes: { id: 'personal-info', className: 'row  col-8 my-2', },

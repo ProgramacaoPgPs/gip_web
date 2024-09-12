@@ -13,9 +13,15 @@ interface MyMainContext {
         text: string;
         type: 1 | 2 | 3 | 4
     }) => void;
-    
-    isLogged:boolean; 
-    setIsLogged:(step:boolean)=>void;
+
+    isLogged: boolean;
+    setIsLogged: (step: boolean) => void;
+
+    titleHead: {title:string,icon?:string};
+    setTitleHead: (value:{
+        title:string;
+        icon?:string;
+    }) => void;
 }
 
 interface Props {
@@ -31,8 +37,9 @@ export function MyProvider({ children }: Props) {
     const [modal, setModal] = useState<boolean>(false);
     const [message, setMessage] = useState<{ text: string, type: 1 | 2 | 3 | 4 }>({ text: '', type: 1 });
     const [isLogged, setIsLogged] = useState<boolean>(false);
+    const [titleHead, setTitleHead] = useState<{title:string,icon?:string}>({title:'Gestão Integrada Peg Pese - GIPP',icon:''});
     return (
-        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged }}>
+        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead }}>
             {
                 loading &&
                 <StructureModal style='StructureModal ModalBgWhite'>
