@@ -1,25 +1,53 @@
 import React from 'react';
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import User from './Class/User';
+import Login from './Components/Login';
+import { MyProvider } from './Context/MainContext';
+import RenderPage from './Components/RenderPage';
+import { HashRouter, Routes, Route } from "react-router-dom";
+import Home from './Components/Home';
+import PrivateRoute from './PrivateRoute';
+import Gtpp from './Modules/GTPP/Gtpp';
 
 function App() {
+  React.useEffect(() => {
+    const user = new User({ login: 'Hygor', password: '1234' });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+      <Routes>
+
+        <Route path="/" element={
+          <MyProvider>
+            <RenderPage>
+              <Login />
+            </RenderPage>
+          </MyProvider>
+        } />
+
+        <Route path="/home" element={
+          <MyProvider>
+            <PrivateRoute>
+              <RenderPage>
+                <Home />
+              </RenderPage>
+            </PrivateRoute>
+          </MyProvider>
+        } />
+        <Route path="/home/GTPP" element={
+          <MyProvider>
+            <PrivateRoute>
+              <RenderPage>
+                <Gtpp />
+              </RenderPage>
+            </PrivateRoute>
+          </MyProvider>
+        } />
+
+
+      </Routes>
+    </HashRouter>
   );
 }
 
