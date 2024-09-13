@@ -11,36 +11,42 @@ interface NotifyMessage {
 export default class WebSocketCLPP {
   isConnected: boolean = false;
   tokens: any;
-  sender: { id: string }= { id: '' };
-  funcReceived: (notify: NotifyMessage) => Promise<void>;
-  funcView: (notify: NotifyMessage) => Promise<void>;
+  sender: { id: string }= { id: '148' };
+  funcReceived!: (notify: NotifyMessage) => Promise<void>;
+  funcView!: (notify: NotifyMessage) => Promise<void>;
 
   constructor(
     tokens: any,
-    funcReceived: (notify: NotifyMessage) => Promise<void>,
-    funcView: (notify: NotifyMessage) => Promise<void>
+    funcReceived?: (notify: NotifyMessage) => Promise<void>,
+    funcView?: (notify: NotifyMessage) => Promise<void>
   ) {
     this.tokens = tokens;
-    this.funcReceived = funcReceived;
-    this.funcView = funcView;
+    if(funcReceived) this.funcReceived = funcReceived;
+    if(funcView) this.funcView = funcView;
   }
 
   connectWebSocket(): void {
     try {
       const localWs = new WebSocket('ws://192.168.0.99:9193');
       ws = localWs;
+
       localWs.onopen = () => {
         this.onOpen(localWs);
+        console.log('connected',localWs)
       };
+
       localWs.onerror = (ev: Event) => {
         this.onError(ev);
       };
+
       localWs.onclose = () => {
         this.onClose();
       };
+
       localWs.onmessage = (ev: MessageEvent) => {
         this.onMessage(ev);
       };
+      
     } catch (error) {
       console.log(error);
     }
@@ -49,7 +55,7 @@ export default class WebSocketCLPP {
   onOpen(localWs: WebSocket): void {
     const jsonString = {
       auth: this.tokens,
-      app_id: 7,
+      app_id: 18,
     };
     localWs.send(JSON.stringify(jsonString));
     this.isConnected = true;

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const navigate = useNavigate();
-    const { setIsLogged, setLoading, setModal, setMessage,setTitleHead } = useMyContext();
+    const { setIsLogged, setLoading, setModal, setMessage,setTitleHead,setUserLog } = useMyContext();
 
     React.useEffect(()=>{
         setTitleHead({title:'Gestão Integrada Peg Pese - GIPP',icon:''});
@@ -80,6 +80,8 @@ function Login() {
 
             if (!req) throw new Error('No response from server');
             if (req.error) throw new Error(req.message);
+
+            setUserLog({...req.data});
             setIsLogged(true);
             navigate('/home');
         } catch (error: any) {
