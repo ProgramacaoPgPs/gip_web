@@ -60,15 +60,15 @@ function renderField(
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
 }
 
-function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
+export function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} />;
 }
 
-function SelectField(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
+export function SelectField(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return <select {...props} />;
 }
 
-function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} />;
 }
 

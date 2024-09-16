@@ -1,0 +1,4 @@
+.box-cardTask {
+    width: 100px !important;
+    /* height: clamp(20px, 100%, 120px); */
+}

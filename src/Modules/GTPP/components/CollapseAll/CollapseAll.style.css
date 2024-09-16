@@ -1,0 +1,72 @@
+/* CollapseAll.style.css */
+
+.dropdown {
+    position: relative;
+    width: 230px;
+    filter: url(#goo);
+    z-index: 1;
+  }
+  
+  .dropdown__face,
+  .dropdown__items {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 25px;
+  }
+  
+  .dropdown__face {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .dropdown__items {
+    margin: 0;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px); /* Ajuste o valor conforme necessário */
+    width: 100%;
+    list-style: none;
+    display: flex;
+    flex-direction: column; /* Ajuste para empilhar os itens verticalmente */
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.93, 0.88, 0.1, 0.8);
+    z-index: -1;
+  }
+  
+  .dropdown__items::before {
+    content: "";
+    background-color: #fff;
+    position: absolute;
+    bottom: 100%;
+    right: 20%;
+    height: 25px;
+    width: 10px;
+  }
+  
+  .dropdown__arrow {
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg) translateY(-50%);
+    transform-origin: right;
+  }
+  
+  .dropdown__input {
+    display: none;
+  }
+  
+  input:checked ~ .dropdown__items {
+    top: calc(100% + 25px); /* Ajuste o valor conforme necessário */
+    visibility: visible;
+    opacity: 1;
+    z-index: 1; /* Assegure-se de que o dropdown esteja acima de outros elementos */
+  }
+  
