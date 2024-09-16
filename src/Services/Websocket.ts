@@ -12,13 +12,13 @@ export default class WebSocketCLPP {
   isConnected: boolean = false;
   tokens: any;
   sender: { id: string }= { id: '148' };
-  funcReceived!: (notify: NotifyMessage) => Promise<void>;
+  funcReceived!: (notify: NotifyMessage) => void;
   funcView!: (notify: NotifyMessage) => Promise<void>;
 
   constructor(
     tokens: any,
-    funcReceived?: (notify: NotifyMessage) => Promise<void>,
-    funcView?: (notify: NotifyMessage) => Promise<void>
+    funcReceived: (notify: NotifyMessage) => void,
+    funcView: (notify: NotifyMessage) => Promise<void>
   ) {
     this.tokens = tokens;
     if(funcReceived) this.funcReceived = funcReceived;
@@ -80,7 +80,7 @@ export default class WebSocketCLPP {
         await this.funcView(getNotify);
       }
     } else if (getNotify.message && !getNotify.error) {
-      await this.funcReceived(getNotify);
+      this.funcReceived(getNotify);
       if (getNotify.send_user === this.sender.id) {
         this.informPreview(this.sender.id);
       }

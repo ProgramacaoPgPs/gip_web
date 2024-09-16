@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, FC, useEffect } from 'react
 import StructureModal, { MessageModal } from '../Components/CustomModal';
 import { tUser } from '../types/types';
 import WebSocketCLPP from '../Services/Websocket';
+import { iUser } from '../Interface/iGIPP';
 const logo = require('../Assets/Image/peg_pese_loading.png')
 // Definindo o tipo dos dados no contexto
 interface MyMainContext {
@@ -25,8 +26,8 @@ interface MyMainContext {
         icon?: string;
     }) => void;
 
-    userLog: tUser;
-    setUserLog: (value: tUser) => void;
+    userLog: iUser;
+    setUserLog: (value: iUser) => void;
 }
 
 interface Props {
@@ -44,26 +45,8 @@ export function MyProvider({ children }: Props) {
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [titleHead, setTitleHead] = useState<{ title: string, icon?: string }>({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
     const [userLog, setUserLog] = useState<tUser>({ id: 0, session: '', administrator: 0 });
-    const [ws,setWs] = useState<WebSocketCLPP>();
-    
-    React.useEffect(()=>{
-        (async()=>{
-            try {
-                if(userLog.session){
-                    const ws = new WebSocketCLPP(userLog.session);
-                    ws.connectWebSocket();
-                    setWs(ws);
-                }
-            } catch (error) {
-                
-            }
-        })();
-    },[userLog]);
-
-    React.useEffect(()=>{
-        console.log(ws)
-    },[ws]);
-
+ 
+ 
     return (
         <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog }}>
             {

@@ -9,11 +9,9 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from './Components/Home';
 import PrivateRoute from './PrivateRoute';
 import Gtpp from './Modules/GTPP/Gtpp';
+import { WebSocketProvider } from './Context/WsContext';
 
 function App() {
-  React.useEffect(() => {
-    const user = new User({ login: 'Hygor', password: '1234' });
-  }, []);
   return (
     <HashRouter>
       <Routes>
@@ -30,7 +28,9 @@ function App() {
           <MyProvider>
             <PrivateRoute>
               <RenderPage>
-                <Home />
+                <WebSocketProvider>
+                  <Home />
+                </WebSocketProvider>
               </RenderPage>
             </PrivateRoute>
           </MyProvider>
