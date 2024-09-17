@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { useMyContext } from '../Context/MainContext';
+import Clpp from '../Modules/CLPP/Clpp';
 type Props = {
   children: JSX.Element; // Tipo para o children
 }
 export default function RenderPage(props: Props): JSX.Element {
-  const { titleHead } = useMyContext();
+  const { titleHead,isLogged } = useMyContext();
   return (
     <div className="App">
       <header className="App-header py-1 d-flex flex-row justify-content-center align-items-center">
@@ -13,6 +14,7 @@ export default function RenderPage(props: Props): JSX.Element {
       </header>
       <section className='d-flex flex-column align-items-center justify-content-center'>
         {props.children}
+        {isLogged ? <Clpp />:null}
       </section>
       <footer>
         &#169; Peg Pese Supermercados Importação e Exportação Ltda. Desenvolvido por Hygor Bueno

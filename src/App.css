@@ -1,10 +1,4 @@
-:root {
-  --vPrimaryColor: #bed989;
-  --vSecondaryColor: #5f7434;
-  --vThirdColor: #d66a2b;
-  --vTitleColor: #555;
-
-}
+@import url('./Color.css');
 
 h1,
 h2,
