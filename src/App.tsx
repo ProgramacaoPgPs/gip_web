@@ -11,6 +11,7 @@ import PrivateRoute from './PrivateRoute';
 import Gtpp from './Modules/GTPP/Gtpp';
 import { WebSocketProvider } from './Context/WsContext';
 import Clpp from './Modules/CLPP/Clpp';
+import RenderedModules from './Components/RenderedModules';
 
 function App() {
   return (
@@ -28,14 +29,18 @@ function App() {
         <Route path="/home" element={
           <MyProvider>
             <PrivateRoute>
-              <Home />
+              <RenderedModules>
+                <Home />
+              </RenderedModules>
             </PrivateRoute>
           </MyProvider>
         } />
         <Route path="/home/GTPP" element={
           <MyProvider>
             <PrivateRoute>
-              <Gtpp />
+              <RenderedModules>
+                <Gtpp />
+              </RenderedModules>
             </PrivateRoute>
           </MyProvider>
         } />

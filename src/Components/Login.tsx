@@ -12,6 +12,7 @@ function Login() {
 
     React.useEffect(()=>{
         setTitleHead({title:'Gestão Integrada Peg Pese - GIPP',icon:''});
+        setIsLogged(false);
     },[]);
     const fieldsetsData = [
         {

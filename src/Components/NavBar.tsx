@@ -29,14 +29,5 @@ const NavBar: React.FC = () => {
         </Navbar>
     );
 };
-/*
-4. Filtros de Pesquisa
-Você pode filtrar os ícones por estilo:
-
-Sólido ( fas)
-Normal ( far)
-Luz ( fal)
-Marcas ( fab), que inclui ícones de marcas como GitHub, Facebook, etc.
-*/
 
 export default NavBar;
