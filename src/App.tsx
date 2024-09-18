@@ -9,11 +9,11 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from './Components/Home';
 import PrivateRoute from './PrivateRoute';
 import Gtpp from './Modules/GTPP/Gtpp';
+import { WebSocketProvider } from './Context/WsContext';
+import Clpp from './Modules/CLPP/Clpp';
+import RenderedModules from './Components/RenderedModules';
 
 function App() {
-  React.useEffect(() => {
-    const user = new User({ login: 'Hygor', password: '1234' });
-  }, []);
   return (
     <HashRouter>
       <Routes>
@@ -29,18 +29,18 @@ function App() {
         <Route path="/home" element={
           <MyProvider>
             <PrivateRoute>
-              <RenderPage>
+              <RenderedModules>
                 <Home />
-              </RenderPage>
+              </RenderedModules>
             </PrivateRoute>
           </MyProvider>
         } />
         <Route path="/home/GTPP" element={
           <MyProvider>
             <PrivateRoute>
-              <RenderPage>
+              <RenderedModules>
                 <Gtpp />
-              </RenderPage>
+              </RenderedModules>
             </PrivateRoute>
           </MyProvider>
         } />

@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { useMyContext } from '../Context/MainContext';
+
 type Props = {
   children: JSX.Element; // Tipo para o children
 }
 export default function RenderPage(props: Props): JSX.Element {
-  const { titleHead } = useMyContext();
+  const { titleHead,isLogged } = useMyContext();
   return (
     <div className="App">
       <header className="App-header py-1 d-flex flex-row justify-content-center align-items-center">

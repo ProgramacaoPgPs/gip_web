@@ -1,0 +1,28 @@
+@import url('../../Color.css');
+:root{
+    --vSpaceDefaul:clamp(0.5px, calc(0.2rem + 0.5vw + 0.5vh), 1px);
+    --vSpaceLg:clamp(2px, calc(0.2rem + 0.5vw + 0.5vh), 14px);
+}
+
+#moduleCLPP{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: fixed;
+    right: var(--vSpaceLg);
+    bottom: var(--vSpaceLg);
+    width: calc(100% - (var(--vSpaceLg)*2));
+    max-width: 550px;
+}
+#moduleCLPP>div{
+    height: 75vh;
+    width: 100%;
+    max-width: 550px;
+}
+
+#moduleCLPP>button{
+    background-color: var(--vPrimaryColor);
+    box-shadow: 0px 0px var(--vSpaceLg)  var(--vSecondaryColor);
+    color:var(--vSecondaryColor);
+    font-size: clamp(2px, calc(0.8rem + 4vw + 4vh), 28px);
+}

@@ -1,8 +1,10 @@
 import React from 'react';
 import { CustomButton } from './CustomButton';
 import { useMyContext } from '../Context/MainContext';
-import NavBar from './Navbar/NavBar';
+import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
+import { useWebSocket } from '../Context/WsContext';
+import Clpp from '../Modules/CLPP/Clpp';
 
 
 export default function Home(): JSX.Element {

@@ -1,3 +1,4 @@
+@import url('./Color.css');
 * {
   margin: 0;
   padding: 0;
@@ -58,12 +59,12 @@ legend {
   overflow: auto;
 }
 
-.App>section>div>#navGipp {
+.App>section>div>div>#navGipp {
   font-size: clamp(20px, calc(0.2rem + 0.5vw + 0.5vh), 26px) !important;
   border-right: solid clamp(1px, calc(0.2rem + 0.5vw + 0.5vh), 2px) #c1c2c6;
 }
 
-.App>section>div>#navGipp a:hover {
+.App>section>div>div>#navGipp a:hover {
   color: var(--vThirdColor) !important;
 }
 

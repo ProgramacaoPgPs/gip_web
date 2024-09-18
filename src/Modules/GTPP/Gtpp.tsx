@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMyContext } from '../../Context/MainContext';
 import './Gtpp.css';
-import NavBar from '../../Components/Navbar/NavBar';
+import NavBar from '../../Components/NavBar';
 import CardTask from './components/Card/index';
 import CollapseAll from './components/CollapseAll/CollapseAll';
 import { Container, Row, Col } from 'react-bootstrap';
@@ -24,7 +24,7 @@ export default function Gtpp(): JSX.Element {
   };
 
   return (
-    <div id='moduleCLPP' className='h-100 w-100'>
+    <div id='moduleGTPP' className='h-100 w-100'>
       <Container fluid className='h-100'>
         <Row className='h-100'>
           <Col xs={12} md={2} className='menu-gtpp'>
