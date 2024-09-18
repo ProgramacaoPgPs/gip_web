@@ -25,8 +25,8 @@ const Card: React.FC<CardProps> = (props) => {
             title={props.title || ""}
             children={
               <React.Fragment>
-                <Button variant="transparent" className="icon-btn fa fa-flag" />
-                <Button variant="transparent" className="icon-btn fa fa-file" />
+                <Button variant="transparent" onClick={() => console.log('listando os níveis de propriedade')} className="icon-btn fa fa-flag" />
+                <Button variant="transparent" onClick={() => console.log('listando os botões de download')} className="icon-btn fa fa-file" />
               </React.Fragment>
             }
           />

@@ -1,5 +1,6 @@
+import './style.useCard.css';
 import React, { useState } from "react";
-import { Button, Collapse, Image, Card as BootstrapCard } from "react-bootstrap";
+import { Collapse, Image, Card as BootstrapCard } from "react-bootstrap";
 
 type UsePropsCard = {
     employeeName?: string;
@@ -18,10 +19,7 @@ const UserCard: React.FC<UsePropsCard> = (props) => {
                 aria-controls="user-info"
                 aria-expanded={openUser}
               >
-              <Button variant="transparent" className="icon-btn fa fa-plus" />
-              <div>
-                <span className="ms-2 employee-name">{props.employeeName}</span>
-              </div>
+              <div className="icon-btn fa fa-plus cursor-pointer position-absolute btn-collapse" />
             </div>
             <div
               className="user-toggle-btn cursor-pointer d-block"
