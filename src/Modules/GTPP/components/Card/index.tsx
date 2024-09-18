@@ -1,5 +1,4 @@
 import './style.card.css';
-// import { faFileAlt, faFlag, faPlus } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { Card as BootstrapCard, Button, Collapse, Image } from 'react-bootstrap';
 
