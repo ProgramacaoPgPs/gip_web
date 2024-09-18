@@ -1,6 +1,5 @@
 import './style.card.css';
 import { faFileAlt, faFlag, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card as BootstrapCard, Button, Collapse, Image } from 'react-bootstrap';
 
@@ -25,12 +24,8 @@ const Card: React.FC<CardProps> = (props) => {
           <div className="col-12 d-flex justify-content-between align-items-center mb-3">
             <BootstrapCard.Title onClick={(e) => console.log('Abrindo modal grande')} title={props.title} className="card-title cursor-pointer">{props.title}</BootstrapCard.Title>
             <div className="card-icons">
-              <Button variant="link" className="icon-btn">
-                <FontAwesomeIcon icon={faFlag} color={props.color || "gray"} />
-              </Button>
-              <Button variant="link" className="icon-btn">
-                <FontAwesomeIcon icon={faFileAlt} color={props.color || "gray"} />
-              </Button>
+              <Button variant="transparent" className="icon-btn fa fa-flag" />
+              <Button variant="transparent" className="icon-btn fa fa-file" />
             </div>
           </div>
 
@@ -69,11 +64,7 @@ const Card: React.FC<CardProps> = (props) => {
                 aria-controls="user-info"
                 aria-expanded={openUser}
               >
-              <FontAwesomeIcon 
-                icon={faPlus}
-                color='#000'
-                fontSize={30}
-              />
+              <Button variant="transparent" className="icon-btn fa fa-plus" />
               <div>
                 <span className="ms-2 employee-name">{props.employeeName}</span>
               </div>

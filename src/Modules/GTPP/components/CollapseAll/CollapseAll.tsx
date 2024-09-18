@@ -1,7 +1,6 @@
-import React, { useState, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import './CollapseAll.style.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckToSlot } from '@fortawesome/free-solid-svg-icons';
+import { Button } from 'react-bootstrap';
 
 type CollapseProps = {
   toggleText: string;
@@ -15,7 +14,7 @@ const CollapseAll: React.FC<CollapseProps> = (props) => {
       <input type="checkbox" className='dropdown__input' id="dropdown" />
       <label className='dropdown__face' htmlFor="dropdown">
         <div className='dropdown__text'>
-          <FontAwesomeIcon icon={faCheckToSlot} color={props.colorIcon || '#00cc'} /> {props.toggleText}
+          <div className="icon-btn">Tire as colunas</div>
         </div>
         <div className="dropdown__arrow"></div>
       </label>

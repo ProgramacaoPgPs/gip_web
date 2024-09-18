@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import {
   Button,
   Collapse,
@@ -27,7 +27,7 @@ const UseButtonCollapse: React.FC<TypeButtonCollapse> = ({
   collapseContent,
   className,
 }) => {
-  const [isOpen, setIsOpen] = useState(false); // Estado para o Collapse
+  const [isOpen, setIsOpen] = React.useState(false); // Estado para o Collapse
   return (
     <>
       {isImage ? (

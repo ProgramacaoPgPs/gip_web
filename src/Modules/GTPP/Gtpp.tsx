@@ -32,7 +32,7 @@ export default function Gtpp(): JSX.Element {
               <NavBar list={listPath} />
             </header>
           </Col>
-          <Col xs={12} md={10} className='menu-task'>
+          <Col xs={12} md={10} className='menu-task pt-3'>
             <CollapseAll toggleText='Filtrar tarefas'>
               {Object.keys(tasks).map((status) => (
                 <li key={status}>
