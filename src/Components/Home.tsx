@@ -8,16 +8,16 @@ import Clpp from '../Modules/CLPP/Clpp';
 
 
 export default function Home(): JSX.Element {
-    const { setIsLogged, setTitleHead } = useMyContext(); // Seu contexto Pai
+    const { setIsLogged,setTitleHead } = useMyContext();
+    React.useEffect(()=>{
+        setTitleHead({title:'Home - GIPP', icon:'fa fa-home'});
+    },[]);
+    const listPath = [{page: '/home', children: 'Home', icon:'fa fa-home' }, {page: '/config', children: 'Configuração', icon:'fa fa-gear'}, {page: '/', children: 'Sair', icon:'fa fa-sign-out'}];
     const navigate = useNavigate();
-
-    React.useEffect(() => {
-        setTitleHead({ title: 'Home - GIPP', icon: 'fa fa-home' });
-    }, []);
 
     return (
         <div className='d-flex flex-row w-100 h-100'>
-            <NavBar />
+            <NavBar  list={listPath}/>
             <section className='m-2'>
                 <CustomButton onClick={() => navigate('/home/GTPP')} className='btn btn-primary' value={'GTPP'} />
             </section>

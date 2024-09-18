@@ -1,4 +1,31 @@
 @import url('./Color.css');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --vPrimaryColor: #bed989;
+  --vSecondaryColor: #5f7434;
+  --vThirdColor: #d66a2b;
+  --vTitleColor: #555;
+
+
+  --card-width-min: 200px;
+  --card-width-max: 400px;
+  --card-height-min: 200px;
+  --card-height-max: 300px;
+  --card-padding: 16px;
+  --card-border-radius: 8px;
+  --card-shadow: rgba(255, 255, 255, 0.15) 2.4px 2.4px 3.2px;
+  --font-size-title-min: 1rem;
+  --font-size-title-max: 1.5rem;
+  --font-size-text-min: 0.875rem;
+  --font-size-text-max: 1.125rem;
+  --transition-speed: 0.3s;
+  --shadow-hover: rgba(255, 255, 255, 0.25) 0 4px 8px;
+}
 
 h1,
 h2,
@@ -81,6 +108,10 @@ legend {
 
 .ModalBgBlack {
   background-color: rgba(0, 0, 0, .5);
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 /* Define a classe para a animação */
