@@ -1,5 +1,5 @@
 import './style.card.css';
-import { faCirclePlus, faFileAlt, faFlag, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt, faFlag, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card as BootstrapCard, Button, Collapse, Image } from 'react-bootstrap';
@@ -10,6 +10,7 @@ type CardProps = {
   description?: any;
   employeeName?: string;
   employeeImage?: string;
+  about?: string;
 }
 
 const Card: React.FC<CardProps> = (props) => {
@@ -56,7 +57,7 @@ const Card: React.FC<CardProps> = (props) => {
 
           {/* Descrição da Tarefa */}
           <div className="col-12 mt-2 overflow-auto border-dark m-auto rounded" style={{height: 50, width: '95%'}}>
-            <h6>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate veritatis dicta illo voluptate eum alias nobis ullam cum quisquam. Eos distinctio temporibus provident nesciunt enim porro modi autem id voluptas!</h6>
+            <h6>{props.about || 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'} </h6>
           </div>
 
           {/* Botões de Usuário */}
