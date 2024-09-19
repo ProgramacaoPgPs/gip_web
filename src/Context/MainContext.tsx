@@ -3,6 +3,7 @@ import StructureModal, { MessageModal } from '../Components/CustomModal';
 import { tUser } from '../types/types';
 import WebSocketCLPP from '../Services/Websocket';
 import { iUser } from '../Interface/iGIPP';
+import ContactList from '../Modules/CLPP/Class/ContactList';
 const logo = require('../Assets/Image/peg_pese_loading.png')
 // Definindo o tipo dos dados no contexto
 interface MyMainContext {
@@ -39,14 +40,33 @@ export const MyContext = createContext<MyMainContext | undefined>(undefined);
 
 // Componente que fornece o contexto
 export function MyProvider({ children }: Props) {
+
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
     const [message, setMessage] = useState<{ text: string, type: 1 | 2 | 3 | 4 }>({ text: '', type: 1 });
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [titleHead, setTitleHead] = useState<{ title: string, icon?: string }>({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
     const [userLog, setUserLog] = useState<tUser>({ id: 0, session: '', administrator: 0 });
- 
- 
+
+    useEffect(() => {
+        (
+            async () => {
+                setLoading(true);
+                if (userLog.id >0) {
+                    try {                        
+                        const contactList = new ContactList(userLog.id);
+                        const req:any = await contactList.loadListContacts();
+                        console.log(req);
+                        if(req.error) throw new Error(req.message);
+                    } catch (error) {
+                        // alert(error)
+                    }
+                }
+                setLoading(false);
+            }
+        )();
+    }, [userLog]);
+
     return (
         <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog }}>
             {

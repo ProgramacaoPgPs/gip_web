@@ -1,15 +1,21 @@
 import WebSocketCLPP from "../Services/Websocket";
 
-export interface iUser{
+export interface iUser {
     id: number;
     youContact?: number;
     notification?: number;
     pendingMessage?: number;
     name?: string;
     company?: string;
+    shop?: number;
+    departament?: string;
+    sub?: string;
+    CSDS?: string;
+    photo?: string;
     administrator: number;
     session: string;
 }
+
 export interface iSender{
     id:number;
 }

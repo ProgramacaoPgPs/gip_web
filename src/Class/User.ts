@@ -1,3 +1,4 @@
+import { Connection } from "../Connection/Connection";
 import { iUser } from "../Interface/iGIPP";
 
 export default class User {
@@ -9,9 +10,16 @@ export default class User {
     #company?: string;
     #administrator: number;
     #session: string;
+    photo: string = '';
+    shop: number = 0;
+    departament: string = '';
+    sub: string = '';
+    CSDS: string = '';
+    #connection: Connection = new Connection('18');
 
     constructor(user: iUser) {
         this.#id = user.id;
+        user.id && this.loadInfo();
         this.#administrator = user.administrator;
         this.#session = user.session;
 
@@ -84,4 +92,40 @@ export default class User {
     set session(session: string) {
         this.#session = session;
     }
+
+    async loadInfo(): Promise<void> {
+        await this.loadPhotos();
+        await this.loadDetails();
+    }
+
+    async loadPhotos(): Promise<void> {
+        try {
+            const userPhoto: any = await this.#connection.get(`&id=${this.id}`, 'CCPP/EmployeePhoto.php');
+            if (userPhoto.error && !userPhoto.message.includes('No data')) {
+                throw new Error(userPhoto.message);
+            } else if (!userPhoto.message) {
+                this.photo = userPhoto.photo;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async loadDetails(): Promise<void> {
+        try {
+            const details: any = await this.#connection.get(`&id=${this.id}`, 'CCPP/Employee.php');
+            if (details.error && !details.message.includes('No data')) throw new Error(details.message);
+
+            this.name = details.data[0]["name"];
+            this.company = details.data[0]["company"];
+            this.shop = details.data[0]["shop"];
+            this.departament = details.data[0]["departament"];
+            this.sub = details.data[0]["sub"];
+            this.CSDS = details.data[0]["CSDS"];
+            this.administrator = details.data[1]["administrator"];
+        } catch (error) {
+            alert(error);
+        }
+    }
+
 }

@@ -37,7 +37,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     setWs(ws);
                 }
             } catch (error) {
-                console.log(error);
+                alert(error);
             }
         })();
 
@@ -79,7 +79,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
             setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
         };
-        console.log(sender);
     }, [messages, sender, contactList, monitorScroll]);
 
     return (
