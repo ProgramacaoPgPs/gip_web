@@ -10,7 +10,7 @@
 
 .card {
     width: clamp(var(--card-width-min), 50vw, var(--card-width-max)); 
-    height: clamp(var(--card-height-min), 50vh, var(--card-height-max)); 
+    height: clamp(var(--card-height-min), 70vh, var(--card-height-max));
     padding: var(--card-padding);
     border: 1px solid #ccc;
     border-radius: var(--card-border-radius);

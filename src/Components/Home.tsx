@@ -9,9 +9,11 @@ import Clpp from '../Modules/CLPP/Clpp';
 
 export default function Home(): JSX.Element {
     const { setIsLogged,setTitleHead } = useMyContext();
+
     React.useEffect(()=>{
         setTitleHead({title:'Home - GIPP', icon:'fa fa-home'});
     },[]);
+    
     const listPath = [{page: '/home', children: 'Home', icon:'fa fa-home' }, {page: '/config', children: 'Configuração', icon:'fa fa-gear'}, {page: '/', children: 'Sair', icon:'fa fa-sign-out'}];
     const navigate = useNavigate();
 

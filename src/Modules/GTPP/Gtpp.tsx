@@ -55,9 +55,9 @@ export default function Gtpp(): JSX.Element {
                       <h3>{status.toUpperCase()}</h3>
                       {taskList.map((task, idx) => (
                         <CardTask key={idx} title={task.title} description={task.listItems.map((item, idx) => (
-                          <div key={idx}>
+                          <p key={idx}>
                             {item.description}
-                          </div>
+                          </p>
                         ))} />
                       ))}
                     </div>
