@@ -102,7 +102,7 @@ export class Connection{
     async settingUrl(middlewer: string, params?: string) {
         await this.initialize();
         let server = this.#isInternalNetwork ? "http://192.168.0.99:71/GLOBAL" : "http://187.92.74.154:71/GLOBAL";
-        let token = localStorage.getItem("token");
+        let token = localStorage.getItem("tokenGIPP");
         this.#URL = server + middlewer + token + (params ? params : "");
     }
     prepareCatchReturn(messageErr:any) {
