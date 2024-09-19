@@ -61,7 +61,7 @@ export default class User {
         this.#pendingMessage = pendingMessage;
     }
 
-    get name(): string | undefined {
+    getName(): string | undefined {
         return this.#name;
     }
 

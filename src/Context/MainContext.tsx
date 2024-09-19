@@ -4,6 +4,7 @@ import { tUser } from '../types/types';
 import WebSocketCLPP from '../Services/Websocket';
 import { iUser } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
+import User from '../Class/User';
 const logo = require('../Assets/Image/peg_pese_loading.png')
 // Definindo o tipo dos dados no contexto
 interface MyMainContext {
@@ -27,8 +28,10 @@ interface MyMainContext {
         icon?: string;
     }) => void;
 
-    userLog: iUser;
-    setUserLog: (value: iUser) => void;
+    userLog: User;
+    setUserLog: (value: User) => void;
+
+    contactList: User[];
 }
 
 interface Props {
@@ -46,29 +49,35 @@ export function MyProvider({ children }: Props) {
     const [message, setMessage] = useState<{ text: string, type: 1 | 2 | 3 | 4 }>({ text: '', type: 1 });
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [titleHead, setTitleHead] = useState<{ title: string, icon?: string }>({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
-    const [userLog, setUserLog] = useState<tUser>({ id: 0, session: '', administrator: 0 });
+    const [userLog, setUserLog] = useState<User>(new User({ id: 0, session: '', administrator: 0 }));
+    const [contactList, setContactList] = useState<User[]>([]);
+    let contacts: ContactList | null;
+
 
     useEffect(() => {
         (
             async () => {
                 setLoading(true);
-                if (userLog.id >0) {
-                    try {                        
-                        const contactList = new ContactList(userLog.id);
-                        const req:any = await contactList.loadListContacts();
-                        console.log(req);
-                        if(req.error) throw new Error(req.message);
-                    } catch (error) {
-                        // alert(error)
-                    }
+                if (userLog.id > 0) {
+                    await buildContactList();
                 }
                 setLoading(false);
             }
         )();
     }, [userLog]);
 
+    async function buildContactList() {
+        try {
+            contacts = new ContactList(userLog.id);
+            const req: any = await contacts.loadListContacts();
+            if (req.error) throw new Error(req.message);
+            setContactList([...req.data]);
+        } catch (error) {
+            alert(error)
+        }
+    }
     return (
-        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog }}>
+        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, contactList }}>
             {
                 loading &&
                 <StructureModal style='StructureModal ModalBgWhite'>
