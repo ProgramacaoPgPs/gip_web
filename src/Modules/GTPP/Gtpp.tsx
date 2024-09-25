@@ -8,15 +8,37 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "../mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 
+// Hook para observar as mudanças de tamanho da janela
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isLandscape = windowSize.width > windowSize.height;
+  return isLandscape;
+}
+
 export default function Gtpp(): JSX.Element {
   const { setTitleHead } = useMyContext();
 
-  // Priomisse react
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
   const [cardTaskItem, setCardTaskItem] = useState<any>();
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
-
+  const isLandscape = useWindowSize();
 
   useEffect(() => {
     setTitleHead({
@@ -25,7 +47,6 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
-  // Aqiui estou renderizando a lista de itens de tarefas
   useEffect(() => {
     let connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
@@ -43,21 +64,6 @@ export default function Gtpp(): JSX.Element {
     getTaskInformations();
   }, [btnValueIdTaskItem]);
 
-  // useEffect(() => {
-  //   let connection = new Connection("3", true);
-  //   async function getTaskStateColumns(): Promise<void> {
-  //     try {
-  //       let getTaskStateColumn = await connection.get('', 'GTPP/TaskState.php');
-  //       setColumnTask(getTaskStateColumn);
-  //     } catch (error) {
-  //       console.error("Erro ao obter as informações: ", error);
-  //     }
-  //   }
-
-  //   getTaskStateColumns();
-  // }, []);
-
-  // Aqui estou renderizando as tarefas e seus status.
   useEffect(() => {
     let connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
@@ -75,29 +81,44 @@ export default function Gtpp(): JSX.Element {
     getTaskInformations();
   }, []);
 
-  console.log();
-
   return (
     <div id="moduleGTPP" className="h-100 w-100">
-      <Container fluid className="h-100">
-        <Row className="h-100">
-          {/* <Col xs={12} md={12} className="menu-gtpp">
+      <Container fluid className={`h-100 d-flex ${isLandscape ? "flex-row" : 'flex-column'}`}>
+        <Row className="flex-grow-0">
+          <Col xs={12}>
             <header id="headerGipp" className="menu-link">
               <NavBar list={listPath} />
             </header>
-          </Col> */}
-          <Col xs={12} md={12} className="menu-task pt-3">
-            <div className="tasks-container mt-3">
-              <div className="d-flex gap-5 overflow-auto">
-                <div className="d-flex gap-3 justify-content-between w-100">
-                  {/* {cardStateTask.data.map((cardTaskStateValue: any , idxValueState: any) => {
-                    return (
-                      <ColumnTaskState bgColor={cardTaskStateValue.color} title={cardTaskStateValue.description} />
-                    )
-                  })} */}
+          </Col>
+        </Row>
+        <Row className="flex-grow-1 overflow-hidden">
+          <Col xs={12} className="d-flex flex-nowrap overflow-auto p-0">
+            {cardStateTask?.data.map((cardTaskStateValue: any, idxValueState: any) => {
+              const filteredTasks = cardTask?.data.filter(
+                (task: any) => task.state_id === cardTaskStateValue.id
+              );
+
+              return (
+                <div key={idxValueState} className="column-task-container p-2 flex-shrink-0">
+                  <ColumnTaskState
+                    title={cardTaskStateValue.description}
+                    bgColor={cardTaskStateValue.color}
+                  >
+                    <div className="task-cards-container">
+                      {filteredTasks?.map((task: any, idx: number) => (
+                        <CardTask
+                          key={idx}
+                          initial_date={task.initial_date}
+                          final_date={task.final_date}
+                          titleCard={task.description}
+                          priorityCard={task.priority}
+                        />
+                      ))}
+                    </div>
+                  </ColumnTaskState>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </Col>
         </Row>
       </Container>

@@ -1,20 +1,70 @@
 @import url(../../Root-space.css);
 
-
+/* Estilo geral do contêiner da coluna */
 .columnTaskState-container {
-    background-color: #e8e6e6;
     width: 100%;
-    overflow: auto;
-    max-width: 300px;
+    height: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #b5b5b53e;
+    border-radius: 0 0px 6px 6px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 0.3rem;
 }
 
+/* Título fixo da coluna */
 .columnTaskState-title {
-    font-weight: bold;
-    text-align: start;
-    border: 1px solid #000;
+    text-align: center;
+    width: clamp(0.9rem, 100vw, 250px);
+    
+    padding: 0.35rem 1rem;
+    
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 6px 6px 0 0;
 }
 
+.columnTaskState-title h1 {
+    color: #fff !important;
+    font-weight: bold !important;
+}
 
+/* Corpo da coluna que contém as tarefas */
 .columnTaskState-body {
-    
+    padding: 1rem;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Estilos para os cards de tarefa */
+.task-card {
+    width: 100%;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    .columnTaskState-container {
+        max-width: 100%;
+    }
+
+    .columnTaskState-title {
+        width: 100%;
+        border-radius: 6px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .columnTaskState-container {
+        max-width: 400px;
+    }
 }

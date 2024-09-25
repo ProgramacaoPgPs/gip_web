@@ -2,7 +2,8 @@
 
 :root {
     /* Tamanhos responsivos para o modal */
-    --modal-width-xsmall: clamp(100px, 40vw, 200px);
+    /* --modal-width-xsmall: clamp(100px, 40vw, 200px); */
+    --modal-width-xsmall: clamp(100px, 60vw, 200px);
     --modal-width-small: clamp(200px, 40vw, 300px);
     --modal-width-medium: clamp(300px, 50vw, 600px);
     --modal-width-large: clamp(400px, 60vw, 900px);
