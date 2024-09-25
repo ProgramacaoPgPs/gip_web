@@ -1,3 +1,7 @@
+* {
+    text-decoration: none;
+}
+
 .menu-link {
     width: 10vw !important;
 }
@@ -45,4 +49,9 @@
 
 .d-flex .gap-5.overflow-auto {
     height: 100%;
+}
+
+
+#task-description {
+    overflow: auto;
 }

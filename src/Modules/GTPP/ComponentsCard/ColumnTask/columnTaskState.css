@@ -1,0 +1,20 @@
+@import url(../../Root-space.css);
+
+
+.columnTaskState-container {
+    background-color: #e8e6e6;
+    width: 100%;
+    overflow: auto;
+    max-width: 300px;
+}
+
+.columnTaskState-title {
+    font-weight: bold;
+    text-align: start;
+    border: 1px solid #000;
+}
+
+
+.columnTaskState-body {
+    
+}

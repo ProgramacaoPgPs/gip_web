@@ -1,0 +1,114 @@
+@import url(../../Root-space.css);
+
+.font-small {
+    font-size: clamp(0.2rem, 20vw, 0.611rem);
+}
+
+.card-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; 
+}
+
+/* Overlay do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--modal-overlay-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Container do modal */
+  .modal-container {
+    background-color: var(--modal-bg-color);
+    border-radius: var(--modal-border-radius);
+    padding: var(--modal-padding);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  
+  /* Tamanhos do modal */
+  .modal-small {
+    width: var(--modal-width-small);
+    height: var(--modal-height-small);
+  }
+  
+  .modal-medium {
+    width: var(--modal-width-medium);
+    height: var(--modal-height-medium);
+  }
+  
+  .modal-large {
+    width: var(--modal-width-large);
+    height: var(--modal-height-large);
+  }
+
+  .modal-Xsmall {
+    width: var(--modal-width-xsmall);
+    height: var(--modal-height-xsmall) * 2;
+  }
+  
+  /* Cabeçalho do modal */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  /* Botão de fechar */
+  .modal-close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  /* Corpo do modal */
+  .modal-body {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  /* Rodapé do modal */
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  
+  .modal-close-footer-button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .modal-close-footer-button:hover {
+    background-color: #0056b3;
+  }
+
+  /* fontes */
+
+  .card-font-small {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  

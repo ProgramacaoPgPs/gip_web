@@ -74,7 +74,7 @@ export function MyProvider({ children }: Props) {
                 <StructureModal style='StructureModal ModalBgWhite'>
                     <div className='d-flex flex-column align-items-center'>
                         <img className="spinner-grow-img" src={logo} alt="Logo Peg Pese" />
-                    </div>
+                    </div> 
                 </StructureModal>
             }
 
