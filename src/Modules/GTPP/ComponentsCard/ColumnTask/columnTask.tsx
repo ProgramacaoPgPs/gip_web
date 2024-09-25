@@ -10,7 +10,7 @@ type ColumnPropsTaskState = {
 const ColumnTaskState: React.FC<ColumnPropsTaskState> = (props) => {
     return (
         <React.Fragment>
-            <div style={{height:'100%'}}>
+            <div style={{height:'100%', marginLeft: '1rem'}}>
                 <div className='columnTaskState-title' style={{background: `#${props.bgColor}`}}><h1 className={`rounded p-1`}>{props.title}</h1></div>
                 <div className='columnTaskState-container'>
                     <div className='columnTaskState-body'>
