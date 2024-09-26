@@ -55,3 +55,11 @@
 #task-description {
     overflow: auto;
 }
+
+.menu-card-outside {
+    z-index: 11;
+}
+
+.menu-card-outside.bg-dark {
+    opacity: 0.3 !important;
+}

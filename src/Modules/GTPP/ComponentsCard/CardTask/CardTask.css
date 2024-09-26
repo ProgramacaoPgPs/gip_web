@@ -4,6 +4,10 @@
     font-size: clamp(0.2rem, 20vw, 0.611rem);
 }
 
+.z-index-outside-with-menu {
+  z-index: 12;
+}
+
 .card-text {
     text-overflow: ellipsis;
     white-space: nowrap;

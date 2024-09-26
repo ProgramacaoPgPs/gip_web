@@ -6,7 +6,7 @@ type Props = {
   children: JSX.Element; // Tipo para o children
 }
 export default function RenderPage(props: Props): JSX.Element {
-  const { titleHead,isLogged } = useMyContext();
+  const { titleHead, isLogged } = useMyContext();
   return (
     <div className="App">
       <header className="App-header py-1 d-flex flex-row justify-content-center align-items-center">
@@ -15,9 +15,9 @@ export default function RenderPage(props: Props): JSX.Element {
       <section className='d-flex flex-column align-items-center justify-content-center'>
         {props.children}
       </section>
-      <footer>
-        &#169; Peg Pese Supermercados Importação e Exportação Ltda. Desenvolvido por Hygor Bueno
-      </footer>
+      {/* <footer>
+        Peg Pese Supermercados Importação e Exportação Ltda. Desenvolvido por Hygor Bueno
+      </footer> */}
     </div>
   );
 }
