@@ -37,6 +37,7 @@ export default function Gtpp(): JSX.Element {
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
   const [cardTaskItem, setCardTaskItem] = useState<any>();
+  const [idButton, setIdButton] = useState<any>();
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
   const isLandscape = useWindowSize();
 
@@ -83,6 +84,7 @@ export default function Gtpp(): JSX.Element {
 
   return (
     <div id="moduleGTPP" className="h-100 w-100">
+      
       <Container fluid className={`h-100 d-flex ${isLandscape ? "flex-row" : 'flex-column'}`}>
         <Row className="flex-grow-0">
           <Col xs={12}>
@@ -92,12 +94,15 @@ export default function Gtpp(): JSX.Element {
           </Col>
         </Row>
         <Row className="flex-grow-1 overflow-hidden">
+          {/* <div className="h-100 bg-dark position-absolute" style={{opacity: 0.5, width: '91%'}}></div> */}
           <Col xs={12} className="d-flex flex-nowrap overflow-auto p-0">
+            
             {cardStateTask?.data.map((cardTaskStateValue: any, idxValueState: any) => {
               const filteredTasks = cardTask?.data.filter(
                 (task: any) => task.state_id === cardTaskStateValue.id
               );
-
+              
+              
               return (
                 <div key={idxValueState} className="column-task-container p-2 flex-shrink-0">
                   <ColumnTaskState
@@ -112,6 +117,10 @@ export default function Gtpp(): JSX.Element {
                           final_date={task.final_date}
                           titleCard={task.description}
                           priorityCard={task.priority}
+
+                          onClick={() => {
+                            setIdButton(task.id);
+                          }}
                         />
                       ))}
                     </div>
