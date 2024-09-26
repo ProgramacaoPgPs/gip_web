@@ -1,70 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { useMyContext } from '../../Context/MainContext';
-import './Gtpp.css';
-import NavBar from '../../Components/NavBar';
-import CardTask from './components/Card/index';
-import CollapseAll from './components/CollapseAll/CollapseAll';
-import { Container, Row, Col } from 'react-bootstrap';
-import { listPath, tasks } from '../mock/mockTeste';
+import { useState, useEffect } from "react";
+import { useMyContext } from "../../Context/MainContext";
+import "./Gtpp.css";
+import { Container, Row, Col } from "react-bootstrap";
+import { Connection } from "../../Connection/Connection";
+import CardTask from "./ComponentsCard/CardTask/CardTask";
+import NavBar from "../../Components/NavBar";
+import { listPath } from "../mock/mockTeste";
+import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
+
+// Hook para observar as mudanças de tamanho da janela
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isLandscape = windowSize.width > windowSize.height;
+  return isLandscape;
+}
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead } = useMyContext();
-  const [visibleCategories, setVisibleCategories] = useState<string[]>([]);
+
+  const [cardTask, setCardTask] = useState<any>();
+  const [cardStateTask, setCardStateTask] = useState<any>();
+  const [cardTaskItem, setCardTaskItem] = useState<any>();
+  const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
+  const isLandscape = useWindowSize();
 
   useEffect(() => {
-    setTitleHead({ title: 'Gerenciador de Tarefas Peg Pese - GTPP', icon: 'fa fa-home' });
+    setTitleHead({
+      title: "Gerenciador de Tarefas Peg Pese - GTPP",
+      icon: "fa fa-home",
+    });
   }, [setTitleHead]);
 
-  const handleCheckboxChange = (category: string) => {
-    setVisibleCategories(prev =>
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
-  };
+  useEffect(() => {
+    let connection = new Connection("18", true);
+    async function getTaskInformations(): Promise<void> {
+      try {
+        let getTaskItem = await connection.get(
+          `&task_id=${btnValueIdTaskItem}`,
+          "GTPP/TaskItem.php"
+        );
+        setCardTaskItem(getTaskItem);
+      } catch (error) {
+        console.error("Erro ao obter as informações da tarefa:", error);
+      }
+    }
+
+    getTaskInformations();
+  }, [btnValueIdTaskItem]);
+
+  useEffect(() => {
+    let connection = new Connection("18", true);
+    async function getTaskInformations(): Promise<void> {
+      try {
+        let getTask = await connection.get("", "GTPP/Task.php");
+        let getStatusTask = await connection.get("", "GTPP/TaskState.php");
+
+        setCardTask(getTask);
+        setCardStateTask(getStatusTask);
+      } catch (error) {
+        console.error("Erro ao obter as informações da tarefa:", error);
+      }
+    }
+
+    getTaskInformations();
+  }, []);
 
   return (
-    <div id='moduleGTPP' className='h-100 w-100'>
-      <Container fluid className='h-100'>
-        <Row className='h-100'>
-          <Col xs={12} md={2} className='menu-gtpp'>
-            <header id="headerGipp" className='menu-link'>
+    <div id="moduleGTPP" className="h-100 w-100">
+      <Container fluid className={`h-100 d-flex ${isLandscape ? "flex-row" : 'flex-column'}`}>
+        <Row className="flex-grow-0">
+          <Col xs={12}>
+            <header id="headerGipp" className="menu-link">
               <NavBar list={listPath} />
             </header>
           </Col>
-          <Col xs={12} md={10} className='menu-task pt-3'>
-            <CollapseAll toggleText='Filtrar tarefas'>
-              {Object.keys(tasks).map((status) => (
-                <li key={status}>
-                  <input 
-                    type="checkbox" 
-                    id={status} 
-                    checked={visibleCategories.includes(status)} 
-                    onChange={() => handleCheckboxChange(status)} 
-                  />
-                  <label htmlFor={status} className="ms-2 cursor-pointer">{status.toUpperCase()}</label>
-                </li>
-              ))}
-            </CollapseAll>
+        </Row>
+        <Row className="flex-grow-1 overflow-hidden">
+          <Col xs={12} className="d-flex flex-nowrap overflow-auto p-0">
+            {cardStateTask?.data.map((cardTaskStateValue: any, idxValueState: any) => {
+              const filteredTasks = cardTask?.data.filter(
+                (task: any) => task.state_id === cardTaskStateValue.id
+              );
 
-            <div className='tasks-container mt-3'>
-              <div className='d-flex gap-5 overflow-auto'>
-                {Object.entries(tasks).map(([status, taskList], index) => (
-                  !visibleCategories.includes(status) && (
-                    <div className="task-column" key={index}>
-                      <h3>{status.toUpperCase()}</h3>
-                      {taskList.map((task, idx) => (
-                        <CardTask key={idx} title={task.title} description={task.listItems.map((item, idx) => (
-                          <p key={idx}>
-                            {item.description}
-                          </p>
-                        ))} />
+              return (
+                <div key={idxValueState} className="column-task-container p-2 flex-shrink-0">
+                  <ColumnTaskState
+                    title={cardTaskStateValue.description}
+                    bgColor={cardTaskStateValue.color}
+                  >
+                    <div className="task-cards-container">
+                      {filteredTasks?.map((task: any, idx: number) => (
+                        <CardTask
+                          key={idx}
+                          initial_date={task.initial_date}
+                          final_date={task.final_date}
+                          titleCard={task.description}
+                          priorityCard={task.priority}
+                        />
                       ))}
                     </div>
-                  )
-                ))}
-              </div>
-            </div>
+                  </ColumnTaskState>
+                </div>
+              );
+            })}
           </Col>
         </Row>
       </Container>
