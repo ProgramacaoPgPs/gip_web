@@ -1,25 +1,42 @@
-import React, { ReactNode } from 'react';
+import React, { HTMLAttributes } from 'react';
 import './columnTaskState.css';
 
-type ColumnPropsTaskState = {
+type ColumnPropsTaskState = HTMLAttributes<HTMLDivElement> & {
     title: string;
     bgColor: string;
-    children?: ReactNode;
+    buttonIcon?: string;
+
+    buttonHeader?: JSX.Element;
+    contentBody?: JSX.Element;
+};
+
+type ColumnPropsTaskStateFunction = {
+    onAction?: () => void;
+    onClickHandler?: () => void;
+    onCsv?: () => void;
+    onPdf?: () => void;
+    onAdd?: () => void;
 }
 
-const ColumnTaskState: React.FC<ColumnPropsTaskState> = (props) => {
+const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunction> = (props) => {
     return (
-        <React.Fragment>
-            <div style={{height:'100%', marginLeft: '1rem'}}>
-                <div className='columnTaskState-title' style={{background: `#${props.bgColor}`}}><h1 className={`rounded p-1`}>{props.title}</h1></div>
-                <div className='columnTaskState-container'>
-                    <div className='columnTaskState-body'>
-                        {props.children}
-                    </div>
+        <div style={{ height: '100%', marginLeft: '1rem' }} {...props}>
+            <div className={`columnTaskState-title rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bgColor}` }}>
+                <h1 className="rounded p-1">{props.title}</h1>
+                {props.buttonHeader}
+            </div>
+            <div className="columnTaskState-container">
+                <div className="columnTaskState-body">
+                    {props.contentBody}
                 </div>
             </div>
-        </React.Fragment>
-    )
-}
+            <div className={`columnTaskState-title rounded-bottom d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center justify-content-around`} style={{ background: `#${props.bgColor}` }}>
+                <i className='fa save cursor-pointer text-white fa-file-csv' onClick={() => props.onCsv}/>
+                <i className='fa file cursor-pointer text-white fa-file-pdf' onClick={() => props.onPdf}/>
+                { true && <i className='fa add cursor-pointer text-white fa-file-circle-plus' onClick={() => props.onAdd}/>}
+            </div>
+        </div>
+    );
+};
 
 export default ColumnTaskState;

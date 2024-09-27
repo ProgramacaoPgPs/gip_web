@@ -18,9 +18,6 @@ type PriorityCardResult = {
 }
 
 const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
-
-   
-
   const colorPriorityCard = (numberKey: Number | string = 0): PriorityCardResult => {
     switch (numberKey) {
         case 0: return {color: 'primary', title: 'baixa'}
@@ -47,7 +44,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                         <div><p>{convertdate(props.initial_date || "2024-09-20")}</p></div>
                     </div>
                     <div className="d-flex justify-content-between flex-wrap">
-                        <div><span className="fw-bold">Data Inicial:</span></div>
+                        <div><span className="fw-bold">Data Final:</span></div>
                         <div><p>{convertdate(props.final_date || "2024-09-20")}</p></div>
                     </div>
                 </div>

@@ -24,7 +24,7 @@
     background-color: var(--vPrimaryColor);
     box-shadow: 0px 0px var(--vSpaceLg)  var(--vSecondaryColor);
     color:var(--vSecondaryColor);
-    font-size: clamp(2px, calc(0.8rem + 4vw + 4vh), 28px);
+    font-size: clamp(2px, calc(0.8rem + 4vw + 4vh), 28px) !important;
 }
 
 .cardContact{

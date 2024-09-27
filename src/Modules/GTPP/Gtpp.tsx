@@ -8,6 +8,7 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "../mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import StructureModal from "../../Components/CustomModal";
+import Hamburger from "./ComponentsCard/Button/Hamburger/hamburger";
 
 // Hook para observar as mudanças de tamanho da janela
 function useWindowSize() {
@@ -38,6 +39,7 @@ export default function Gtpp(): JSX.Element {
   const [cardStateTask, setCardStateTask] = useState<any>();
   const [cardTaskItem, setCardTaskItem] = useState<any>();
   const [idButton, setIdButton] = useState<any>();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
   const isLandscape = useWindowSize();
 
@@ -127,36 +129,46 @@ export default function Gtpp(): JSX.Element {
                     <ColumnTaskState
                       title={cardTaskStateValue.description}
                       bgColor={cardTaskStateValue.color}
-                    >
-                      <div className="task-cards-container">
-                        {filteredTasks?.map((task: any, idx: number) => (
-                          <CardTask
-                            key={idx}
-                            initial_date={task.initial_date}
-                            final_date={task.final_date}
-                            titleCard={task.description}
-                            priorityCard={task.priority}
-                            onClick={() => {
-                              // Estamos capturando o Id da tarefa para abrir o modal.
-                              setIdButton(task.id);
-
-                              setModalPageElement(
-                                <div className="card w-75 h-75">
-                                  <div className="col-12 bg-primary header-menu">t</div>
-                                  <div className="d-flex overflow-hidden h-100">
-                                    <div className="col-7 h-100 bg-danger">
-                                      <button className="btn btn-primary m-4" onClick={()=>setModalPage(false)}>close</button>
+                      
+                      onAction={() => {
+                        setModalPageElement(
+                          <div className="card position-absolute w-25 h-25" style={{left: '1px', top: '1px'}}>
+                            t <button className="btn btn-primary m-4" onClick={()=> setModalPage(false)}>close</button>
+                          </div>
+                        );
+                        setModalPage(true);
+                      }}
+                      // buttonHeader={<Hamburger />}
+                      contentBody={
+                        <div className="task-cards-container">
+                          {filteredTasks?.map((task: any, idx: number) => (
+                            <CardTask
+                              key={idx}
+                              initial_date={task.initial_date}
+                              final_date={task.final_date}
+                              titleCard={task.description}
+                              priorityCard={task.priority}
+                              onClick={() => {
+                                // Estamos capturando o Id da tarefa para abrir o modal.
+                                setIdButton(task.id);
+                                setModalPageElement(
+                                  <div className="card w-75 h-75">
+                                    <div className="col-12 bg-primary header-menu">t</div>
+                                    <div className="d-flex overflow-hidden h-100">
+                                      <div className="col-7 h-100 bg-danger">
+                                        <button className="btn btn-primary m-4" onClick={()=>setModalPage(false)}>close</button>
+                                      </div>
+                                      <div className="col-5 bg-warning">t</div>
                                     </div>
-                                    <div className="col-5 bg-warning">t</div>
                                   </div>
-                                </div>
-                              );
-                              setModalPage(true);
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </ColumnTaskState>
+                                );
+                                setModalPage(true);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      }
+                      />
                   </div>
                 );
               }
