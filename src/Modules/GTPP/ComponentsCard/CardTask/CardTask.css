@@ -60,11 +60,9 @@
 
 
   .modal-Xsmall:active {
-    /* -webkit-box-shadow: inset -2px -2px 4px 2px rgba(94, 94, 94, 0.3);
-    -moz-box-shadow: inset -2px -2px 4px 2px rgba(94, 94, 94, 0.1); */
+    -webkit-box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
     box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1); 
-
-
   }
   
   /* Cabeçalho do modal */
