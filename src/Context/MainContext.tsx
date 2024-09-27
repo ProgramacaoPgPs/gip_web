@@ -89,7 +89,7 @@ export function MyProvider({ children }: Props) {
 
             {
                 modal &&
-                <StructureModal style='StructureModal ModalBgWhite'>
+                <StructureModal style='StructureModal ModalBgBlack'>
                     <MessageModal message={message.text} type={message.type} onClose={() => { setModal(false) }} />
                 </StructureModal>
             }

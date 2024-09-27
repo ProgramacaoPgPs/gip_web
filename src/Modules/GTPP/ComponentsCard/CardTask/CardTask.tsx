@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import "./CardTask.css"; // Importando o estilo
 import StructureModal from "../../../../Components/CustomModal";
 import { convertdate } from "../../../../Util/Util";
@@ -11,12 +11,8 @@ type CardTaskProps = {
     percent?: string;
 }
 
-type CardTaskPropsFunciton = {
-    assistantFunction?: () => any;
-}
-
-type CardTaskPropsVariables = {
-    styleClass?: string;
+type CardTaskPropsFunciton = HTMLAttributes<HTMLDivElement> & { 
+    // assistantFunction?: () => any;
 }
 
 type PriorityCardResult = {
@@ -25,7 +21,7 @@ type PriorityCardResult = {
 }
 
 
-const CardTask: React.FC<CardTaskProps & CardTaskPropsFunciton & CardTaskPropsVariables> = (props) => {
+const CardTask: React.FC<CardTaskProps & CardTaskPropsFunciton> = (props) => {
 
   const colorPriorityCard = (numberKey: Number | string = 0): PriorityCardResult => {
     switch (numberKey) {
@@ -39,12 +35,12 @@ const CardTask: React.FC<CardTaskProps & CardTaskPropsFunciton & CardTaskPropsVa
   let { color, title } = colorPriorityCard(props.priorityCard);
   
   return (
-    <StructureModal style={`card-task-container modal-container modal-Xsmall ${props.styleClass} p-2`} children={
+    <div {...props} children={
         <React.Fragment>
         <div className="card-task-header d-flex justify-content-between col-12 gap-3">
             {/* Aqui vou colocar o titulo e o dropdown */}
-            <div className="col-9"><h3 className="fw-bold card-text">{props.titleCard || "Tarefa sem nome"}</h3></div>
-            <div className="cursor-pointer col-3" onClick={props.assistantFunction}><i className="fa-solid fa-bars"></i></div>
+            <div className="col-12"><h3 className="fw-bold card-text">{props.titleCard || "Tarefa sem nome"}</h3></div>
+            {/* <div className="cursor-pointer col-3" onClick={props.assistantFunction}><i className="fa-solid fa-bars"></i></div> */}
         </div>
         <div className="card-task-body">
             {/* Aqui vou montar aonde vai ficar as datas e uma breve descrição */}

@@ -133,14 +133,8 @@ export default function Gtpp(): JSX.Element {
                           return (
                             <CardTask
                               key={idx}
-                              styleClass={
-                                task.id == idButton
-                                  ? "z-index-outside-with-menu"
-                                  : ""
-                              }
-                              assistantFunction={() => {
-                                handleClick(task.id);                          
-                              }}
+                              onClick={() => {handleClick(task.id);}}
+                              className={`card-task-container modal-container modal-Xsmall ${task.id == idButton? "": ""} p-2`}
                               initial_date={task.initial_date}
                               final_date={task.final_date}
                               titleCard={task.description}
