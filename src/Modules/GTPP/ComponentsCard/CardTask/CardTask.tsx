@@ -1,6 +1,7 @@
 import React from "react";
 import "./CardTask.css"; // Importando o estilo
 import { convertdate } from "../../../../Util/Util";
+import { useMyContext } from "../../../../Context/MainContext";
 
 type CardTaskProps = { 
     titleCard?: string;
@@ -18,6 +19,8 @@ type PriorityCardResult = {
 
 const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
 
+   
+
   const colorPriorityCard = (numberKey: Number | string = 0): PriorityCardResult => {
     switch (numberKey) {
         case 0: return {color: 'primary', title: 'baixa'}
@@ -30,12 +33,11 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
   let { color, title } = colorPriorityCard(props.priorityCard);
   
   return (
-    <div {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}> 
+    <div {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
         <React.Fragment>
             <div className="card-task-header d-flex justify-content-between col-12 gap-3">
                 {/* Aqui vou colocar o titulo e o dropdown */}
                 <div className="col-12 mb-2"><h3 className="fw-bold card-text">{props.titleCard || "Tarefa sem nome"}</h3></div>
-                {/* <div className="cursor-pointer col-3"><i className="fa-solid fa-bars"></i></div> */}
             </div>
             <div className="card-task-body">
                 {/* Aqui vou montar aonde vai ficar as datas e uma breve descrição */}

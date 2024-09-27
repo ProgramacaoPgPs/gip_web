@@ -13,12 +13,16 @@ interface MyMainContext {
 
     modal: boolean;
     setModal: (step: boolean) => void;
-
+    
     setMessage: (value: {
         text: string;
         type: 1 | 2 | 3 | 4
     }) => void;
-
+    
+    setModalPage: (step: boolean) => void;
+    
+    setModalPageElement: (value:JSX.Element)=>void;
+    
     isLogged: boolean;
     setIsLogged: (step: boolean) => void;
 
@@ -46,7 +50,10 @@ export function MyProvider({ children }: Props) {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
+    const [modalPage, setModalPage] = useState<boolean>(false);
+    
     const [message, setMessage] = useState<{ text: string, type: 1 | 2 | 3 | 4 }>({ text: '', type: 1 });
+    const [modalPageElement, setModalPageElement] = useState<JSX.Element>(<div> Hi </div>);
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [titleHead, setTitleHead] = useState<{ title: string, icon?: string }>({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
     const [userLog, setUserLog] = useState<User>(new User({ id: 0, session: '', administrator: 0 }));
@@ -77,10 +84,10 @@ export function MyProvider({ children }: Props) {
         }
     }
     return (
-        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, contactList }}>
+        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, contactList, setModalPage, setModalPageElement }}>
             {
                 loading &&
-                <StructureModal style='StructureModal ModalBgWhite'>
+                <StructureModal className='StructureModal ModalBgWhite'>
                     <div className='d-flex flex-column align-items-center'>
                         <img className="spinner-grow-img" src={logo} alt="Logo Peg Pese" />
                     </div> 
@@ -89,8 +96,14 @@ export function MyProvider({ children }: Props) {
 
             {
                 modal &&
-                <StructureModal style='StructureModal ModalBgWhite'>
+                <StructureModal className='StructureModal ModalBgBlack'>
                     <MessageModal message={message.text} type={message.type} onClose={() => { setModal(false) }} />
+                </StructureModal>
+            }
+            {
+                modalPage &&
+                <StructureModal className='StructureModal ModalBgBlack'>
+                    {modalPageElement}
                 </StructureModal>
             }
 

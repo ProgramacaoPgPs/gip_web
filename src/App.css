@@ -156,10 +156,12 @@ header, nav {
 }
 
 .ModalBgWhite {
+  z-index: 1000;
   background-color: rgba(255, 255, 255, .5);
 }
 
 .ModalBgBlack {
+  z-index: 900;
   background-color: rgba(0, 0, 0, .5);
 }
 
