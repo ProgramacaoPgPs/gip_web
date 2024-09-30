@@ -1,13 +1,13 @@
 import React from 'react';
-type Props = {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
     children: JSX.Element; // Tipo para o children
-    style?: string
+    // styleClass?: string
 }
 
-export default function StructureModal({ children, style }: Props) {
+export default function StructureModal(props: Props) {
     return (
-        <div className={style}>
-            {children}
+        <div {...props}>
+            {props.children}
         </div>
     );
 }

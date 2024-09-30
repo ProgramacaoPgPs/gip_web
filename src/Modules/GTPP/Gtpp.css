@@ -2,6 +2,16 @@
     text-decoration: none;
 }
 
+.z-index-modal {
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+}
+
+.header-menu{
+    height: 10%;
+}
+
 .menu-link {
     width: 10vw !important;
 }

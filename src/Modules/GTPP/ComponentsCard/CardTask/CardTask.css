@@ -57,6 +57,13 @@
     width: var(--modal-width-xsmall);
     height: var(--modal-height-xsmall) * 2;
   }
+
+
+  .modal-Xsmall:active {
+    -webkit-box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0px 0px 8px 2px rgba(0, 0, 0, 0.1); 
+  }
   
   /* Cabeçalho do modal */
   .modal-header {
