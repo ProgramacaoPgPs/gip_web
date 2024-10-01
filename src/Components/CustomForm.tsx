@@ -8,18 +8,21 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       mandatory?: boolean;
       captureValue:
         | React.InputHTMLAttributes<HTMLInputElement>
-        | React.SelectHTMLAttributes<HTMLSelectElement>
+        | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
         | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
     };
-    legend?:{
-      style?:string;
-      text?:string;
+    legend?: {
+      style?: string;
+      text?: string;
     };
-    buttons?:[
-
-    ]
+    buttons?: [];
   }[];
 };
+
+interface SelectOption {
+  value: string | number;
+  label: string;
+}
 
 function CustomForm({ fieldsets, ...formProps }: CustomFormProps) {
   return (
@@ -29,13 +32,16 @@ function CustomForm({ fieldsets, ...formProps }: CustomFormProps) {
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
           <label>
             {fieldset.item.label}
-            <b className={fieldset.item.mandatory ? 'text-danger' : ''}>{fieldset.item.mandatory ? ' *' : ''}</b>
+            <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
+              {fieldset.item.mandatory ? ' *' : ''}
+            </b>
             :
           </label>
           {renderField(fieldset.item.captureValue)}
         </fieldset>
       ))}
-      <button className='btn my-2'>Login</button>
+      {/* <button className='btn mt-5 my-2'>Enviar</button> */}
+      <button className="btn my-2">Login</button>
     </form>
   );
 }
@@ -43,20 +49,25 @@ function CustomForm({ fieldsets, ...formProps }: CustomFormProps) {
 function renderField(
   captureValue:
     | React.InputHTMLAttributes<HTMLInputElement>
-    | React.SelectHTMLAttributes<HTMLSelectElement>
+    | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) // Certifique-se que options só existe em select
     | React.TextareaHTMLAttributes<HTMLTextAreaElement>
 ) {
   if ('type' in captureValue) {
     switch (captureValue.type) {
       case 'select':
-        return <SelectField {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement>)} />;
+        return (
+          <SelectField
+            {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
+            // @ts-ignore
+            options={captureValue?.options || []} 
+          />
+        );
       case 'textarea':
         return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
       default:
         return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
     }
   }
-  // Fallback to input if type is not specified
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
 }
 
@@ -64,8 +75,18 @@ export function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} />;
 }
 
-export function SelectField(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} />;
+export function SelectField(
+  props: React.SelectHTMLAttributes<HTMLSelectElement> & { options: SelectOption[] }
+) {
+  return (
+    <select {...props} className={`form-control ${props.className}`}>
+      {props.options.map((option, index) => (
+        <option key={index} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
 }
 
 export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {

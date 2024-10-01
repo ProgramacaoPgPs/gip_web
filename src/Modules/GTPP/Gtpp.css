@@ -11,8 +11,13 @@
 }
 
 .bodyCard {
-    height: 60% !important;
+    height: 43% !important;
     width: 25% !important;
+}
+
+.bodyCard button {
+    margin: 0px !important;
+    margin-top: 5px !important;
 }
 
 .form-register label {

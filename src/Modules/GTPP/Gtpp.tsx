@@ -8,9 +8,10 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "../mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import StructureModal from "../../Components/CustomModal";
-import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
-import CustomForm from "../../Components/CustomForm";
-import { fieldsetsData } from "./ComponentsCard/ConfigForm/configForm";
+import {
+  PDFGenerator,
+  generateAndDownloadCSV,
+} from "../../Class/FileGenerator";
 
 function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
@@ -35,13 +36,14 @@ function useWindowSize() {
 }
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
+  const { setTitleHead, setModalPage, setModalPageElement} = useMyContext();
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
   const [cardTaskItem, setCardTaskItem] = useState<any>();
   const [idButton, setIdButton] = useState<any>();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
+
+  const [reset, setReset] = useState<any>(0);
 
   const isLandscape = useWindowSize();
 
@@ -79,13 +81,14 @@ export default function Gtpp(): JSX.Element {
 
         setCardTask(getTask);
         setCardStateTask(getStatusTask);
+
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
       }
     }
 
     getTaskInformations();
-  }, []);
+  }, [reset]);
 
   return (
     <div id="moduleGTPP" className="h-100 w-100 position-relative">
@@ -133,67 +136,33 @@ export default function Gtpp(): JSX.Element {
                       bgColor={cardTaskStateValue.color}
                       isFirstColumn={isFirstColumnTaskState}
                       onAdd={() => {
-                        setModalPageElement(
-                          <div className="card bodyCard">
-                            <div className="d-flex justify-content-end align-items-center">
-                              <div className="">
-                                <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
-                              </div>
-                            </div>
-                            <div>
-                              <div className="m-3">
-                              <CustomForm
-                                fieldsets={fieldsetsData} // inputs de registro
-                                onSubmit={() => {console.log('teste')}} // botão
-                                method="post"
-                                className='d-flex flex-column align-items-center justify-center col-8 col-sm-6 col-md-4 col-lg-2 rounded py-4 w-100'
-                                id='loginCustomForm'
-                              />
-                              </div>
-                            </div>
-                          </div>
-                        );
+                        setModalPageElement(<Teste />);
                         setModalPage(true);
                       }}
                       onCsv={() => {
-                        //gerador do csv
-                        generateAndDownloadCSV(filteredTasks, 'teste', 'GTPP-documento');
-                        
+                        generateAndDownloadCSV(
+                          filteredTasks,
+                          "teste",
+                          "GTPP-documento"
+                        );
                       }}
                       onPdf={() => {
-                        
-                        // const tasks = [
-                        //   {
-                        //     description: 'Implementar login',
-                        //     state_description: 'Concluído',
-                        //     priority: 2,
-                        //     initial_date: '2024-09-15',
-                        //     final_date: '2024-09-20',
-                        //     state_id: 'completed',
-                        //     percent: 100,
-                        //   },
-                        //   {
-                        //     description: 'Configurar CI/CD',
-                        //     state_description: 'Em andamento',
-                        //     priority: 1,
-                        //     initial_date: '2024-09-21',
-                        //     final_date: '2024-09-25',
-                        //     state_id: 'in_progress',
-                        //     percent: 75,
-                        //   },
-                        //   // Adicione mais tarefas conforme necessário
-                        // ];
-
                         setModalPageElement(
                           <div className="card w-75 h-75 position relative">
                             <div className="d-flex justify-content-end align-items-center">
                               <div className="">
-                                <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
+                                <button
+                                  className="btn fa fa-close m-4"
+                                  onClick={() => setModalPage(false)}
+                                ></button>
                               </div>
                             </div>
                             <div className="overflow-auto h-75">
                               <div className="m-3">
-                                <PDFGenerator data={filteredTasks} configId="completed" />
+                                <PDFGenerator
+                                  data={filteredTasks}
+                                  configId="completed"
+                                />
                               </div>
                             </div>
                           </div>
@@ -203,7 +172,6 @@ export default function Gtpp(): JSX.Element {
                       contentBody={
                         <div className="task-cards-container">
                           {filteredTasks?.map((task: any, idx: number) => {
-                            
                             return (
                               <CardTask
                                 key={idx}
@@ -215,19 +183,28 @@ export default function Gtpp(): JSX.Element {
                                   setIdButton(task.id);
                                   setModalPageElement(
                                     <div className="card w-75 h-75">
-                                      <div className="col-12 bg-primary header-menu">t</div>
+                                      <div className="col-12 bg-primary header-menu">
+                                        t
+                                      </div>
                                       <div className="d-flex overflow-hidden h-100">
                                         <div className="col-7 h-100 bg-danger">
-                                          <button className="btn btn-primary m-4" onClick={() => setModalPage(false)}>close</button>
+                                          <button
+                                            className="btn btn-primary m-4"
+                                            onClick={() => setModalPage(false)}
+                                          >
+                                            close
+                                          </button>
                                         </div>
-                                        <div className="col-5 bg-warning">t</div>
+                                        <div className="col-5 bg-warning">
+                                          t
+                                        </div>
                                       </div>
                                     </div>
                                   );
                                   setModalPage(true);
                                 }}
                               />
-                            )
+                            );
                           })}
                         </div>
                       }
@@ -241,4 +218,100 @@ export default function Gtpp(): JSX.Element {
       </Container>
     </div>
   );
+
+  function Teste(): JSX.Element {
+    // Estado para armazenar os dados do formulário
+    const [formData, setFormData] = useState({
+      description: "",
+      initial_date: "",
+      final_date: "",
+      priority: "1", // valor padrão
+    });
+
+    // Manipulador de mudança para atualizar o estado
+    const handleChange = (e: any) => {
+      const { name, value } = e.target;
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
+
+    useEffect(() => {
+      console.log(formData);
+    }, [formData]);
+
+
+    // Função para lidar com o envio do formulário
+    const handleSubmit = (e: any) => {
+      e.preventDefault(); // Impede o envio padrão do formulário
+      const connection = new Connection("18", true);
+      connection.post(formData, "GTPP/Task.php");
+      setReset((prev: any)=>prev + 1) // renderizando o componente
+    };
+
+    return (
+      <div className="card bodyCard">
+        <div className="d-flex justify-content-end align-items-center">
+          <div>
+            <button
+              className="btn fa fa-close m-4"
+              onClick={() => setModalPage(false)}
+            ></button>
+          </div>
+        </div>
+        <div className="m-3">
+          <div>
+            <label>Description: </label>
+            <input
+              type="text"
+              name="description"
+              onChange={handleChange}
+              className="form-control"
+            />
+          </div>
+          <div>
+            <label>Data inicial: </label>
+            <input
+              type="date"
+              name="initial_date"
+              onChange={handleChange}
+              className="form-control"
+            />
+          </div>
+          <div>
+            <label>Data final: </label>
+            <input
+              type="date"
+              name="final_date"
+              onChange={handleChange}
+              className="form-control"
+            />
+          </div>
+          <div>
+            <label>Prioridade: </label>
+            <select
+              className="form-select"
+              name="priority"
+              onChange={handleChange}
+            >
+              <option value="0">Báixo</option>
+              <option value="1">Médio</option>
+              <option value="2">Alto</option>
+            </select>
+          </div>
+          <div className="d-flex justify-content-center align-items-center mt-3">
+            <button
+              onClick={handleSubmit}
+              type="submit"
+              className="btn btn-success"
+            >
+              Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
