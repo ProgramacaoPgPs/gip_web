@@ -34,8 +34,6 @@ interface MyMainContext {
 
     userLog: User;
     setUserLog: (value: User) => void;
-
-    contactList: User[];
 }
 
 interface Props {
@@ -57,34 +55,10 @@ export function MyProvider({ children }: Props) {
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [titleHead, setTitleHead] = useState<{ title: string, icon?: string }>({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
     const [userLog, setUserLog] = useState<User>(new User({ id: 0, session: '', administrator: 0 }));
-    const [contactList, setContactList] = useState<User[]>([]);
-    let contacts: ContactList | null;
+    // const [contactList, setContactList] = useState<User[]>([]);
 
-
-    useEffect(() => {
-        (
-            async () => {
-                setLoading(true);
-                if (userLog.id > 0) {
-                    await buildContactList();
-                }
-                setLoading(false);
-            }
-        )();
-    }, [userLog]);
-
-    async function buildContactList() {
-        try {
-            contacts = new ContactList(userLog.id);
-            const req: any = await contacts.loadListContacts();
-            if (req.error) throw new Error(req.message);
-            setContactList([...req.data]);
-        } catch (error) {
-            alert(error)
-        }
-    }
     return (
-        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, contactList, setModalPage, setModalPageElement }}>
+        <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, setModalPage, setModalPageElement }}>
             {
                 loading &&
                 <StructureModal className='StructureModal ModalBgWhite'>
