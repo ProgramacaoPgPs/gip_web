@@ -56,14 +56,17 @@ export default class User {
     get pendingMessage(): number | undefined {
         return this.#pendingMessage;
     }
-
+    
     set pendingMessage(pendingMessage: number | undefined) {
         this.#pendingMessage = pendingMessage;
     }
-
-    getName(): string | undefined {
+    
+    get name(): string | undefined {
         return this.#name;
     }
+    // getName(): string | undefined {
+    //     return this.#name;
+    // }
 
     set name(name: string | undefined) {
         this.#name = name;

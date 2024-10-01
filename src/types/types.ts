@@ -6,11 +6,12 @@ export type tUser ={
 
 export type tCardUser = {
     name?: string;
-    shop: number;
-    departament: string;
-    sub: string;
-    photo: string;
+    shop?: number;
+    departament?: string;
+    sub?: string;
+    photo?: string;
     youContact?: number;
     isSend?:boolean;
+    notification?:number;
     sendMessage:(value:string)=>void;
 }

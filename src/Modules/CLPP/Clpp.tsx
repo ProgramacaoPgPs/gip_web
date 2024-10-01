@@ -13,7 +13,8 @@ export default function Clpp(): JSX.Element {
     const [openChat, setOpenChat] = React.useState<boolean>(false)
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
-    const { userLog, contactList } = useMyContext();
+    const { userLog } = useMyContext();
+    const { contactList } = useWebSocket();
 
     return (
         <div id='moduleCLPP'>
@@ -27,38 +28,24 @@ export default function Clpp(): JSX.Element {
                             </div>
                             <i onClick={() => setDetailsChat(!detailsChat)} className={`btn text-primary fa-solid fa-circle-info`}></i>
                         </div>
-                        {detailsChat && <CardUser sendMessage={sendMessage} {...userLog} name={userLog.getName()} />}
+                        {detailsChat && <CardUser sendMessage={sendMessage} {...userLog} name={userLog.name} />}
                         <div className="d-flex flex-row w-100 align-items-center form-switch">
-                            <input onClick={() => { setIsConverse(!isConverse);}} className="form-check-input " type="checkbox" defaultChecked={isConverse} />
+                            <input onClick={() => { setIsConverse(!isConverse); }} className="form-check-input " type="checkbox" defaultChecked={isConverse} />
                             <label className='mx-2' htmlFor="flexSwitchCheckChecked">{isConverse ? 'Conversas' : 'Contatos'}</label>
                         </div>
                     </header>
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
-                        {
-                            isConverse
-                                ?
-                                <article>
-                                    Conversas
-                                </article>
-                                :
-                                <article className='w-100'>
-                                    <div className='overflow-auto h-100 w-100'>
-                                        {
-                                            contactList.map(item =><CardUser sendMessage={sendMessage} key={`contact_${item.id}`} {...item} name={item.getName()} youContact={item.youContact || 0} isSend={true} />)
-                                        }
-                                    </div>
-                                </article>
-                        }
-
-
+                        <div className='overflow-auto h-100 w-100'>
+                            {contactList.filter(item => item.youContact == (isConverse ? 1 : undefined) && item).map((item) => <CardUser sendMessage={sendMessage} key={`contact_${item.id}`} {...item} name={item.name} youContact={item.youContact || 0} isSend={true} notification={item.notification} />)}
+                        </div>
                     </section>
                 </div>
             }
-            <button className={`btn fa-solid my-2 ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={() => {setOpenChat(!openChat);/* ws.informPreview('68');*/}}></button>
+            <button className={`btn fa-solid my-2 ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={() => { setOpenChat(!openChat);/* ws.informPreview('68');*/ }}></button>
         </div>
     );
 
-    function sendMessage(name:string){
+    function sendMessage(name: string) {
         console.log(`Você ira enviar a mesagem para ${name}`)
     }
 }
