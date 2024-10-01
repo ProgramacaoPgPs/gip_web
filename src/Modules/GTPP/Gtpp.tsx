@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Container, Row, Col } from "react-bootstrap";
@@ -8,9 +8,10 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "../mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import StructureModal from "../../Components/CustomModal";
-import Hamburger from "./ComponentsCard/Button/Hamburger/hamburger";
+import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
+import CustomForm from "../../Components/CustomForm";
+import { fieldsetsData } from "./ComponentsCard/ConfigForm/configForm";
 
-// Hook para observar as mudanças de tamanho da janela
 function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -41,21 +42,21 @@ export default function Gtpp(): JSX.Element {
   const [idButton, setIdButton] = useState<any>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
+
   const isLandscape = useWindowSize();
 
   useEffect(() => {
-    
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
       icon: "fa fa-home",
     });
-  }, [setTitleHead, setModalPage, setModalPageElement]);
+  }, [setTitleHead]);
 
   useEffect(() => {
-    let connection = new Connection("18", true);
+    const connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
       try {
-        let getTaskItem = await connection.get(
+        const getTaskItem = await connection.get(
           `&task_id=${btnValueIdTaskItem}`,
           "GTPP/TaskItem.php"
         );
@@ -64,16 +65,17 @@ export default function Gtpp(): JSX.Element {
         console.error("Erro ao obter as informações da tarefa:", error);
       }
     }
-
-    getTaskInformations();
+    if (btnValueIdTaskItem) {
+      getTaskInformations();
+    }
   }, [btnValueIdTaskItem]);
 
   useEffect(() => {
-    let connection = new Connection("18", true);
+    const connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
       try {
-        let getTask = await connection.get("", "GTPP/Task.php");
-        let getStatusTask = await connection.get("", "GTPP/TaskState.php");
+        const getTask = await connection.get("", "GTPP/Task.php");
+        const getStatusTask = await connection.get("", "GTPP/TaskState.php");
 
         setCardTask(getTask);
         setCardStateTask(getStatusTask);
@@ -113,62 +115,123 @@ export default function Gtpp(): JSX.Element {
           </Col>
         </Row>
         <Row className="flex-grow-1 overflow-hidden">
-          {/* <div className="h-100 bg-dark position-absolute" style={{opacity: 0.5, width: '91%'}}></div> */}
           <Col xs={12} className="d-flex flex-nowrap overflow-auto p-0">
             {cardStateTask?.data.map(
               (cardTaskStateValue: any, idxValueState: any) => {
                 const filteredTasks = cardTask?.data.filter(
                   (task: any) => task.state_id === cardTaskStateValue.id
                 );
-
+                const isFirstColumnTaskState = idxValueState === 0;
                 return (
                   <div
                     key={idxValueState}
                     className="column-task-container p-2 flex-shrink-0"
                   >
                     <ColumnTaskState
+                      configId={`task_state_${cardTaskStateValue.id}`}
                       title={cardTaskStateValue.description}
                       bgColor={cardTaskStateValue.color}
-                      
-                      onAction={() => {
+                      isFirstColumn={isFirstColumnTaskState}
+                      onAdd={() => {
                         setModalPageElement(
-                          <div className="card position-absolute w-25 h-25" style={{left: '1px', top: '1px'}}>
-                            t <button className="btn btn-primary m-4" onClick={()=> setModalPage(false)}>close</button>
+                          <div className="card bodyCard">
+                            <div className="d-flex justify-content-end align-items-center">
+                              <div className="">
+                                <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="m-3">
+                              <CustomForm
+                                fieldsets={fieldsetsData} // inputs de registro
+                                onSubmit={() => {console.log('teste')}} // botão
+                                method="post"
+                                className='d-flex flex-column align-items-center justify-center col-8 col-sm-6 col-md-4 col-lg-2 rounded py-4 w-100'
+                                id='loginCustomForm'
+                              />
+                              </div>
+                            </div>
                           </div>
                         );
                         setModalPage(true);
                       }}
-                      // buttonHeader={<Hamburger />}
+                      onCsv={() => {
+                        //gerador do csv
+                        generateAndDownloadCSV(filteredTasks, 'teste', 'GTPP-documento');
+                        
+                      }}
+                      onPdf={() => {
+                        
+                        // const tasks = [
+                        //   {
+                        //     description: 'Implementar login',
+                        //     state_description: 'Concluído',
+                        //     priority: 2,
+                        //     initial_date: '2024-09-15',
+                        //     final_date: '2024-09-20',
+                        //     state_id: 'completed',
+                        //     percent: 100,
+                        //   },
+                        //   {
+                        //     description: 'Configurar CI/CD',
+                        //     state_description: 'Em andamento',
+                        //     priority: 1,
+                        //     initial_date: '2024-09-21',
+                        //     final_date: '2024-09-25',
+                        //     state_id: 'in_progress',
+                        //     percent: 75,
+                        //   },
+                        //   // Adicione mais tarefas conforme necessário
+                        // ];
+
+                        setModalPageElement(
+                          <div className="card w-75 h-75 position relative">
+                            <div className="d-flex justify-content-end align-items-center">
+                              <div className="">
+                                <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
+                              </div>
+                            </div>
+                            <div className="overflow-auto h-75">
+                              <div className="m-3">
+                                <PDFGenerator data={filteredTasks} configId="completed" />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                        setModalPage(true);
+                      }}
                       contentBody={
                         <div className="task-cards-container">
-                          {filteredTasks?.map((task: any, idx: number) => (
-                            <CardTask
-                              key={idx}
-                              initial_date={task.initial_date}
-                              final_date={task.final_date}
-                              titleCard={task.description}
-                              priorityCard={task.priority}
-                              onClick={() => {
-                                // Estamos capturando o Id da tarefa para abrir o modal.
-                                setIdButton(task.id);
-                                setModalPageElement(
-                                  <div className="card w-75 h-75">
-                                    <div className="col-12 bg-primary header-menu">t</div>
-                                    <div className="d-flex overflow-hidden h-100">
-                                      <div className="col-7 h-100 bg-danger">
-                                        <button className="btn btn-primary m-4" onClick={()=>setModalPage(false)}>close</button>
+                          {filteredTasks?.map((task: any, idx: number) => {
+                            
+                            return (
+                              <CardTask
+                                key={idx}
+                                initial_date={task.initial_date}
+                                final_date={task.final_date}
+                                titleCard={task.description}
+                                priorityCard={task.priority}
+                                onClick={() => {
+                                  setIdButton(task.id);
+                                  setModalPageElement(
+                                    <div className="card w-75 h-75">
+                                      <div className="col-12 bg-primary header-menu">t</div>
+                                      <div className="d-flex overflow-hidden h-100">
+                                        <div className="col-7 h-100 bg-danger">
+                                          <button className="btn btn-primary m-4" onClick={() => setModalPage(false)}>close</button>
+                                        </div>
+                                        <div className="col-5 bg-warning">t</div>
                                       </div>
-                                      <div className="col-5 bg-warning">t</div>
                                     </div>
-                                  </div>
-                                );
-                                setModalPage(true);
-                              }}
-                            />
-                          ))}
+                                  );
+                                  setModalPage(true);
+                                }}
+                              />
+                            )
+                          })}
                         </div>
                       }
-                      />
+                    />
                   </div>
                 );
               }
