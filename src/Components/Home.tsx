@@ -3,12 +3,10 @@ import { CustomButton } from './CustomButton';
 import { useMyContext } from '../Context/MainContext';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
-import { useWebSocket } from '../Context/WsContext';
-import Clpp from '../Modules/CLPP/Clpp';
 
 
 export default function Home(): JSX.Element {
-    const { setIsLogged,setTitleHead } = useMyContext();
+    const { setTitleHead } = useMyContext();
 
     React.useEffect(()=>{
         setTitleHead({title:'Home - GIPP', icon:'fa fa-home'});

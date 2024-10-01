@@ -2,7 +2,7 @@ import WebSocketCLPP from "../Services/Websocket";
 
 export interface iUser {
     id: number;
-    youContact?: number;
+    yourContact?: number;
     notification?: number;
     pendingMessage?: number;
     name?: string;
@@ -41,4 +41,6 @@ export interface iWebSocketContextType {
     sender: iSender;
     setSender: React.Dispatch<React.SetStateAction<iSender>>;
     ws: WebSocketCLPP;
+    setContactList:(value:iUser[])=>void;
+    changeListContact:(value:number)=>void;
 }

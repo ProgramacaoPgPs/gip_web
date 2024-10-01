@@ -6,7 +6,7 @@ const logo = require('../../../Assets/Image/groupCLPP.png');
 
 export default function CardUser(props: tCardUser): JSX.Element {
     return (
-        <div className='cardContact border rounded my-2 overflow-hidden' >
+        <div className={`cardContact border rounded my-2 overflow-hidden`}>
             <div className='d-flex align-items-center w-100 p-2'>
                 <header className='overflow-hidden rounded-circle object-fit-cover'>
                     <img src={props.photo ? `data:image/png;base64,${props.photo}` : logo} />
@@ -26,11 +26,25 @@ export default function CardUser(props: tCardUser): JSX.Element {
                     </span>
                 </div>
                 {props.isSend &&
-                    <button onClick={()=>props.sendMessage(props.name || 'N/P')} className='btn'>
-                        <i className="fa-solid fa-paper-plane"></i>
+                    <button onClick={() => props.sendMessage(props)} className='btn'>
+                        <IconButton {...props} />
                     </button>
                 }
             </div>
         </div>
     );
+
+}
+function IconButton(value: tCardUser): JSX.Element {
+    let icon: string = '';
+    if (value.yourContact) {
+        if (value.notification == 1) {
+            icon = 'fa-solid fa-envelope'
+        } else {
+            icon = 'fa-solid fa-envelope-open-text'
+        }
+    } else {
+        icon = 'fa-solid fa-paper-plane';
+    }
+    return (<i className={icon}></i>)
 }

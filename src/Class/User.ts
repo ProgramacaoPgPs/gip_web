@@ -3,7 +3,7 @@ import { iUser } from "../Interface/iGIPP";
 
 export default class User {
     #id: number;
-    #youContact?: number;
+    #yourContact?: number;
     #notification?: number;
     #pendingMessage?: number;
     #name?: string;
@@ -24,7 +24,7 @@ export default class User {
         this.#session = user.session;
 
         // Optional properties
-        this.#youContact = user.youContact;
+        this.#yourContact = user.yourContact;
         this.#notification = user.notification;
         this.#pendingMessage = user.pendingMessage;
         this.#name = user.name;
@@ -37,12 +37,12 @@ export default class User {
     }
 
     // Optional properties' getters and setters
-    get youContact(): number | undefined {
-        return this.#youContact;
+    get yourContact(): number | undefined {
+        return this.#yourContact;
     }
 
-    set youContact(youContact: number | undefined) {
-        this.#youContact = youContact;
+    set yourContact(yourContact: number | undefined) {
+        this.#yourContact = yourContact;
     }
 
     get notification(): number | undefined {
@@ -56,14 +56,17 @@ export default class User {
     get pendingMessage(): number | undefined {
         return this.#pendingMessage;
     }
-
+    
     set pendingMessage(pendingMessage: number | undefined) {
         this.#pendingMessage = pendingMessage;
     }
-
-    getName(): string | undefined {
+    
+    get name(): string | undefined {
         return this.#name;
     }
+    // getName(): string | undefined {
+    //     return this.#name;
+    // }
 
     set name(name: string | undefined) {
         this.#name = name;

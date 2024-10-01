@@ -115,7 +115,7 @@ import React, {
           setModalPage,
           setModalPageElement,
 
-          
+
           reset,
           setResetState, // Expondo o setter diretamente
         }}
