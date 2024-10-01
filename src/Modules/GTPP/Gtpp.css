@@ -2,10 +2,33 @@
     text-decoration: none;
 }
 
+.form-register {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bodyCard {
+    height: 60% !important;
+    width: 25% !important;
+}
+
+.form-register label {
+    width: 100%;
+}
+
 .z-index-modal {
     z-index: 100;
     width: 100%;
     height: 100%;
+}
+
+.box-pdf {
+    position: absolute;
+    left: 47%;
+    top: 90%;
 }
 
 .header-menu{
