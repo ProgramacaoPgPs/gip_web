@@ -29,11 +29,13 @@ function Login() {
                     id: 'loginUserInput'
                 },
             },
+
             legend: {
                 text: 'Bem vindo(a)!',
                 style: 'my-2 h5 d-flex aligm-items-center justify-content-center'
             }
         },
+
         {
             attributes: { id: 'contact-info', className: 'row col-8 my-2' },
             item: {
@@ -65,6 +67,7 @@ function Login() {
                 className='d-flex flex-column align-items-center justify-center col-8 col-sm-6 col-md-4 col-lg-2 rounded py-4'
                 id='loginCustomForm'
             />
+            
         </div>
     );
 
