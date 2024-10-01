@@ -57,6 +57,7 @@ export function MyProvider({ children }: Props) {
     const [userLog, setUserLog] = useState<User>(new User({ id: 0, session: '', administrator: 0 }));
     // const [contactList, setContactList] = useState<User[]>([]);
 
+    useEffect(()=>{console.log(modalPageElement)},[modalPageElement]);
     return (
         <MyContext.Provider value={{ loading, setLoading, modal, setModal, setMessage, isLogged, setIsLogged, titleHead, setTitleHead, userLog, setUserLog, setModalPage, setModalPageElement }}>
             {

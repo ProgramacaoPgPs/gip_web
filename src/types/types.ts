@@ -1,3 +1,5 @@
+import User from "../Class/User";
+
 export type tUser ={
     id:number;
     administrator:number;
@@ -6,12 +8,13 @@ export type tUser ={
 
 export type tCardUser = {
     name?: string;
+    id?:number;
     shop?: number;
     departament?: string;
     sub?: string;
     photo?: string;
-    youContact?: number;
+    yourContact?: number;
     isSend?:boolean;
     notification?:number;
-    sendMessage:(value:string)=>void;
+    sendMessage:(value:any)=>void;
 }

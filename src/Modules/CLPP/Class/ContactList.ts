@@ -20,7 +20,7 @@ export default class ContactList {
             let list: any = await this.#connection.get(`&id=${this.#idUser}&id_user`, 'CLPP/Message.php');
             if (list.error) throw new Error(list.message);
 
-            this.checkYouContacts(list.data);
+            this.checkyourContacts(list.data);
             return { error: false, data: this.#contacts }
         } catch (error) {
             return { error: true, message: error }
@@ -37,12 +37,12 @@ export default class ContactList {
         return results;
     }
 
-    checkYouContacts(list: any[]): void {
+    checkyourContacts(list: any[]): void {
         list.forEach(item => {
             if (item.id_user) {
                 this.#contacts.forEach(contact => {
                     if (contact.id == parseInt(item.id_user)) {
-                        contact.youContact = 1;
+                        contact.yourContact = 1;
                         contact.notification = item.notification;
                     }
                 });
@@ -53,7 +53,7 @@ export default class ContactList {
     changeYouListContact(id: number): void {
         this.#contacts.forEach(contact => {
             if (contact.id === id) {
-                contact.youContact = 1;
+                contact.yourContact = 1;
             }
         });
     }

@@ -12,23 +12,29 @@ const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefi
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [messages, setMessages] = useState<iMessage[]>([]);
     const [contactList, setContactList] = useState<iUser[]>([]);
-    const [sender, setSender] = useState<iSender>({ id: 0});
+    const [sender, setSender] = useState<iSender>({ id: 0 });
     const [monitorScroll, setMonitorScroll] = useState<boolean>(false);
     const changeScrollRef = useRef<() => void>(() => { });
     const [ws, setWs] = useState<any>();
-    const {setLoading,userLog} = useMyContext();
-    
+    const { setLoading, userLog } = useMyContext();
+
     // Função para atualizar contato com base no evento
-    const updateContact = (event: any, contact: iUser) => {
-        if (contact.youContact === 0) contact.youContact = 1;
+    function updateContact(event: any, contact: iUser) {
+        if (contact.yourContact === 0) contact.yourContact = 1;
         if (contact.notification === 0) {
             const pattern = /^(.{0,25}).*/;
             contact.notification = 1;
         }
         return contact;
     };
-    
-    useEffect(() => {console.log(contactList)},[contactList]);
+
+    function changeListContact(id: number) {
+        let newList = contactList;
+        newList[newList.findIndex((item: iUser) => item.id == id)].notification = 0;
+        newList[newList.findIndex((item: iUser) => item.id == id)].yourContact = 1;
+        setContactList([...newList]);
+    }
+
     useEffect(() => {
         (
             async () => {
@@ -41,21 +47,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         )();
     }, [userLog]);
 
-    async function buildContactList() {
-        try {
-            let contacts = new ContactList(userLog.id);
-            const req: any = await contacts.loadListContacts();
-            if (req.error) throw new Error(req.message);
-            console.log(req.data[0]) ;
-            setContactList([...req.data]);
-        } catch (error) {
-            alert(error)
-        }
-    }
-
     // Controle das mensagens e destinatário
     useEffect(() => {
-
         (async () => {
             try {
                 if (userLog.session) {
@@ -67,49 +60,61 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 alert(error);
             }
         })();
+    }, [userLog]);
 
-        async function receivedMessage(event: any) {
-            const { send_user, message, type } = event;
-            console.log(event);
-            if (parseInt(send_user) === sender.id) {
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { send_user, message, type },
-                ]);
-                if (monitorScroll && changeScrollRef.current) changeScrollRef.current();
-            } else {
-                setContactList((prevContacts) =>
-                    prevContacts.map((contact) =>
-                        contact.id === send_user ? updateContact(event, contact) : contact
-                    )
-                );
-            }
-        };
+    async function buildContactList() {
+        try {
+            let contacts = new ContactList(userLog.id);
+            const req: any = await contacts.loadListContacts();
+            if (req.error) throw new Error(req.message);
+            console.log(req.data[0]);
+            setContactList([...req.data]);
+        } catch (error) {
+            alert(error)
+        }
+    }
 
-        async function viewedMessage(event: any) {
-            const { user } = event;
+    async function receivedMessage(event: any) {
+        const { send_user, message, type } = event;
+        console.log(event);
+        if (parseInt(send_user) === sender.id) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { send_user, message, type },
+            ]);
+            if (monitorScroll && changeScrollRef.current) changeScrollRef.current();
+        } else {
             setContactList((prevContacts) =>
                 prevContacts.map((contact) =>
-                    contact.id === parseInt(user) ? { ...contact, pendingMessage: 0 } : contact
+                    contact.id === send_user ? updateContact(event, contact) : contact
                 )
             );
+        }
+    };
 
-            const connection = new Connection('7');
-            await connection.put(
-                {
-                    id_user: user,
-                    id_sender: userLog.id,
-                    UpdateNotification: 1,
-                },
-                'CLPP/Message.php'
-            );
+    async function viewedMessage(event: any) {
+        const { user } = event;
+        setContactList((prevContacts) =>
+            prevContacts.map((contact) =>
+                contact.id === parseInt(user) ? { ...contact, pendingMessage: 0 } : contact
+            )
+        );
 
-            setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
-        };
-    }, [messages, sender, contactList, monitorScroll]);
+        const connection = new Connection('7');
+        await connection.put(
+            {
+                id_user: user,
+                id_sender: userLog.id,
+                UpdateNotification: 1,
+            },
+            'CLPP/Message.php'
+        );
+
+        setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
+    };
 
     return (
-        <WebSocketContext.Provider value={{messages, contactList, sender, setSender, ws }}>
+        <WebSocketContext.Provider value={{ messages, contactList, sender, setSender, ws, setContactList, changeListContact }}>
             {children}
         </WebSocketContext.Provider>
     );

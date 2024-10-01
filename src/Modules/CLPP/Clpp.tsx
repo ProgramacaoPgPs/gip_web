@@ -14,7 +14,7 @@ export default function Clpp(): JSX.Element {
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
-    const { contactList } = useWebSocket();
+    const { contactList, changeListContact } = useWebSocket();
 
     return (
         <div id='moduleCLPP'>
@@ -36,7 +36,7 @@ export default function Clpp(): JSX.Element {
                     </header>
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
                         <div className='overflow-auto h-100 w-100'>
-                            {contactList.filter(item => item.youContact == (isConverse ? 1 : undefined) && item).map((item) => <CardUser sendMessage={sendMessage} key={`contact_${item.id}`} {...item} name={item.name} youContact={item.youContact || 0} isSend={true} notification={item.notification} />)}
+                            {contactList.filter(item => item.yourContact == (isConverse ? 1 : undefined) && item).map((item) => <CardUser sendMessage={sendMessage} key={`contact_${item.id}`} {...item} name={item.name} yourContact={item.yourContact || 0} isSend={true} notification={item.notification} id={item.id} />)}
                         </div>
                     </section>
                 </div>
@@ -45,7 +45,8 @@ export default function Clpp(): JSX.Element {
         </div>
     );
 
-    function sendMessage(name: string) {
-        console.log(`Você ira enviar a mesagem para ${name}`)
+    function sendMessage(user: User) {
+        changeListContact(user.id);
+        console.log(`Você ira enviar a mesagem para ${user.name}. ID#: ${user.id}`)
     }
 }
