@@ -25,7 +25,7 @@ type ColumnPropsTaskStateFunction = {
 
 const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunction & ColumnPropsTaskStateBoolean> = (props) => {
     return (
-        <div style={{ height: '100%', marginLeft: '1rem' }} {...props}>
+        <div style={{ height: '100%', marginLeft: '1rem'}} {...props}>
             <div className={`columnTaskState-title rounded-top d-flex ${props.configId} ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bgColor}` }}>
                 <h1 className="rounded p-1">{props.title}</h1>
                 {props.buttonHeader}
