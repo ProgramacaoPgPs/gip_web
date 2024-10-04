@@ -17,7 +17,7 @@ export default function Clpp(): JSX.Element {
     const { contactList, changeListContact } = useWebSocket();
 
     return (
-        <div id='moduleCLPP'>
+        <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
             {
                 openChat &&
                 <div className='bg-white p-2 rounded d-flex flex-column'>
