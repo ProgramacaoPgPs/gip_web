@@ -93,7 +93,7 @@ export default function Gtpp(): JSX.Element {
     }
 
     getTaskInformations();
-  }, [reset]);
+  }, [reset, data]);
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -115,22 +115,8 @@ export default function Gtpp(): JSX.Element {
 
   return (
     <div id="moduleGTPP" className="h-100 w-100 position-relative">
-      {true ? <h1>Status da conexão: {isConnected ? "Conectado" : "Desconectado"}</h1> : null} 
+      {false ? <h1>Status da conexão: {isConnected ? "Conectado" : "Desconectado"}</h1> : null} 
       {/* {false ? <div>{socketData}</div> : null}  */}
-      {false ? (
-        <StructureModal
-          className="StructureModal ModalBgBlack z-index-modal"
-          children={
-            <div className="card w-75 h-75">
-              <div className="col-12 bg-primary header-menu">t</div>
-              <div className="d-flex overflow-hidden h-100">
-                <div className="col-7 h-100 bg-danger">t</div>
-                <div className="col-5 bg-warning">t</div>
-              </div>
-            </div>
-          }
-        />
-      ) : null}
       <Container fluid className={`h-100 d-flex ${isLandscape ? "flex-row" : "flex-column"} `}>
         <Row className="flex-grow-0">
           <Col xs={12}>
@@ -141,7 +127,7 @@ export default function Gtpp(): JSX.Element {
         </Row>
         <Row className="flex-grow-1 overflow-hidden">
           <Col xs={12} className="position-relative" style={{padding: 0, marginLeft: 15 }}>
-            <h1 onClick={handleOpenFilter} className="cursor-pointer">Filtros <i className="fa fa-angle-down"></i></h1>
+            <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
             <div className="position-absolute" style={{ zIndex: 1 }}>
               {openFilter ? (
                 <div className="bg-light border-dark p-3">
@@ -194,22 +180,22 @@ export default function Gtpp(): JSX.Element {
                       className="column-task-container p-2 flex-shrink-0"
                     >
                       <ColumnTaskState
-                        configId={`task_state_${cardTaskStateValue.id}`}
+                        
                         title={cardTaskStateValue.description}
-                        bgColor={cardTaskStateValue.color}
-                        isFirstColumn={isFirstColumnTaskState}
-                        onAdd={() => {
+                        bg_color={cardTaskStateValue.color}
+                        is_first_column={isFirstColumnTaskState}
+                        addTask={() => {
                           setModalPageElement(<Teste />);
                           setModalPage(true);
                         }}
-                        onCsv={() => {
+                        exportCsv={() => {
                           generateAndDownloadCSV(
                             filteredTasks,
                             "teste",
                             "GTPP-documento"
                           );
                         }}
-                        onPdf={() => {
+                        exportPdf={() => {
                           setModalPageElement(
                             <div className="card w-75 h-75 position relative">
                               <div className="d-flex justify-content-end align-items-center">
@@ -222,17 +208,14 @@ export default function Gtpp(): JSX.Element {
                               </div>
                               <div className="overflow-auto h-75">
                                 <div className="m-3">
-                                  <PDFGenerator
-                                    data={filteredTasks}
-                                    configId="completed"
-                                  />
+                                  <PDFGenerator data={filteredTasks} />
                                 </div>
                               </div>
                             </div>
                           );
                           setModalPage(true);
                         }}
-                        contentBody={
+                        content_body={
                           <div className="task-cards-container">
                             {filteredTasks?.map((task: any, idx: number) => {
                               return (
@@ -240,8 +223,8 @@ export default function Gtpp(): JSX.Element {
                                   key={idx}
                                   initial_date={task.initial_date}
                                   final_date={task.final_date}
-                                  titleCard={task.description}
-                                  priorityCard={task.priority}
+                                  title_card={task.description}
+                                  priority_card={task.priority}
                                   onClick={() => {
                                     setIdButton(task.id);
                                     setModalPageElement(

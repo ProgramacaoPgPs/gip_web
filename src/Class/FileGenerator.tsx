@@ -1,9 +1,7 @@
-import { AnyCnameRecord } from 'node:dns';
 import React, { useRef } from 'react';
 
 interface PDFGeneratorProps {
   data: Task[];
-  configId: string;
 }
 
 interface Task {
@@ -82,7 +80,7 @@ const downloadCSV = (csv: string, filename: string) => {
   }
 };
 
-export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ data, configId }) => {
+export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ data }) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const headers = ['Tarefas', 'Estado das Tarefas', 'Prioridade', 'Data Inicial', 'Data Final', 'Percentual'];
