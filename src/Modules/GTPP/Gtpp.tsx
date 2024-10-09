@@ -8,10 +8,8 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "../mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import StructureModal from "../../Components/CustomModal";
-import {
-  PDFGenerator,
-  generateAndDownloadCSV,
-} from "../../Class/FileGenerator";
+import {PDFGenerator, generateAndDownloadCSV} from "../../Class/FileGenerator";
+import useWebSocketGTPP from '../GTPP/hook/WebSocketHook';
 
 function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
@@ -43,11 +41,17 @@ export default function Gtpp(): JSX.Element {
   const [idButton, setIdButton] = useState<any>();
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
 
+  const {isConnected, disconnect, data, send} = useWebSocketGTPP();
+
   const [openFilter, setOpenFilter] = useState<any>(false);
 
   const [reset, setReset] = useState<any>(0);
 
-  const isLandscape = useWindowSize();
+  const isLandscape = useWindowSize();  
+
+  if(data) {
+    console.log(data);
+  }
 
   useEffect(() => {
     setTitleHead({
@@ -111,7 +115,9 @@ export default function Gtpp(): JSX.Element {
 
   return (
     <div id="moduleGTPP" className="h-100 w-100 position-relative">
-      {!true ? (
+      {true ? <h1>Status da conexão: {isConnected ? "Conectado" : "Desconectado"}</h1> : null} 
+      {/* {false ? <div>{socketData}</div> : null}  */}
+      {false ? (
         <StructureModal
           className="StructureModal ModalBgBlack z-index-modal"
           children={
