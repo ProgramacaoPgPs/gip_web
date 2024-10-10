@@ -40,8 +40,9 @@ export default function Gtpp(): JSX.Element {
   const [cardTaskItem, setCardTaskItem] = useState<any>();
   const [idButton, setIdButton] = useState<any>();
   const [btnValueIdTaskItem, setBtnValueIdTaskItem] = useState<any>();
+  const [taskItem, setTaskItem] = useState<Object | null | any >(null);
 
-  const {isConnected, disconnect, data, send} = useWebSocketGTPP();
+  const {isConnected, disconnect, send, responseWebSocket, dataResponseWebSocket} = useWebSocketGTPP();
 
   const [openFilter, setOpenFilter] = useState<any>(false);
 
@@ -49,9 +50,7 @@ export default function Gtpp(): JSX.Element {
 
   const isLandscape = useWindowSize();  
 
-  if(data) {
-    console.log(data);
-  }
+  // console.log(taskItem);
 
   useEffect(() => {
     setTitleHead({
@@ -93,7 +92,23 @@ export default function Gtpp(): JSX.Element {
     }
 
     getTaskInformations();
-  }, [reset, data]);
+  }, [reset, responseWebSocket]);
+
+  // useEffect(() => {
+  //   const connection = new Connection("18", true);
+  //   async function getTaskItemFunction() {
+  //     try {
+  //       // @ts-ignore
+  //       const getTaskItem = await connection.get(`&id=${dataResponseWebSocket.itemUp.task_id}`, "GTPP/TaskItem.php");
+  //       setTaskItem(getTaskItem);
+
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+
+  //   getTaskItemFunction();
+  // }, [dataResponseWebSocket])
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -180,7 +195,6 @@ export default function Gtpp(): JSX.Element {
                       className="column-task-container p-2 flex-shrink-0"
                     >
                       <ColumnTaskState
-                        
                         title={cardTaskStateValue.description}
                         bg_color={cardTaskStateValue.color}
                         is_first_column={isFirstColumnTaskState}
@@ -229,19 +243,25 @@ export default function Gtpp(): JSX.Element {
                                     setIdButton(task.id);
                                     setModalPageElement(
                                       <div className="card w-75 h-75">
-                                        <div className="col-12 bg-primary header-menu">
-                                          t
+                                        <div className="col-12 bg-gray header-menu d-flex justify-content-between">
+                                          <div className="w-100 d-flex align-items-center gap-3 px-1">
+                                            <h1><span className="fw-bold fs-2">{task.description}</span></h1>
+                                          </div>
+                                          <div>
+                                            <button
+                                                className="btn btn-danger text-light fa fa-x m-4"
+                                                onClick={() =>
+                                                  setModalPage(false)
+                                                }
+                                              >
+                                              </button>
+                                          </div>
                                         </div>
                                         <div className="d-flex overflow-hidden h-100">
-                                          <div className="col-7 h-100 bg-danger">
-                                            <button
-                                              className="btn btn-primary m-4"
-                                              onClick={() =>
-                                                setModalPage(false)
-                                              }
-                                            >
-                                              close
-                                            </button>
+                                          <div className="col-7 h-100 p-2">
+                                            <div className="border-dark h-100">
+                                                <textarea name="" id="" className="w-100" disabled></textarea>
+                                            </div>
                                           </div>
                                           <div className="col-5 bg-warning">
                                             t

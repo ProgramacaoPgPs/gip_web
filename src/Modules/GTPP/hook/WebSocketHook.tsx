@@ -7,7 +7,8 @@ const useWebSocketGTPP = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [timeOut, setTimeOut] = useState<NodeJS.Timeout | null>(null);
-  const [data, setData] = useState<Object | null>({});
+  const [responseWebSocket, setResponseWebSocket] = useState<Object | null>({});
+  const [dataResponseWebSocket, setDataResponseWebSocket] = useState<Object | null>([]);
 
   useEffect(() => {
     const connect = () => {
@@ -43,7 +44,7 @@ const useWebSocketGTPP = () => {
           }
           const response = JSON.parse(data);
           console.log("Dados recebidos:", response);
-          setData(response);
+          setResponseWebSocket(response);
 
           if (response.error) {
             console.error("Erro na resposta:", response.error);
@@ -51,6 +52,7 @@ const useWebSocketGTPP = () => {
             console.log("ID do usuário:", response.send_user_id);
             if (response.object) {
               console.log("Objeto:", response.object);
+              setDataResponseWebSocket(response.object);
             }
           }
         };
@@ -73,9 +75,10 @@ const useWebSocketGTPP = () => {
         console.log("Timeout: não recebeu __pong__");
       }, 5000);
       setTimeOut(timeout);
-    } else {
-      console.warn("Tentativa de enviar ping quando o WebSocket não está conectado.");
-    }
+    } 
+    // else {
+    //   console.warn("Tentativa de enviar ping quando o WebSocket não está conectado.");
+    // }
   };
 
   const pong = () => {
@@ -100,7 +103,7 @@ const useWebSocketGTPP = () => {
     }
   };
 
-  return { isConnected, send, disconnect, data };
+  return { isConnected, send, disconnect, responseWebSocket, dataResponseWebSocket };
 };
 
 export default useWebSocketGTPP;
