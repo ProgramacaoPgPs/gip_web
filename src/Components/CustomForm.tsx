@@ -16,7 +16,10 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       text?: string;
     };
     buttons?: [];
+    
   }[];
+  onAction?: any;
+  titleButton?: any;
 };
 
 interface SelectOption {
@@ -24,7 +27,7 @@ interface SelectOption {
   label: string;
 }
 
-function CustomForm({ fieldsets, ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, titleButton="Login", ...formProps }: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset, fieldsetIndex) => (
@@ -41,7 +44,7 @@ function CustomForm({ fieldsets, ...formProps }: CustomFormProps) {
         </fieldset>
       ))}
       {/* <button className='btn mt-5 my-2'>Enviar</button> */}
-      <button className="btn my-2">Login</button>
+      <button className="btn my-2">{titleButton}</button>
     </form>
   );
 }

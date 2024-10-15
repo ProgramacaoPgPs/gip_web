@@ -13,6 +13,7 @@
     bottom: var(--vSpaceLg);
     /* width: calc(100% - (var(--vSpaceLg)*2)); */
     max-width: 550px;
+    z-index: 1;
 }
 #moduleCLPP>div{
     height: 75vh;

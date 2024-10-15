@@ -31,7 +31,6 @@ const useWebSocketGTPP = () => {
         };
 
         ws.onclose = () => {
-          console.log("Conexão fechada. Tentando reconectar...");
           setIsConnected(false);
           setTimeout(connect, 1000);
         };
@@ -46,12 +45,8 @@ const useWebSocketGTPP = () => {
           console.log("Dados recebidos:", response);
           setResponseWebSocket(response);
 
-          if (response.error) {
-            console.error("Erro na resposta:", response.error);
-          } else if (response.send_user_id) {
-            console.log("ID do usuário:", response.send_user_id);
+          if (response.error) {} else if (response.send_user_id) {
             if (response.object) {
-              console.log("Objeto:", response.object);
               setDataResponseWebSocket(response.object);
             }
           }
@@ -75,10 +70,7 @@ const useWebSocketGTPP = () => {
         console.log("Timeout: não recebeu __pong__");
       }, 5000);
       setTimeOut(timeout);
-    } 
-    // else {
-    //   console.warn("Tentativa de enviar ping quando o WebSocket não está conectado.");
-    // }
+    }
   };
 
   const pong = () => {
