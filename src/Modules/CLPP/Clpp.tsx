@@ -47,6 +47,7 @@ export default function Clpp(): JSX.Element {
 
     function sendMessage(user: User) {
         changeListContact(user.id);
+        ws.informPreview(user.id.toString());
         console.log(`Você ira enviar a mesagem para ${user.name}. ID#: ${user.id}`)
     }
 }
