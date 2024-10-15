@@ -1,4 +1,5 @@
 let ws: WebSocket;
+let wsGtpp: WebSocket;
 
 interface NotifyMessage {
   objectType?: string;

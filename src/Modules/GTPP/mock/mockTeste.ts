@@ -1,8 +1,13 @@
-export const fieldsetsData = [
+export const listPath = [
+    { page: '/home', children: 'Home' },
+];
+
+
+export const fieldsetsRegister = [
     {
         attributes: { id: '', className: 'w-100', },
         item: {
-            label: 'Descrição',
+            label: 'Digite o nome da tarefa',
             mandatory: true,
             captureValue: {
                 type: 'text',
@@ -10,7 +15,7 @@ export const fieldsetsData = [
                 name: 'description',
                 className: 'form-control',
                 required: true,
-                id: 'description_form'
+                id: ''
             },
         },
     },{
@@ -21,10 +26,10 @@ export const fieldsetsData = [
             captureValue: {
                 type: 'date',
                 placeholder: '',
-                name: 'date_initial',
+                name: 'initial_date',
                 className: 'form-control',
                 required: true,
-                id: 'date_initial'
+                id: ''
             },
         },
     },{
@@ -35,10 +40,10 @@ export const fieldsetsData = [
             captureValue: {
                 type: 'date',
                 placeholder: '',
-                name: 'date_initial',
+                name: 'final_date',
                 className: 'form-control',
                 required: true,
-                id: 'date_initial'
+                id: ''
             },
         },
     },{
@@ -52,11 +57,12 @@ export const fieldsetsData = [
                 name: 'date_initial',
                 className: 'form-control',
                 required: true,
-                id: 'date_initial',
-                onChange: (e: any) => console.log(e.target.value),
+                id: '',
                 options: [
                   {value: '', label: 'selectione'},
-                  {value: '1', label: 'Teste'},
+                  {value: '1', label: 'baixo'},
+                  {value: '2', label: 'médio'},
+                  {value: '3', label: 'alto'},
                 ]
             },
         },
