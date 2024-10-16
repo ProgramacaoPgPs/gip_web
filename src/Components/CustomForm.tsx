@@ -92,6 +92,35 @@ export function SelectField(
   );
 }
 
+export function SelectFieldDefault (props: {
+  label: string;
+  value: string | number;
+  onChange: any;
+  className: string;
+  options: {label: string, value: string | number}[];
+}) {
+  return (
+    <label>
+      {props.label}
+      <select value={props.value} onChange={props.onChange} className={`form-select ${props.className}`}>
+        {props.options.map(({label}, key: number) => (
+          <option key={`opt_${key}`} value={label}>{label}</option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+
+export function InputCheckbox(props: {label: string, value: boolean , onChange: any}) {
+  return (
+    <label className='cursor-pointer'>
+      <input type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />{" "}
+      {props.label}
+    </label>
+  )
+}
+
 export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} />;
 }
