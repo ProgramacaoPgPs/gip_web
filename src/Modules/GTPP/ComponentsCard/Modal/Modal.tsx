@@ -1,151 +1,184 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./style.css";
+import { Connection } from '../../../../Connection/Connection';
+import { InputCheckbox, SelectField, SelectFieldDefault } from '../../../../Components/CustomForm';
 
 type TaskItem = {
-    task?: any;
-    setModalPage?: any;
-    cardTaskItem?: {
-        data?: Array<{ 
-            description?: string,
-            check?: boolean,
-        }>;
-    };
-    Item: any
+  card_id?: string;
+  task_id?: string;
+  description?: string;
+  percent?: number;
+  close_modal?: any;
+  taskFilter?: any;
+  listItem?: any;
 }
 
-const ModalDefault: React.FC<TaskItem> = (props) => {
-    let image = "https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-panorama-vista-paisagem-natureza.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-    const [openTextArea, setOpenTextArea] = useState<any>(false);
+type FormTextAreaDefaultProps = {
+  disabledForm?: boolean;
+  task_description: string;
+  onChange?: (value: string) => void;
+  buttonTextOpen?: string;
+  buttonTextClosed?: string;
+  buttonClasses?: string;
+  textAreaClasses?: string;
+  rows?: number;
+  cols?: number;
+}
 
-    console.log(props.cardTaskItem);
+type SubTask = {
+  id: number;
+  description: string;
+  checked: boolean;
+}
 
-    return (
-      <div className='zIndex99'>
-        <div className="card w-75 h-75 position-absolute modal-card-default">
-          <div className="progress">
-            <div
-              className="progress-bar"
-              role="progressbar"
-              style={{ width: false ? '' : "50%" }}
-              aria-valuenow={50}  
-              aria-valuemin={0}   
-              aria-valuemax={100} 
-              >
-              {false ? '' : '50%'}
-            </div>
-          </div>
-        <div className="col-12 bg-gray header-menu d-flex justify-content-between">
-          <div className="w-100 d-flex align-items-center gap-3 px-1">
-            <h1>
-              <span className="fw-bold fs-2">{props.task?.description || 'Descrição indisponível'}</span>
-            </h1>
-          </div>
-          <div>
-            <button
-              className="btn btn-danger text-light fa fa-x m-4"
-              onClick={props.setModalPage}
-            ></button>
-          </div>
-        </div>
-        <div className="d-flex overflow-hidden h-100">
-          <div className="col-7 h-100 p-2">
-            <div className='h-100 p-2 overflow-auto'>
-              <div className='d-flex flex-column align-items-end'>
-                <textarea className='form-control' disabled={openTextArea}></textarea>
-                <button onClick={() => setOpenTextArea((prev:any) => !prev)} className={`btn ${openTextArea ? 'btn-success' : 'btn-danger'} mt-2`}>Editar</button>
-              </div>
-              <div>
-                {props.Item?.data ? (
-                  props.Item.data.map((taskItem:any, index:any) => (
-                    <div key={index} {...props}>
-                      <div className="d-flex gap-2">
-                          <div><input type="checkbox" checked={taskItem.check} /></div>
-                          <div>{taskItem.description}</div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>Sem dados disponíveis</p>
-                )}
-              </div>
-              <div className='overflow-auto mt-2 '></div>
-            </div>
-          </div>
-          <div className="col-5 border border-primary h-100 overflow-hidden d-flex flex-column justify-content-between">
-            {/*
-              - Fazer um componente de datas []
-              - Fazer um componente de barra de progresso []
-              - Fazer selecionadores de loja e companhias []
-              - Fazer fazer um botão para parar a tarefa []
-              - Fazer um formulário de adicionar um item (ou seja uma tarefa!) e uma imagem []
-              - Mostrar todos os colaboradores []
-            */}
-            <div>
-              <div className='px-3 pt-2 d-flex justify-content-between '>
-                  <div>
-                    <span>Selecione a Compania</span>
-                    <select className='form-select'>
-                      <option value="">teste</option>
-                    </select>
-                  </div>
-                  <div>
-                    <span>Selecione a loja</span>
-                    <select className='form-select'>
-                      <option value="">teste</option>
-                    </select>
-                  </div>
-                  <div>
-                    <span>Selecione o departamento</span>
-                    <select className='form-select'>
-                      <option value="">teste</option>
-                    </select>
-                  </div>
-              </div>
-              <div className='px-3 mt-3 d-flex gap-4'>
-                <div>
-                  <span>Data inicial:</span>
-                  <input type="date" className='form-control' disabled value={'2001-06-03'} />
-                </div>
-                <div>
-                  <span>Data Final:</span>
-                  <input type="date" className='form-control' value={'2001-06-03'} />
-                </div>
-                <div>
-                  <span>Status da Tarefa:</span>
-                  <button type="button" className={`d-block btn ${true ? 'btn-danger' : 'btn-primary'}`}>Parado</button>
-                </div>
-              </div>
-              <div className='px-3 mt-3 d-flex gap-4'>
-                
-              </div>
-            </div>
-            <div className='px-3 mt-3'>
-              <div>
-                {/* Aqui vou tratar os usúarios */}
-                <React.Fragment>
-                  <div>
-                    <h2>Usuários conectados</h2>
-                    <div className='d-flex gap-2 position-relative mt-2' onClick={() => console.log('vendo quantas pessoas vinculadas a tarefa!')}>
-                    {props.Item ? props.Item?.data?.map((item:any) => {
-                      return (
-                        <React.Fragment>
-                          <img alt="item.name" className="cursor-pointer rounded-circle mb-3 border-online" height={50} width={50} src={image}  />
-                        </React.Fragment>
-                      )
-                    }) : (
-                      <h2>Não há colaboradores para essa tarefa</h2>
-                    )}
-                    </div>
-                  </div>
-                </React.Fragment>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    );
-  };
+type SubTasksWithCheckboxProps = {
+  subTasks: SubTask[];
+  onTaskChange: (id: number, checked: boolean) => void;
+}
   
-  export default ModalDefault;
+const HeaderModal = (props: {color: string, description: string, OnClick: any}) => {
+return (
+  <div className='w-100'>
+    <div className='d-flex justify-content-between align-items-center pt-2 px-2'>
+      <div className='fs-1'>
+        <h2>{props.description}</h2>
+      </div>
+      <div>
+        <button onClick={props.OnClick ? props.OnClick : () => console.log('teste')} className={`bg-${props.color} btn text-light fa fa-x`} />
+      </div>
+    </div>
+
+  </div>
+)
+}
+
+const ProgressBar = (props: {progressValue: string | any}) => {
+return (
+  <div className="progress mt-2 mx-2">
+    <div className="progress-bar" role="progressbar" style={{width: `${props.progressValue}%`}} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>{props.progressValue}%</div>
+  </div>
+)
+}
+
+const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = (props) => {
+const { disabledForm = false, task_description, onChange, buttonTextOpen = 'Aberto', buttonTextClosed = 'Trancado', buttonClasses = 'btn', textAreaClasses = 'form-control', rows = 5, cols = 10} = props;
+const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
+const [value, setValueChange] = useState<string>(task_description);
+
+useEffect(() => {
+  setValueChange(task_description);
+}, [task_description]);
+
+const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const newValue = e.target.value;
+  setValueChange(newValue);
+  if (onChange) onChange(newValue);
+};
+
+return (
+  <div className='d-flex align-items-end gap-2 mt-2 flex-column'>
+    <textarea onChange={handleTextChange} disabled={disabledForm || !isOpenButton} value={value} className={textAreaClasses} cols={cols} rows={rows} />
+    <button onClick={() => setIsOpenButton((prev: boolean) => !prev)} className={`${buttonClasses} btn-${isOpenButton ? 'success' : 'danger'}`}>
+      {isOpenButton ? buttonTextOpen : buttonTextClosed}
+    </button>
+  </div>
+);
+};
+
+
+const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, onTaskChange }) => {
+  const handleCheckboxChange = (id: number, checked: boolean) => {
+    onTaskChange(id, checked);
+  };
+
+  return (
+    <div className='overflow-auto mt-3' style={{height: '300px'}}>
+      {subTasks.map((task, index: number) => (
+        <div key={task.id} className="d-flex gap-2 align-items-center mb-2">
+          <InputCheckbox
+            label={task.description}
+            onChange={(e: any) => handleCheckboxChange(task.id, e.target.checked)}
+            value={task.checked}
+            key={index} 
+          />
+        </div>
+      ))}
+    </div>
+  )};
+
+const SelectTaskItem = () => {
+  const [food, setFood] = React.useState('fruit');
+
+  const handleFoodChange = (event: any) => {
+    setFood(event.target.value);
+  };
+
+  return (
+    <React.Fragment>
+      <SelectFieldDefault 
+        label=""
+        options={[
+          { label: 'Fruit', value: 'fruit' },
+          { label: 'Vegetable', value: 'vegetable' },
+          { label: 'Meat', value: 'meat' },
+        ]}
+        value={food}
+        onChange={handleFoodChange}
+        className=''
+      />
+    </React.Fragment>
+  ) 
+}
+
+const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any }) => {
+  const [subTasks, setSubTasks] = useState<SubTask[]>(props.listSubTasks?.data || []);
+
+  useEffect(() => {
+    if (props.listSubTasks?.data) {
+      setSubTasks(props.listSubTasks.data);
+    }
+  }, [props.listSubTasks]);
+
+  const handleTaskChange = (id: number, checked: boolean) => {
+    const updatedTasks = subTasks.map((task) =>
+      task.id === id ? { ...task, checked } : task
+    );
+    setSubTasks(updatedTasks);
+  };
+
+  return (
+    <div className="row mt-3 h-100 overflow-hidden p-4">
+      <div className="col-md-6 overflow-hidden">
+        <FormTextAreaDefault task_description="abacaxi" disabledForm={props.disabledForm} />
+        <SubTasksWithCheckbox subTasks={subTasks} onTaskChange={handleTaskChange} />
+        <div className="d-flex flex-column justify-content-end">
+          <input type="text" className="form-control d-block" />
+        </div>
+      </div>
+      <div className="col-md-6 h-100 border border-primary">
+        <SelectTaskItem />
+      </div>
+    </div>
+  );
+};
+
+  
+const ModalDefault: React.FC<TaskItem> = (props) => {
+  return (
+    <div className='zIndex99'>
+      <div className="card w-75 h-75 overflow-hidden position-absolute modal-card-default">
+        <section className='header-modal-default'>
+          <HeaderModal color='danger' description={props.taskFilter.description} OnClick={props.close_modal} />
+          <ProgressBar progressValue={props.taskFilter.percent ? props.taskFilter.percent : '20'}/>
+        </section>
+        <section className='body-modal-default'>
+          <BodyDefault listSubTasks={props.listItem || []} />
+        </section>
+      </div>
+    </div>
+  );
+};
+
+
+export default ModalDefault;
   
