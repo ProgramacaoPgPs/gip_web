@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import "./style.css";
 import { Connection } from '../../../../Connection/Connection';
 import { InputCheckbox, SelectField, SelectFieldDefault } from '../../../../Components/CustomForm';
+import AvatarGroup from '../Avatar/avatar';
+import CheckboxList from '../CheckboxList/checkboxlist';
 
 type TaskItem = {
   card_id?: string;
@@ -28,13 +30,16 @@ type FormTextAreaDefaultProps = {
 type SubTask = {
   id: number;
   description: string;
-  checked: boolean;
+  check: boolean;
+  task_id: number;
 }
 
 type SubTasksWithCheckboxProps = {
   subTasks: SubTask[];
   onTaskChange: (id: number, checked: boolean) => void;
 }
+
+const connection = new Connection("18", true);
   
 const HeaderModal = (props: {color: string, description: string, OnClick: any}) => {
 return (
@@ -77,7 +82,7 @@ const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
 return (
   <div className='d-flex align-items-end gap-2 mt-2 flex-column'>
-    <textarea onChange={handleTextChange} disabled={disabledForm || !isOpenButton} value={value} className={textAreaClasses} cols={cols} rows={rows} />
+    <textarea style={{resize: 'none'}} onChange={handleTextChange} disabled={disabledForm || !isOpenButton} value={value} className={textAreaClasses} cols={cols} rows={rows} />
     <button onClick={() => setIsOpenButton((prev: boolean) => !prev)} className={`${buttonClasses} btn-${isOpenButton ? 'success' : 'danger'}`}>
       {isOpenButton ? buttonTextOpen : buttonTextClosed}
     </button>
@@ -87,8 +92,15 @@ return (
 
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, onTaskChange }) => {
-  const handleCheckboxChange = (id: number, checked: boolean) => {
+  const handleCheckboxChange = async (id: number, checked: boolean, idTask: any ) => {
     onTaskChange(id, checked);
+
+    let result = await connection.put({
+      check: checked, 
+      id: id,
+      task_id: idTask
+    }, "GTPP/TaskItem.php");
+    console.log(result);
   };
 
   return (
@@ -97,8 +109,8 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
         <div key={task.id} className="d-flex gap-2 align-items-center mb-2">
           <InputCheckbox
             label={task.description}
-            onChange={(e: any) => handleCheckboxChange(task.id, e.target.checked)}
-            value={task.checked}
+            onChange={(e: any) => handleCheckboxChange(task.id, e.target.checked, task.task_id)}
+            value={task.check}
             key={index} 
           />
         </div>
@@ -106,31 +118,81 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
     </div>
   )};
 
-const SelectTaskItem = () => {
-  const [food, setFood] = React.useState('fruit');
+  
+  const SelectTaskItem = (props: { data?: any }) => {
+    const [shopValue, setShop] = useState<any>();
+    const [CompanyValue, setCompany] = useState<any>([]);
+    const [DepartamentValue, setDepartament] = useState<any>();
 
-  const handleFoodChange = (event: any) => {
-    setFood(event.target.value);
+    const [CompanyData, setCompanyData] = useState<any>(props.data.csds[0]?.company_id);
+    const [ShopData, setShopData] = useState<any>(props.data.csds[0]?.shop_id);
+    const [DepartamentData, setDepartamentData] = useState<any>(props.data.csds[0]?.departament_id);
+
+    const [openModal, setOpenModal] = useState<any>(false);
+  
+    useEffect(() => {
+      async function department() {
+        //task_id=4286
+        const result1 = await connection.get(`&company_id=1&shop_id=1&task_id=${props.data?.id}`, "CCPP/Department.php");
+        const result2 = await connection.get("&company_id=1", "CCPP/Shop.php");
+        const result3 = await connection.get("", "CCPP/Company.php");
+  
+        setDepartament(result1);
+        setCompany(result3);
+        setShop(result2);
+      }
+  
+      department();
+    }, []);
+
+    console.log(DepartamentValue, shopValue, CompanyValue);
+
+    // Verifica se há dados disponíveis
+    const hasData = CompanyValue?.data?.length && shopValue?.data?.length && DepartamentValue?.data?.length;
+  
+    return (
+      <React.Fragment>
+        <div className='d-flex align-items-centers justify-content-around mt-2 position-relative'>
+          {hasData ? (
+            <React.Fragment>
+              <SelectFieldDefault
+                label='Compania'
+                value={CompanyData}
+                onChange={(e: any) => {setCompanyData(e.target.value)}}
+                options={CompanyValue.data?.map((item: any) => ({ label: item.description, value: item.id }))}
+              />
+  
+              <SelectFieldDefault
+                label='Loja'
+                value={ShopData}
+                onChange={(e: any) => setShopData(e.target.value)}
+                options={shopValue.data?.map((item: any) => ({ label: item.description, value: item.id }))}
+              />
+  
+              {/* <SelectFieldDefault
+                label='Departamento'
+                value={DepartamentData}
+                onChange={(e: any) => setDepartamentData(e.target.value)}
+                options={DepartamentValue.data?.map((item: any) => ({ label: item.description, value: item.id }))}
+              /> */}
+
+              <div className='d-flex align-items-center mt-4 position-relative' id={'idTeste'}>
+                <div><button className='btn btn-light border' onClick={() => setOpenModal((prev:boolean) => !prev)} style={{height: '40px'}} >Departamento</button></div>
+                <div className='position-absolute' style={{top: '104%'}}>
+                  {openModal && <CheckboxList items={DepartamentValue.data} />}
+                </div>
+              </div>
+            </React.Fragment>
+          ) : (
+            <p>Carregando dados...</p>
+          )}
+        </div>
+      </React.Fragment>
+    );
   };
+  
 
-  return (
-    <React.Fragment>
-      <SelectFieldDefault 
-        label=""
-        options={[
-          { label: 'Fruit', value: 'fruit' },
-          { label: 'Vegetable', value: 'vegetable' },
-          { label: 'Meat', value: 'meat' },
-        ]}
-        value={food}
-        onChange={handleFoodChange}
-        className=''
-      />
-    </React.Fragment>
-  ) 
-}
-
-const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any }) => {
+const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any, taskListFiltered: any }) => {
   const [subTasks, setSubTasks] = useState<SubTask[]>(props.listSubTasks?.data || []);
 
   useEffect(() => {
@@ -139,24 +201,41 @@ const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any }) => {
     }
   }, [props.listSubTasks]);
 
-  const handleTaskChange = (id: number, checked: boolean) => {
+  const handleTaskChange = (id: number, check: boolean) => {
     const updatedTasks = subTasks.map((task) =>
-      task.id === id ? { ...task, checked } : task
+      task.id === id ? { ...task, check } : task
     );
     setSubTasks(updatedTasks);
   };
+
+  const users = [
+    { name: "Alice", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: true },
+    { name: "Bob", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
+    { name: "Charlie", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
+    { name: "David", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
+    { name: "Eve", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: true }
+  ];
+
 
   return (
     <div className="row mt-3 h-100 overflow-hidden p-4">
       <div className="col-md-6 overflow-hidden">
         <FormTextAreaDefault task_description="abacaxi" disabledForm={props.disabledForm} />
         <SubTasksWithCheckbox subTasks={subTasks} onTaskChange={handleTaskChange} />
-        <div className="d-flex flex-column justify-content-end">
-          <input type="text" className="form-control d-block" />
+        <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
+          <div className='w-100'>
+            <input type="text" className="form-control d-block" />
+          </div>
+          <div>
+            <button onClick={(e:any) => console.log('Olá mundo!')} className='btn btn-success'>Enviar</button>
+          </div>
         </div>
       </div>
-      <div className="col-md-6 h-100 border border-primary">
-        <SelectTaskItem />
+      <div className="col-md-6 h-100 position-relative">
+        <SelectTaskItem data={props.taskListFiltered} />
+        <div className='position-absolute position-box-users'>
+          <AvatarGroup dataTask={props.taskListFiltered} users={users} />
+        </div>
       </div>
     </div>
   );
@@ -164,15 +243,16 @@ const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any }) => {
 
   
 const ModalDefault: React.FC<TaskItem> = (props) => {
+  console.log(props);
   return (
     <div className='zIndex99'>
-      <div className="card w-75 h-75 overflow-hidden position-absolute modal-card-default">
+      <div className="card w-75 overflow-hidden position-absolute modal-card-default">
         <section className='header-modal-default'>
           <HeaderModal color='danger' description={props.taskFilter.description} OnClick={props.close_modal} />
-          <ProgressBar progressValue={props.taskFilter.percent ? props.taskFilter.percent : '20'}/>
+          <ProgressBar progressValue={props.taskFilter.percent ? props.taskFilter.percent : '20'} />
         </section>
         <section className='body-modal-default'>
-          <BodyDefault listSubTasks={props.listItem || []} />
+          <BodyDefault taskListFiltered={props.taskFilter} listSubTasks={props.listItem || []} />
         </section>
       </div>
     </div>

@@ -51,6 +51,8 @@ export default function Gtpp(): JSX.Element {
     async function getTaskInformations(): Promise<void> {
       try {
         const getTask = await connection.get("", "GTPP/Task.php");
+        // const getIdTask = await connection.get("&id=", "GTPP/Task.php");
+        // console.log(getIdTask);
         const getStatusTask = await connection.get("", "GTPP/TaskState.php");
 
         setCardTask(getTask);
@@ -145,7 +147,7 @@ export default function Gtpp(): JSX.Element {
                         }}
                         exportPdf={() => {
                           setModalPageElement(
-                            <div className="card w-75 h-75 position relative">
+                            <div className="card w-75 position relative">
                               <div className="d-flex justify-content-end align-items-center">
                                 <div className="">
                                   <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>

@@ -5,8 +5,9 @@
 }
 
 .zIndex99 {
-    background-color: rgba(0, 0, 0, 0.43);
+    background-color: #0000006e;
     position: absolute;
+    left: 0;
     width: 100% !important;
     height: 100%;
 }
@@ -27,5 +28,9 @@
 
 .cardUser:hover {
     width: 300px;
+}
 
+.position-box-users {
+    top: 688%;
+    left: 81%;;
 }
