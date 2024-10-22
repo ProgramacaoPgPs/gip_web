@@ -22,8 +22,6 @@ const CheckboxList = (props: { items: any }) => {
     setCheckboxes(newCheckboxes);
   };
 
-  console.log(checkboxes);
-
   const checkedCount = checkboxes.filter((item: any) => item.check).length;
 
   return (

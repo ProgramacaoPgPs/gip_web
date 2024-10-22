@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, HTMLAttributes } from 'react';
 import "./style.css";
 import { Connection } from '../../../../Connection/Connection';
 import { InputCheckbox, SelectField, SelectFieldDefault } from '../../../../Components/CustomForm';
@@ -15,7 +15,7 @@ type TaskItem = {
   listItem?: any;
 }
 
-type FormTextAreaDefaultProps = {
+type FormTextAreaDefaultProps = HTMLAttributes<HTMLInputElement> &{
   disabledForm?: boolean;
   task_description: string;
   onChange?: (value: string) => void;
@@ -145,7 +145,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
       department();
     }, []);
 
-    console.log(DepartamentValue, shopValue, CompanyValue);
+    // console.log(DepartamentValue, shopValue, CompanyValue);
 
     // Verifica se há dados disponíveis
     const hasData = CompanyValue?.data?.length && shopValue?.data?.length && DepartamentValue?.data?.length;
@@ -168,13 +168,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
                 onChange={(e: any) => setShopData(e.target.value)}
                 options={shopValue.data?.map((item: any) => ({ label: item.description, value: item.id }))}
               />
-  
-              {/* <SelectFieldDefault
-                label='Departamento'
-                value={DepartamentData}
-                onChange={(e: any) => setDepartamentData(e.target.value)}
-                options={DepartamentValue.data?.map((item: any) => ({ label: item.description, value: item.id }))}
-              /> */}
 
               <div className='d-flex align-items-center mt-4 position-relative' id={'idTeste'}>
                 <div><button className='btn btn-light border' onClick={() => setOpenModal((prev:boolean) => !prev)} style={{height: '40px'}} >Departamento</button></div>
@@ -192,58 +185,61 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
   };
   
 
-const BodyDefault = (props: { disabledForm?: boolean; listSubTasks?: any, taskListFiltered: any }) => {
-  const [subTasks, setSubTasks] = useState<SubTask[]>(props.listSubTasks?.data || []);
-
-  useEffect(() => {
-    if (props.listSubTasks?.data) {
-      setSubTasks(props.listSubTasks.data);
-    }
-  }, [props.listSubTasks]);
-
-  const handleTaskChange = (id: number, check: boolean) => {
-    const updatedTasks = subTasks.map((task) =>
-      task.id === id ? { ...task, check } : task
+  const BodyDefault = ({
+    disabledForm = false,
+    listSubTasks = { data: { task_item: [], full_description: "", task_user: [] } },
+    taskListFiltered = [],
+  }: {
+    disabledForm?: boolean;
+    listSubTasks?: any;
+    taskListFiltered: any;
+  }) => {
+    const [subTasks, setSubTasks] = useState<SubTask[]>(listSubTasks?.data?.task_item || []);
+  
+    useEffect(() => {
+      if (listSubTasks?.data?.task_item) {
+        setSubTasks(listSubTasks.data.task_item);
+      }
+    }, [listSubTasks?.data?.task_item]);
+  
+    const handleTaskChange = (id: number, check: boolean) => {
+      setSubTasks((prevSubTasks) =>
+        prevSubTasks.map((task) => (task.id === id ? { ...task, check } : task))
+      );
+    };
+  
+    return (
+      <div className="row mt-3 h-100 overflow-hidden p-4">
+        <div className="col-md-6 overflow-hidden">
+          <FormTextAreaDefault
+            task_description={listSubTasks.data.full_description || ""}
+            disabledForm={disabledForm}
+          />
+          <SubTasksWithCheckbox subTasks={subTasks} onTaskChange={handleTaskChange} />
+          <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
+            <div className="w-100">
+              <input type="text" className="form-control d-block" />
+            </div>
+            <div>
+              <button onClick={() => console.log("Olá mundo!")} className="btn btn-success">
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 h-100 position-relative">
+          <SelectTaskItem data={taskListFiltered} />
+          <div className="position-absolute position-box-users">
+            <AvatarGroup dataTask={taskListFiltered} users={listSubTasks.data.task_user} />
+          </div>
+        </div>
+      </div>
     );
-    setSubTasks(updatedTasks);
   };
-
-  const users = [
-    { name: "Alice", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: true },
-    { name: "Bob", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
-    { name: "Charlie", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
-    { name: "David", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: false },
-    { name: "Eve", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFG1m8cHJEfi8AM6vWVYJZaRXfcWcLIQZGiw&s", online: true }
-  ];
-
-
-  return (
-    <div className="row mt-3 h-100 overflow-hidden p-4">
-      <div className="col-md-6 overflow-hidden">
-        <FormTextAreaDefault task_description="abacaxi" disabledForm={props.disabledForm} />
-        <SubTasksWithCheckbox subTasks={subTasks} onTaskChange={handleTaskChange} />
-        <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
-          <div className='w-100'>
-            <input type="text" className="form-control d-block" />
-          </div>
-          <div>
-            <button onClick={(e:any) => console.log('Olá mundo!')} className='btn btn-success'>Enviar</button>
-          </div>
-        </div>
-      </div>
-      <div className="col-md-6 h-100 position-relative">
-        <SelectTaskItem data={props.taskListFiltered} />
-        <div className='position-absolute position-box-users'>
-          <AvatarGroup dataTask={props.taskListFiltered} users={users} />
-        </div>
-      </div>
-    </div>
-  );
-};
+  
 
   
 const ModalDefault: React.FC<TaskItem> = (props) => {
-  console.log(props);
   return (
     <div className='zIndex99'>
       <div className="card w-75 overflow-hidden position-absolute modal-card-default">

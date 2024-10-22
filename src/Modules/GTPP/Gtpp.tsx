@@ -16,9 +16,8 @@ export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
-  const { isConnected, disconnect, send, responseWebSocket, dataResponseWebSocket } = useWebSocketGTPP();
+  const { isConnected, responseWebSocket } = useWebSocketGTPP();
   const [openFilter, setOpenFilter] = useState<any>(false);
-  const [openModal, setOpenModal] = useState<any>(false);
   const [reset, setReset] = useState<any>(0);
   const [getTaskId, setTaskId] = useState<any>('');
   const [Item, getAllTaskItem] = useState<any>({});
@@ -37,7 +36,8 @@ export default function Gtpp(): JSX.Element {
     async function getTaskInformations(): Promise<void> {
       if (!getTaskId) return; // Evita chamadas desnecessárias se o ID não estiver definido
       try {
-        const getTaskItem = await connection.get(`&task_id=${getTaskId.toString()}`, "GTPP/TaskItem.php");
+        // const getTaskItem = await connection.get(`&task_id=${getTaskId.toString()}`, "GTPP/TaskItem.php");
+        const getTaskItem = await connection.get(`&id=${getTaskId.toString()}`, "GTPP/Task.php");
         getAllTaskItem(getTaskItem);
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
