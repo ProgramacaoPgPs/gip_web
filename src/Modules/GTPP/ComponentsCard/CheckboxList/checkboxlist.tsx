@@ -6,7 +6,7 @@ const Checkbox = (props: { label: string, isChecked: boolean, onChange: any }) =
   return (
     <div className="checkbox-item">
       <label>
-        <input type="checkbox" checked={props.isChecked} onChange={props.onChange} />
+        <input type="checkbox" className="form-check-control" checked={props.isChecked} onChange={props.onChange} />
         {props.label}
       </label>
     </div>

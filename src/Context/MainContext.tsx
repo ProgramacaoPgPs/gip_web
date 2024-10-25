@@ -21,6 +21,9 @@ import React, {
   
     modal: boolean;
     setModal: (step: boolean) => void;
+
+    newProgressBar: any;
+    setNewProgressBar: any;
   
     reset: any;
     setResetState: React.Dispatch<React.SetStateAction<any>>; // Expondo diretamente o setter
@@ -55,6 +58,7 @@ import React, {
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
     const [modalPage, setModalPage] = useState<boolean>(false);
+    const [newProgressBar, setNewProgressBar] = useState<number | string | null>(null);
   
     const [message, setMessage] = useState<{ text: string; type: 1 | 2 | 3 | 4 }>({
       text: "",
@@ -115,6 +119,9 @@ import React, {
           setModalPage,
           setModalPageElement,
 
+
+          newProgressBar,
+          setNewProgressBar,
 
           reset,
           setResetState, // Expondo o setter diretamente

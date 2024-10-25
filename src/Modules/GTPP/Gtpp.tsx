@@ -13,7 +13,7 @@ import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
+  const { setTitleHead, setModalPage, setModalPageElement, newProgressBar, setNewProgressBar } = useMyContext();
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
   const { isConnected, responseWebSocket } = useWebSocketGTPP();
@@ -23,6 +23,10 @@ export default function Gtpp(): JSX.Element {
   const [Item, getAllTaskItem] = useState<any>({});
   const [openCardDefault, setOpenCardDefault] = useState<any>(false);
   const [filterTask, setFilterTask] = useState<any>([]);
+
+  const [TaskReset, setTaskReset] = useState<any>(0);
+  const [TaskResetCheck, setTaskResetCheck] = useState<any>(0);
+  const [taskDataAll,setTaskDataAll] = useState<any>(0);
 
   useEffect(() => {
     setTitleHead({
@@ -34,7 +38,7 @@ export default function Gtpp(): JSX.Element {
   useEffect(() => {
     const connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
-      if (!getTaskId) return; // Evita chamadas desnecessárias se o ID não estiver definido
+      if (!getTaskId) return;
       try {
         // const getTaskItem = await connection.get(`&task_id=${getTaskId.toString()}`, "GTPP/TaskItem.php");
         const getTaskItem = await connection.get(`&id=${getTaskId.toString()}`, "GTPP/Task.php");
@@ -44,7 +48,7 @@ export default function Gtpp(): JSX.Element {
       }
     }
     getTaskInformations();
-  }, [getTaskId, reset]);
+  }, [getTaskId, TaskResetCheck, responseWebSocket, newProgressBar]);   
 
   useEffect(() => {
     const connection = new Connection("18", true);
@@ -62,7 +66,7 @@ export default function Gtpp(): JSX.Element {
       }
     }
     getTaskInformations();
-  }, [reset, responseWebSocket]);
+  }, [TaskReset, responseWebSocket, newProgressBar]);
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -135,7 +139,7 @@ export default function Gtpp(): JSX.Element {
                         bg_color={cardTaskStateValue.color}
                         is_first_column={isFirstColumnTaskState}
                         addTask={() => {
-                          setModalPageElement(<Cardregister assistenceFunction={() => setModalPage(false)} setReset={setReset} />);
+                          setModalPageElement(<Cardregister assistenceFunction={() => setModalPage(false)} setReset={setTaskReset} />);
                           setModalPage(true);
                         }}
                         exportCsv={() => {
@@ -190,8 +194,10 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </Row>
-        {openCardDefault && <ModalDefault listItem={Item} taskFilter={filterTask} close_modal={() => {
-          setReset((prev: any) => prev + 1);
+        {openCardDefault && <ModalDefault taskCheckReset={setTaskReset} resetTask={setTaskResetCheck} listItem={Item} taskFilter={filterTask} close_modal={() => {
+          setTaskReset((prev: any) => prev + 1);
+          setTaskResetCheck((prev: any) => prev + 1);
+        
           setOpenCardDefault(false);
         }} />}
       </Container>
