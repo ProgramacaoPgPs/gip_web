@@ -11,8 +11,19 @@ import React, {
   import { iUser } from "../Interface/iGIPP";
   import ContactList from "../Modules/CLPP/Class/ContactList";
   import User from "../Class/User";
+import WebSocketGTPPClass from "../Modules/GTPP/hook/WebSocketHook";
   
   const logo = require("../Assets/Image/peg_pese_loading.png");
+
+  interface webSocketGTPP {
+    disconnect: () => void;
+    getIsConnected: () => boolean;
+    send: () => void;
+    getResponseWebSocket: () => object | null;
+    getDataResponseWebSocket: () =>  object | null | any[];
+    getLastSentMessage: () => object | null;
+  }
+
   
   // Definindo o tipo dos dados no contexto
   interface MyMainContext {
@@ -21,6 +32,11 @@ import React, {
   
     modal: boolean;
     setModal: (step: boolean) => void;
+
+    webSocketInstance: webSocketGTPP | any;
+
+    newProgressBar: any;
+    setNewProgressBar: any;
   
     reset: any;
     setResetState: React.Dispatch<React.SetStateAction<any>>; // Expondo diretamente o setter
@@ -55,6 +71,10 @@ import React, {
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, setModal] = useState<boolean>(false);
     const [modalPage, setModalPage] = useState<boolean>(false);
+    const [newProgressBar, setNewProgressBar] = useState<number | string | null>(null);
+    const [webSocketInstance, setWebSocketInstance] = useState<WebSocketGTPPClass | null>(null);
+    const [response, setResponse] = useState<object | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
   
     const [message, setMessage] = useState<{ text: string; type: 1 | 2 | 3 | 4 }>({
       text: "",
@@ -85,6 +105,23 @@ import React, {
         setLoading(false);
       })();
     }, [userLog]);
+
+    useEffect(() => {
+      let ws = new WebSocketGTPPClass();
+      setWebSocketInstance(ws);
+
+      // Atualiza o status da conexão
+      const checkConnection = setInterval(() => {
+        if (ws.getIsConnected()) {
+          setIsConnected(true);
+          clearInterval(checkConnection);
+        }
+      }, 100);
+
+      return () => {
+        ws.disconnect();
+      }
+    }, [])
   
     async function buildContactList() {
       try {
@@ -115,6 +152,10 @@ import React, {
           setModalPage,
           setModalPageElement,
 
+          newProgressBar,
+          setNewProgressBar,
+
+          webSocketInstance,
 
           reset,
           setResetState, // Expondo o setter diretamente

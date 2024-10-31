@@ -93,18 +93,19 @@ export function SelectField(
 }
 
 export function SelectFieldDefault (props: {
-  label: string;
-  value: string | number;
-  onChange: any;
-  className: string;
-  options: {label: string, value: string | number}[];
+  label?: string;
+  value?: string | number;
+  onChange?: any;
+  className?: string;
+  options: {label?: string, value?: string | number}[];
 }) {
   return (
-    <label>
+    <label className='fw-bold'>
       {props.label}
       <select value={props.value} onChange={props.onChange} className={`form-select ${props.className}`}>
-        {props.options.map(({label}, key: number) => (
-          <option key={`opt_${key}`} value={label}>{label}</option>
+        <option defaultValue={""} value={""}>Selecione</option>
+        {props.options.map(({label, value}, key: number) => (
+          <option key={`opt_${key}`} value={value}>{label}</option>
         ))}
       </select>
     </label>
@@ -116,7 +117,7 @@ export function InputCheckbox(props: {label: string, value: boolean , onChange: 
   return (
     <label className='cursor-pointer'>
       <input type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />{" "}
-      {props.label}
+      <span className='fs-6'>{props.label}</span>
     </label>
   )
 }

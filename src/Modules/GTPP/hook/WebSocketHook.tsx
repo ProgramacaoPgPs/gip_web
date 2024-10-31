@@ -1,135 +1,135 @@
-import { useEffect, useState, useRef } from 'react';
+class WebSocketGTPPClass {
+  private socket: WebSocket | null = null;
+  private isConnected: boolean = false;
+  private responseWebSocket: object | null = {};
+  private dataResponseWebSocket: object | null | any[] = [];
+  private pingIntervalRef: NodeJS.Timeout | null = null;
+  private timeoutRef: NodeJS.Timeout | null = null;
+  private lastSentMessage: object | null = null;
 
-/**
- * Custom Hook para gerenciar a conexão WebSocket com o servidor.
- */
-const useWebSocketGTPP = () => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [responseWebSocket, setResponseWebSocket] = useState<Object | null>({});
-  const [dataResponseWebSocket, setDataResponseWebSocket] = useState<Object | null>([]);
-  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);  // Ref para controlar o intervalo de ping
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);      // Ref para o timeout do pong
+  constructor() {
+    this.connect();
+  }
 
-  useEffect(() => {
-    const connect = () => {
-      if (localStorage?.tokenGIPP) {
-        const ws = new WebSocket("ws://192.168.0.99:3333");
+  // Função para conectar ao WebSocket
+  private connect(): void {
+    if (localStorage?.tokenGIPP) {
+      this.socket = new WebSocket("ws://192.168.0.99:3333");
 
-        ws.onopen = () => {
-          // Remove ou comente a linha abaixo para evitar log de abertura de conexão
-          // console.log("Conexão aberta"); 
-          const authMessage = {
-            auth: localStorage.tokenGIPP,
-            app_id: 18,
-          };
-          ws.send(JSON.stringify(authMessage));
-          startPing(ws); // Inicia o ping
-          setIsConnected(true);
+      this.socket.onopen = () => {
+        const authMessage = {
+          auth: localStorage.tokenGIPP,
+          app_id: 18,
         };
+        this.socket?.send(JSON.stringify(authMessage));
+        this.startPing();
+        this.isConnected = true;
+      };
 
-        ws.onerror = (ev) => {
-          console.error("Erro no WebSocket", ev);
-        };
+      this.socket.onerror = (ev) => {
+        console.error("Erro no WebSocket", ev);
+      };
 
-        ws.onclose = () => {
-          // Remove ou comente a linha abaixo para evitar log de fechamento de conexão
-          // console.log("Conexão fechada, tentando reconectar...");
-          setIsConnected(false);
-          stopPing(); // Para o ping quando o socket fecha
-          setTimeout(connect, 1000); // Tenta reconectar após 1 segundo
-        };
+      this.socket.onclose = () => {
+        console.log("Conexão fechada, tentando reconectar...");
+        this.isConnected = false;
+        this.stopPing();
+        setTimeout(() => this.connect(), 10000);
+      };
 
-        ws.onmessage = (ev) => {
-          const data = ev.data;
-          if (data === "__pong__") {
-            pong(); // Cancela o timeout se o pong foi recebido
-            return;
-          }
+      this.socket.onmessage = (ev) => {
+        const data = ev.data;
+        if (data === "__pong__") {
+          this.pong();
+          return;
+        }
+        try {
           const response = JSON.parse(data);
-          setResponseWebSocket(response);
+          this.responseWebSocket = response;
 
           if (response.error) {
-            // Trata o erro aqui
+            console.error("Erro recebido:", response.error);
           } else if (response.send_user_id && response.object) {
-            setDataResponseWebSocket(response.object);
+            this.dataResponseWebSocket = response.object;
           }
-        };
+        } catch (error) {
+          console.error("Erro ao fazer o parse do JSON", error);
+        }
+      };
+    }
+  }
 
-        setSocket(ws);
-      }
-    };
-
-    connect(); // Inicia a conexão WebSocket
-
-    return () => {
-      disconnect(); // Limpa tudo ao desmontar o componente
-    };
-  }, []);
-
-  // Função para iniciar o ping
-  const startPing = (ws: WebSocket) => {
-    if (pingIntervalRef.current) {
-      clearInterval(pingIntervalRef.current); // Evita múltiplos intervalos
+  private startPing(): void {
+    if (this.pingIntervalRef) {
+      clearInterval(this.pingIntervalRef);
     }
 
-    pingIntervalRef.current = setInterval(() => {
-      ping(ws);
-    }, 10000); // Envia ping a cada 10 segundos
-  };
+    this.pingIntervalRef = setInterval(() => {
+      this.ping();
+    }, 10000);
+  }
 
-  // Função para parar o ping
-  const stopPing = () => {
-    if (pingIntervalRef.current) {
-      clearInterval(pingIntervalRef.current);
-      pingIntervalRef.current = null;
+  private stopPing(): void {
+    if (this.pingIntervalRef) {
+      clearInterval(this.pingIntervalRef);
+      this.pingIntervalRef = null;
     }
-  };
+  }
 
-  // Função para enviar ping
-  const ping = (ws: WebSocket) => {
-    if (isConnected && ws.readyState === WebSocket.OPEN) {
-      ws.send("__ping__");
+  private ping(): void {
+    if (this.isConnected && this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send("__ping__");
 
-      // Usando timeoutRef para armazenar o timeout do pong
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current); // Cancela qualquer timeout anterior
+      if (this.timeoutRef) {
+        clearTimeout(this.timeoutRef);
       }
 
-      timeoutRef.current = setTimeout(() => {
-        // Remova ou comente esta linha se não quiser logs de timeout
-        // console.log("Timeout: não recebeu __pong__");
-      }, 5000); // Aguarda até 5 segundos para receber __pong__
+      this.timeoutRef = setTimeout(() => {
+        console.warn("Timeout: não recebeu __pong__");
+      }, 5000);
     }
-  };
+  }
 
-  // Função para lidar com o pong
-  const pong = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current); // Cancela o timeout se o __pong__ for recebido
-      timeoutRef.current = null;
+  private pong(): void {
+    if (this.timeoutRef) {
+      clearTimeout(this.timeoutRef);
+      this.timeoutRef = null;
     }
-  };
+  }
 
-  // Função para enviar mensagens através do WebSocket
-  const send = (json: object) => {
-    if (isConnected && socket?.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(json));
+  public send(json: object): void {
+    if (this.isConnected && this.socket?.readyState === WebSocket.OPEN) {
+      this.lastSentMessage = json;
+      this.socket.send(JSON.stringify(json));
+      console.log('Mensagem enviada:', this.lastSentMessage);
     } else {
       console.warn("Não está conectado ao WebSocket ou o socket está fechado");
     }
-  };
+  }
 
-  // Função para desconectar o WebSocket
-  const disconnect = () => {
-    if (socket) {
-      stopPing(); // Para o ping antes de fechar a conexão
-      socket.close();
-      setIsConnected(false);
+  public disconnect(): void {
+    if (this.socket) {
+      this.stopPing();
+      this.socket.close();
+      this.isConnected = false;
     }
-  };
+  }
 
-  return { isConnected, send, disconnect, responseWebSocket, dataResponseWebSocket };
-};
+  public getResponseWebSocket(): object | null {
+    return this.responseWebSocket;
+  }
 
-export default useWebSocketGTPP;
+  public getDataResponseWebSocket(): object | null | any[] {
+    return this.dataResponseWebSocket;
+  }
+
+  public getLastSentMessage(): object | null {
+    return this.lastSentMessage;
+  }
+
+  public getIsConnected(): boolean {
+    return this.isConnected;
+  }
+}
+
+export default WebSocketGTPPClass;

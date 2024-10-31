@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Container, Row, Col } from "react-bootstrap";
@@ -8,22 +8,21 @@ import NavBar from "../../Components/NavBar";
 import { listPath } from "./mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
-import useWebSocketGTPP from '../GTPP/hook/WebSocketHook';
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
+  const { setTitleHead, setModalPage, setModalPageElement, webSocketInstance } = useMyContext();
+  
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
-  const { isConnected, disconnect, send, responseWebSocket, dataResponseWebSocket } = useWebSocketGTPP();
+
   const [openFilter, setOpenFilter] = useState<any>(false);
-  const [openModal, setOpenModal] = useState<any>(false);
-  const [reset, setReset] = useState<any>(0);
-  const [getTaskId, setTaskId] = useState<any>('');
-  const [Item, getAllTaskItem] = useState<any>({});
+
   const [openCardDefault, setOpenCardDefault] = useState<any>(false);
   const [filterTask, setFilterTask] = useState<any>([]);
+  const [responseWs, setResponseWs] = useState<any>([]);
+  const [loading, setLoading] = useState<any>(false);
 
   useEffect(() => {
     setTitleHead({
@@ -32,35 +31,42 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
+
+  setTimeout(() => {
+    const responseData = webSocketInstance?.getLastSentMessage();
+    setResponseWs(responseData);
+  }, 1);
+
+  const connection = useMemo(() => new Connection("18", true), []);
+
   useEffect(() => {
-    const connection = new Connection("18", true);
+    setLoading(true);
     async function getTaskInformations(): Promise<void> {
-      if (!getTaskId) return; // Evita chamadas desnecessárias se o ID não estiver definido
       try {
-        const getTaskItem = await connection.get(`&task_id=${getTaskId.toString()}`, "GTPP/TaskItem.php");
-        getAllTaskItem(getTaskItem);
+        const getStatusTask = await connection.get("", "GTPP/TaskState.php");
+        setCardStateTask(getStatusTask);
+
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
       }
     }
     getTaskInformations();
-  }, [getTaskId, reset]);
+    setLoading(false);
+  }, [connection, responseWs]);
 
   useEffect(() => {
     const connection = new Connection("18", true);
     async function getTaskInformations(): Promise<void> {
       try {
         const getTask = await connection.get("", "GTPP/Task.php");
-        const getStatusTask = await connection.get("", "GTPP/TaskState.php");
-
         setCardTask(getTask);
-        setCardStateTask(getStatusTask);
+        
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
       }
     }
     getTaskInformations();
-  }, [reset, responseWebSocket]);
+  }, [connection, responseWs]);
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -78,9 +84,10 @@ export default function Gtpp(): JSX.Element {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
 
+  if(loading) return (<React.Fragment>Carregando...</React.Fragment>);
+
   return (
     <div id="moduleGTPP" className="h-100 w-100 position-relative">
-      {false ? <h1>Status da conexão: {isConnected ? "Conectado" : "Desconectado"}</h1> : null}
       <Container fluid className={`h-100 d-flex`}>
         <Row className="flex-grow-0">
           <Col xs={12}>
@@ -89,8 +96,8 @@ export default function Gtpp(): JSX.Element {
             </header>
           </Col>
         </Row>
-        <Row className="flex-grow-1 overflow-hidden">
-          <Col xs={12} className="position-relative" style={{ padding: 0, marginLeft: 15 }}>
+        <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
+          <div className="position-relative" style={{ padding: 0, marginLeft: 15 }}>
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
             <div className="position-absolute" style={{ zIndex: 1 }}>
               {openFilter ? (
@@ -99,7 +106,7 @@ export default function Gtpp(): JSX.Element {
                     (cardTaskStateValue: any, idxValueState: any) => (
                       <div key={idxValueState}>
                         <label className="cursor-pointer">
-                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={selectedStateIds.includes(cardTaskStateValue.id)} />{" "}
+                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={!selectedStateIds.includes(cardTaskStateValue.id)} />{" "}
                           {cardTaskStateValue.description}
                         </label>
                       </div>
@@ -108,8 +115,8 @@ export default function Gtpp(): JSX.Element {
                 </div>
               ) : null}
             </div>
-          </Col>
-          <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto' }}>
+          </div>
+          <Col xs={12} className="d-flex h-100 flex-nowrap p-0" style={{ overflowX: 'auto' }}>
             {cardStateTask?.data.map(
               (cardTaskStateValue: any, idxValueState: any) => {
                 const filteredTasks = cardTask?.data.filter(
@@ -126,26 +133,22 @@ export default function Gtpp(): JSX.Element {
                   !isHidden && (
                     <div
                       key={idxValueState}
-                      className="column-task-container p-2 flex-shrink-0"
+                      className="column-task-container p-2 align-items-start flex-shrink-0"
                     >
                       <ColumnTaskState
                         title={cardTaskStateValue.description}
                         bg_color={cardTaskStateValue.color}
                         is_first_column={isFirstColumnTaskState}
                         addTask={() => {
-                          setModalPageElement(<Cardregister assistenceFunction={() => setModalPage(false)} setReset={setReset} />);
+                          setModalPageElement(<Cardregister assistenceFunction={() => setModalPage(false)} />);
                           setModalPage(true);
                         }}
                         exportCsv={() => {
-                          generateAndDownloadCSV(
-                            filteredTasks,
-                            "teste",
-                            "GTPP-documento"
-                          );
+                          generateAndDownloadCSV(filteredTasks,"teste","GTPP-documento");
                         }}
                         exportPdf={() => {
                           setModalPageElement(
-                            <div className="card w-75 h-75 position relative">
+                            <div className="card w-75 position relative">
                               <div className="d-flex justify-content-end align-items-center">
                                 <div className="">
                                   <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
@@ -172,8 +175,7 @@ export default function Gtpp(): JSX.Element {
                                   priority_card={task.priority}
                                   onClick={() => {
                                     setFilterTask(task);
-                                    setTaskId(task.id); // Atualiza o taskId
-                                    setOpenCardDefault(true); // Abre o modal
+                                    setOpenCardDefault(true);
                                   }}
                                 />
                               );
@@ -187,11 +189,8 @@ export default function Gtpp(): JSX.Element {
               }
             )}
           </Col>
-        </Row>
-        {openCardDefault && <ModalDefault listItem={Item} taskFilter={filterTask} close_modal={() => {
-          setReset((prev: any) => prev + 1);
-          setOpenCardDefault(false);
-        }} />}
+        </div>
+        {openCardDefault && <ModalDefault taskFilter={filterTask} close_modal={() => { setOpenCardDefault(false)}} />}
       </Container>
     </div>
   );
