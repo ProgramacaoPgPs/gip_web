@@ -6,7 +6,7 @@ import { useMyContext } from "../../../../Context/MainContext";
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, onTaskChange }) => {
     const connection = new Connection("18", true);
-    const { setNewProgressBar } = useMyContext();
+    const { webSocketInstance } = useMyContext();
     
     const handleCheckboxChange = async (id: number, checked: boolean, idTask: any ) => {
       onTaskChange(id, checked);
@@ -17,13 +17,14 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
         task_id: idTask
       }, "GTPP/TaskItem.php");
 
+      webSocketInstance.send({result: result});
+
       // @ts-ignore
-      setNewProgressBar(result?.data?.percent);
-      // console.log()
+      localStorage.setItem("percent",JSON.stringify(result));
     };
   
     return (
-      <div className='overflow-auto mt-3' style={{height: '300px'}}>
+      <div className='overflow-auto mt-3' style={{height: '176px'}}>
         {subTasks.map((task, index: number) => (
           <div key={task.id} className="d-flex gap-2 align-items-center mb-2">
             <InputCheckbox

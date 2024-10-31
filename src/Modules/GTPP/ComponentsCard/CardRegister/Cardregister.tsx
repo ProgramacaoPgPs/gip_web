@@ -4,8 +4,8 @@ import CustomForm from "../../../../Components/CustomForm";
 import { fieldsetsRegister } from "../../mock/mockTeste";
 
 type Cardregister = {
-  assistenceFunction: any;
-  setReset: any;
+  assistenceFunction?: any;
+  setReset?: any;
 };
 
 const Cardregister: React.FC<Cardregister> = (props) => {
@@ -35,7 +35,7 @@ const Cardregister: React.FC<Cardregister> = (props) => {
     e.preventDefault();
     const connection = new Connection("18", true);
     connection.post(formDataRef.current, "GTPP/Task.php");
-    setReset((prev: any) => prev + 1);
+    // setReset((prev: any) => prev + 1);
   };
 
   return (

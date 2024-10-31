@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMyContext } from '../../../../Context/MainContext';
 
 interface ProgressBarProps {
   progressValue: number;
@@ -7,9 +6,6 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue }) => {
-  const { newProgressBar, setNewProgressBar } = useMyContext();
-
-  // const clampedValue = Math.min(Math.max((newProgressBar ? newProgressBar :progressValue) , 0), 100);
    const clampedValue = Math.min(Math.max((progressValue) , 0), 100);
 
   const getProgressClass = () => {
