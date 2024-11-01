@@ -68,6 +68,8 @@ export default function Gtpp(): JSX.Element {
     getTaskInformations();
   }, [connection, responseWs]);
 
+  // console.log('teste', cardTask.data);
+
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
   const handleCheckboxChange = (stateId: number) => {

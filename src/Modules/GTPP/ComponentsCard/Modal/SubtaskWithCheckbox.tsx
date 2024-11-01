@@ -8,7 +8,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
     const connection = new Connection("18", true);
     const { webSocketInstance } = useMyContext();
     
-    const handleCheckboxChange = async (id: number, checked: boolean, idTask: any ) => {
+    const handleCheckboxChange = async (id: number, checked: boolean, idTask: any, task: any ) => {
       onTaskChange(id, checked);
 
       let result = await connection.put({
@@ -17,10 +17,17 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
         task_id: idTask
       }, "GTPP/TaskItem.php");
 
-      webSocketInstance.send({result: result});
-
-      // @ts-ignore
-      localStorage.setItem("percent",JSON.stringify(result));
+      webSocketInstance.send({data: {
+        // user_id: localStorage?.userGTPP,
+        object: {
+            description: task.check ? "Um item foi marcado" : "Um item foi desmarcado",
+            // @ts-ignore
+            percent: result.data?.percent,
+            itemUp: task
+        },
+        task_id: idTask,
+        type: 2
+      }});
     };
   
     return (
@@ -29,7 +36,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({ subTasks, o
           <div key={task.id} className="d-flex gap-2 align-items-center mb-2">
             <InputCheckbox
               label={task.description}
-              onChange={(e: any) => handleCheckboxChange(task.id, e.target.checked, task.task_id)}
+              onChange={(e: any) => handleCheckboxChange(task.id, e.target.checked, task.task_id, task)}
               value={task.check}
               key={index} 
             />
