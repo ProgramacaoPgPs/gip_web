@@ -70,7 +70,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             console.log(req.data[0]);
             setContactList([...req.data]);
         } catch (error) {
-            alert(error)
+            console.log(error)
         }
     }
 

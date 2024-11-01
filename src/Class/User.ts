@@ -127,7 +127,8 @@ export default class User {
             this.CSDS = details.data[0]["CSDS"];
             this.administrator = details.data[1]["administrator"];
         } catch (error) {
-            alert(error);
+            // alert(error);
+            console.log(error);
         }
     }
 
