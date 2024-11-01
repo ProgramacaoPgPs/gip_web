@@ -90,7 +90,8 @@ function Login() {
                 session:req.data.session,
                 administrator:req.data.administrator
             }));
-            localStorage.setItem("tokenGIPP",req.data.session)
+            localStorage.setItem("tokenGIPP",req.data.session);
+            
             setIsLogged(true);
             navigate('/home');
         } catch (error: any) {
