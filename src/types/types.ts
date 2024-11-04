@@ -5,6 +5,10 @@ export type tUser ={
     administrator:number;
     session:string;
 };
+export type tWindowsMessage ={
+    onClose:(value?:any)=>void;
+    idReceiver:number;
+};
 
 export type tCardUser = {
     name?: string;

@@ -11,8 +11,7 @@ type Props = {
 }
 
 export default function PrivateRoute({ children }: Props) {
-    // const [isLogged, setIsLogged] = useState<boolean>(true);
-    const { isLogged, setIsLogged, setUserLog, setLoading } = useMyContext();
+    const { isLogged, setIsLogged, setUserLog } = useMyContext();
 
     useEffect(() => {
         (async () => {

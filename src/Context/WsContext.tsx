@@ -38,11 +38,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     useEffect(() => {
         (
             async () => {
-                setLoading(true);
                 if (userLog.id > 0) {
+                    setLoading(true);
                     await buildContactList();
+                    setLoading(false);
                 }
-                setLoading(false);
             }
         )();
     }, [userLog]);
