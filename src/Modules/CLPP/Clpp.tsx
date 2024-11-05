@@ -74,12 +74,12 @@ export default function Clpp(): JSX.Element {
 
 
 function WindowsMessage(props: tWindowsMessage): JSX.Element {
-    const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification:number }[]>([]);
+    const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
     const [page, setPage] = useState<number>(1);
     const [pageLimit, setPageLimit] = useState<number>(1);
     const [msgLoad, setMsgLoad] = useState<boolean>(true);
     const { userLog } = useMyContext();
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    // const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const previousScrollHeight = useRef<number>(0);
 
@@ -102,11 +102,8 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
 
     // Rolagem automática para o final ao carregar mensagens
     useEffect(() => {
-        if (page === 1 && messagesEndRef.current) {
+        if (messagesContainerRef.current) {
             // Rolagem até o final apenas na primeira página
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth'});
-        } else if (messagesContainerRef.current) {
-            // Mantenha a posição de rolagem ao carregar mais páginas
             messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
         }
     }, [listMessage]);
@@ -150,14 +147,14 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
                 className='d-flex flex-column overflow-auto h-100 w-100 p-2'
             >
                 {listMessage.map((item) => (
-                    <div key={`message_${item.id}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end messageSent' : 'text-start align-items-start messageReceived'}`}>
+                    <div key={`message_${item.id}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
                         <div className="p-2 rounded">{controllerMessage(item)}</div>
                         {
-                           item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary':'text-primary'}`}></span>
+                            item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>
                         }
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
+                <div />
             </div>
             <div>
                 {/* Placeholder for future input or button */}
@@ -165,16 +162,74 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
         </div>
     );
 
-    function controllerMessage(message:any):any {
+    function controllerMessage(message: any): any {
         let response;
         if (parseInt(message.type) === 1) {
             response = message.message;
         } else if (parseInt(message.type) === 2) {
             response = <a href={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'><img alt="Mensagem no formato de imagem." className='fileStyle' src={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} /></a>;
-        } 
-        // else {
-        //      response = iconFileMessage(message);
-        // }
+        } else {
+            response = iconFileMessage(message);
+        }
         return response;
     }
+    function iconFileMessage(message: any) {
+        let style: string = '';
+        let icon: string = '';
+        if (parseInt(message.type) === 3) {
+            style = "text-danger h1";
+            icon = "fa-solid fa-file-pdf";
+        } else if (parseInt(message.type) === 4) {
+            style = "text-success";
+            icon = "fa-solid fa-file-code"
+        }
+        return componentFile(message, style, icon);
+    }
+    function componentFile(message: any, style: string, icon: string): JSX.Element {
+        return (
+            <div id='divMessageFile' className="d-flex flex-column fileStyle bg-white p-2 rounded ">
+                <a href={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'>
+                    <i className={`${style} ${icon}`} />
+                </a>
+                <div className="d-flex justify-content-end my-2" onClick={async () => {
+                    try {
+                        const conn = new Connection('18');
+                        const req: { error: boolean, fileName: string, fileContent: string, message?:'string' } = await conn.get(`&file=${message.message}`, 'GIPP/LoginGipp.php') || { error: true, fileName: '', fileContent: '' };
+                        if(req.error) throw new Error(req.message);
+                        downloadFile(req);
+                    } catch (error) {
+                        alert(error)
+                    }
+                }}>
+                    <i className='text-dark fa-solid fa-download' />
+                </div>
+            </div>
+        );
+    }
+    async function downloadFile(reqFile: { error: boolean, fileName: string, fileContent: string }) {
+        const binaryString = atob(reqFile.fileContent);
+        const byteNumbers = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            byteNumbers[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([byteNumbers], { type: 'application/octet-stream' });
+
+        // Cria um link temporário para download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = reqFile.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    };
+
+
 }
+/*
+<i class="fa-solid fa-file-pdf"></i>
+<i class="fa-solid fa-download"></i>
+<i class="fa-solid fa-file-code"></i>
+*/
+// downloadFile(`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`, message.message)
