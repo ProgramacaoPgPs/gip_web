@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SelectFieldDefault } from "../../../../Components/CustomForm";
 import CheckboxList from "../CheckboxList/checkboxlist";
 import { Connection } from "../../../../Connection/Connection";
@@ -11,7 +11,10 @@ interface SelectTaskItemProps {
 }
 
 const SelectTaskItem: React.FC<SelectTaskItemProps> = ({ data }) => {
-  const connection = new Connection("18", true);
+  const connection = useMemo(() => {
+    return new Connection("18", true);
+  }, []);
+  
 
   const [shopOptions, setShopOptions] = useState<{ id: number, description: string }[]>([]);
   const [companyOptions, setCompanyOptions] = useState<{ id: number, description: string }[]>([]);
@@ -19,6 +22,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = ({ data }) => {
 
   const [selectedCompany, setSelectedCompany] = useState<number | undefined>(data?.csds[0]?.company_id);
   const [selectedShop, setSelectedShop] = useState<number | undefined>(data?.csds[0]?.shop_id);
+  const [captureDep, setCaptureDep] = useState<number | undefined>();
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -41,7 +45,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = ({ data }) => {
     };
 
     fetchDepartmentData();
-  }, [selectedCompany, selectedShop, data?.id]);
+  }, [selectedCompany, selectedShop, data?.id, connection]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (!document.getElementById("department-modal")?.contains(event.target as Node)) {
@@ -57,37 +61,35 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = ({ data }) => {
   }, []);
 
   return (
-    <div className="d-flex align-items-center justify-content-around mt-2 position-relative">
-          <SelectFieldDefault
-            label="Companhia"
-            value={selectedCompany}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCompany(Number(e.target.value))}
-            options={companyOptions.map((company) => ({ label: company.description, value: company.id }))}
-          />
-
-          <SelectFieldDefault
-            label="Loja"
-            value={selectedShop}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedShop(Number(e.target.value))}
-            options={shopOptions.length > 0 ? shopOptions.map((shop) => ({ label: shop.description, value: shop.id })) : []}
-          />
-
+    <div className="container">
+      <div className="row">
+        <div className="col-md-4">
+          <SelectFieldDefault label="Companhia" value={selectedCompany} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCompany(Number(e.target.value))} options={companyOptions.map((company) => ({ label: company.description, value: company.id }))} />
+        </div>
+        <div className="col-md-4">
+          <SelectFieldDefault label="Loja" value={selectedShop} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedShop(Number(e.target.value))} options={shopOptions.length > 0 ? shopOptions.map((shop) => ({ label: shop.description, value: shop.id })) : []} />
+        </div>
+        <div className="col-md-4">
           <div className="d-flex align-items-center mt-4 position-relative" id="department-modal">
-            <button
-              className="btn btn-light border"
-              onClick={() => setOpenModal((prev) => !prev)}
-              style={{ height: "40px" }}
-              aria-haspopup="true"
-              aria-expanded={openModal}
-            >
-              Departamento
-            </button>
+            <button className="btn btn-light border" onClick={async () => {
+              if(selectedCompany && selectedShop && data?.id && false) {
+                let p = {
+                  task_id:data?.id,
+                  company_id: selectedCompany,
+                  shop_id:selectedShop,
+                  depart_id:captureDep
+                }
+                connection.post(p, "CCPP/");
+              }
+              setOpenModal((prev) => !prev)
+            }
+            } style={{ height: "40px" }} aria-haspopup="true" aria-expanded={openModal}>Departamento</button>
             {openModal && (
-              <div className="position-absolute" style={{ top: "100%" }}>
-                {departmentOptions.length > 0 && <CheckboxList items={departmentOptions} />}
-              </div>
+              <div className="position-absolute" style={{ top: "110%" }}>{departmentOptions.length > 0 && <CheckboxList captureDep={setCaptureDep} items={departmentOptions} />}</div>
             )}
           </div>
+        </div>
+      </div>
     </div>
   );
 };

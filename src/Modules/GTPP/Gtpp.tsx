@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Container, Row, Col } from "react-bootstrap";
@@ -10,6 +10,7 @@ import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
+import Connect from "./hook/webSocketConnect";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement, webSocketInstance } = useMyContext();
@@ -22,6 +23,7 @@ export default function Gtpp(): JSX.Element {
   const [openCardDefault, setOpenCardDefault] = useState<any>(false);
   const [filterTask, setFilterTask] = useState<any>([]);
   const [responseWs, setResponseWs] = useState<any>([]);
+  const [renderList, setRenderList] = useState<any>(true);
   const [loading, setLoading] = useState<any>(false);
 
   useEffect(() => {
@@ -52,23 +54,22 @@ export default function Gtpp(): JSX.Element {
     }
     getTaskInformations();
     setLoading(false);
-  }, [connection, responseWs]);
+  }, [connection]);
+
+  const getTaskInformations = useCallback(async () => {
+    const connection = new Connection("18", true);
+    try {
+      const getTask = await connection.get("", "GTPP/Task.php");
+      setCardTask(getTask);
+      
+    } catch (error) {
+      console.error("Erro ao obter as informações da tarefa:", error);
+    }
+  }, [])
 
   useEffect(() => {
-    const connection = new Connection("18", true);
-    async function getTaskInformations(): Promise<void> {
-      try {
-        const getTask = await connection.get("", "GTPP/Task.php");
-        setCardTask(getTask);
-        
-      } catch (error) {
-        console.error("Erro ao obter as informações da tarefa:", error);
-      }
-    }
     getTaskInformations();
-  }, [connection, responseWs]);
-
-  // console.log('teste', cardTask.data);
+  }, [getTaskInformations, renderList]);
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -101,7 +102,7 @@ export default function Gtpp(): JSX.Element {
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative" style={{ padding: 0, marginLeft: 15 }}>
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
-            <div className="position-absolute" style={{ zIndex: 1 }}>
+            <div className="position-absolute filter-modal">
               {openFilter ? (
                 <div className="bg-light border-dark p-3">
                   {cardStateTask?.data.map(
@@ -192,7 +193,11 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </div>
-        {openCardDefault && <ModalDefault taskFilter={filterTask} close_modal={() => { setOpenCardDefault(false)}} />}
+        {/* 
+          A renderização do componente tem que ser aqui
+          a porcentagem chegando a 0 ele tem que renderizar o componente
+        */}
+        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={filterTask} close_modal={() => { setOpenCardDefault(false)}} />}
       </Container>
     </div>
   );
