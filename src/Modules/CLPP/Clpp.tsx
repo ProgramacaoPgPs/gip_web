@@ -18,9 +18,8 @@ export default function Clpp(): JSX.Element {
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const [windowsMessage, setWindowsMessage] = React.useState<boolean>(false);
-    const [idReceiver, setIdReiceved] = React.useState<number>(0);
     const { userLog } = useMyContext();
-    const { contactList, changeListContact } = useWebSocket();
+    const { contactList, changeListContact,idReceived, setIdReceived } = useWebSocket();
 
 
     return (
@@ -42,7 +41,7 @@ export default function Clpp(): JSX.Element {
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
                         {
                             windowsMessage ?
-                                <WindowsMessage idReceiver={idReceiver} onClose={() => setWindowsMessage(false)} /> :
+                                <WindowsMessage idReceived={idReceived} onClose={() => setWindowsMessage(false)} /> :
                                 <div className='overflow-auto h-100 w-100'>
                                     <div className="d-flex flex-row w-100 align-items-center form-switch">
                                         <input onClick={() => { setIsConverse(!isConverse); }} className="form-check-input " type="checkbox" defaultChecked={isConverse} />
@@ -64,41 +63,42 @@ export default function Clpp(): JSX.Element {
 
     function sendMessage(user: User) {
         changeListContact(user.id);
-        ws.informPreview(user.id.toString());
+        ws.current.informPreview(user.id.toString());
         console.log(`Você ira enviar a mesagem para ${user.name}. ID#: ${user.id}`);
         setWindowsMessage(true);
-        setIdReiceved(user.id);
+        setIdReceived(user.id);
     }
 }
 
 
 
 function WindowsMessage(props: tWindowsMessage): JSX.Element {
-    const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
-    const [page, setPage] = useState<number>(1);
-    const [pageLimit, setPageLimit] = useState<number>(1);
-    const [msgLoad, setMsgLoad] = useState<boolean>(true);
+
+    // const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
+    // const [pageLimit, setPageLimit] = useState<number>(1);
+    // const [msgLoad, setMsgLoad] = useState<boolean>(true);
     const { userLog } = useMyContext();
+    const {changeChat,setPage,listMessage,page,pageLimit,msgLoad} = useWebSocket();
     // const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const previousScrollHeight = useRef<number>(0);
 
-    useEffect(() => {
-        const fetchMessages = async () => {
-            setMsgLoad(true);
-            try {
-                const req = await loadMessage();
-                if (req.error) throw new Error(req.message);
-                setPageLimit(req.pages);
-                setListMessage(reloadList(req.data.reverse()));
-            } catch (error) {
-                alert(error);
-            }
-            setMsgLoad(false);
-        };
+    // useEffect(() => {
+    //     const fetchMessages = async () => {
+    //         setMsgLoad(true);
+    //         try {
+    //             const req = await loadMessage();
+    //             if (req.error) throw new Error(req.message);
+    //             setPageLimit(req.pages);
+    //             setListMessage(reloadList(req.data.reverse()));
+    //         } catch (error) {
+    //             alert(error);
+    //         }
+    //         setMsgLoad(false);
+    //     };
 
-        fetchMessages();
-    }, [page]);
+    //     fetchMessages();
+    // }, [page]);
 
     // Rolagem automática para o final ao carregar mensagens
     useEffect(() => {
@@ -118,18 +118,18 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
         }
     };
 
-    async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
-        const conn = new Connection('18');
-        const listMessage: { error: boolean, message?: string, data?: any, pages: number } = await conn.get(`&pages=${page}&id_user=${userLog.id}&id_send=${props.idReceiver}`, 'CLPP/Message.php')
-            || { error: true, message: 'fail', pages: 1 };
-        return listMessage;
-    }
+    // async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
+    //     const conn = new Connection('18');
+    //     const listMessage: { error: boolean, message?: string, data?: any, pages: number } = await conn.get(`&pages=${page}&id_user=${userLog.id}&id_send=${props.idReceived}`, 'CLPP/Message.php')
+    //         || { error: true, message: 'fail', pages: 1 };
+    //     return listMessage;
+    // }
 
-    function reloadList(pList: any[]): any[] {
-        const newList: any = [...listMessage];
-        newList.unshift(...pList);
-        return newList;
-    }
+    // function reloadList(pList: any[]): any[] {
+    //     const newList: any = [...listMessage];
+    //     newList.unshift(...pList);
+    //     return newList;
+    // }
 
     return (
         <div id='divWindowsMessage' className='d-flex flex-column h-100 w-100'>
@@ -140,7 +140,10 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
                     </div>
                 </StructureModal>
             )}
-            <i onClick={() => props.onClose()} className="fa-solid fa-rotate-left text-end text-danger my-2"> Voltar</i>
+            <i onClick={() => {
+                changeChat();
+                props.onClose();
+            }} className="fa-solid fa-rotate-left text-end text-danger my-2"> Voltar</i>
             <div
                 ref={messagesContainerRef}
                 onScroll={handleScroll}

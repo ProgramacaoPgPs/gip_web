@@ -14,8 +14,6 @@ const AvatarGroup = (props: { users: any, dataTask: any }) => {
   const maxToShow = 2;
   const extraUsersCount = props.users.length - maxToShow;
 
-  // console.log(props.dataTask);
-
   return (
     <React.Fragment>
         <div className="avatar-group">

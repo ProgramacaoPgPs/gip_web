@@ -13,17 +13,14 @@ export default class WebSocketCLPP {
   isConnected: boolean = false;
   tokens: any;
   sender: { id: string }= { id: '148' };
-  funcReceived!: (notify: NotifyMessage) => void;
-  funcView!: (notify: NotifyMessage) => Promise<void>;
+  callbackOnMessage!: (notify: NotifyMessage) => Promise<void>;
 
   constructor(
     tokens: any,
-    funcReceived: (notify: NotifyMessage) => void,
-    funcView: (notify: NotifyMessage) => Promise<void>
+    callbackOnMessage: (notify: NotifyMessage) => Promise<void>
   ) {
     this.tokens = tokens;
-    if(funcReceived) this.funcReceived = funcReceived;
-    if(funcView) this.funcView = funcView;
+    if(callbackOnMessage) this.callbackOnMessage = callbackOnMessage;
   }
 
   connectWebSocket(): void {
@@ -75,20 +72,11 @@ export default class WebSocketCLPP {
 
   async onMessage(ev: MessageEvent): Promise<void> {
     const getNotify: NotifyMessage = JSON.parse(ev.data);
-
-    if (getNotify.objectType === 'notification') {
-      if (getNotify.user === this.sender.id) {
-        await this.funcView(getNotify);
-      }
-    } else if (getNotify.message && !getNotify.error) {
-      this.funcReceived(getNotify);
-      if (getNotify.send_user === this.sender.id) {
-        this.informPreview(this.sender.id);
-      }
-    }
+    this.callbackOnMessage(getNotify);
   }
 
   async informPreview(idSender: string): Promise<void> {
+    console.error(idSender,'<<<<<<<<<<<');
     const jsonString: { type: number; send_id: string } = {
       type: 3,
       send_id: idSender,

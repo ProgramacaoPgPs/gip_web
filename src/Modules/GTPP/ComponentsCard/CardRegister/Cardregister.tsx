@@ -20,7 +20,6 @@ const Cardregister: React.FC<Cardregister> = (props) => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    console.log(value)
     formDataRef.current = {
       ...formDataRef.current,
       [name]: value,

@@ -36,7 +36,6 @@ const CheckboxList = (props: { items: any }) => {
           isChecked={item.check}
           onChange={(e:any) => {
             handleCheckboxChange(index);
-            console.log(e.target.value);
           }}
         />
       ))}

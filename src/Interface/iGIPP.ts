@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import WebSocketCLPP from "../Services/Websocket";
 
 export interface iUser {
@@ -35,12 +36,19 @@ export interface iWebSocketCLPP {
 }
 
 export interface iWebSocketContextType {
-    // connectWebSocket: () => void;
-    messages: iMessage[];
+
     contactList: iUser[];
     sender: iSender;
+    ws: MutableRefObject<WebSocketCLPP>;
+    idReceived:number; 
+    listMessage: { id: number, id_user: number, message: string, notification: number, type: number }[];
+    page:number;
+    pageLimit:number;
+    msgLoad:boolean;
+    changeChat:()=>void;
+    setPage:(value:number)=>void;
+    setIdReceived:(value:number)=>void;
     setSender: React.Dispatch<React.SetStateAction<iSender>>;
-    ws: WebSocketCLPP;
     setContactList:(value:iUser[])=>void;
     changeListContact:(value:number)=>void;
 }

@@ -7,7 +7,7 @@ export type tUser ={
 };
 export type tWindowsMessage ={
     onClose:(value?:any)=>void;
-    idReceiver:number;
+    idReceived:number;
 };
 
 export type tCardUser = {

@@ -27,8 +27,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = ({
   const [subTasks, setSubTasks] = useState<SubTask[]>(listSubTasks?.data?.task_item || []);// listSubTasks?.data?.task_item 
   const [valueNewTask, setValueNewTask] = useState<string>("");
 
-  // console.log(listSubTasks);
-
   const connection = new Connection("18", true);
 
   // aqui faz apaarecer as tarefas do para tikar 
