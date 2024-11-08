@@ -5,11 +5,9 @@ import { Connection } from "../../../../Connection/Connection";
 import { convertImage } from "../../../../Util/Util";
 import Aside from './aside'; // Importe o componente Aside
 
-const Avatar = (props: { name:string, src:string, online: boolean, allPhotosUsers?: any }) => {
+const Avatar = (props: { name:string, src:string, online: boolean, allPhotosUsers?: any, isShownNameUser?: any }) => {
   const [user, setUser] = useState<any>('');
   const [photo, setPhoto] = useState<any>('');
-
-
 
   useEffect(() => {
     async function getPhoto(photoUserId:any) {
@@ -24,10 +22,17 @@ const Avatar = (props: { name:string, src:string, online: boolean, allPhotosUser
     })
   },[props.allPhotosUsers]);
 
+  // console.log(user);
+
   return (
-    <div className="avatar cursor-pointer">
-      <img src={convertImage(photo.photo) || "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3408.jpg"} alt={props.name} />
-      {props.online && <span className="online-dot"></span>}
+    <div className="d-flex gap-3 align-items-center">
+      <div className="avatar cursor-pointer">
+        <img src={convertImage(photo.photo) || "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3408.jpg"} alt={props.name} />
+        {props.online && <span className="online-dot"></span>}
+      </div>
+      {props.isShownNameUser && <div>{user?.data?.map((element:any) => {
+        return element?.name;
+      })}</div>}
     </div>
   );
 };
@@ -35,7 +40,7 @@ const Avatar = (props: { name:string, src:string, online: boolean, allPhotosUser
 const AvatarGroup = (props: { users: any, dataTask: any }) => {
   const maxToShow = 2;
   const extraUsersCount = props.users.length - maxToShow;
-  const [isOpenAside, setIsOpenAside] = useState<any>(true);
+  const [isOpenAside, setIsOpenAside] = useState<any>(false);
 
   useEffect(() => {
     console.log(props.users);
@@ -48,11 +53,8 @@ const AvatarGroup = (props: { users: any, dataTask: any }) => {
           funcAss={() => setIsOpenAside(false)}
           title="Usuários"
           content={<div className="d-flex flex-column justify-content-around">
-            {props.users.slice(0, maxToShow).map((user: any, index: number) => (
-              <div className="d-flex gap-4 align-items-center">
-                <Avatar key={index} name={user.user_id} src={user.src} online={!user.status} allPhotosUsers={props.users} />
-                <div>Usuarios</div>
-              </div>
+            {props.users.map((user: any, index: number) => (
+              <Avatar key={index} name={user.user_id} src={user.src} online={!user.status} allPhotosUsers={props.users} isShownNameUser={isOpenAside} />
             ))}
           </div>}
         />
