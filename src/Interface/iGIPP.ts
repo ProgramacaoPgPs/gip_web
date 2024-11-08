@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, RefObject } from "react";
 import WebSocketCLPP from "../Services/Websocket";
 
 export interface iUser {
@@ -45,7 +45,10 @@ export interface iWebSocketContextType {
     page:number;
     pageLimit:number;
     msgLoad:boolean;
+    previousScrollHeight:MutableRefObject<number>;
+    messagesContainerRef:RefObject<HTMLDivElement>;
     changeChat:()=>void;
+    handleScroll:()=>void;
     setPage:(value:number)=>void;
     setIdReceived:(value:number)=>void;
     setSender: React.Dispatch<React.SetStateAction<iSender>>;

@@ -19,3 +19,13 @@ export const httpPost = async (url: string, data: any) => {
 export const httpPut = async (url: string, data: any) => {
     return connection.put(data, url);
 };
+
+export function convertImage(src: any) {
+    if (src != null) {
+      var image = new Image();
+      image.src = "data:image/jpeg;base64, " + src;
+      return image.src;
+    } else {
+      return null;
+    }
+  }

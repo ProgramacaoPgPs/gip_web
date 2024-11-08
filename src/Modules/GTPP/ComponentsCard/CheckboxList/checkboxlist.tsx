@@ -13,7 +13,7 @@ const Checkbox = (props: { label: string, isChecked: boolean, onChange: any }) =
   );
 };
 
-const CheckboxList = (props: { items: any }) => {
+const CheckboxList = (props: { items: any, captureDep: any }) => {
   const [checkboxes, setCheckboxes] = useState(props.items);
 
   const handleCheckboxChange = (index: any) => {
@@ -36,6 +36,7 @@ const CheckboxList = (props: { items: any }) => {
           isChecked={item.check}
           onChange={(e:any) => {
             handleCheckboxChange(index);
+            props.captureDep(item);
           }}
         />
       ))}

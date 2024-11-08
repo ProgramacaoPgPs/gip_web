@@ -78,10 +78,10 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
     // const [pageLimit, setPageLimit] = useState<number>(1);
     // const [msgLoad, setMsgLoad] = useState<boolean>(true);
     const { userLog } = useMyContext();
-    const {changeChat,setPage,listMessage,page,pageLimit,msgLoad} = useWebSocket();
+    const {changeChat,handleScroll,messagesContainerRef,listMessage,page,pageLimit,msgLoad} = useWebSocket();
     // const messagesEndRef = useRef<HTMLDivElement>(null);
-    const messagesContainerRef = useRef<HTMLDivElement>(null);
-    const previousScrollHeight = useRef<number>(0);
+    // const messagesContainerRef = useRef<HTMLDivElement>(null);
+    // const previousScrollHeight = useRef<number>(0);
 
     // useEffect(() => {
     //     const fetchMessages = async () => {
@@ -100,23 +100,7 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
     //     fetchMessages();
     // }, [page]);
 
-    // Rolagem automática para o final ao carregar mensagens
-    useEffect(() => {
-        if (messagesContainerRef.current) {
-            // Rolagem até o final apenas na primeira página
-            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
-        }
-    }, [listMessage]);
 
-    // Verifica quando o usuário rola até o topo
-    function handleScroll() {
-        if (messagesContainerRef.current) {
-            if (messagesContainerRef.current.scrollTop === 0 && page < pageLimit) {
-                previousScrollHeight.current = messagesContainerRef.current.scrollHeight;
-                setPage(page + 1);
-            }
-        }
-    };
 
     // async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
     //     const conn = new Connection('18');
@@ -149,8 +133,8 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
                 onScroll={handleScroll}
                 className='d-flex flex-column overflow-auto h-100 w-100 p-2'
             >
-                {listMessage.map((item) => (
-                    <div key={`message_${item.id}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
+                {listMessage.map((item,index) => (
+                    <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
                         <div className="p-2 rounded">{controllerMessage(item)}</div>
                         {
                             item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>

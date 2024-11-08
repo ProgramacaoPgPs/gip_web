@@ -10,14 +10,17 @@ import User from '../Class/User';
 const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [monitorScroll, setMonitorScroll] = useState<boolean>(false);
+    // const [monitorScroll, setMonitorScroll] = useState<boolean>(false);
     const [msgLoad, setMsgLoad] = useState<boolean>(true);
 
     const [idReceived, setIdReceived] = React.useState<number>(0);
     const [pageLimit, setPageLimit] = useState<number>(1);
     const [page, setPage] = useState<number>(1);
+    const previousScrollHeight = useRef<number>(0);
 
     const [contactList, setContactList] = useState<iUser[]>([]);
+
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     const [sender, setSender] = useState<iSender>({ id: 0 });
     const changeScrollRef = useRef<() => void>(() => { });
@@ -58,7 +61,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setMsgLoad(true);
             try {
                 if (idReceived) {
-
                     const req = await loadMessage();
                     if (req.error) throw new Error(req.message);
                     setPageLimit(req.pages);
@@ -74,6 +76,24 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMessages();
     }, [page, idReceived]);
 
+
+    // Rolagem automática para o final ao carregar mensagens
+    useEffect(() => {
+        if (messagesContainerRef.current) {
+            // Rolagem até o final apenas na primeira página
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
+        }
+    }, [listMessage]);
+
+    // Verifica quando o usuário rola até o topo
+    function handleScroll() {
+        if (messagesContainerRef.current) {
+            if (messagesContainerRef.current.scrollTop === 0 && page < pageLimit) {
+                previousScrollHeight.current = messagesContainerRef.current.scrollHeight;
+                setPage(page + 1);
+            }
+        }
+    };
 
     async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
         const conn = new Connection('18');
@@ -150,18 +170,14 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (parseInt(send_user) === idReceived) {
             console.error('Aqui!', listMessage, event);
             listMessage.push({
-                id:999,
-                "id_user": 68,
-                "message": "2\n",
+                id: 999,
+                "id_user": event.send_user,
+                "message": event.message,
                 "notification": 0,
-                "type": 1
+                "type": event.type
             });
             setListMessage([...listMessage])
-            // setMessages((prevMessages) => [
-            //     ...prevMessages,
-            //     { send_user, message, type },
-            // ]);
-            if (monitorScroll && changeScrollRef.current) changeScrollRef.current();
+            // if (monitorScroll && changeScrollRef.current) changeScrollRef.current();
         } else {
             setContactList((prevContacts) =>
                 prevContacts.map((contact) =>
@@ -194,7 +210,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <WebSocketContext.Provider value={{ listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight,messagesContainerRef,listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

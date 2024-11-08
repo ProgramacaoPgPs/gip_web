@@ -24,6 +24,11 @@
     width: 100%;
 }
 
+.filter-modal {
+    z-index: 1;
+    width: 150px;
+}
+
 .z-index-modal {
     z-index: 100;
     width: 100%;
