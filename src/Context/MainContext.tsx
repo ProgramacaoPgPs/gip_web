@@ -2,17 +2,11 @@ import React, {
   createContext,
   useContext,
   useState,
-  FC,
   useEffect,
 } from "react";
 import StructureModal, { MessageModal } from "../Components/CustomModal";
-import { tUser } from "../types/types";
-import WebSocketCLPP from "../Services/Websocket";
-import { iUser } from "../Interface/iGIPP";
-import ContactList from "../Modules/CLPP/Class/ContactList";
 import User from "../Class/User";
 import WebSocketGTPPClass from "../Modules/GTPP/hook/WebSocketHook";
-import { Connection } from "../Connection/Connection";
 
 const logo = require("../Assets/Image/peg_pese_loading.png");
 
@@ -92,7 +86,7 @@ export function MyProvider({ children }: Props) {
     new User({ id: 0, session: "", administrator: 0 })
   );
   const [contactList, setContactList] = useState<User[]>([]);
-  const [reset, setResetState] = useState<any>(1); // Mudança aqui
+  const [reset, setResetState] = useState<any>(1); 
 
   useEffect(() => {
     if (userLog.id > 0 && isLogged) {
@@ -141,7 +135,7 @@ export function MyProvider({ children }: Props) {
         webSocketInstance,
 
         reset,
-        setResetState, // Expondo o setter diretamente
+        setResetState,
 
       }}
     >

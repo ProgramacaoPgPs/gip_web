@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { InputCheckbox } from "../../../../Components/CustomForm";
 import { SubTasksWithCheckboxProps } from "./Types";
 import { Connection } from "../../../../Connection/Connection";
 import { useMyContext } from "../../../../Context/MainContext";
+import useConnect from "../../hook/webSocketConnect";
+
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   subTasks,
@@ -11,37 +13,66 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   getPercent,
 }) => {
   const connection = new Connection("18", true);
-  const { webSocketInstance } = useMyContext();
+  // const { webSocketInstance } = useMyContext();
+  
 
-  const handleCheckboxChange = async (
-    id: number,
-    checked: boolean,
-    idTask: any,
-    task: any
-  ) => {
+  // Função para manipular mensagens recebidas
+  const handleNewMessage = (message: any) => {
+    console.log("Nova mensagem recebida:", message);
+  };
+
+  // Função para monitorar o estado da conexão
+  const getStateWebSocket = () => {
+      console.log("Estado do WebSocket foi alterado!");
+  };
+
+  // 
+  const {isConnected, messages, socket} = useConnect({
+    getStateWebSocket, 
+    handleNewMessage,
+  });
+
+  const handleCheckboxChange = async ( id: number, checked: boolean, idTask: any, task: any) => {
     onTaskChange(id, checked);
+
+    
+
     let result = await connection.put({ check: checked, id: id, task_id: idTask },"GTPP/TaskItem.php");
     setRenderList((prev: any) => !prev);
-    
-    webSocketInstance.send({
-      data: {
-        user_id: localStorage?.userGTPP,
-        object: {
-          description: task.check
-            ? "Um item foi marcado"
-            : "Um item foi desmarcado",
-          /*  @ts-ignore */
-          percent: result.data?.percent,
-          itemUp: task,
-        },
-        task_id: idTask,
-        type: 2,
-      },
-    });
 
+    // Exemplo de envio de mensagem quando conectado
+    const sendMessage = () => {
+      if (socket && isConnected) {
+          const message = {
+            data: {
+              user_id: localStorage?.userGTPP,
+              object: {
+                description: task.check
+                  ? "Um item foi marcado"
+                  : "Um item foi desmarcado",
+                /*  @ts-ignore */
+                percent: result.data?.percent,
+                itemUp: task,
+              },
+              task_id: idTask,
+              type: 2,
+            },
+          };
+          socket.send(JSON.stringify(message));
+          console.log("Mensagem enviada:", message);
+      } else {
+          console.log("WebSocket não está conectado.");
+      }
+    };
+
+    
+    sendMessage();
     /* @ts-ignore */
-    getPercent(result.data?.percent); // Aqui trabalhei um callback para pegar o valor de mudança
+    getPercent(result.data?.percent);
+
   };
+
+  console.log(messages);
 
   return (
     <div className="overflow-auto mt-3" style={{ height: "176px" }}>
