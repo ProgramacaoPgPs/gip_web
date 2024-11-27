@@ -46,7 +46,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     async function callbackOnMessage(event: any) {
         let response = JSON.parse(event.data);
-        console.error(response);
+    
         if (response.error && response.message.includes("This user has been connected to another place")) {
             // Criar lógica para voltá-lo para login
         }
@@ -60,6 +60,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     function itemUp(itemUp: any) {
+        setTaskPercent(itemUp.percent);
         taskDetails.data?.task_item.forEach((element, index) => {
             if (taskDetails.data && element.id == itemUp.itemUp.id) taskDetails.data.task_item[index] = itemUp.itemUp;
         });
