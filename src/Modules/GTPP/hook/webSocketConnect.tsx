@@ -5,8 +5,6 @@ interface ConnectProps {
     handleNewMessage?: (message: any) => void; // Ajuste o tipo conforme necessário
 }
 
-
-
 function useConnect({ getStateWebSocket, handleNewMessage }: ConnectProps) {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);

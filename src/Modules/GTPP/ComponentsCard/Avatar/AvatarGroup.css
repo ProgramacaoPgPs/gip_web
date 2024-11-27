@@ -8,6 +8,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
+
   overflow: hidden;
   margin-right: -10px;
   border: 2px solid white;
@@ -15,6 +16,14 @@
   position: relative;
   transition: transform 0.3s ease, margin 0.3s ease, width 0.3s ease;
   z-index: 1; /* Z-index base para todos os avatares */
+}
+
+.avatar-red {
+  border: 3px solid red;
+}
+
+.avatar-green {
+  border: 3px solid rgb(2, 165, 2);
 }
 
 .avatar img {

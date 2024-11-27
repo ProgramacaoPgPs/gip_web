@@ -131,7 +131,6 @@ export function MyProvider({ children }: Props) {
 
         newProgressBar,
         setNewProgressBar,
-
         webSocketInstance,
 
         reset,
