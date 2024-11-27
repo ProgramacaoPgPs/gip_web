@@ -98,8 +98,9 @@ class WebSocketGTPPClass {
   }
 
   public send(json: object): void {
-    if (this.isConnected && this.socket?.readyState === WebSocket.OPEN) {
+    if (this.isConnected) {
       this.lastSentMessage = json;
+      // @ts-ignore
       this.socket.send(JSON.stringify(json));
       console.log('Mensagem enviada:', this.lastSentMessage);
     } else {

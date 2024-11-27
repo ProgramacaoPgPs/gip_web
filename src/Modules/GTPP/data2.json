@@ -1,0 +1,497 @@
+{
+    "full_description": "",
+    "task_item": [
+      {
+        "id": 25671,
+        "description": "Desenhar as telas do sistema no Figma",
+        "check": true,
+        "task_id": 3868,
+        "order": 1,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25672,
+        "description": "Realizar levantamento de requisitos.",
+        "check": true,
+        "task_id": 3868,
+        "order": 2,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25765,
+        "description": "Desenhar Banco de dados no BD Designer",
+        "check": true,
+        "task_id": 3868,
+        "order": 3,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25985,
+        "description": "modelagem do sistema",
+        "check": true,
+        "task_id": 3868,
+        "order": 4,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25986,
+        "description": "criação do banco de dados",
+        "check": true,
+        "task_id": 3868,
+        "order": 5,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25989,
+        "description": "backend -company",
+        "check": true,
+        "task_id": 3868,
+        "order": 6,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25990,
+        "description": "backend - Units",
+        "check": true,
+        "task_id": 3868,
+        "order": 7,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25991,
+        "description": "backend - departament",
+        "check": true,
+        "task_id": 3868,
+        "order": 8,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 25992,
+        "description": "backend - subdepartament",
+        "check": true,
+        "task_id": 3868,
+        "order": 9,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28682,
+        "description": "MVP - front end",
+        "check": true,
+        "task_id": 3868,
+        "order": 10,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28679,
+        "description": "Falha ao cadastrar um usuário, e inserir os dados dele como motorista. Apenas os dados de usuário são salvos (em alguns casos). \n",
+        "check": true,
+        "task_id": 3868,
+        "order": 11,
+        "yes_no": 0,
+        "file": 0,
+        "note": "Após análise suspeitamos que exista uma trava no botão de adicionar, que valida a quantidade de dígitos de um RG, porém não há um retorno de erro para o usuário, o que dá a impressão dele ter sido cadastrado com sucesso. \n\nQuando editamos as informações do usuário e depois inserimos os dados de motorista dele e salvamos, os dados persistem no BD."
+      },
+      {
+        "id": 28681,
+        "description": "Já corrigiu o bug",
+        "check": true,
+        "task_id": 3868,
+        "order": 12,
+        "yes_no": 1,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28688,
+        "description": "falha para cadastrar Seguro, foi cadastro o veiculo e seguro pela primeira vez e deu erro no seguro",
+        "check": true,
+        "task_id": 3868,
+        "order": 13,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28689,
+        "description": "Placa do Veiculo que deu não salvou as informações do seguro  FUW 9242",
+        "check": true,
+        "task_id": 3868,
+        "order": 14,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28690,
+        "description": "Esse Campo vc vai atualizar?",
+        "check": true,
+        "task_id": 3868,
+        "order": 15,
+        "yes_no": 1,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28691,
+        "description": "Adiciona o focu no input, quando abrir o modal de pesquisa por placa.",
+        "check": true,
+        "task_id": 3868,
+        "order": 16,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28692,
+        "description": "Validar página de cadastro de ativo. Está gerando requisições desnecessárias. ",
+        "check": true,
+        "task_id": 3868,
+        "order": 17,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28693,
+        "description": "Falha ao cria grupo de trabalho!",
+        "check": true,
+        "task_id": 3868,
+        "order": 18,
+        "yes_no": 0,
+        "file": 0,
+        "note": "Objeto enviado ao banco:\n{\n    \"group_id\": \"\",\n    \"group_name\": \"Loja\",\n    \"status_work_group\": \"1\",\n    \"departmentsList\": [\n        {\n            \"dep_id\": \"\",\n            \"dep_name\": \"\"\n        },\n        {\n            \"dep_id\": 1,\n            \"dep_name\": \"T.I\",\n            \"status_dep\": 1,\n            \"unit_id_fk\": 1\n        },\n        {\n            \"dep_id\": 2,\n            \"dep_name\": \"Administrativos\",\n            \"status_dep\": 1,\n            \"unit_id_fk\": 1\n        },\n        {\n            \"dep_id\": 4,\n            \"dep_name\": \"Engenharia/Obra/Manutenção\",\n            \"status_dep\": 1,\n            \"unit_id_fk\": 1\n        },\n        {\n            \"dep_id\": 5,\n            \"dep_name\": \"Lojas\",\n            \"status_dep\": 1,\n            \"unit_id_fk\": 1\n        }\n    ],\n    \"dep_id_fk\": \"2\",\n    \"unit_id_fk\": \"1\"\n}\n\n"
+      },
+      {
+        "id": 28694,
+        "description": "Favor corrigir o item 104 do abastecimento Nome do posto de Peças para Serviços .",
+        "check": true,
+        "task_id": 3868,
+        "order": 19,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28695,
+        "description": "Verificar pq não consigo adicionar um novo ativo, quero adicionar a empilhadeira.",
+        "check": true,
+        "task_id": 3868,
+        "order": 20,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28696,
+        "description": "A empilhadeira tem abastecimento com placa , porem não tem placa oficial, para cadastrar ela sem ser um veículo não vou usar placa mas para lançar o abastecimento vou precisar",
+        "check": true,
+        "task_id": 3868,
+        "order": 21,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28703,
+        "description": "Erro no campo Disponibilizado para ",
+        "check": true,
+        "task_id": 3868,
+        "order": 22,
+        "yes_no": 0,
+        "file": 1,
+        "note": "O campo depende do filtro anterior para trazer do banco as informações atualizadas. É necessário mudar o filtro anterior para alterar a disponibilização.\n\nLembrando que isso só é necessário se for para editar uma informação que foi cadastrada erroneamente anteriormente.\n\nO ideal é realizar os ajustes pela movimentação."
+      },
+      {
+        "id": 28700,
+        "description": "Verificar cadastro da empilhadeira, aparece nos ativos, porem quando entro o campo esta em branco ",
+        "check": true,
+        "task_id": 3868,
+        "order": 23,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28701,
+        "description": "Favor verificar erro na inserção de combustível .",
+        "check": true,
+        "task_id": 3868,
+        "order": 24,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28702,
+        "description": "verificar pq as vezes aparece todas as opções e as vezes não ",
+        "check": true,
+        "task_id": 3868,
+        "order": 25,
+        "yes_no": 0,
+        "file": 1,
+        "note": "Quando vamos inserir pela primeira vez, o campo \"disponibilizado para:\" permanece inativo até a seleção do seu antecessor. \nA ação de selecionar o campo \"Comprado por:\" dispara uma requisição no servidor trazendo apenas os setores e departamentos vínculados a aquela companhia.\n\nAo clicarmos em editar, trazemos apenas o vínculo atual daquele ativo, obrigando o usuário a mudar a origem para garantir uma lista atualizada dos departamentos da companhia. "
+      },
+      {
+        "id": 28704,
+        "description": "Remover obrigatoriedade do Campos das peças  da Manutenção , acrescentar campo de desconto  na manutenção e no lançamento de multas",
+        "check": true,
+        "task_id": 3868,
+        "order": 26,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28705,
+        "description": "Acrescentar campo para colocar numero da nota fiscal do lançamento dos combustível  ",
+        "check": true,
+        "task_id": 3868,
+        "order": 27,
+        "yes_no": 0,
+        "file": 0,
+        "note": "Está operação exige criação de tabela no banco, alterações no back end e front end. \nSerá realizada em uma segunda fase do projeto. "
+      },
+      {
+        "id": 28680,
+        "description": "Cadastro da carroceria dos caminhões",
+        "check": false,
+        "task_id": 3868,
+        "order": 28,
+        "yes_no": 0,
+        "file": 0,
+        "note": "Está operação exige criação de tabela no banco, alterações no back end e front end. \nSerá realizada em uma segunda fase do projeto. "
+      },
+      {
+        "id": 28779,
+        "description": "É possível deixar esse campo preenchido com os dados do posto já que não abastecemos em outros apenas nesse?",
+        "check": true,
+        "task_id": 3868,
+        "order": 29,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28780,
+        "description": "Favor verificar se é possivel acrescentar esse campo no seguro, pois é um campo que sera preciso editar todos os anos, igual do seguro",
+        "check": true,
+        "task_id": 3868,
+        "order": 30,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28781,
+        "description": "Favor verificar pq os dados da habilitação não esta salvando",
+        "check": true,
+        "task_id": 3868,
+        "order": 31,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28783,
+        "description": "Favor verificar esse erro....",
+        "check": true,
+        "task_id": 3868,
+        "order": 32,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28784,
+        "description": "Favor verificar erro ao cadastrar novo veiculo",
+        "check": true,
+        "task_id": 3868,
+        "order": 33,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28785,
+        "description": "favor verificar a inclusão do nome outros para ser utilizado quando for abastecimento / compra de óleo ou água ",
+        "check": true,
+        "task_id": 3868,
+        "order": 34,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28867,
+        "description": "Contador de letras no campo de descrição.",
+        "check": true,
+        "task_id": 3868,
+        "order": 35,
+        "yes_no": 0,
+        "file": 0,
+        "note": "Esse contador é direcionado na página de lançamento de registros."
+      },
+      {
+        "id": 28868,
+        "description": "Bom dia, seria possível criar 2 campos adicionais, nessa parte em amarelo para colocar o valor da multa quando for dobrar e o valor do desconto dobrado? Esse campo não pode ser obrigatório pois não são todos que deixam a multa dobrar",
+        "check": false,
+        "task_id": 3868,
+        "order": 36,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28883,
+        "description": "Bom dia, verificar se é possível fazer essas alterações nesses campos: Colocar alguma coluna que represente a NF, para diferenciar caso lance duplicado, ou para buscar e  Colocar as datas de forma cronologica para ficar mais facil a vizualização",
+        "check": true,
+        "task_id": 3868,
+        "order": 37,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28884,
+        "description": "segue imagem do local da Nota",
+        "check": false,
+        "task_id": 3868,
+        "order": 38,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28885,
+        "description": "ops da Nota ",
+        "check": true,
+        "task_id": 3868,
+        "order": 39,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      },
+      {
+        "id": 28886,
+        "description": "boa tarde, pode verificar estes campos o Loja tem 2 campos iguais , e no campo local publico se possivel alterar para endereço ",
+        "check": false,
+        "task_id": 3868,
+        "order": 40,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28887,
+        "description": "segue imagem",
+        "check": false,
+        "task_id": 3868,
+        "order": 41,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28888,
+        "description": "Bom dia, pode verificar pq esse campo não aparece a informação do endereço por gentileza ",
+        "check": false,
+        "task_id": 3868,
+        "order": 42,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28889,
+        "description": "Poderia verificar a edição desse campo para aparecer os dados do grupo onde o veiculo sera utilizado no caso os  dados do disponibilizado, pois esta aparecendo as mesmas informações do proprietário   ",
+        "check": true,
+        "task_id": 3868,
+        "order": 43,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28890,
+        "description": "Pq não consigo excluir uma unidade por esse botão de excluir?",
+        "check": false,
+        "task_id": 3868,
+        "order": 44,
+        "yes_no": 0,
+        "file": 1,
+        "note": null
+      },
+      {
+        "id": 28936,
+        "description": "Bom dia, pode verificar por gentileza no campo cadastro  porque não consigo buscar os ativos pelo numero do ID apenas  pela placa ",
+        "check": false,
+        "task_id": 3868,
+        "order": 45,
+        "yes_no": 0,
+        "file": 0,
+        "note": null
+      }
+    ],
+    "task_user": [
+      {
+        "task_id": 3868,
+        "user_id": 3,
+        "status": true
+      },
+      {
+        "task_id": 3868,
+        "user_id": 6,
+        "status": false
+      },
+      {
+        "task_id": 3868,
+        "user_id": 111,
+        "status": true
+      },
+      {
+        "task_id": 3868,
+        "user_id": 113,
+        "status": true
+      },
+      {
+        "task_id": 3868,
+        "user_id": 210,
+        "status": true
+      },
+      {
+        "task_id": 3868,
+        "user_id": 214,
+        "status": true
+      }
+    ],
+    "csds": [
+      {
+        "company_id": "1",
+        "company_description": "Peg Pese",
+        "shop_id": "1",
+        "shop_description": "Interlagos",
+        "depart_id": "1",
+        "depart_description": "TI"
+      }
+    ]
+  }

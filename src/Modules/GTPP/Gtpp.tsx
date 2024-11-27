@@ -10,7 +10,6 @@ import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
-import Connect from "./hook/webSocketConnect";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement, webSocketInstance } = useMyContext();
@@ -46,6 +45,7 @@ export default function Gtpp(): JSX.Element {
     async function getTaskInformations(): Promise<void> {
       try {
         const getStatusTask = await connection.get("", "GTPP/TaskState.php");
+        console.log(getStatusTask);
         setCardStateTask(getStatusTask);
 
       } catch (error) {
@@ -60,6 +60,7 @@ export default function Gtpp(): JSX.Element {
     const connection = new Connection("18", true);
     try {
       const getTask = await connection.get("", "GTPP/Task.php");
+      console.log(getTask);
       setCardTask(getTask);
       
     } catch (error) {

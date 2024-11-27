@@ -28,4 +28,13 @@ export function convertImage(src: any) {
     } else {
       return null;
     }
-  }
+}
+
+export function isJSON(obj: string): boolean {
+    try {
+        JSON.parse(obj);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}

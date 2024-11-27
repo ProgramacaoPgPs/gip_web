@@ -1,42 +1,71 @@
 import React, { useState } from "react";
 import "./Style.css";
 
+// Interface para as props do componente Checkbox
+interface CheckboxProps {
+  label: string;
+  isChecked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 // Componente individual do checkbox
-const Checkbox = (props: { label: string, isChecked: boolean, onChange: any }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ label, isChecked, onChange }) => {
   return (
     <div className="checkbox-item">
       <label>
-        <input type="checkbox" className="form-check-control" checked={props.isChecked} onChange={props.onChange} />
-        {props.label}
+        <input 
+          type="checkbox" 
+          className="form-check-control" 
+          checked={isChecked} 
+          onChange={onChange} 
+        />
+        {label}
       </label>
     </div>
   );
 };
 
-const CheckboxList = (props: { items: any, captureDep: any }) => {
-  const [checkboxes, setCheckboxes] = useState(props.items);
+// Interface para os itens no estado e o tipo de captura
+interface CheckboxItem {
+  id: string;
+  description: string;
+  check: boolean;
+}
 
-  const handleCheckboxChange = (index: any) => {
+// Interface para as props do componente CheckboxList
+interface CheckboxListProps {
+  items: CheckboxItem[];
+  captureDep: (item: CheckboxItem) => void;
+  getCheck?: any;
+}
+
+// Componente que renderiza a lista de checkboxes
+const CheckboxList: React.FC<CheckboxListProps> = ({ items, captureDep, getCheck }) => {
+  const [checkboxes, setCheckboxes] = useState<CheckboxItem[]>(items);
+
+  const handleCheckboxChange = (index: number) => {
     const newCheckboxes = [...checkboxes];
     newCheckboxes[index].check = !newCheckboxes[index].check;
     setCheckboxes(newCheckboxes);
+    
   };
 
-  const checkedCount = checkboxes.filter((item: any) => item.check).length;
+  const checkedCount = checkboxes.filter((item) => item.check).length;
 
   return (
     <div className="checkbox-list">
       <div className="checkbox-counter">
         {checkedCount} checked
       </div>
-      {checkboxes.map((item:any, index:number) => (
+      {checkboxes.map((item, index) => (
         <Checkbox
-          key={index}
+          key={item.id}
           label={item.description}
           isChecked={item.check}
-          onChange={(e:any) => {
+          onChange={(e) => {
             handleCheckboxChange(index);
-            props.captureDep(item);
+            captureDep(item);
+            getCheck(item);
           }}
         />
       ))}

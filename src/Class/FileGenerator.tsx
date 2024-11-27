@@ -20,16 +20,7 @@ interface Attribute {
   transform?: (value: string | number | undefined) => string;
 }
 
-interface Task {
-  description: string;
-  state_description: string;
-  priority: number;
-  initial_date: string;
-  final_date: string;
-}
-
 export const generateAndDownloadCSV = (getTasks: any, configId: string, fileName: string = 'documento.csv') => {
-  // const filteredTasks = getTasks().filter(item => item.state_id === configId.replace('_', ''));
   const tasks = getTasks;
 
   try {
@@ -121,39 +112,43 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ data }) => {
         </body>
       </html>
     `);
-    printDocument.close();
     printWindow.print();
+    printDocument.close();
   };
 
   return (
     <React.Fragment>
-      <div ref={contentRef} className=''>
-        <table className='table'>
-          <thead>
-            <tr>
-              {headers.map((header, index) => (
-                <th key={index}>{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className=''>
-            {data.filter(item => item.state_id).map((item, index) => (
-              <tr key={index}>
-                {attributes.map((attr, i) => {
-                  const value = item[attr.key];
-                  const displayValue = attr.transform ? attr.transform(value) : String(value);
-                  return (
-                    <td key={i}>
-                      {displayValue}
-                    </td>
-                  );
-                })}
+      <div ref={contentRef} className="container">
+        <div className="table-responsive" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                {headers.map((header, index) => (
+                  <th key={index}>{header}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.filter(item => item.state_id).map((item, index) => (
+                <tr key={index}>
+                  {attributes.map((attr, i) => {
+                    const value = item[attr.key];
+                    const displayValue = attr.transform ? attr.transform(value) : String(value);
+                    return (
+                      <td key={i}>
+                        {displayValue}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <button className='btn btn-success box-pdf' onClick={generatePDF} >Gerar PDF</button>
+      <div className="text-center">
+        <button className="btn btn-success mt-3" onClick={generatePDF}>Gerar PDF</button>
+      </div>
     </React.Fragment>
   );
 };

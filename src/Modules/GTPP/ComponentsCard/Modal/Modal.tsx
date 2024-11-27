@@ -8,6 +8,7 @@ import FormTextAreaDefault from './FormTextAraeaDefault';
 import SubTasksWithCheckbox from './SubtaskWithCheckbox';
 import SelectTaskItem from './SelectTaskItem';
 import { Connection } from '../../../../Connection/Connection';
+import useConnect from '../../hook/webSocketConnect';
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -20,27 +21,19 @@ interface BodyDefaultProps {
   reset?: any;
 }
 
-const BodyDefault: React.FC<BodyDefaultProps> = ({
-  disabledForm = false,
-  listSubTasks = { data: { task_item: [], full_description: "", task_user: [] } },
-  taskListFiltered,
-  reset,
-  getPercent,
-  setRenderList,
-  taskCheckReset,
-}) => {
-  const [subTasks, setSubTasks] = useState<SubTask[]>(listSubTasks?.data?.task_item || []); 
+const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
+  const [subTasks, setSubTasks] = useState<SubTask[]>(props.listSubTasks?.data?.task_item || []); 
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const connection = new Connection("18", true);
 
   useEffect(() => {
-    if (listSubTasks?.data?.task_item) {
-      setSubTasks(listSubTasks?.data?.task_item);
+    if (props.listSubTasks?.data?.task_item) {
+      setSubTasks(props.listSubTasks?.data?.task_item);
     }
 
-  }, [listSubTasks?.data?.task_item]);
+  }, [props.listSubTasks?.data?.task_item]);
 
   const handleTaskChange = (id: number, check: boolean) => {
     setSubTasks((prevSubTasks) => prevSubTasks.map((task) => (task.id === id ? { ...task, check } : task)));
@@ -49,12 +42,9 @@ const BodyDefault: React.FC<BodyDefaultProps> = ({
   const handleAddTask = async () => {
     if (valueNewTask.length > 0) {
       try {
-        await connection.post(
-          { description: valueNewTask, file: null, task_id: taskListFiltered.id },
-          "GTPP/TaskItem.php"
-        );
+        await connection.post({ description: valueNewTask, file: null, task_id: props.taskListFiltered.id },"GTPP/TaskItem.php");
         setValueNewTask("");
-        reset();
+        props.reset();
       } catch (error) {
         console.error("Error adding task:", error);
       }
@@ -63,10 +53,10 @@ const BodyDefault: React.FC<BodyDefaultProps> = ({
 
   return (
     <div className="row mt-3 h-100 overflow-hidden p-4">
-      <div className="col-md-12 row m-auto container h-100 overflow-hidden w-100"> {/* bg-danger */}
-       <div className="col-md-6"> {/* bg-primary */}
-        <FormTextAreaDefault task_description={listSubTasks?.data?.full_description || ""} disabledForm={disabledForm} />
-        <SubTasksWithCheckbox getPercent={getPercent} setRenderList={setRenderList} subTasks={subTasks} onTaskChange={handleTaskChange} />
+      <div className="col-md-12 row m-auto container h-100 overflow-hidden w-100"> 
+       <div className="col-md-6"> 
+        <FormTextAreaDefault task_description={props.listSubTasks?.data?.full_description || ""} disabledForm={props.disabledForm} />
+        <SubTasksWithCheckbox getPercent={props.getPercent} setRenderList={props.setRenderList} subTasks={subTasks} onTaskChange={handleTaskChange} />
         <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
           <div className="w-100">
             <input
@@ -81,17 +71,15 @@ const BodyDefault: React.FC<BodyDefaultProps> = ({
           </div>
         </div>
        </div>
-       <div className='col-md-6 d-flex flex-column justify-content-between '>{/* bg-secondary */}
-        <SelectTaskItem data={taskListFiltered} />
+       <div className='col-md-6 d-flex flex-column justify-content-between'>
+        <SelectTaskItem data={props.taskListFiltered} />
         <div className="">
           <div className='p-1 d-flex align-items-center justify-content-between'>
             <div>
               {isOpenModal && <div className='modal bg-light w-100'>teste</div>}
               <button onClick={() => {setIsOpenModal((prev:any) => !prev)}} className='btn btn-transparent'><i className={`fa fa-${isOpenModal ? 'calendar' : 'power-off'} ${isOpenModal ? 'text-success' : 'text-danger'}`}></i></button>
             </div>
-            <div>
-              <AvatarGroup dataTask={taskListFiltered} users={listSubTasks?.data?.task_user ? listSubTasks?.data?.task_user : []} />
-            </div>
+            <div><AvatarGroup dataTask={props.taskListFiltered} users={props.listSubTasks?.data?.task_user ? props.listSubTasks?.data?.task_user : []} /></div>
           </div>
         </div>
        </div>
@@ -103,7 +91,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = ({
 const ModalDefault: React.FC<TaskItem> = (props) => {
   const [data, setData] = useState<any>();
   const [percent, getPercent] = useState<any>(0);
-
   const connection = useMemo(() => new Connection("18", true), []);
   
   useEffect(() => {
@@ -113,6 +100,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           `&id=${props.taskFilter.id.toString()}`,
           "GTPP/Task.php"
         );
+        console.log(getTaskItem);
         setData(getTaskItem);
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
@@ -122,7 +110,6 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
       getTaskInformations();
     }
   }, [props, connection]);
-
 
   return (
     <div className='zIndex99'>
