@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import StructureModal, { MessageModal } from "../Components/CustomModal";
 import User from "../Class/User";
-import WebSocketGTPPClass from "../Modules/GTPP/hook/WebSocketHook";
+// import WebSocketGTPPClass from "../Modules/GTPP/hook/WebSocketHook";
 
 const logo = require("../Assets/Image/peg_pese_loading.png");
 
@@ -28,7 +28,7 @@ interface MyMainContext {
   modal: boolean;
   setModal: (step: boolean) => void;
 
-  webSocketInstance: webSocketGTPP | any;
+  // webSocketInstance: webSocketGTPP | any;
 
   newProgressBar: any;
   setNewProgressBar: any;
@@ -68,7 +68,7 @@ export function MyProvider({ children }: Props) {
   const [modal, setModal] = useState<boolean>(false);
   const [modalPage, setModalPage] = useState<boolean>(false);
   const [newProgressBar, setNewProgressBar] = useState<number | string | null>(null);
-  const [webSocketInstance, setWebSocketInstance] = useState<WebSocketGTPPClass | null>(null);
+  // const [webSocketInstance, setWebSocketInstance] = useState<WebSocketGTPPClass | null>(null);
   const [response, setResponse] = useState<object | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -91,20 +91,20 @@ export function MyProvider({ children }: Props) {
   useEffect(() => {
     if (userLog.id > 0 && isLogged) {
 
-      let ws = new WebSocketGTPPClass();
-      setWebSocketInstance(ws);
+      // let ws = new WebSocketGTPPClass();
+      // setWebSocketInstance(ws);
 
       // Atualiza o status da conexão
-      const checkConnection = setInterval(() => {
-        if (ws.getIsConnected()) {
-          setIsConnected(true);
-          clearInterval(checkConnection);
-        }
-      }, 100);
+      // const checkConnection = setInterval(() => {
+      //   if (ws.getIsConnected()) {
+      //     setIsConnected(true);
+      //     clearInterval(checkConnection);
+      //   }
+      // }, 100);
 
-      return () => {
-        ws.disconnect();
-      }
+      // return () => {
+      //   ws.disconnect();
+      // }
     }
 
   }, [userLog, isLogged]);
@@ -132,7 +132,7 @@ export function MyProvider({ children }: Props) {
         newProgressBar,
         setNewProgressBar,
 
-        webSocketInstance,
+        // webSocketInstance,
 
         reset,
         setResetState,

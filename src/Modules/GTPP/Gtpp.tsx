@@ -10,9 +10,10 @@ import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
+import { useWebSocket } from "./Context/GtppWsContext";
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement, webSocketInstance } = useMyContext();
+  const { setTitleHead, setModalPage, setModalPageElement /*,webSocketInstance*/ } = useMyContext();
   
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
@@ -20,10 +21,13 @@ export default function Gtpp(): JSX.Element {
   const [openFilter, setOpenFilter] = useState<any>(false);
 
   const [openCardDefault, setOpenCardDefault] = useState<any>(false);
-  const [filterTask, setFilterTask] = useState<any>([]);
+  // const [filterTask, setFilterTask] = useState<any>([]);
   const [responseWs, setResponseWs] = useState<any>([]);
   const [renderList, setRenderList] = useState<any>(true);
   const [loading, setLoading] = useState<any>(false);
+
+  // Modified by Hygor
+  const {task,setTask,setTaskPercent,clearGtppWsContext} = useWebSocket();
 
   useEffect(() => {
     setTitleHead({
@@ -33,10 +37,10 @@ export default function Gtpp(): JSX.Element {
   }, [setTitleHead]);
 
 
-  setTimeout(() => {
-    const responseData = webSocketInstance?.getLastSentMessage();
-    setResponseWs(responseData);
-  }, 1);
+  // setTimeout(() => {
+  //   const responseData = webSocketInstance?.getLastSentMessage();
+  //   setResponseWs(responseData);
+  // }, 1);
 
   const connection = useMemo(() => new Connection("18", true), []);
 
@@ -45,9 +49,7 @@ export default function Gtpp(): JSX.Element {
     async function getTaskInformations(): Promise<void> {
       try {
         const getStatusTask = await connection.get("", "GTPP/TaskState.php");
-        console.log(getStatusTask);
         setCardStateTask(getStatusTask);
-
       } catch (error) {
         console.error("Erro ao obter as informações da tarefa:", error);
       }
@@ -60,9 +62,7 @@ export default function Gtpp(): JSX.Element {
     const connection = new Connection("18", true);
     try {
       const getTask = await connection.get("", "GTPP/Task.php");
-      console.log(getTask);
-      setCardTask(getTask);
-      
+      setCardTask(getTask);      
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
@@ -178,7 +178,8 @@ export default function Gtpp(): JSX.Element {
                                   title_card={task.description}
                                   priority_card={task.priority}
                                   onClick={() => {
-                                    setFilterTask(task);
+                                    setTask(task);
+                                    setTaskPercent(task.percent);
                                     setOpenCardDefault(true);
                                   }}
                                 />
@@ -198,7 +199,7 @@ export default function Gtpp(): JSX.Element {
           A renderização do componente tem que ser aqui
           a porcentagem chegando a 0 ele tem que renderizar o componente
         */}
-        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={filterTask} close_modal={() => { setOpenCardDefault(false)}} />}
+        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={task} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
       </Container>
     </div>
   );

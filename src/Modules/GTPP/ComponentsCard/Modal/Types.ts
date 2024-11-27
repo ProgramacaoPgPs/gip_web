@@ -36,7 +36,7 @@ export type TaskItem = {
   }
   
  export type SubTasksWithCheckboxProps = {
-    subTasks: SubTask[];
+    subTasks: any[];
     setRenderList?: any;
     getPercent?: any;
     taskCheckReset?: any;
