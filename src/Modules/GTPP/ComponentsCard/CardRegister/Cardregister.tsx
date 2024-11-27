@@ -26,10 +26,6 @@ const Cardregister: React.FC<Cardregister> = (props) => {
     };
   };
 
-  useEffect(() => {
-    console.log(formDataRef);
-  }, [formDataRef]);
-
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const connection = new Connection("18", true);

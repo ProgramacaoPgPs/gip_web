@@ -21,8 +21,6 @@ export default function PrivateRoute({ children }: Props) {
         })();
     }, []);
 
-    useEffect(() => { console.log(isLogged) }, [isLogged])
-
     async function checkedLogin(): Promise<boolean> {
         let response = true;
         const conn = new Connection('18');

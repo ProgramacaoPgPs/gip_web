@@ -64,7 +64,6 @@ export default function Clpp(): JSX.Element {
     function sendMessage(user: User) {
         changeListContact(user.id);
         ws.current.informPreview(user.id.toString());
-        console.log(`Você ira enviar a mesagem para ${user.name}. ID#: ${user.id}`);
         setWindowsMessage(true);
         setIdReceived(user.id);
     }
@@ -73,48 +72,16 @@ export default function Clpp(): JSX.Element {
 
 
 function WindowsMessage(props: tWindowsMessage): JSX.Element {
-
-    // const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
-    // const [pageLimit, setPageLimit] = useState<number>(1);
-    // const [msgLoad, setMsgLoad] = useState<boolean>(true);
     const { userLog } = useMyContext();
-    const {changeChat,handleScroll,messagesContainerRef,listMessage,page,pageLimit,msgLoad} = useWebSocket();
-    // const messagesEndRef = useRef<HTMLDivElement>(null);
-    // const messagesContainerRef = useRef<HTMLDivElement>(null);
-    // const previousScrollHeight = useRef<number>(0);
-
-    // useEffect(() => {
-    //     const fetchMessages = async () => {
-    //         setMsgLoad(true);
-    //         try {
-    //             const req = await loadMessage();
-    //             if (req.error) throw new Error(req.message);
-    //             setPageLimit(req.pages);
-    //             setListMessage(reloadList(req.data.reverse()));
-    //         } catch (error) {
-    //             alert(error);
-    //         }
-    //         setMsgLoad(false);
-    //     };
-
-    //     fetchMessages();
-    // }, [page]);
+    const {changeChat,handleScroll,messagesContainerRef,previousScrollHeight,listMessage,page,pageLimit,msgLoad} = useWebSocket();
 
 
-
-    // async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
-    //     const conn = new Connection('18');
-    //     const listMessage: { error: boolean, message?: string, data?: any, pages: number } = await conn.get(`&pages=${page}&id_user=${userLog.id}&id_send=${props.idReceived}`, 'CLPP/Message.php')
-    //         || { error: true, message: 'fail', pages: 1 };
-    //     return listMessage;
-    // }
-
-    // function reloadList(pList: any[]): any[] {
-    //     const newList: any = [...listMessage];
-    //     newList.unshift(...pList);
-    //     return newList;
-    // }
-
+    useEffect(() => {
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
+        }
+    }, [listMessage,page]);
+   
     return (
         <div id='divWindowsMessage' className='d-flex flex-column h-100 w-100'>
             {msgLoad && (
@@ -214,9 +181,3 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
 
 
 }
-/*
-<i class="fa-solid fa-file-pdf"></i>
-<i class="fa-solid fa-download"></i>
-<i class="fa-solid fa-file-code"></i>
-*/
-// downloadFile(`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`, message.message)

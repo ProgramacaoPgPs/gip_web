@@ -23,7 +23,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     const [sender, setSender] = useState<iSender>({ id: 0 });
-    const changeScrollRef = useRef<() => void>(() => { });
+    // const changeScrollRef = useRef<() => void>(() => { });
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
     const { setLoading, userLog } = useMyContext();
@@ -76,15 +76,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMessages();
     }, [page, idReceived]);
 
-
-    // Rolagem automática para o final ao carregar mensagens
-    useEffect(() => {
-        if (messagesContainerRef.current) {
-            // Rolagem até o final apenas na primeira página
-            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
-        }
-    }, [listMessage]);
-
+  
     // Verifica quando o usuário rola até o topo
     function handleScroll() {
         if (messagesContainerRef.current) {
@@ -126,9 +118,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     async function callbackOnMessage(event: any) {
         // Novos
-        if (event.user == idReceived) {
-            console.log(event);
-        }
+        // if (event.user == idReceived) {
+        //     console.log(event);
+        // }
 
         //Antigos
         if (event.objectType === 'notification') {
@@ -136,9 +128,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 await viewedMessage(event);
             }
         } else if (event.message && !event.error) {
-            console.log(event);
             await receivedMessage(event);
-
             // Se a janela de batepapo estiver aberta, ele informa que a msg já foi visualizada.
             if (event.send_user === idReceived) {
                 ws.current.informPreview(idReceived.toString());
@@ -168,7 +158,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const { send_user, message, type } = event;
 
         if (parseInt(send_user) === idReceived) {
-            console.error('Aqui!', listMessage, event);
+            
             listMessage.push({
                 id: 999,
                 "id_user": event.send_user,
@@ -188,7 +178,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     async function viewedMessage(event: any) {
-        console.log(event)
+        // console.log(event)
         // const { user } = event;
         // setContactList((prevContacts) =>
         //     prevContacts.map((contact) =>
@@ -210,7 +200,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight,messagesContainerRef,listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

@@ -30,7 +30,7 @@ export default class WebSocketCLPP {
 
       localWs.onopen = () => {
         this.onOpen(localWs);
-        console.log('connected',localWs)
+        console.log('connected',localWs);
       };
 
       localWs.onerror = (ev: Event) => {
@@ -76,7 +76,6 @@ export default class WebSocketCLPP {
   }
 
   async informPreview(idSender: string): Promise<void> {
-    console.error(idSender,'<<<<<<<<<<<');
     const jsonString: { type: number; send_id: string } = {
       type: 3,
       send_id: idSender,

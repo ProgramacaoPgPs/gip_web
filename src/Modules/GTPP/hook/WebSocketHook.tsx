@@ -31,7 +31,6 @@ class WebSocketGTPPClass {
       };
 
       this.socket.onclose = () => {
-        console.log("Conexão fechada, tentando reconectar...");
         this.isConnected = false;
         this.stopPing();
         setTimeout(() => this.connect(), 10000);
