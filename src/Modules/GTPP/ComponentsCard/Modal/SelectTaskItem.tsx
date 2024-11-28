@@ -111,21 +111,8 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
                   captureDep={setCaptureDep}
                   items={departmentOptions}
                   getCheck={(item: any) => {
-                    // try {
-                    //   const connection = new Connection("18", true);
-                      // await connection.post({
-                      //   task_id: props?.data?.id,
-                      //   company_id: selectedCompany,
-                      //   shop_id: selectedShop,
-                      //   depart_id: item.id,
-                    //   }, "GTPP/TaskComShoDepSub.php");
-                    // } catch (error) {
-                    //   console.log("teste");
-                    // }
-
                     // @ts-ignore
-                   checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
-                    
+                    checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
                   }}
                 />
               </div>

@@ -28,8 +28,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   
   const connection = new Connection("18", true);
 
-  console.log(props);
-
   const handleAddTask = async () => {
     if (valueNewTask.length > 0) {
       try {
