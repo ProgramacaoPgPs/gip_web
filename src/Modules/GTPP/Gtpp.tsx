@@ -36,12 +36,6 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
-
-  // setTimeout(() => {
-  //   const responseData = webSocketInstance?.getLastSentMessage();
-  //   setResponseWs(responseData);
-  // }, 1);
-
   const connection = useMemo(() => new Connection("18", true), []);
 
   useEffect(() => {
@@ -195,10 +189,7 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </div>
-        {/* 
-          A renderização do componente tem que ser aqui
-          a porcentagem chegando a 0 ele tem que renderizar o componente
-        */}
+        
         {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={task} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
       </Container>
     </div>

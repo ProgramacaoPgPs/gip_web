@@ -17,7 +17,6 @@ export type TaskItem = {
  export type FormTextAreaDefaultProps = HTMLAttributes<HTMLInputElement> &{
     disabledForm?: boolean;
     setRenderList?:any;
-    task_description: string;
     onChange?: (value: string) => void;
     buttonTextOpen?: string;
     buttonTextClosed?: string;
@@ -25,6 +24,7 @@ export type TaskItem = {
     textAreaClasses?: string;
     rows?: number;
     cols?: number;
+    task: any;
   }
   
  export type SubTask = {
@@ -37,8 +37,5 @@ export type TaskItem = {
   
  export type SubTasksWithCheckboxProps = {
     subTasks: any[];
-    setRenderList?: any;
-    getPercent?: any;
-    taskCheckReset?: any;
     onTaskChange: (id: number, checked: boolean) => void;
   }

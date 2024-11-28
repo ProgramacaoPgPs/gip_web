@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { FormTextAreaDefaultProps } from "./Types";
 import { httpPut } from "../../../../Util/Util";
+import { useWebSocket } from "../../Context/GtppWsContext";
 
 const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   disabledForm = false,
-  task_description = "",
   onChange,
   buttonTextOpen = "Aberto",
   buttonTextClosed = "Trancado",
@@ -12,14 +12,18 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   textAreaClasses = "form-control",
   rows = 5,
   cols = 10,
+  task
 }) => {
   const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
-  const [value, setValueChange] = useState<string>(task_description);
+  const [value, setValueChange] = useState<string>(task.description);
+
+  const {changeDescription} = useWebSocket();
 
   // Atualiza o valor quando task_description mudar
   useEffect(() => {
-    setValueChange(task_description);
-  }, [task_description]);
+    setValueChange(task.description);
+    console.log(task.description);
+  }, [task.description]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -41,14 +45,7 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
       />
       <button
         onClick={() => {
-          // if(false) {
-          //   httpPut("GTPP/Task.php", {
-          //     // @ts-ignore
-          //     full_description: value,
-          //     // @ts-ignore
-          //     id: any
-          //   })
-          // }
+          changeDescription(value, task.id, task.id);
           setIsOpenButton((prev) => !prev);
         }}
         className={`${buttonClasses} btn-${isOpenButton ? "success" : "danger"}`}

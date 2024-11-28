@@ -4,8 +4,6 @@ import GtppWebSocket from './GtppWebSocket';
 import { Connection } from '../../../Connection/Connection';
 import { useMyContext } from '../../../Context/MainContext';
 
-
-
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
 export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -88,6 +86,51 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
     }
 
+    // ver o que esta acontecendo aqui! depois de completar a 
+    async function checkTaskComShoDepSub(task_id: number, company_id:number, shop_id:number, depart_id:number, taskLocal: any) {
+       try {
+        const connection = new Connection('18');
+        let result = await connection.post({ task_id: task_id, company_id: company_id, shop_id: shop_id, depart_id: depart_id }, "GTPP/TaskComShoDepSub.php");
+        console.log(result);
+        ws.current.informSending({
+            "error": false,
+            user_id: localStorage.userGTPP,
+            object: {
+                description: "A descrição completa da tarefa foi atualizada",
+                task_id: task_id, 
+                company_id: company_id, 
+                shop_id: shop_id, 
+                depart_id: depart_id
+            },
+            task_id: taskLocal,
+            type: 5
+        });
+       } catch (error) {
+        console.log(error);
+       }
+    }
+
+    async function changeDescription (description: string, id: number, descLocal: string) {
+        try {
+            const connection = new Connection('18');
+            let result = await connection.put({ id: id, full_description: description }, "GTPP/Task.php");
+            console.log(result);
+            ws.current.informSending({
+                "error": false,
+                user_id: userLog.id,
+                object: {
+                    description: "A descrição completa da tarefa foi atualizada",
+                    task_id: id,
+                    full_description: description
+                },
+                task_id: descLocal,
+                type: 3
+            });
+        } catch (error) {
+            console.log("erro ao fazer o PUT em Task.php");
+        }
+    }
+
     function clearGtppWsContext() {
         setTask({});
         setTaskDetails({});
@@ -95,7 +138,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
     return (
-        <GtppWsContext.Provider value={{ taskDetails, task, taskPercent, setTaskPercent, setTask, clearGtppWsContext, checkedItem }}>
+        <GtppWsContext.Provider value={{ taskDetails, task, taskPercent, setTaskPercent, setTask, clearGtppWsContext, checkedItem, checkTaskComShoDepSub, changeDescription }}>
             {children}
         </GtppWsContext.Provider>
     );

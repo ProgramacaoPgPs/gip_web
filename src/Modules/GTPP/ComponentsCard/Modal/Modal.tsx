@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import "./style.css";
 import AvatarGroup from '../Avatar/avatar';
-import { SubTask, TaskItem } from './Types';
+import { TaskItem } from './Types';
 import HeaderModal from './Header';
 import ProgressBar from './Progressbar';
 import FormTextAreaDefault from './FormTextAraeaDefault';
@@ -9,15 +9,11 @@ import SubTasksWithCheckbox from './SubtaskWithCheckbox';
 import SelectTaskItem from './SelectTaskItem';
 import { Connection } from '../../../../Connection/Connection';
 import { useWebSocket } from '../../Context/GtppWsContext';
-import { iTaskReq } from '../../../../Interface/iGIPP';
-
-// import useConnect from '../../hook/webSocketConnect';
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
   renderList?: any;
   listSubTasks?:any;
-  // listSubTasks?: { data: { task_item?: any, full_description: string, task_user: any[] } };
   taskListFiltered?: any;
   taskCheckReset?: any;
   setRenderList?: any;
@@ -32,16 +28,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   
   const connection = new Connection("18", true);
 
-  // Modified by Hygor -> Análisar para exclusão - depreciado devido nova tratativa de dados.
-  // const [subTasks, setSubTasks] = useState<SubTask[]>(props.listSubTasks?.data?.task_item || []); 
-  // useEffect(() => {
-  //   if (props.listSubTasks?.data?.task_item) {
-  //     setSubTasks(props.listSubTasks?.data?.task_item);
-  //   }
-  // }, [props.listSubTasks?.data?.task_item]);
-  // const handleTaskChange = (id: number, check: boolean) => {
-  //   setSubTasks((prevSubTasks) => prevSubTasks.map((task) => (task.id === id ? { ...task, check } : task)));
-  // };
+  console.log(props);
 
   const handleAddTask = async () => {
     if (valueNewTask.length > 0) {
@@ -59,8 +46,8 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
     <div className="row mt-3 h-100 overflow-hidden p-4">
       <div className="col-md-12 row m-auto container h-100 overflow-hidden w-100"> 
        <div className="col-md-6"> 
-        <FormTextAreaDefault task_description={props.listSubTasks?.data?.full_description || ""} disabledForm={props.disabledForm} />
-        <SubTasksWithCheckbox getPercent={props.getPercent} setRenderList={props.setRenderList} subTasks={taskDetails.data?.task_item || []} onTaskChange={(e)=>console.log(e)} />
+        <FormTextAreaDefault task={props.taskListFiltered} disabledForm={props.disabledForm} />
+        <SubTasksWithCheckbox subTasks={taskDetails.data?.task_item || []} onTaskChange={(e)=>console.log(e)} />
         <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
           <div className="w-100">
             <input
@@ -97,28 +84,6 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
   
   // Modified by Hygor
   const {task,taskPercent} = useWebSocket();
-  
-  
-  // Modified by Hygor -> Análisar para exclusão
-  // const [data, setData] = useState<any>();
-  // const connection = useMemo(() => new Connection("18", true), []);
-  // useEffect(() => {
-    // async function getTaskInformations() {
-    //   try {
-    //     const getTaskItem = await connection.get(
-    //       `&id=${props.taskFilter.id.toString()}`,
-    //       "GTPP/Task.php"
-    //     );
-    //     console.log(getTaskItem);
-    //     setData(getTaskItem);
-    //   } catch (error) {
-    //     console.error("Erro ao obter as informações da tarefa:", error);
-    //   }
-    // }
-    // return () => {
-    //   getTaskInformations();
-    // }
-  // }, [props, connection]);
 
   return (
     <div className='zIndex99'>
@@ -128,10 +93,6 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           <ProgressBar progressValue={taskPercent} />
         </section>
         <section className='body-modal-default'>
-          {/* 
-            Modified by Hygor -> Análisar para exclusão
-            <BodyDefault getPercent={getPercent} setRenderList={props.setRenderList} taskListFiltered={task || []} listSubTasks={taskDetails || []}/> 
-          */}
           <BodyDefault getPercent={getPercent} setRenderList={props.setRenderList} taskListFiltered={task || []}/>
         </section>
       </div>
