@@ -11,11 +11,14 @@ export type TaskItem = {
     listItem?: any;
     resetTask?: any;
     setRenderList?: any;
+    details?: any;
+    taskDetails?: any;
     taskCheckReset?: any;
   }
   
  export type FormTextAreaDefaultProps = HTMLAttributes<HTMLInputElement> &{
     disabledForm?: boolean;
+    details?: any;
     setRenderList?:any;
     onChange?: (value: string) => void;
     buttonTextOpen?: string;

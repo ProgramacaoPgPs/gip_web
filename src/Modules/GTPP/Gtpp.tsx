@@ -27,7 +27,9 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const {task,setTask,setTaskPercent,clearGtppWsContext} = useWebSocket();
+  const {task,setTask,setTaskPercent,clearGtppWsContext, taskDetails} = useWebSocket();
+
+  // const [details, _] = useState(taskDetails);
 
   useEffect(() => {
     setTitleHead({
@@ -82,8 +84,9 @@ export default function Gtpp(): JSX.Element {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
 
+  
   if(loading) return (<React.Fragment>Carregando...</React.Fragment>);
-
+  
   return (
     <div id="moduleGTPP" className="h-100 w-100 position-relative">
       <Container fluid className={`h-100 d-flex`}>
@@ -93,7 +96,7 @@ export default function Gtpp(): JSX.Element {
               <NavBar list={listPath} />
             </header>
           </Col>
-        </Row>
+        </Row>      
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative" style={{ padding: 0, marginLeft: 15 }}>
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
@@ -189,8 +192,7 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </div>
-        
-        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={task} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
+        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
       </Container>
     </div>
   );

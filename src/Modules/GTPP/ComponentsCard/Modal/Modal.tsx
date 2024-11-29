@@ -19,6 +19,7 @@ interface BodyDefaultProps {
   setRenderList?: any;
   getPercent?: any;
   reset?: any;
+  details?: any;
 }
 
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
@@ -40,11 +41,13 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
     }
   };
 
+  //console.log(props.details.data.full_description);
+
   return (
     <div className="row mt-3 h-100 overflow-hidden p-4">
       <div className="col-md-12 row m-auto container h-100 overflow-hidden w-100"> 
        <div className="col-md-6"> 
-        <FormTextAreaDefault task={props.taskListFiltered} disabledForm={props.disabledForm} />
+        <FormTextAreaDefault task={props.taskListFiltered} details={props.details.data} disabledForm={props.disabledForm} />
         <SubTasksWithCheckbox subTasks={taskDetails.data?.task_item || []} onTaskChange={(e)=>console.log(e)} />
         <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
           <div className="w-100">
@@ -81,6 +84,8 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
   const [percent, getPercent] = useState<any>(0);
   
   // Modified by Hygor
+  console.log(props.details);
+
   const {task,taskPercent} = useWebSocket();
 
   return (
@@ -91,7 +96,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           <ProgressBar progressValue={taskPercent} />
         </section>
         <section className='body-modal-default'>
-          <BodyDefault getPercent={getPercent} setRenderList={props.setRenderList} taskListFiltered={task || []}/>
+          <BodyDefault details={props.details} getPercent={getPercent} setRenderList={props.setRenderList} taskListFiltered={task || []}/>
         </section>
       </div>
     </div>

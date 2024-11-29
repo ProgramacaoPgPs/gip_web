@@ -12,18 +12,18 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   textAreaClasses = "form-control",
   rows = 5,
   cols = 10,
-  task
+  task, details
 }) => {
   const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
-  const [value, setValueChange] = useState<string>(task.description);
+  const [value, setValueChange] = useState<string>(details?.full_description);
 
   const {changeDescription} = useWebSocket();
 
   // Atualiza o valor quando task_description mudar
   useEffect(() => {
-    setValueChange(task.description);
-    console.log(task.description);
-  }, [task.description]);
+    setValueChange(details?.full_description);
+    console.log(details?.full_description);
+  }, [details?.full_description]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;

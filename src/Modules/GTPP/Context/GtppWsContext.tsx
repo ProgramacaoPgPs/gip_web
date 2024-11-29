@@ -55,15 +55,29 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 itemUp(response.object);
             }
         }
+
+        if (!response.error && response.type == 3) {
+            if (response.object) {
+                getDescription(response.object);
+            }
+        }
     }
 
     function itemUp(itemUp: any) {
         setTaskPercent(itemUp.percent);
+        
         taskDetails.data?.task_item.forEach((element, index) => {
             if (taskDetails.data && element.id == itemUp.itemUp.id) taskDetails.data.task_item[index] = itemUp.itemUp;
         });
 
         setTaskDetails({ ...taskDetails });
+    }
+
+    function getDescription (description: any) {
+        if(taskDetails.data){
+            taskDetails.data.full_description = description.full_description;
+            setTaskDetails({ ...taskDetails });
+        }
     }
 
     async function checkedItem(id: number, checked: boolean, idTask: any, taskLocal: any) {
