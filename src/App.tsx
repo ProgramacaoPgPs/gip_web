@@ -12,6 +12,7 @@ import Gtpp from './Modules/GTPP/Gtpp';
 import { WebSocketProvider } from './Context/WsContext';
 import Clpp from './Modules/CLPP/Clpp';
 import RenderedModules from './Components/RenderedModules';
+import { EppWsProvider } from './Modules/GTPP/Context/GtppWsContext';
 
 function App() {
   return (
@@ -39,7 +40,9 @@ function App() {
           <MyProvider>
             <PrivateRoute>
               <RenderedModules>
-                <Gtpp />
+                <EppWsProvider>
+                  <Gtpp />
+                </EppWsProvider>
               </RenderedModules>
             </PrivateRoute>
           </MyProvider>

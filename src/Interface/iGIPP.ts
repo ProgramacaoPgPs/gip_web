@@ -1,3 +1,4 @@
+import { MutableRefObject, RefObject } from "react";
 import WebSocketCLPP from "../Services/Websocket";
 
 export interface iUser {
@@ -16,8 +17,8 @@ export interface iUser {
     session: string;
 }
 
-export interface iSender{
-    id:number;
+export interface iSender {
+    id: number;
 }
 
 export interface iMessage {
@@ -33,14 +34,54 @@ export interface iWebSocketCLPP {
     funcView: (event: any) => Promise<void>;
     connectWebSocket: () => void;
 }
+export interface iGtppWsContextType {
+    task: any;
+    taskDetails:iTaskReq;
+    taskPercent:number;
+    setTaskPercent:(value:number)=>void;
+    setTask: (value: any) => void;
+    clearGtppWsContext:()=>void;
+    checkedItem:(id: number, checked: boolean, idTask: any, task: any)=>void;
+    checkTaskComShoDepSub:(task_id:number, company_id:number, shop_id:number, depart_id:number, taskLocal: any)=>void;
+    changeDescription: (description: string, id: number, descLocal: string) => void;
+}
+
+export interface iTaskReq {
+    error?: boolean,
+    data?: {
+        csds?: number,
+        full_description?: string,
+        task_item: [{
+            id?: number,
+            description?: string,
+            check?: boolean,
+            task_id?: number,
+            order?: number,
+            yes_no?: number,
+            file?: number,
+            note?: any,
+        }],
+        task_user: [{ task?: number, user_id?: number, status?: boolean }]
+    }
+}
 
 export interface iWebSocketContextType {
-    // connectWebSocket: () => void;
-    messages: iMessage[];
+
     contactList: iUser[];
     sender: iSender;
+    ws: MutableRefObject<WebSocketCLPP>;
+    idReceived: number;
+    listMessage: { id: number, id_user: number, message: string, notification: number, type: number }[];
+    page: number;
+    pageLimit: number;
+    msgLoad: boolean;
+    previousScrollHeight: MutableRefObject<number>;
+    messagesContainerRef: RefObject<HTMLDivElement>;
+    changeChat: () => void;
+    handleScroll: () => void;
+    setPage: (value: number) => void;
+    setIdReceived: (value: number) => void;
     setSender: React.Dispatch<React.SetStateAction<iSender>>;
-    ws: WebSocketCLPP;
-    setContactList:(value:iUser[])=>void;
-    changeListContact:(value:number)=>void;
+    setContactList: (value: iUser[]) => void;
+    changeListContact: (value: number) => void;
 }

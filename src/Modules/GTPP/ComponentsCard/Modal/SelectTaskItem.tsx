@@ -2,16 +2,20 @@ import React, { useEffect, useState } from "react";
 import { SelectFieldDefault } from "../../../../Components/CustomForm";
 import CheckboxList from "../CheckboxList/checkboxlist";
 import { Connection } from "../../../../Connection/Connection";
+import { useWebSocket } from "../../Context/GtppWsContext";
 
 interface SelectTaskItemProps {
   data?: {
     csds: { company_id: number; shop_id: number }[];
     id: number;
+    setcheckTaskComShoDepSub: any;
   };
 }
 
 const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const { data } = props;
+
+  const { checkTaskComShoDepSub } = useWebSocket();
   
   const [shopOptions, setShopOptions] = useState<{ id: number; description: string }[]>([]);
   const [companyOptions, setCompanyOptions] = useState<{ id: number; description: string }[]>([]);
@@ -106,19 +110,9 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
                 <CheckboxList 
                   captureDep={setCaptureDep}
                   items={departmentOptions}
-                  getCheck={async (item: any) => {
-                    try {
-                      const connection = new Connection("18", true);
-                      // aqui está dando um erro quando eu clico em chicar na primeira vez mais quando eu clico para desticar ele faz um post como true e manda um post.
-                      await connection.post({
-                        task_id: props?.data?.id,
-                        company_id: selectedCompany,
-                        shop_id: selectedShop,
-                        depart_id: item.id,
-                      }, "GTPP/TaskComShoDepSub.php");
-                    } catch (error) {
-                      console.log("teste");
-                    }
+                  getCheck={(item: any) => {
+                    // @ts-ignore
+                    checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
                   }}
                 />
               </div>

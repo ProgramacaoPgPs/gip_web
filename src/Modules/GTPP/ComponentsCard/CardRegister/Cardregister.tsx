@@ -20,16 +20,11 @@ const Cardregister: React.FC<Cardregister> = (props) => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    console.log(value)
     formDataRef.current = {
       ...formDataRef.current,
       [name]: value,
     };
   };
-
-  useEffect(() => {
-    console.log(formDataRef);
-  }, [formDataRef]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
