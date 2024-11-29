@@ -21,29 +21,44 @@ const Avatar = () => {
 };
 
 const Modal = (user: any) => {
-  const {userLog} = useContextDeufault();
+  const { userLog } = useContextDeufault();
+  const [userElements, setUserElements] = useState<JSX.Element[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Função que retorna uma Promise resolvida com os dados
+  const loadUserData = async () => {
+    if (!user) return;
+
+    const userPromises = user.user.map(async (item: { task_id: number; user_id: number; status: boolean }) => {
+      // @ts-ignore
+      const fetchedUser = await new User({ id: item.user_id }); // Supondo que `User` seja uma função assíncrona
+      return (
+        <div key={item.user_id}>
+          <Image src={convertImage(fetchedUser.photo) ?? ImageUser} alt={fetchedUser.name} title={fetchedUser.name} />
+          <div>{item.user_id}</div>
+        </div>
+      );
+    });
+
+    const resolvedElements = await Promise.all(userPromises);
+    setUserElements(resolvedElements);
+    setLoading(false); // Atualiza o estado para indicar que o carregamento terminou
+  };
+
+  // Se a função de carregamento ainda não foi chamada, chamamos ela aqui.
+  if (loading) {
+    loadUserData(); // Chama a função para carregar os dados
+    return <div>Carregando usuários...</div>; // Retorna o estado de carregamento
+  }
 
   return (
     <div className="modal-list d-flex align-items-center gap-3">
-      <div className=""> 
-        {/* {`avatar ${userLog.session ? `avatar-green` : `avatar-red`}`}*/}
-        {user ? user.user.map((item: {task_id: number, user_id: number, status: boolean}) => 
-        {
-          // @ts-ignore
-          let user = new User({id: item.user_id});
-
-          console.log(user);
-
-          return (
-            <div key={item.user_id}>
-              <Image src={convertImage(user.photo) ?? ImageUser} alt={user.name} title={user.name} />
-              <div>{item.user_id}</div>
-            </div>)
-        }) : null}
+      <div>
+        {userElements} {/* Renderiza os elementos do usuário após carregados */}
       </div>
     </div>
   );
-}
+};
 
 const AvatarGroup = (props: { users: any, dataTask: any }) => {
   const [changeModal, setChangeModal] = useState(false);
