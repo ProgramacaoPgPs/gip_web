@@ -100,7 +100,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
     }
 
-    // ver o que esta acontecendo aqui! depois de completar a 
+    // aqui podemos trabalhar com a vinculação  das tarefas com as lojas e departamentos
     async function checkTaskComShoDepSub(task_id: number, company_id:number, shop_id:number, depart_id:number, taskLocal: any) {
        try {
         const connection = new Connection('18');
@@ -117,13 +117,14 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 depart_id: depart_id
             },
             task_id: taskLocal,
-            type: 5
+            type: 2
         });
        } catch (error) {
         console.log(error);
        }
     }
 
+    // Aqui podemos trabalhar de forma horizontal para atualizar a descrição da tarefa de ponta a ponta.
     async function changeDescription (description: string, id: number, descLocal: string) {
         try {
             const connection = new Connection('18');
