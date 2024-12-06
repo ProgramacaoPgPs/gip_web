@@ -25,7 +25,7 @@ interface BodyDefaultProps {
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const { taskDetails, task } = useWebSocket();
+  const { taskDetails, task, stopAndToBackTask } = useWebSocket();
 
   const connection = new Connection("18", true);
 
@@ -85,11 +85,18 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 {isOpenModal && (<div className="modal bg-light w-100">teste</div>)}
                 <button
                   onClick={() => {
+                    stopAndToBackTask(props.taskListFiltered?.id, props.taskListFiltered.state_id == 4 ? null : "teste", null, props.taskListFiltered)
                     setIsOpenModal((prev: any) => !prev);
                   }}
                   className="btn btn-transparent"
                 >
-                  <i className={`fa fa-${ isOpenModal ? "calendar" : "power-off" } ${isOpenModal ? "text-success" : "text-danger"}`}></i>
+                  {/* Aqui é o botão para parar e retomar o botão  */}
+                  {props.taskListFiltered.state_id == 4 ? (
+                    <i className="fa fa-power-off text-danger"></i>
+                  ) : props.taskListFiltered.state_id == 2 ? (
+                    <i className="fa fa-power-off text-success"></i>
+                  ) : null}
+
                 </button>
               </div>
               <div>
@@ -111,13 +118,19 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
 
   return (
     <div className="zIndex99">
-      <div className="card w-75 overflow-hidden position-absolute modal-card-default">
+      {/* 
+        eu tirei o overflow-hidden da classe para colocar porta retrato para pegar as informações dos usuários quando clicados!
+        temos que fazer uma lógica que quando o usuário for clicar no porta retrato para pegar as informações dos usuários precisamos fazer os seguintes passos
+
+        usuário clicou:  retirar o overflow-hidden
+        usuário saiu: reclocar o overflow-hidden
+      */}
+      <div className="card position-absolute modal-card-default" style={{width: '70%'}}> {/* Aqui tirei o w-75 para conseguir fazer um controle de CSS responsivo vou desenhar ele de forma universal aonde vai conseguir pegar tanto no mobile quando no dasktop */}
         <section className="header-modal-default">
           <HeaderModal
             color="danger"
             description={task.description}
-            onClick={props.close_modal}
-          />
+            onClick={props.close_modal} />
           <ProgressBar progressValue={taskPercent} />
         </section>
         <section className="body-modal-default">

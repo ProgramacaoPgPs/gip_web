@@ -21,7 +21,7 @@ export const httpPut = async (url: string, data: any) => {
 };
 
 export function convertImage(src: any) {
-    console.log(src);
+    
     if (src != null) {
 
       var image = new Image();

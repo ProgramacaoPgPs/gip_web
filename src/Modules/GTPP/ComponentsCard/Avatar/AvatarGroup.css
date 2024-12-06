@@ -4,6 +4,38 @@
   position: relative;
 }
 
+.portrait {
+  width: 300px;
+  position: absolute;
+  top: 0%;
+  z-index: 999;
+  left: 101%;
+  height: 520px;
+  overflow: auto;
+}
+
+.bg-danger-hover:hover {
+  background-color: #dc3545;
+  transition: all ease .4s;
+}
+
+.bg-danger-hover {
+  position: relative;
+}
+
+.checkbox-label {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+input[type="checkbox"]:checked + .checkbox-label {
+  background-color: red;
+}
+
 .avatar {
   width: 40px;
   height: 40px;

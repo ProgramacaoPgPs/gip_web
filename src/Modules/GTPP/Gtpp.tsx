@@ -58,11 +58,11 @@ export default function Gtpp(): JSX.Element {
     const connection = new Connection("18", true);
     try {
       const getTask = await connection.get("", "GTPP/Task.php");
-      setCardTask(getTask);      
+      setCardTask(getTask);
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
-  }, [])
+  }, [task]);
 
   useEffect(() => {
     getTaskInformations();

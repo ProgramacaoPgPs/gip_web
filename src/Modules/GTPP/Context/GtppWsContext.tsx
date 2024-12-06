@@ -52,7 +52,17 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         //Aqui será feito a atualização das tarefas.
         if (!response.error && response.type == 2) {
             if (response.object) {
-                itemUp(response.object);
+                if(response.object.isItemUp) {
+                    itemUp(response.object);
+                } else if(response.object.isStopAndToBackTask) {
+                    // Aqui vamos indentificar pelo objeto qual dos objetos estmos tratando para evitar erros
+                    if(response.object.taskState == 2) {
+                    }
+                    if(response.object.taskState == 4) {
+                    }
+                } else {
+                    console.log("Sem retorno");
+                }
             }
         }
 
@@ -80,6 +90,20 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     }
 
+    // atualizando o estados dos components via WebSocket
+    function getNewChangeOfStopAndBackToTask() {
+        if(taskDetails.data){
+            
+        }
+    }
+
+    // atualizando o estados do usuário.
+    function getNewUserList() {
+        if(taskDetails.data){
+
+        }
+    }
+
     async function checkedItem(id: number, checked: boolean, idTask: any, taskLocal: any) {
         const connection = new Connection('18');
         let result: any = await connection.put({ check: checked, id: id, task_id: idTask }, "GTPP/TaskItem.php");
@@ -94,6 +118,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     : "Um item foi desmarcado",
                 percent: result.data?.percent,
                 itemUp: taskLocal,
+                isItemUp: true
             },
             task_id: taskLocal.task_id,
             type: 2,
@@ -108,7 +133,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.log(result);
         ws.current.informSending({
             "error": false,
-            user_id: localStorage.userGTPP,
+            user_id: userLog.id,
             object: {
                 description: "A descrição completa da tarefa foi atualizada",
                 task_id: task_id, 
@@ -146,6 +171,60 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     }
 
+    async function stopAndToBackTask(taskId: number, resource: string | null, date: string | null, taskList: any) {
+        try {
+            const connection = new Connection("18", true);
+
+            if(taskList.state_id == 4) {
+                let result = await connection.put({task_id: taskId, reason: resource, days: date}, "GTPP/TaskState.php");
+                console.log('response => ', result);
+
+                ws.current.informSending({
+                    "error": false,
+                    user_id: userLog.id,
+                    object: {
+                        description: `Tarefa que estava parado está de volta!`,
+                        task_id: taskId, 
+                        reason: resource, 
+                        days: date,
+                        taskState: taskList.state_id, // pegando o id do estado da tarefa.
+                    },
+                    task_id: taskId,
+                    type: 2
+                });
+            }
+
+            if(taskList.state_id == 2) {
+            // aquit temos que fazer um modal para pegar o porque o usuario está parando essa tarefa!
+            let result = await connection.put({task_id: taskId, reason: resource, days: date}, "GTPP/TaskState.php");
+            console.log('response => ', result);
+
+                ws.current.informSending({
+                    "error": false,
+                    user_id: userLog.id,
+                    object: {
+                        description: "A tarefa que estava ativa foi parada!",
+                        task_id: taskId, 
+                        reason: resource, 
+                        days: date, 
+                        taskState: taskList.state_id, // pegando o id do estado da tarefa.
+                    },
+                    task_id: taskId,
+                    type: 2
+                });
+            }
+
+           
+
+        } catch (error) {
+            console.log("erro ao fazer o PUT em TaskState.php");
+        }
+    }
+
+    function setUpdateUserAndAdd() {
+        console.log("setUpdateUserAndAdd");
+    }
+
     function clearGtppWsContext() {
         setTask({});
         setTaskDetails({});
@@ -153,7 +232,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
     return (
-        <GtppWsContext.Provider value={{ taskDetails, task, taskPercent, setTaskPercent, setTask, clearGtppWsContext, checkedItem, checkTaskComShoDepSub, changeDescription }}>
+        <GtppWsContext.Provider value={{ taskDetails, task, taskPercent, setTaskPercent, setTask, clearGtppWsContext, checkedItem, checkTaskComShoDepSub, changeDescription, stopAndToBackTask }}>
             {children}
         </GtppWsContext.Provider>
     );

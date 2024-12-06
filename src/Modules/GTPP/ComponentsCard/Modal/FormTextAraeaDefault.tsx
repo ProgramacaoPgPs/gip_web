@@ -16,13 +16,11 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
 }) => {
   const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
   const [value, setValueChange] = useState<string>(details?.full_description);
-
   const {changeDescription} = useWebSocket();
 
   // Atualiza o valor quando task_description mudar
   useEffect(() => {
     setValueChange(details?.full_description);
-    console.log(details?.full_description);
   }, [details?.full_description]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
