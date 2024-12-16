@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
 import AvatarGroup from "../Avatar/avatar";
 import { TaskItem } from "./Types";
@@ -9,6 +9,10 @@ import SubTasksWithCheckbox from "./SubtaskWithCheckbox";
 import SelectTaskItem from "./SelectTaskItem";
 import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
+import MessageModal from "../ModalMessage/messagemodal";
+import ButtonIcon from "../Button/ButtonIcon/btnicon";
+import Modalnotification from "../ModalNotification/Modalnotification";
+import Observer from "../Observer/Observer";
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -24,8 +28,29 @@ interface BodyDefaultProps {
 
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [valueTask, setValueTask] = useState<boolean>(false);
   const { taskDetails, task, stopAndToBackTask } = useWebSocket();
+
+  // AQUI VOU CHAMAR O MODAL DO CLOCK PARA EU INSERIR QUANTOS DIAS VOU FICAR COM A TAREFA ATÉ TERMINAR.
+  const [openClock, setOpenClock] = useState<{
+    stopTask: boolean;
+    openModalQuastionTask: boolean;
+    description: string;
+    isCompShopDep: boolean;
+    isChat: boolean;
+    isObservable: boolean;
+    isQuastion: boolean;
+    isAttachment: boolean;
+  }>({
+    stopTask: false,
+    openModalQuastionTask: false,
+    description: "",
+    isCompShopDep: false,
+    isChat: false,
+    isObservable: false,
+    isQuastion: false,
+    isAttachment: false,
+  });
 
   const connection = new Connection("18", true);
 
@@ -49,61 +74,122 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   };
 
   return (
-    <div className="row mt-3 h-100 overflow-hidden p-4">
-      <div className="col-md-12 row m-auto container h-100 overflow-hidden w-100">
-        <div className="col-md-6">
+    <div className="row mt-3 h-100 overflow-hidden">
+      {/* AQUI VAMOS FAZER UM COMPONENTE PARA DIMINUIR AS LINHAS PRECISAMOS ESTUDAR ESSAS LINHAS PARA DIMINUIR E DEIXAR ELAS NAS MELHORES CONDIÇÕES. */}
+      <div className="d-flex justify-content-between px-4">
+        <div className="d-flex align-items-center">
+          <AvatarGroup
+            dataTask={props.taskListFiltered}
+            users={taskDetails.data ? taskDetails.data?.task_user : []}
+          />
+        </div>
+        <div className="">
+          {/* Aqui vou fazer um componente separado */}
+          {openClock.openModalQuastionTask ? (
+            <MessageModal
+              typeInput={
+                props.taskListFiltered.state_id == 2 || props.taskListFiltered.state_id == 4 ? "text"
+                : props.taskListFiltered.state_id == 5 ? "number" : null
+              }
+              title={
+                props.taskListFiltered.state_id == 2
+                  ? "Deseja parar mesmo a tarefa?"
+                  : props.taskListFiltered.state_id == 4
+                  ? "Deseja mesmo retomar a tarefa?"
+                  : props.taskListFiltered.state_id == 5
+                  ? "Insira o total de dias que voce precisa"
+                  : null
+              }
+              onChange={(e: any) =>
+                setOpenClock((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              openClock={openClock}
+              onClick={() => {
+                if (openClock.description.length > 0) {
+                  stopAndToBackTask(
+                    props.taskListFiltered?.id,
+                    props.taskListFiltered.state_id == 4
+                      ? null
+                      : openClock.description,
+                    props.taskListFiltered.state_id == 5 ? openClock.description : null,
+                    props.taskListFiltered
+                  );
+                  setOpenClock((prev) => ({
+                    ...prev,
+                    openModalQuastionTask: !prev.openModalQuastionTask,
+                  }));
+                } else {
+                  alert("escreva algo");
+                }
+              }}
+            />
+          ) : null}
+          <div>
+            {/* Aqui é o botão para fazer a parada da tarefa! */}
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                setOpenClock((prev) => ({...prev, openModalQuastionTask: !prev.openModalQuastionTask}))
+              }}
+            >
+              {props.taskListFiltered.state_id == 4 ? (
+                <ButtonIcon color="success" icon="power-off" description="Retomar tarefas" />
+              ) : props.taskListFiltered.state_id == 2 ? (
+                <ButtonIcon color="danger" icon="power-off" description="Parar tarefas" />
+              ) : props.taskListFiltered.state_id == 5 ? (
+                <ButtonIcon color="dark" icon="clock" description="Quantos dias precisa?" />
+              ) : null}
+            </div>
+          </div>
+          {/** */}
+        </div>
+      </div>
+      <div className="col-md-12 row m-auto container overflow-hidden h-100">
+        <div className="col-md-12 h-100">
           <FormTextAreaDefault
             task={props.taskListFiltered}
             details={props.details.data}
             disabledForm={props.disabledForm}
           />
-          <SubTasksWithCheckbox
-            subTasks={taskDetails.data?.task_item || []}
-            onTaskChange={(e) => console.log(e)}
-          />
-          <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
-            <div className="w-100">
-              <input
-                type="text"
-                className="form-control d-block"
-                onChange={(e) => setValueNewTask(e.target.value)}
-                value={valueNewTask}
+          <div className="mt-2">
+            <div className="d-flex flex-wrap gap-2">
+              <ButtonIcon onClick={() => {setOpenClock((prev) => ({...prev, isChat: false, isCompShopDep: false, isAttachment: false, isObservable: false, isQuastion: false})); setValueTask((prev) => !prev)}} color="secondary" icon="tasks" description="Tarefas" />
+              <ButtonIcon onClick={() => {setOpenClock((prev) => ({...prev, isChat: !prev.isChat, isCompShopDep: false, isAttachment: false, isObservable: false, isQuastion: false})); setValueTask(false)}} color="secondary" icon="message" description="Chat" />
+              <ButtonIcon onClick={() => {setOpenClock((prev) => ({...prev, isCompShopDep: !prev.isCompShopDep, isChat: false, isAttachment: false, isObservable: false, isQuastion: false})); setValueTask(false)}} color="secondary" icon="shop" description="Comp/Loj/Dep" />
+            </div>
+            {valueTask && (
+              <SubTasksWithCheckbox
+                subTasks={taskDetails.data?.task_item || []}
+                onTaskChange={(e) => console.log(e)}
+                allData={props}
               />
-            </div>
-            <div>
-              <button onClick={handleAddTask} className="btn btn-success">
-                Enviar
-              </button>
-            </div>
+            )}
           </div>
-        </div>
-        <div className="col-md-6 d-flex flex-column justify-content-between">
-          <SelectTaskItem data={props.taskListFiltered} />
-          <div className="">
-            <div className="p-1 d-flex align-items-center justify-content-between">
-              <div>
-                {isOpenModal && (<div className="modal bg-light w-100">teste</div>)}
-                <button
-                  onClick={() => {
-                    stopAndToBackTask(props.taskListFiltered?.id, props.taskListFiltered.state_id == 4 ? null : "teste", null, props.taskListFiltered)
-                    setIsOpenModal((prev: any) => !prev);
-                  }}
-                  className="btn btn-transparent"
-                >
-                  {/* Aqui é o botão para parar e retomar o botão  */}
-                  {props.taskListFiltered.state_id == 4 ? (
-                    <i className="fa fa-power-off text-danger"></i>
-                  ) : props.taskListFiltered.state_id == 2 ? (
-                    <i className="fa fa-power-off text-success"></i>
-                  ) : null}
-
-                </button>
+          {valueTask && (
+            <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
+              <div className="w-100">
+                <input
+                  type="text"
+                  className="form-control d-block"
+                  onChange={(e) => setValueNewTask(e.target.value)}
+                  value={valueNewTask}
+                />
               </div>
               <div>
-                <AvatarGroup dataTask={props.taskListFiltered} users={ taskDetails.data ? taskDetails.data?.task_user : [] } />
+                <ButtonIcon color="success" description="Enviar" icon="arrow-right" onClick={handleAddTask} />
               </div>
+              <ButtonIcon title="Questão" color="secondary" icon="question" description="" onClick={() => {
+                console.log('task', )
+              }} />
+              <ButtonIcon title="Anexo" color="secondary" icon="newspaper" description="" onClick={() => console.log('Anexo 1')} />
             </div>
-          </div>
+          )}
+          {openClock.isCompShopDep && <div className="col-md-12 d-flex flex-column justify-content-between">
+            <SelectTaskItem data={props.taskListFiltered} />
+          </div>}
         </div>
       </div>
     </div>
@@ -112,28 +198,46 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
 
 const ModalDefault: React.FC<TaskItem> = (props) => {
   const [percent, getPercent] = useState<any>(0);
+  const [notification, setNotification] = useState<string | null>(null);
 
-  // chamada do websocket context do GTPP
-  const { task, taskPercent } = useWebSocket();
+  const { 
+    task, 
+    taskPercent, 
+    messageNotification 
+  } = useWebSocket();
+
+  useEffect(() => {
+    // @ts-ignore
+    if (messageNotification && messageNotification.object?.description) { setNotification(messageNotification.object?.description);
+
+      // Remover notificação após 5 segundos
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [messageNotification]);
 
   return (
     <div className="zIndex99">
-      {/* 
-        eu tirei o overflow-hidden da classe para colocar porta retrato para pegar as informações dos usuários quando clicados!
-        temos que fazer uma lógica que quando o usuário for clicar no porta retrato para pegar as informações dos usuários precisamos fazer os seguintes passos
-
-        usuário clicou:  retirar o overflow-hidden
-        usuário saiu: reclocar o overflow-hidden
-      */}
-      <div className="card position-absolute modal-card-default" style={{width: '70%'}}> {/* Aqui tirei o w-75 para conseguir fazer um controle de CSS responsivo vou desenhar ele de forma universal aonde vai conseguir pegar tanto no mobile quando no dasktop */}
+      {notification && (
+        <div className="position-absolute">
+          <Modalnotification 
+            message={notification} 
+            title="Tarefa feita com sucesso!" 
+            whichType="success" 
+            user="Jonatas" 
+          />
+        </div>
+      )}
+      <div className="card modal-card-default">
         <section className="header-modal-default">
           <HeaderModal
             color="danger"
             description={task.description}
-            onClick={props.close_modal} />
+            onClick={props.close_modal}
+          />
           <ProgressBar progressValue={taskPercent} />
         </section>
-        <section className="body-modal-default">
+        <section className="body-modal-default h-100">
           <BodyDefault
             details={props.details}
             getPercent={getPercent}
@@ -145,5 +249,6 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
     </div>
   );
 };
+
 
 export default ModalDefault;

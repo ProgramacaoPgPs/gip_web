@@ -18,7 +18,6 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   const [value, setValueChange] = useState<string>(details?.full_description);
   const {changeDescription} = useWebSocket();
 
-  // Atualiza o valor quando task_description mudar
   useEffect(() => {
     setValueChange(details?.full_description);
   }, [details?.full_description]);
@@ -30,13 +29,13 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   };
 
   return (
-    <div className="d-flex align-items-end gap-2 mt-2 flex-column">
+    <div className="d-flex align-items-end gap-2 mt-2 flex-column position-relative">
       <textarea
         style={{ resize: "none" }}
         onChange={handleTextChange}
         disabled={disabledForm || !isOpenButton}
         value={value}
-        className={textAreaClasses}
+        className={`${textAreaClasses}`}
         cols={cols}
         rows={rows}
         aria-label="Descrição da tarefa"
@@ -46,10 +45,13 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
           changeDescription(value, task.id, task.id);
           setIsOpenButton((prev) => !prev);
         }}
-        className={`${buttonClasses} btn-${isOpenButton ? "success" : "danger"}`}
+        className={`${buttonClasses}  position-absolute`} 
+        style={{
+          top: "82px",
+        }}
         aria-label={isOpenButton ? buttonTextOpen : buttonTextClosed}
       >
-        {isOpenButton ? buttonTextOpen : buttonTextClosed}
+        <i className={`fa fa-${isOpenButton ? "unlock" : "lock" } text-${isOpenButton ? "success" : "danger"}`}></i>
       </button>
     </div>
   );

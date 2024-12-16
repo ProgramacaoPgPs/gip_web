@@ -64,6 +64,11 @@
     padding: 0.5vw;
 }
 
+.border-secondary {
+    border: 2px solid #cecece !important;
+    padding: 0.5vw;
+}
+
 .container-fluid {
     max-width: 1920px;
     width: 100%;

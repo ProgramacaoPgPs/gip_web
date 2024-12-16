@@ -4,7 +4,6 @@ import ImageUser from "../../../../Assets/Image/user.png";
 import { useMyContext as useContextDeufault} from "../../../../Context/MainContext";
 import { convertImage } from "../../../../Util/Util";
 import { Connection } from "../../../../Connection/Connection";
-import { InputCheckbox } from "../../../../Components/CustomForm";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -22,6 +21,8 @@ const UserProfile = (props: any) => {
         const conn = new Connection('18');
         const userList: any = [];
         
+        // Temos que fazer um filtro para pesquisar um usuario a pedido do marcio
+
         // Verifica se userId é um array e mapeia sobre ele
         if (Array.isArray(userId)) {
           for (let user of userId) {
@@ -112,9 +113,9 @@ const LoadUserCheck = (props: any) => {
           // precisamos pesquisar quem é o list user e o que ele faz para que conseguirmos pegar todos os usuários e fazer a vinculação dele com a tarefa!
           const responseUserTaskList: any = await connection.get(`&task_id=${props.list.data.datatask.id}&list_user=1`, 'GTPP/Task_User.php');
           for (let user of responseUserTaskList.data) {
-
             // precisamos carregar essas photos antes do que os dados para não ter um atraso no carregamento.
-            const responsePhotos:any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
+            // Aqui tive que tirar porque tava fazendo travar pelo numero grande de requisições.
+            const responsePhotos:any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php'); 
 
             userList.push({
               photo: responsePhotos.photo, // responsePhotos.photo --> é aqui que faz com que a busca dos dados demore porque é aonde que os dados estão sendo carregados paras ser utilizados.
@@ -155,7 +156,6 @@ const LoadUserCheck = (props: any) => {
   )
 }
 
-
 const ListUserTask = ({ item, taskid }:any) => {
   const [isChecked, setIsChecked] = useState(item.check);
   const connection = new Connection('18');
@@ -164,20 +164,21 @@ const ListUserTask = ({ item, taskid }:any) => {
     <div
       className={`d-flex gap-4 rounded w-100 align-items-center p-1 mb-2 ${isChecked ? 'bg-secondary' : 'bg-normal'}`}
       onClick={async () => {
-        // Aqui só precisa fazer o PUT para conseguir fazer vincular um usuário na lista.
+        // Aquit estou fazendo a vinculacão do usúario com a tarefa.
+        // Aqui vou levar esse funcionalidade para o contexto aonde posso fazer com que o websocket trabalhe com isso e conseguir fazer a renderização mais facilmente.
         setIsChecked(!isChecked);
-        let result = await connection.put({ check: !isChecked, name: item.name, user_id: item.user, task_id: taskid }, 'GTPP/Task_User.php');
-        console.log(result);
-
+        let result: any = await connection.put({ check: !isChecked, name: item.name, user_id: item.user, task_id: taskid }, 'GTPP/Task_User.php');
+        if(result.error == true){
+          alert('Voce não é criador dessa tarefa para vincular algum colaborador!')
+        } else {
+          alert('Vinculado com sucesso!');
+        };
       }}
     >
       <input
         type="checkbox"
         checked={isChecked}
-        onChange={(e) => {
-          setIsChecked(e.target.checked);
-          console.log('Checkbox toggled:', e.target.checked);
-        }}
+        onChange={(e) => setIsChecked(e.target.checked)}
         hidden
       />
       <div className="avatar">
@@ -222,7 +223,13 @@ function ModalUser (props: any){
                 <div><strong>Adicione Colaboradores</strong></div>
                 <div><button className="btn bg-danger text-white" onClick={() => setLoadUserTask(true)}>X</button></div>
               </div>
-              <LoadUserCheck list={props} />
+              <div className="h-100 overflow-auto">
+                <LoadUserCheck list={props} />
+              </div>
+              <div>
+                <input type="text" className="form-control" onChange={(e) => console.log(e.target.value)}  />
+              </div>
+
             </React.Fragment>
           )}
           <div className="d-flex justify-content-end">
@@ -238,8 +245,14 @@ const Avatar = () => {
   const {userLog} = useContextDeufault();
 
   return (
-    <div className={`avatar ${userLog.session ? `avatar-green` : `avatar-red`}`}>
-      <Image title={userLog.name} alt={userLog.name} src={convertImage(userLog.photo) ?? ImageUser }/>
+    // Aqui nesse componente temos a foto do usuário logado.
+    // <div className={`avatar ${userLog.session ? `avatar-green` : ``}`}>
+    //   <Image title={userLog.name} alt={userLog.name} src={convertImage(userLog.photo) ?? ImageUser }/>
+    // </div>
+
+    // Aqui nesse componente estamos montanto para que ele seja responsivo e que não seja complicado de entender
+    <div className="bg-primary text-white p-2 gap-2 rounded font-weight-bold d-flex" >
+      <i className="fa fa-user text-white"></i> <p className="font-weight-bold">Adicione um usuário</p>
     </div>
   );
 };

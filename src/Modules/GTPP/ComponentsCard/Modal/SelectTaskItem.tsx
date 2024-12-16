@@ -20,7 +20,6 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const [shopOptions, setShopOptions] = useState<{ id: number; description: string }[]>([]);
   const [companyOptions, setCompanyOptions] = useState<{ id: number; description: string }[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<{ id: number; description: string }[] | any>([]);
-
   const [selectedCompany, setSelectedCompany] = useState<number | undefined>(data?.csds[0]?.company_id);
   const [selectedShop, setSelectedShop] = useState<number | undefined>(data?.csds[0]?.shop_id);
   const [captureDep, setCaptureDep] = useState<number | any>();
@@ -62,62 +61,66 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
     };
   }, []);
 
+  const booleanDep = departmentOptions?.some((item: any) => item.check === true) || false;
+
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-4">
-          <SelectFieldDefault
-            label="Companhia"
-            value={selectedCompany}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setSelectedCompany(Number(e.target.value))
-            }
-            options={companyOptions.map((company) => ({
-              label: company.description,
-              value: company.id,
-            }))}
-          />
-        </div>
-        <div className="col-md-4">
-          <SelectFieldDefault
-            label="Loja"
-            value={selectedShop}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setSelectedShop(Number(e.target.value))
-            }
-            options={shopOptions.map((shop) => ({
-              label: shop.description,
-              value: shop.id,
-            }))}
-          />
-        </div>
-        <div className="col-md-4">
+    <div className="d-flex gap-2 mt-4">
+      <div>
+        <p><strong>Loja</strong></p>
+        <SelectFieldDefault
+          label=""
+          disabled={booleanDep}
+          value={selectedCompany}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            setSelectedCompany(Number(e.target.value))
+          }
+          options={companyOptions.map((company) => ({
+            label: company.description,
+            value: company.id,
+          }))}
+        />
+      </div>
+      <div>
+        <p><strong>Compania</strong></p>
+        <SelectFieldDefault
+          label=""
+          disabled={booleanDep}
+          value={selectedShop}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            setSelectedShop(Number(e.target.value))
+          }
+          options={shopOptions.map((shop) => ({
+            label: shop.description,
+            value: shop.id,
+          }))}
+        />
+      </div>
+      <div>
+        <i className="fa"></i>
+        <div
+          className="d-flex align-items-center position-relative"
+          id="department-modal"
+        >
           <div
-            className="d-flex align-items-center mt-4 position-relative"
-            id="department-modal"
+            className="border rounded form-control cursor-pointer"
+            onClick={() => setOpenModal((prev) => !prev)}
+            aria-expanded={openModal ? "true" : "false"}
           >
-            <button
-              className="btn btn-light border"
-              onClick={() => setOpenModal((prev) => !prev)}
-              style={{ height: "40px" }}
-              aria-haspopup="true"
-              aria-expanded={openModal ? "true" : "false"}
-            >
-              Departamento
-            </button>
-            {openModal && departmentOptions.length > 0 && (
-              <div className="position-absolute" style={{ top: "110%" }}>
-                <CheckboxList 
-                  captureDep={setCaptureDep}
-                  items={departmentOptions}
-                  getCheck={(item: any) => {
-                    // @ts-ignore
-                    checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
-                  }}
-                />
-              </div>
-            )}
+            Departamento
           </div>
+          {openModal && departmentOptions.length > 0 && (
+            <div className="position-absolute bg-light rounded boxListCheck">
+              <CheckboxList 
+                captureDep={setCaptureDep}
+                items={departmentOptions}
+                getCheck={(item: any) => {
+                  console.log(departmentOptions);
+                  // @ts-ignore
+                  checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

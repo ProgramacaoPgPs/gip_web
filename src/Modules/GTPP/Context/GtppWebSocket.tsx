@@ -8,11 +8,6 @@ class GtppWebSocket {
   private lastSentMessage: object | null = null;
   callbackOnMessage!: (notify: any) => Promise<void>;
 
-  // constructor() {
-  //   this.socket = null;
-  //   this.isConnected = false;
-  // }
-
   // Função para conectar ao WebSocket
   connect(): void {
     if (localStorage?.tokenGIPP) {
@@ -90,20 +85,8 @@ class GtppWebSocket {
     }
   }
 
-  // public send(json: object): void {
-  //   if (this.isConnected) {
-  //     this.lastSentMessage = json;
-  //     // @ts-ignore
-  //     this.socket.send(JSON.stringify(json));
-  //     console.log('Mensagem enviada:', this.lastSentMessage);
-  //   } else {
-  //     console.warn("Não está conectado ao WebSocket ou o socket está fechado");
-  //   }
-  // }
-
   informSending(json: object) {
     if (this.isConnected && this.socket) {
-      console.log(JSON.stringify(json));     
       this.socket.send(JSON.stringify(json));
     }
   }

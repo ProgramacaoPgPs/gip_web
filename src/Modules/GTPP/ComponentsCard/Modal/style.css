@@ -1,7 +1,14 @@
 .modal-card-default {
-    z-index: 1; 
-    top: 10%;
-    left: 13%;
+    width: 50%;
+    height: 98%;
+    margin-top: 5px;
+}
+
+/* Media queries para responsividade */
+@media screen and (max-width: 768px) {
+    .modal-card-default {
+        width: 100%; /* Ajusta para ocupar toda a largura em telas menores */
+    }
 }
 
 .zIndex99 {
@@ -10,6 +17,8 @@
     left: 0;
     width: 100% !important;
     height: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .border-online {
@@ -30,7 +39,80 @@
     width: 300px;
 }
 
-.position-box-users {
-    top: 688%;
-    left: 81%;;
+.boxListCheck {
+    top: 100%;
+    left: 0%;
+}
+
+/* Ajusta o posicionamento para telas menores */
+@media screen and (max-width: 768px) {
+    .cardUser {
+        width: 20%; /* Tornar os cartões maiores para facilitar o toque */
+    }
+
+    .cardUser:hover {
+        width: 100%; /* Expande o cartão para toda a largura */
+    }
+}
+
+.box-dialog {
+    width: 300px;
+    top: 12%;
+    left: 60%;
+    z-index: 1;
+}
+
+.taskGtpp {
+    height: 500px;
+}
+
+@media screen and (max-width: 920px) {
+    .box-dialog {
+        width: 300px;
+        top: 32%;
+        left: 15%;
+    }
+     
+    .portrait {
+        left: 2% !important;
+        height: 270px !important;
+        top: 20% !important;
+    }
+
+    .taskGtpp {
+        height: 400px;
+    }
+}
+
+
+/* Ajustes de posicionamento em telas menores */
+@media screen and (max-width: 768px) {
+    .position-box-users {
+        top: 90%;
+        left: 50%; /* Centraliza em telas menores */
+        transform: translateX(-50%);
+    }
+
+    .box-dialog {
+        top: 14%;
+        left: 50%;
+        width: 300px;
+        transform: translateX(-50%);
+    }
+
+    .taskGtpp {
+        height: 370px;
+    }
+
+    /* AQUI FICA O ESTILO E A POSIÇÃO DA LISTA DE COLABORADORES */
+    .portrait {
+        left: 2% !important;
+        height: 510px !important;
+        top: 8% !important;
+    }
+
+    .boxListCheck {
+        top: 100%;
+        left: -86%;
+    }
 }
