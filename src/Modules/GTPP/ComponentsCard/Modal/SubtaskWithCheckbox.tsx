@@ -63,8 +63,11 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
           />
           <div className="d-flex gap-2">
             <ButtonIcon title="Observação" color="secondary" icon="book" description="" onClick={() => {
-              setSubtask((prev) => ({...prev, idSubTask: task.id}))
+              setSubtask((prev) => ({...prev, idSubTask: task.id}));
               setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false}));
+            }} />
+            <ButtonIcon title="Anexo" color="secondary" icon="newspaper" description="" onClick={() => {
+              console.log('teste');
             }} />
           </div>
         </div>

@@ -31,7 +31,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueTask, setValueTask] = useState<boolean>(false);
   const { taskDetails, task, stopAndToBackTask } = useWebSocket();
 
-  // AQUI VOU CHAMAR O MODAL DO CLOCK PARA EU INSERIR QUANTOS DIAS VOU FICAR COM A TAREFA ATÉ TERMINAR.
   const [openClock, setOpenClock] = useState<{
     stopTask: boolean;
     openModalQuastionTask: boolean;
@@ -75,7 +74,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
 
   return (
     <div className="row mt-3 h-100 overflow-hidden">
-      {/* AQUI VAMOS FAZER UM COMPONENTE PARA DIMINUIR AS LINHAS PRECISAMOS ESTUDAR ESSAS LINHAS PARA DIMINUIR E DEIXAR ELAS NAS MELHORES CONDIÇÕES. */}
       <div className="d-flex justify-content-between px-4">
         <div className="d-flex align-items-center">
           <AvatarGroup
@@ -84,7 +82,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           />
         </div>
         <div className="">
-          {/* Aqui vou fazer um componente separado */}
           {openClock.openModalQuastionTask ? (
             <MessageModal
               typeInput={
@@ -128,7 +125,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
             />
           ) : null}
           <div>
-            {/* Aqui é o botão para fazer a parada da tarefa! */}
             <div
               className="cursor-pointer"
               onClick={() => {
@@ -207,10 +203,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
   } = useWebSocket();
 
   useEffect(() => {
-    // @ts-ignore
     if (messageNotification && messageNotification.object?.description) { setNotification(messageNotification.object?.description);
-
-      // Remover notificação após 5 segundos
       const timer = setTimeout(() => setNotification(null), 3000);
       return () => clearTimeout(timer);
     }

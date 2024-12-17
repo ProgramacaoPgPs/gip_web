@@ -38,7 +38,7 @@ export interface iGtppWsContextType {
     task: any;
     taskDetails:iTaskReq;
     taskPercent:number;
-    messageNotification: Record<string, unknown>;
+    messageNotification: Record<string, any>;
     setTaskPercent:(value:number)=>void;
     setTask: (value: any) => void;
     clearGtppWsContext:()=>void;

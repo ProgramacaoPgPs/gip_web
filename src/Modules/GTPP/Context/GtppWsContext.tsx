@@ -224,18 +224,18 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     description: string
   ) {
     try {
-      const obj = {
-        id: subId,
-        task_id: taskId,
-        description: description,
-      };
-      // const obj2 = {
-      //     id: subId,
-      //     task_id: taskId,
-      //     note: description
-      // }
+      // const obj = {
+      //   id: subId,
+      //   task_id: taskId,
+      //   description: description,
+      // };
+      const obj2 = {
+          id: subId,
+          task_id: taskId,
+          note: description
+      }
       const connection = new Connection("18");
-      await connection.put(obj, "GTPP/TaskItem.php");
+      await connection.put(obj2, "GTPP/TaskItem.php");
       ws.current.informSending({
         error: false,
         user_id: userLog.id,
