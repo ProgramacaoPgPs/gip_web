@@ -12,7 +12,8 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   textAreaClasses = "form-control",
   rows = 5,
   cols = 10,
-  task, details
+  task,
+  details
 }) => {
   const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
   const [value, setValueChange] = useState<string>(details?.full_description);

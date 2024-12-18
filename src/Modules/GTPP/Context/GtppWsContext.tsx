@@ -219,28 +219,23 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   // AQUI VOU PRECISAR MONTAR UMA CONDICIONAL PARA MUDAR A DESCRIÇÃO E COLOCAR UMA OBSERVAÇÃO.
-  // message((prev: any) => ({...prev, message: response?.message}));
   async function changeObservedForm(
     taskId: number,
     subId: number,
     description: string,
-    isNote: boolean = false,
-    message: any
+    isNote: boolean
   ) {
     try {
+
+      console.log(isNote);
       const obj = {
         id: subId,
         task_id: taskId,
-        [isNote ? 'note' : 'description']: description, 
+        [!isNote ? 'description' : 'note']: description,
       };
-
-      const connection = new Connection("18");
       
-
-      if(obj.isDescription || obj.isNote) {
-       let response = await connection.put(obj, "GTPP/TaskItem.php");
-       console.log(response);
-      }
+      const connection = new Connection("18");
+      await connection.put(obj, "GTPP/TaskItem.php");
 
       ws.current.informSending({
         error: false,
@@ -248,7 +243,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         object: {
           id: subId,
           task_id: taskId,
-          [isNote ? 'note' : 'description']: description
+          [!isNote ? 'description' : 'note']: description,
         },
         task_id: taskId,
         type: 2,
@@ -355,7 +350,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         checkTaskComShoDepSub,
         changeDescription,
         stopAndToBackTask,
-        changeObservedForm
+        changeObservedForm,
       }}
     >
       {children}

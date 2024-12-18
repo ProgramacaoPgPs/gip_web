@@ -169,7 +169,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
         <div className="col-md-12 h-100">
           <FormTextAreaDefault
             task={props.taskListFiltered}
-            details={props.details.data}
+            details={props?.details?.data}
             disabledForm={props.disabledForm}
           />
           <div className="mt-2">
@@ -314,11 +314,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           <ProgressBar progressValue={taskPercent} />
         </section>
         <section className="body-modal-default h-100">
-          <BodyDefault
-            message={seNotificationMessage}
-            details={props.details}
-            taskListFiltered={task || []}
-          />
+          <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
         </section>
       </div>
     </div>

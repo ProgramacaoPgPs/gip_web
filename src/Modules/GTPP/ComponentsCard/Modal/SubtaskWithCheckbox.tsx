@@ -45,7 +45,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         onSave={
           async (text) => {
           try {
-            changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, text, message);
+            changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, text, message, false);
             setSubtask((prev) => ({ ...prev, isObservable: false }));
           } catch (error) {
             console.log(error);
