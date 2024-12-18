@@ -10,7 +10,6 @@ export type TaskItem = {
     getPercent?: any;
     listItem?: any;
     resetTask?: any;
-    setRenderList?: any;
     details?: any;
     taskDetails?: any;
     taskCheckReset?: any;
@@ -42,4 +41,5 @@ export type TaskItem = {
     subTasks: any[];
     onTaskChange: (id: number, checked: boolean) => void;
     allData: any;
+    message?: any;
   }

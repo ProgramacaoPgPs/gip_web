@@ -63,8 +63,14 @@
 }
 
 .taskGtpp {
-    height: 470px;
+    height: 570px;
 }
+
+/* @media screen and (min-height: 974px) {
+    .taskGtpp {
+        height: 470px;
+    }
+} */
 
 @media screen and (max-width: 920px) {
     .box-dialog {

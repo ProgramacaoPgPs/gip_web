@@ -27,68 +27,68 @@ legend {
 }
 
 body {
-  font-size: var(--font-size-body) !important;
+  font-size: var(--font-size-body);
 }
 
 p {
-  font-size: var(--font-size-p) !important;
+  font-size: var(--font-size-p);
   margin: 0;
 }
 
 h1 {
-  font-size: var(--font-size-h1) !important;
+  font-size: var(--font-size-h1);
 }
 
-h2 {
-  font-size: var(--font-size-h2) !important;
-}
+/* h2 {
+  font-size: var(--font-size-h2);
+} */
 
 h3 {
-  font-size: var(--font-size-h3) !important;
+  font-size: var(--font-size-h3);
 }
 
 h4 {
-  font-size: var(--font-size-h4) !important;
+  font-size: var(--font-size-h4);
 }
 
 h5 {
-  font-size: var(--font-size-h5) !important;
+  font-size: var(--font-size-h5);
 }
 
 h6 {
-  font-size: var(--font-size-h6) !important;
+  font-size: var(--font-size-h6);
 }
 
 small {
-  font-size: var(--font-size-small) !important;
+  font-size: var(--font-size-small);
 }
 
 figcaption {
-  font-size: var(--font-size-caption) !important;
+  font-size: var(--font-size-caption);
 }
 
 button {
-  font-size: var(--font-size-button) !important;
+  font-size: var(--font-size-button);
 }
 
 input, textarea {
-  font-size: var(--font-size-input) !important;
+  font-size: var(--font-size-input);
 }
 
 blockquote {
-  font-size: var(--font-size-blockquote) !important;
+  font-size: var(--font-size-blockquote);
 }
 
 ul, ol {
-  font-size: var(--font-size-list) !important;
+  font-size: var(--font-size-list);
 }
 
 footer {
-  font-size: var(--font-size-footer) !important;
+  font-size: var(--font-size-footer);
 }
 
 header, nav {
-  font-size: var(--font-size-header) !important;
+  font-size: var(--font-size-header);
 }
 
 

@@ -8,7 +8,8 @@ import ButtonIcon from "../Button/ButtonIcon/btnicon";
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   subTasks,
-  allData
+  allData,
+  message
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
 
@@ -29,20 +30,27 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   return (
     <div className="overflow-auto mt-3 border-secondary rounded taskGtpp">
       <Observer
-        title="Digite a mudança da tarefa"
+        title="Menu de edição"
         text={subTask.text}
         setText={(value: string) => setSubtask((prev) => ({ ...prev, text: value }))}
         isOpen={subTask.isObservable}
         onClose={() => setSubtask((prev) => ({ ...prev, isObservable: false }))}
-        onSave={async (text) => {
+        childrenContent={(
+          <React.Fragment>
+            <div>
+              <textarea name="" id="" placeholder="Digite..."></textarea>
+            </div>
+          </React.Fragment>
+        )}
+        onSave={
+          async (text) => {
           try {
-            changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, text);
+            changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, text, message);
             setSubtask((prev) => ({ ...prev, isObservable: false }));
           } catch (error) {
             console.log(error);
           }
         }}
-        
       />
 
       {subTasks.map((task, index: number) => (
@@ -62,12 +70,9 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
             key={index}
           />
           <div className="d-flex gap-2">
-            <ButtonIcon title="Observação" color="secondary" icon="book" description="" onClick={() => {
+            <ButtonIcon title="Observação" color="secondary" icon="bars" description="" onClick={() => {
               setSubtask((prev) => ({...prev, idSubTask: task.id}));
               setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false}));
-            }} />
-            <ButtonIcon title="Anexo" color="secondary" icon="newspaper" description="" onClick={() => {
-              console.log('teste');
             }} />
           </div>
         </div>

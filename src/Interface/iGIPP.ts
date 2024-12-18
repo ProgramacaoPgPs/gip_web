@@ -46,7 +46,7 @@ export interface iGtppWsContextType {
     checkTaskComShoDepSub:(task_id:number, company_id:number, shop_id:number, depart_id:number, taskLocal: any)=>void;
     changeDescription: (description: string, id: number, descLocal: string) => void;
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;
-    changeObservedForm: (taskId: number, subId: any, description: string) => void;
+    changeObservedForm: (taskId: number, subId: any, description: string, message?: any, isNote?: any) => void;
 }
 
 export interface iTaskReq {

@@ -13,23 +13,15 @@ import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement /*,webSocketInstance*/ } = useMyContext();
-  
+  const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
   const [cardTask, setCardTask] = useState<any>();
   const [cardStateTask, setCardStateTask] = useState<any>();
-
   const [openFilter, setOpenFilter] = useState<any>(false);
-
   const [openCardDefault, setOpenCardDefault] = useState<any>(false);
-  // const [filterTask, setFilterTask] = useState<any>([]);
-  const [responseWs, setResponseWs] = useState<any>([]);
-  const [renderList, setRenderList] = useState<any>(true);
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
   const {task,setTask,setTaskPercent,clearGtppWsContext, taskDetails} = useWebSocket();
-
-  // const [details, _] = useState(taskDetails);
 
   useEffect(() => {
     setTitleHead({
@@ -66,7 +58,7 @@ export default function Gtpp(): JSX.Element {
 
   useEffect(() => {
     getTaskInformations();
-  }, [getTaskInformations, renderList]);
+  }, [getTaskInformations]);
 
   const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
 
@@ -107,7 +99,7 @@ export default function Gtpp(): JSX.Element {
                     (cardTaskStateValue: any, idxValueState: any) => (
                       <div key={idxValueState}>
                         <label className="cursor-pointer">
-                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={!selectedStateIds.includes(cardTaskStateValue.id)} />{" "}
+                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={!selectedStateIds.includes(cardTaskStateValue.id)} />
                           {cardTaskStateValue.description}
                         </label>
                       </div>
@@ -117,7 +109,7 @@ export default function Gtpp(): JSX.Element {
               ) : null}
             </div>
           </div>
-          <Col xs={12} className="d-flex h-100 flex-nowrap p-0" style={{ overflowX: 'auto' }}>
+          <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
             {cardStateTask?.data.map(
               (cardTaskStateValue: any, idxValueState: any) => {
                 const filteredTasks = cardTask?.data.filter(
@@ -192,7 +184,7 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </div>
-        {openCardDefault && <ModalDefault setRenderList={setRenderList}  taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
+        {openCardDefault && <ModalDefault taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
       </Container>
     </div>
   );

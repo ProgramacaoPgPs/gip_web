@@ -226,9 +226,9 @@ function ModalUser (props: any){
               <div className="h-100 overflow-auto">
                 <LoadUserCheck list={props} />
               </div>
-              <div>
+              {/* <div>
                 <input type="text" className="form-control" onChange={(e) => console.log(e.target.value)}  />
-              </div>
+              </div> */}
 
             </React.Fragment>
           )}
