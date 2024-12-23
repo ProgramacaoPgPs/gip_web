@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./AvatarGroup.css";
 import ImageUser from "../../../../Assets/Image/user.png";
-import { useMyContext as useContextDeufault} from "../../../../Context/MainContext";
 import { convertImage } from "../../../../Util/Util";
 import { Connection } from "../../../../Connection/Connection";
+import { useWebSocket } from "../../Context/GtppWsContext";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -60,7 +60,6 @@ const UserProfile = (props: any) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  // Aqui precisos desenvolver uma lógica de como podemos ver se usuário está online ou não
 
   return (
     <div className="">
@@ -81,7 +80,7 @@ const UserProfile = (props: any) => {
               // Aqui quero fazer um modal aonde que eu clicar quero pegar os dados do usuário e exibir esses dados para mostrar as informações dele.
               props.setOpenDetailUser(true);
               props.listuser(photo);
-            }} className={`avatar`}> {/* ${photos?.sessionUser ? 'avatar-green' : 'avatar-red'} --> Aqui vamos veririficar se o usuário está online ou não */}
+            }} className={`avatar`}>
               <Image
                 title={photo.name} // Aqui vamos exibir o nome do usuario
                 src={convertImage(photo.photo) || ImageUser} 
@@ -100,79 +99,31 @@ const UserProfile = (props: any) => {
   );
 };
 
-const LoadUserCheck = (props: any) => {
-  /* Aqui vamos carregar a lista de usuários que pode chegar a participar da tarefa */
-  const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
-  
-
-  useEffect(() => {
-    const loadUserTaskLis = async () =>{
-        const connection = new Connection('18');
-        try {
-          const userList: any = [];
-          // precisamos pesquisar quem é o list user e o que ele faz para que conseguirmos pegar todos os usuários e fazer a vinculação dele com a tarefa!
-          const responseUserTaskList: any = await connection.get(`&task_id=${props.list.data.datatask.id}&list_user=1`, 'GTPP/Task_User.php');
-          for (let user of responseUserTaskList.data) {
-            // precisamos carregar essas photos antes do que os dados para não ter um atraso no carregamento.
-            // Aqui tive que tirar porque tava fazendo travar pelo numero grande de requisições.
-            const responsePhotos:any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php'); 
-
-            userList.push({
-              photo: responsePhotos.photo, // responsePhotos.photo --> é aqui que faz com que a busca dos dados demore porque é aonde que os dados estão sendo carregados paras ser utilizados.
-              check: user.check,
-              name: user.name,
-              user: user.user_id
-            });
-          }
-
-          // console.log(userList);
-          setUserTaskBind(userList); 
-
-        } 
-      catch (error: any) {
-        console.log(error.message);
-      }
-    }
-    loadUserTaskLis();
-  }, []);
-
-  return (
-    <div>
-      <div className="">
-        {/* Aqui estamos trabalhando para conseguir renderizar */}
-        {userTaskBind.length > 0 ? (
-          <>
-          {userTaskBind.map((item: any) => (
-            <ListUserTask item={item} taskid={props.list.data.datatask.id} key={item.user_id} />
-          ))}
-          </>
-        ) : (
-          <p>
-            Carregando todos os colaboradores...
-          </p>
-        )}
-      </div>
-    </div>
-  )
-}
-
-const ListUserTask = ({ item, taskid }:any) => {
+const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   const [isChecked, setIsChecked] = useState(item.check);
   const connection = new Connection('18');
+
+  const handleActiveUser = async () => {
+    const response: any = await connection.put(
+      { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid },
+      'GTPP/Task_User.php'
+    );
+
+    if (response.message && !response.error) {
+      alert('Usuário atualizado com sucesso!');
+      // Recarregar a lista de usuários após a atualização
+      loadUserTaskLis();  // Chamando a função passada via props
+    } else {
+      alert('Erro ao salvar a taréfa!');
+    }
+  };
 
   return (
     <div
       className={`d-flex gap-4 rounded w-100 align-items-center p-1 mb-2 ${isChecked ? 'bg-secondary' : 'bg-normal'}`}
       onClick={async () => {
-        // Aquit estou fazendo a vinculacão do usúario com a tarefa.
-        // Aqui vou levar esse funcionalidade para o contexto aonde posso fazer com que o websocket trabalhe com isso e conseguir fazer a renderização mais facilmente.
         setIsChecked(!isChecked);
-        let result: any = await connection.put({ check: !isChecked, name: item.name, user_id: item.user, task_id: taskid }, 'GTPP/Task_User.php');
-        if(result.error == true){
-          alert('Voce não é criador dessa tarefa para vincular algum colaborador!')
-        } else {
-          alert('Vinculado com sucesso!');
-        };
+        handleActiveUser();
       }}
     >
       <input
@@ -191,65 +142,107 @@ const ListUserTask = ({ item, taskid }:any) => {
   );
 };
 
-// Aqui é aonde vou fazer o modal dos usuarios, a pessoa vai clicar em um dos usuarios e vai abrir ele aqui, e vai enxergar algumas informações importantes sobre esse usuário.
-function ModalUser (props: any){
+
+const LoadUserCheck = (props: any) => {
+  const [userTaskBind, setUserTaskBind] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function loadUserTaskLis() {
+    const connection = new Connection('18');
+    setLoading(true);
+    try {
+      const userList: any = [];
+      const responseUserTaskList: any = await connection.get(
+        `&task_id=${props.list.data.datatask.id}&list_user=1`,
+        'GTPP/Task_User.php'
+      );
+      for (let user of responseUserTaskList.data) {
+        const responsePhotos: any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
+        userList.push({
+          photo: responsePhotos.photo,
+          check: user.check,
+          name: user.name,
+          user: user.user_id
+        });
+      }
+
+      setUserTaskBind(userList);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadUserTaskLis();
+  }, []);  // O useEffect é executado apenas uma vez quando o componente é montado
+
+  if (loading) {
+    return <div>Carregando usuários...</div>;
+  } else {
+    return (
+      <div>
+        {userTaskBind.map((item: any) => (
+          <ListUserTask
+            item={item}
+            taskid={props.list.data.datatask.id}
+            key={item.user_id}
+            loadUserTaskLis={loadUserTaskLis}  // Passando a função para o componente filho
+          />
+        ))}
+      </div>
+    );
+  }
+};
+
+
+function ModalUser(props: any) {
   const [loadUserTask, setLoadUserTask] = useState(true);
 
   return (
     <React.Fragment>
       <div className="border-dark bg-dark text-white rounded portrait d-flex flex-column justify-content-between">
-          {loadUserTask ? (
-            <React.Fragment>
-              {props.openDetailUser ? (
-                <>
-                  <div className="d-flex align-items-center justify-content-end mb-2">
-                    <button className="btn bg-danger text-white" onClick={() => props.setOpenDetailUser(false)}>X</button>
-                  </div>
-                  <div className="text-center">
-                    <Image className="rounded img-fluid img-thumbnail w-100" src={convertImage(props.list?.photo) || ImageUser}  />
-                  </div>
-                  <p><strong>Nome:</strong> {props.list?.name}</p>          
-                  <p><strong>departamento:</strong> {props.list?.department}</p>
-                  <p><strong>loja:</strong> {props.list?.shop}</p>
-                  <p><strong>subdepartamento:</strong> {props.list?.sub}</p>
-                </>
-              ) : (
-                <>{props.children}</>
-              )}
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <div><strong>Adicione Colaboradores</strong></div>
-                <div><button className="btn bg-danger text-white" onClick={() => setLoadUserTask(true)}>X</button></div>
-              </div>
-              <div className="h-100 overflow-auto">
-                <LoadUserCheck list={props} />
-              </div>
-              {/* <div>
-                <input type="text" className="form-control" onChange={(e) => console.log(e.target.value)}  />
-              </div> */}
-
-            </React.Fragment>
-          )}
-          <div className="d-flex justify-content-end">
-            {/* Aqui vou fazer um modal para adicionar outros usuarios que vão poder participar das tarefas. */}
-            {loadUserTask && <i className="btn fa fa-plus text-white" onClick={() => setLoadUserTask(false)}></i>}
-          </div>
+        {loadUserTask ? (
+          <React.Fragment>
+            {props.openDetailUser ? (
+              <>
+                <div className="d-flex align-items-center justify-content-end mb-2">
+                  <button className="btn bg-danger text-white" onClick={() => props.setOpenDetailUser(false)}>X</button>
+                </div>
+                <div className="text-center">
+                  <Image className="rounded img-fluid img-thumbnail w-100" src={convertImage(props.list?.photo) || ImageUser} />
+                </div>
+                <p><strong>Nome:</strong> {props.list?.name}</p>
+                <p><strong>Departamento:</strong> {props.list?.department}</p>
+                <p><strong>Loja:</strong> {props.list?.shop}</p>
+                <p><strong>Subdepartamento:</strong> {props.list?.sub}</p>
+              </>
+            ) : (
+              <>{props.children}</>
+            )}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <div><strong>Adicione Colaboradores</strong></div>
+              <div><button className="btn bg-danger text-white" onClick={() => setLoadUserTask(true)}>X</button></div>
+            </div>
+            <div className="h-100 overflow-auto">
+              <LoadUserCheck list={props} />
+            </div>
+          </React.Fragment>
+        )}
+        <div className="d-flex justify-content-end">
+          {loadUserTask && <i className="btn fa fa-plus text-white" onClick={() => setLoadUserTask(false)}></i>}
+        </div>
       </div>
     </React.Fragment>
-  )
-};
+  );
+}
 
 const Avatar = () => {
-  const {userLog} = useContextDeufault();
-
   return (
-    // Aqui nesse componente temos a foto do usuário logado.
-    // <div className={`avatar ${userLog.session ? `avatar-green` : ``}`}>
-    //   <Image title={userLog.name} alt={userLog.name} src={convertImage(userLog.photo) ?? ImageUser }/>
-    // </div>
-
     // Aqui nesse componente estamos montanto para que ele seja responsivo e que não seja complicado de entender
     <div className="bg-primary text-white p-2 gap-2 rounded font-weight-bold d-flex" >
       <i className="fa fa-user text-white"></i> <p className="font-weight-bold">Adicione um usuário</p>
@@ -271,25 +264,26 @@ const Modal = (props:any) => {
 };
 
 const AvatarGroup = (props: { users: any, dataTask: any }) => {
-  // Aqui estamos abrindo ou fechando um modal aonde podemos visualizar todos os usuarios que estão conectado a uma tarefa.
   const [openDetailsUser, setOpenDetailsUserModal] = useState(true);
 
   return (
     <React.Fragment>
       <div className="cursor-pointer">
-      {openDetailsUser ? (
-        <div onClick={() => setOpenDetailsUserModal(prev => !prev)}>
-          <Avatar />
-        </div>
-      ) : (
-        <React.Fragment>
-          {/* Apos clicar em um usuário da lista eu vou capturar os dados dele e vou exibir um modelo */}
-          <Modal detailsmodaluser={setOpenDetailsUserModal} datatask={props?.dataTask}  user={props?.users} />
-        </React.Fragment>
-      )}
-    </div>
+        {openDetailsUser ? (
+          <div onClick={() => setOpenDetailsUserModal(prev => !prev)}>
+            <Avatar />
+          </div>
+        ) : (
+          <Modal
+            detailsmodaluser={setOpenDetailsUserModal}
+            datatask={props?.dataTask}
+            user={props?.users}
+          />
+        )}
+      </div>
     </React.Fragment>
   );
 };
+
 
 export default AvatarGroup;

@@ -32,19 +32,22 @@ export default function Gtpp(): JSX.Element {
 
   const connection = useMemo(() => new Connection("18", true), []);
 
-  useEffect(() => {
+  async function getTaskInformations2(): Promise<void> {
     setLoading(true);
-    async function getTaskInformations(): Promise<void> {
-      try {
-        const getStatusTask = await connection.get("", "GTPP/TaskState.php");
-        setCardStateTask(getStatusTask);
-      } catch (error) {
-        console.error("Erro ao obter as informações da tarefa:", error);
-      }
+    try {
+      const getStatusTask = await connection.get("", "GTPP/TaskState.php");
+      setCardStateTask(getStatusTask);
+    } catch (error) {
+      console.error("Erro ao obter as informações da tarefa:", error);
     }
-    getTaskInformations();
-    setLoading(false);
-  }, [connection]);
+    finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getTaskInformations2();
+  }, []);
 
   const getTaskInformations = useCallback(async () => {
     const connection = new Connection("18", true);
@@ -133,7 +136,7 @@ export default function Gtpp(): JSX.Element {
                         bg_color={cardTaskStateValue.color}
                         is_first_column={isFirstColumnTaskState}
                         addTask={() => {
-                          setModalPageElement(<Cardregister assistenceFunction={() => setModalPage(false)} />);
+                          setModalPageElement(<Cardregister reloadtask={getTaskInformations} assistenceFunction={() => setModalPage(false)} />);
                           setModalPage(true);
                         }}
                         exportCsv={() => {

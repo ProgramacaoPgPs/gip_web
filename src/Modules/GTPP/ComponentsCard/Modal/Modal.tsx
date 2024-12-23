@@ -7,7 +7,6 @@ import ProgressBar from "./Progressbar";
 import FormTextAreaDefault from "./FormTextAraeaDefault";
 import SubTasksWithCheckbox from "./SubtaskWithCheckbox";
 import SelectTaskItem from "./SelectTaskItem";
-import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import MessageModal from "../ModalMessage/messagemodal";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
@@ -37,8 +36,8 @@ interface ValueStateTask {
 
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
-  const [valueTask, setValueTask] = useState<boolean>(false);
-  const { taskDetails, task, stopAndToBackTask } = useWebSocket();
+  const [valueTask, setValueTask] = useState<boolean>(true);
+  const { taskDetails, task, stopAndToBackTask, handleAddTask } = useWebSocket();
 
   const [ListTask, setListTask] = useState<ValueStateTask>({
     stopTask: false,
@@ -50,28 +49,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
     isQuastion: false,
     isAttachment: false,
   });
-
-  const connection = new Connection("18", true);
-
-  const handleAddTask = async () => {
-    if (valueNewTask.length > 0) {
-      try {
-        let response = await connection.post(
-          {
-            description: valueNewTask,
-            file: null,
-            task_id: props.taskListFiltered.id,
-          },
-          "GTPP/TaskItem.php"
-        );
-        console.log(response);
-        setValueNewTask("");
-        props.reset();
-      } catch (error) {
-        console.error("Error adding task:", error);
-      }
-    }
-  };
 
   return (
     <div className="row mt-3 h-100 overflow-hidden">
@@ -247,12 +224,14 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   color="success"
                   description="Enviar"
                   icon="arrow-right"
-                  onClick={handleAddTask}
+                  onClick={() => handleAddTask(valueNewTask, props.taskListFiltered.id)}
                 />
               </div>
-              {/* <ButtonIcon title="Questão" color="secondary" icon="question" description="" onClick={() => {
-                console.log('task');
-              }} /> */}
+              {/* 
+                <ButtonIcon title="Questão" color="secondary" icon="question" description="" onClick={() => {
+                  console.log('task');
+                }} /> 
+              */}
             </div>
           )}
           {ListTask.isCompShopDep && (

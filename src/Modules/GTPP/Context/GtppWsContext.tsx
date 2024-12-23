@@ -19,8 +19,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<
-    Record<string, unknown>
+  Record<string, unknown>
   >({});
+
+  // GET
+  const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const ws = useRef(new GtppWebSocket());
   const { userLog } = useMyContext();
@@ -62,16 +66,13 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       response.error &&
       response.message.includes("This user has been connected to another place")
     ) {
-      // Criar lógica para voltá-lo para login
     }
 
-    //Aqui será feito a atualização das tarefas.
     if (!response.error && response.type == 2) {
       if (response.object) {
         if (response.object.isItemUp) {
           itemUp(response.object);
         } else if (response.object.isStopAndToBackTask) {
-          // Aqui vamos indentificar pelo objeto qual dos objetos estmos tratando para evitar erros
           if (response.object.taskState == 2) {
           }
           if (response.object.taskState == 4) {
@@ -107,23 +108,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  // atualizando o estados dos components via WebSocket
-  function getNewChangeOfStopAndBackToTask() {
-    if (taskDetails.data) {
-    }
-  }
-
-  // atualizando o estados do usuário.
-  function getNewUserList() {
-    if (taskDetails.data) {
-    }
-  }
-
-  function getNewChangeSubTask() {
-    if(taskDetails.data) {
-    }
-  }
-
   async function checkedItem(
     id: number,
     checked: boolean,
@@ -153,7 +137,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }
 
-  // aqui podemos trabalhar com a vinculação  das tarefas com as lojas e departamentos
   async function checkTaskComShoDepSub(
     task_id: number,
     company_id: number,
@@ -190,6 +173,34 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  const handleAddTask = async (
+    description: string,
+    task_id: string
+  ) => {
+    setLoading(true);
+    try {
+      const connection = new Connection('18');
+      const response: any = await connection.post({
+        description: description,
+        file: null,
+        task_id: task_id
+      }, "GTPP/TaskItem.php");
+
+      if(response.data && !response.error) {
+        getTaskInformations();
+        alert('Salvo com sucesso!');
+      } else {
+        alert('Error saved task.');
+      }
+
+    } catch (error) {
+      console.error("Error adding task:", error);
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Aqui podemos trabalhar de forma horizontal para atualizar a descrição da tarefa de ponta a ponta.
   async function changeDescription(
     description: string,
@@ -223,35 +234,67 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     taskId: number,
     subId: number,
     description: string,
-    isNote: boolean
-  ) {
+    _: string,
+    type: string
+) {
+    setLoading(true); 
     try {
-
-      console.log(isNote);
-      const obj = {
-        id: subId,
-        task_id: taskId,
-        [!isNote ? 'description' : 'note']: description,
-      };
-      
-      const connection = new Connection("18");
-      await connection.put(obj, "GTPP/TaskItem.php");
-
-      ws.current.informSending({
-        error: false,
-        user_id: userLog.id,
-        object: {
+      console.log(type);
+        const connection = new Connection("18"); // Instanciando a conexão com o ID
+        const response: any = await connection.put(type === "description" ? {
           id: subId,
           task_id: taskId,
-          [!isNote ? 'description' : 'note']: description,
-        },
-        task_id: taskId,
-        type: 2,
-      });
+          description: description
+          } : type === "observed" ? {
+            id: subId,
+            task_id: taskId,
+            note: description
+          } : "", "GTPP/TaskItem.php");
+
+        if (response.message && !response.error) {
+          getTaskInformations();
+          alert('Salvo com sucesso!');
+        } else if (response.data && !response.error) {
+          getTaskInformations();
+          alert('Salvo com sucesso!');
+        } else {
+            alert('Erro ao atualizar a tarefa!');
+        }
+
+        if(type === "description") {
+          ws.current.informSending({
+            error: false,
+            user_id: userLog.id,
+            object: {
+                id: subId,
+                task_id: taskId,
+                description: description,
+            },
+            task_id: taskId,
+            type: 2,
+        })}
+
+        if(type === "observed") {
+          ws.current.informSending({
+            error: false,
+            user_id: userLog.id,
+            object: {
+                id: subId,
+                task_id: taskId,
+                note: description,
+            },
+            task_id: taskId,
+            type: 2,
+          })}
+          
     } catch (error) {
-      console.log("error->", error);
+        console.log("Erro ao tentar salvar:", error);
+        alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
+    } finally {
+        setLoading(false); // Finaliza o carregamento
     }
-  }
+}
+
 
   async function stopAndToBackTask(
     taskId: number,
@@ -343,14 +386,17 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         task,
         taskPercent,
         messageNotification,
+        userTaskBind,
         setTaskPercent,
         setTask,
+        handleAddTask,
+        setTaskDetails,
         clearGtppWsContext,
         checkedItem,
         checkTaskComShoDepSub,
         changeDescription,
         stopAndToBackTask,
-        changeObservedForm,
+        changeObservedForm
       }}
     >
       {children}

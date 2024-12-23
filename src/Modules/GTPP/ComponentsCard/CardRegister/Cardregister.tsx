@@ -5,6 +5,7 @@ import { fieldsetsRegister } from "../../mock/mockTeste";
 
 type Cardregister = {
   assistenceFunction?: any;
+  reloadtask?: any;
   setReset?: any;
 };
 
@@ -26,11 +27,17 @@ const Cardregister: React.FC<Cardregister> = (props) => {
     };
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const connection = new Connection("18", true);
-    connection.post(formDataRef.current, "GTPP/Task.php");
-    // setReset((prev: any) => prev + 1);
+    const response: any = await connection.post(formDataRef.current, "GTPP/Task.php");
+    if(response.message && !response.error) {
+      // aqui vamos re-renderizar o componente chamando ele novamente.
+      props.reloadtask();
+      alert('Tarefa enviada com sucesso!')
+    } else {
+      alert('Erro na tarefa.')
+    }
   };
 
   return (

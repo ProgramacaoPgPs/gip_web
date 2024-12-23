@@ -39,8 +39,11 @@ export interface iGtppWsContextType {
     taskDetails:iTaskReq;
     taskPercent:number;
     messageNotification: Record<string, any>;
+    userTaskBind: any;
     setTaskPercent:(value:number)=>void;
     setTask: (value: any) => void;
+    setTaskDetails: (value: any) => void;
+    handleAddTask: (description: string, task_id: string) => void;
     clearGtppWsContext:()=>void;
     checkedItem:(id: number, checked: boolean, idTask: any, task: any)=>void;
     checkTaskComShoDepSub:(task_id:number, company_id:number, shop_id:number, depart_id:number, taskLocal: any)=>void;
