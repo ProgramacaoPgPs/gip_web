@@ -325,7 +325,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
 
-      if (taskList.state_id == 4) {
+      if (taskList.state_id == 4 || taskList.state_id == 6) {
         await connection.put(
           { task_id: taskId, reason: resource, days: date },
           "GTPP/TaskState.php"
@@ -334,11 +334,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
           error: false,
           user_id: userLog.id,
           object: {
-            description: `Tarefa que estava parado está de volta!`,
+            description: taskList.state_id == 4 ? `Tarefa que estava parado está de volta!` : 'Tarefa que estava completa teve que retornar!',
             task_id: taskId,
             reason: resource,
             days: date,
-            taskState: taskList.state_id, // pegando o id do estado da tarefa.
+            taskState: taskList.state_id,
           },
           task_id: taskId,
           type: 2,
@@ -346,7 +346,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       if (taskList.state_id == 2) {
-        // aquit temos que fazer um modal para pegar o porque o usuario está parando essa tarefa!
         await connection.put(
           { task_id: taskId, reason: resource, days: date },
           "GTPP/TaskState.php"
@@ -359,12 +358,33 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             task_id: taskId,
             reason: resource,
             days: date,
-            taskState: taskList.state_id, // pegando o id do estado da tarefa.
+            taskState: taskList.state_id,
           },
           task_id: taskId,
           type: 2,
         });
       }
+
+      if (taskList.state_id == 3) {
+        await connection.put(
+          { task_id: taskId, reason: resource, days: date },
+          "GTPP/TaskState.php"
+        );
+        ws.current.informSending({
+          error: false,
+          user_id: userLog.id,
+          object: {
+            description: "A tarefa finalizada!",
+            task_id: taskId,
+            reason: resource,
+            days: date,
+            taskState: taskList.state_id,
+          },
+          task_id: taskId,
+          type: 2,
+        });
+      }
+      
     } catch (error) {
       console.log("erro ao fazer o PUT em TaskState.php");
     }

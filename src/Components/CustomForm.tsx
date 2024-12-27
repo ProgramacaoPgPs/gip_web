@@ -114,11 +114,11 @@ export function SelectFieldDefault (props: {
 }
 
 
-export function InputCheckbox(props: {label?: string, value: boolean , onChange: any}) {
+export function InputCheckbox(props: {label?: string, value: boolean , onChange: any, textColor?: string}) {
   return (
     <label className='cursor-pointer'>
       <input type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />{" "}
-      <span className='fs-6'>{props.label}</span>
+      <span className={`fs-6 ${props.textColor}`}>{props.label}</span>
     </label>
   )
 }

@@ -4,7 +4,7 @@ import { SubTasksWithCheckboxProps } from "./Types";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import ModalGender from "../ModalGender/ModalGender";
-
+import AnexoImage from "../AnexoImage/AnexoImage";
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   subTasks,
@@ -13,6 +13,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
   const [selectedOption, setSelectedOption] = useState("description");
+  const [markedLines, setMarkedLines] = useState<Record<string | number, boolean>>({});
 
   const [subTask, setSubtask] = useState<{
     isObservable: boolean,
@@ -32,6 +33,13 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 
   const handleRadioChange = (event: any) => {
     setSelectedOption(event.target.value);
+  }
+
+  const handleLineMarked = (id: string | number) => {
+    setMarkedLines(prevState => ({
+      ...prevState,
+      [id]: !prevState[id]
+    }));
   }
 
   const ModalEdit = () => {
@@ -73,17 +81,19 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
       </div>
     );
   };
-  
-  
 
   return (
     <div className="overflow-auto mt-3 border-secondary rounded taskGtpp">
-      <ModalEdit />
+      {ModalEdit()}
       {subTasks.map((task, index: number) => (
-        <div key={task.id} className="d-flex justify-content-between gap-2 align-items-center mb-2 position-relative">
+        <div 
+          key={task.id} 
+          className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative 
+          ${markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "bg-secondary" : ""}`}
+        >
           {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
-
           <InputCheckbox
+            textColor={markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "text-white" : ""}
             label={task.description}
             onChange={(e: any) => {
               checkedItem(
@@ -97,14 +107,14 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
             key={index}
           />
           <div className="d-flex gap-2">
+            <AnexoImage />
             <ButtonIcon title="Observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
-              setSubtask((prev) => ({...prev, openDialog: !prev.openDialog}));
-              setSubtask((prev) => ({...prev, idSubTask: task.id}));
-            }} />
-            <ButtonIcon title="Observação" color="secondary" icon="bars" description="" onClick={() => {
-              setSubtask((prev) => ({...prev, idSubTask: task.id}));
-              setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false}));
-            }} />
+              handleLineMarked(task.id);
+              setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
+            }}/>
+            <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
+              setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id}));
+            }}/>
           </div>
         </div>
       ))}

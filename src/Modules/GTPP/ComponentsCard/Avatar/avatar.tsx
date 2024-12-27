@@ -15,6 +15,8 @@ const UserProfile = (props: any) => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);  
 
+  console.log(photos);
+
   useEffect(() => {
     const loadPhotos = async () => {
       try {
@@ -142,10 +144,10 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   );
 };
 
-
 const LoadUserCheck = (props: any) => {
   const [userTaskBind, setUserTaskBind] = useState([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');  // Estado para armazenar o termo de pesquisa
 
   async function loadUserTaskLis() {
     const connection = new Connection('18');
@@ -157,9 +159,10 @@ const LoadUserCheck = (props: any) => {
         'GTPP/Task_User.php'
       );
       for (let user of responseUserTaskList.data) {
-        const responsePhotos: any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
+        // const responsePhotos: any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
+        // console.log(responsePhotos);
         userList.push({
-          photo: responsePhotos.photo,
+          photo: null, 
           check: user.check,
           name: user.name,
           user: user.user_id
@@ -174,27 +177,47 @@ const LoadUserCheck = (props: any) => {
     }
   }
 
+  // Função para filtrar os usuários com base no nome
+  const filteredUserList = userTaskBind.filter((user: any) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   useEffect(() => {
     loadUserTaskLis();
   }, []);  // O useEffect é executado apenas uma vez quando o componente é montado
+
+  // Atualiza o termo de pesquisa ao digitar no campo
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   if (loading) {
     return <div>Carregando usuários...</div>;
   } else {
     return (
       <div>
-        {userTaskBind.map((item: any) => (
+        <div>
+          <input
+            placeholder="Nome do colaborador..."
+            type="text"
+            className="form-control mb-3"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
+        {filteredUserList.map((item: any) => (
           <ListUserTask
             item={item}
             taskid={props.list.data.datatask.id}
-            key={item.user_id}
-            loadUserTaskLis={loadUserTaskLis}  // Passando a função para o componente filho
+            key={item.user}
+            loadUserTaskLis={loadUserTaskLis}
           />
         ))}
       </div>
     );
   }
 };
+
 
 
 function ModalUser(props: any) {

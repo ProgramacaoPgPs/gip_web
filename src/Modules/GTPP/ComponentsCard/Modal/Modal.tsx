@@ -71,12 +71,16 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   : null
               }
               title={
-                props.taskListFiltered.state_id == 2
+                  props.taskListFiltered.state_id == 2
                   ? "Deseja parar mesmo a tarefa?"
                   : props.taskListFiltered.state_id == 4
                   ? "Deseja mesmo retomar a tarefa?"
+                  : props.taskListFiltered.state_id == 3
+                  ? "Deseja finalizar essa tarefa?"
                   : props.taskListFiltered.state_id == 5
                   ? "Insira o total de dias que voce precisa"
+                  : props.taskListFiltered.state_id == 6
+                  ? "Deseja mesmo retomar a tarefa?"
                   : null
               }
               onChange={(e: any) =>
@@ -136,10 +140,27 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   icon="clock"
                   description="Quantos dias precisa?"
                 />
+              ) : props.taskListFiltered.state_id == 3 ? (
+                <ButtonIcon
+                  color="success"
+                  icon="check"
+                  description="Deseja finalizar a tarefa?"
+                />
+              ) : props.taskListFiltered.state_id == 6 ? (
+                <ButtonIcon
+                  color="dark"
+                  icon="arrow-left"
+                  description="Deseja retomar a tarefa?"
+                />
+              ) : props.taskListFiltered.state_id == 7 ? (
+                <ButtonIcon
+                  color="dark"
+                  icon="arrow-left"
+                  description="Descancelar tarefa"
+                />
               ) : null}
             </div>
           </div>
-          {/** */}
         </div>
       </div>
       <div className="col-md-12 row m-auto container overflow-hidden h-100">
@@ -224,14 +245,11 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   color="success"
                   description="Enviar"
                   icon="arrow-right"
-                  onClick={() => handleAddTask(valueNewTask, props.taskListFiltered.id)}
+                  onClick={() =>
+                    handleAddTask(valueNewTask, props.taskListFiltered.id)
+                  }
                 />
               </div>
-              {/* 
-                <ButtonIcon title="Questão" color="secondary" icon="question" description="" onClick={() => {
-                  console.log('task');
-                }} /> 
-              */}
             </div>
           )}
           {ListTask.isCompShopDep && (
@@ -246,7 +264,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
 };
 
 const ModalDefault: React.FC<TaskItem> = (props) => {
-  const [notification, setNotification] = useState<string | null>(null);
   const [_, seNotificationMessage] = useState<{
     message: string;
     error: boolean;
@@ -255,34 +272,10 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
     error: true,
   });
 
-  const { task, taskPercent, messageNotification } = useWebSocket();
-
-  useEffect(() => {
-    if (messageNotification && messageNotification.object?.description) {
-      setNotification(messageNotification.object?.description);
-      const timer = setTimeout(() => setNotification(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+  const { task, taskPercent } = useWebSocket();
 
   return (
     <div className="zIndex99">
-      {notification && (
-        <div className="position-absolute">
-          {/* <Modalnotification
-            message={
-              notificationMessage.error
-                ? notificationMessage.message
-                : "Dados enviados com sucesso!"
-            }
-            title={
-              !notificationMessage.error ? "Dados enviados" : "Erro ao enviar"
-            }
-            whichType={!notificationMessage.error ? "success" : "danger"}
-            user="Jonatas"
-          /> */}
-        </div>
-      )}
       <div className="card modal-card-default">
         <section className="header-modal-default">
           <HeaderModal
