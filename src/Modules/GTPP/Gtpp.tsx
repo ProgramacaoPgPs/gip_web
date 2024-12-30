@@ -87,9 +87,9 @@ export default function Gtpp(): JSX.Element {
       <Container fluid className={`h-100 d-flex`}>
         <Row className="flex-grow-0">
           <Col xs={12}>
-            <header id="headerGipp" className="menu-link">
+            {/* <header id="headerGipp" className="menu-link"> */}
               <NavBar list={listPath} />
-            </header>
+            {/* </header> */}
           </Col>
         </Row>      
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
