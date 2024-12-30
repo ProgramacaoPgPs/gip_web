@@ -19,7 +19,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<
-  Record<string, unknown>
+    Record<string, unknown>
   >({});
 
   // GET
@@ -31,6 +31,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
+    return ()=>{
+      if(ws.current && ws.current.isConnected) ws.current.disconnect();
+    }
   }, []);
 
   // Garante a atualização do callback.
@@ -108,7 +111,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function checkedItem (
+  async function checkedItem(
     id: number,
     checked: boolean,
     idTask: any,
@@ -186,7 +189,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         task_id: task_id
       }, "GTPP/TaskItem.php");
 
-      if(response.data && !response.error) {
+      if (response.data && !response.error) {
         getTaskInformations();
         alert('Salvo com sucesso!');
       } else {
@@ -236,64 +239,66 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     description: string,
     _: string,
     type: string
-) {
-    setLoading(true); 
+  ) {
+    setLoading(true);
     try {
       console.log(type);
-        const connection = new Connection("18"); // Instanciando a conexão com o ID
-        const response: any = await connection.put(type === "description" ? {
-          id: subId,
-          task_id: taskId,
-          description: description
-          } : type === "observed" ? {
+      const connection = new Connection("18"); // Instanciando a conexão com o ID
+      const response: any = await connection.put(type === "description" ? {
+        id: subId,
+        task_id: taskId,
+        description: description
+      } : type === "observed" ? {
+        id: subId,
+        task_id: taskId,
+        note: description
+      } : "", "GTPP/TaskItem.php");
+
+      if (response.message && !response.error) {
+        getTaskInformations();
+        alert('Salvo com sucesso!');
+      } else if (response.data && !response.error) {
+        getTaskInformations();
+        alert('Salvo com sucesso!');
+      } else {
+        alert('Erro ao atualizar a tarefa!');
+      }
+
+      if (type === "description") {
+        ws.current.informSending({
+          error: false,
+          user_id: userLog.id,
+          object: {
             id: subId,
             task_id: taskId,
-            note: description
-          } : "", "GTPP/TaskItem.php");
+            description: description,
+          },
+          task_id: taskId,
+          type: 2,
+        })
+      }
 
-        if (response.message && !response.error) {
-          getTaskInformations();
-          alert('Salvo com sucesso!');
-        } else if (response.data && !response.error) {
-          getTaskInformations();
-          alert('Salvo com sucesso!');
-        } else {
-            alert('Erro ao atualizar a tarefa!');
-        }
-
-        if(type === "description") {
-          ws.current.informSending({
-            error: false,
-            user_id: userLog.id,
-            object: {
-                id: subId,
-                task_id: taskId,
-                description: description,
-            },
+      if (type === "observed") {
+        ws.current.informSending({
+          error: false,
+          user_id: userLog.id,
+          object: {
+            id: subId,
             task_id: taskId,
-            type: 2,
-        })}
+            note: description,
+          },
+          task_id: taskId,
+          type: 2,
+        })
+      }
 
-        if(type === "observed") {
-          ws.current.informSending({
-            error: false,
-            user_id: userLog.id,
-            object: {
-                id: subId,
-                task_id: taskId,
-                note: description,
-            },
-            task_id: taskId,
-            type: 2,
-          })}
-          
     } catch (error) {
-        console.log("Erro ao tentar salvar:", error);
-        alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
+      console.log("Erro ao tentar salvar:", error);
+      alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
     } finally {
-        setLoading(false); // Finaliza o carregamento
+      setLoading(false); // Finaliza o carregamento
     }
-}
+  }
 
 
   async function stopAndToBackTask(
@@ -384,7 +389,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
           type: 2,
         });
       }
-      
+
     } catch (error) {
       console.log("erro ao fazer o PUT em TaskState.php");
     }

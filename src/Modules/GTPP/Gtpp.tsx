@@ -23,7 +23,6 @@ export default function Gtpp(): JSX.Element {
 
   // Modified by Hygor
   const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails } = useWebSocket();
-
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
