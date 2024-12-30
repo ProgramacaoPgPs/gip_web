@@ -11,6 +11,7 @@ import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator"
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
+import { error } from "console";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
@@ -30,13 +31,51 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
+  useEffect(() => {
+    getTaskInformations2();
+  }, []);
+
+  //ALTERADO POR HYGOR INÍCIO 12/2024
+  async function statesManagement() {
+    let listState: any = [];
+    if (localStorage.gtppStates) {
+      listState = JSON.parse(localStorage.gtppStates);
+    } else {
+      const getStatusTask: { error: boolean, message?: string, data?: [{ id: number, description: string, color: string }] } = await connection.get("", "GTPP/TaskState.php") || { error: false };
+      if (getStatusTask.error) throw new Error(getStatusTask.message || 'Error generic')
+      listState = createStorageState(getStatusTask.data || [{ id: 0, description: '', color: '' }])
+    }
+    updateCardStateTask(listState);
+  }
+
+  function createStorageState(list: [{ id: number, description: string, color: string }]) {
+    let listState: [{ id: number, description: string, color: string }] = [{ id: 0, description: '', color: '' }];
+    list.forEach((element: { id: number, description: string, color: string }, index) => {
+      const item = { id: element.id, description: element.description, color: element.color, active: true }
+      index == 0 ? listState[index] = item : listState.push(item);
+    });
+    return listState;
+  }
+
+  function handleCheckboxChange(stateId: number) {
+    const newItem: any = [...cardStateTask];
+    newItem[newItem.findIndex((item: any) => item.id == stateId)].active = !newItem[newItem.findIndex((item: any) => item.id == stateId)].active;
+    updateCardStateTask(newItem);
+  };
+
+  function updateCardStateTask(newList: any) {
+    setCardStateTask([...newList]);
+    localStorage.gtppStates = JSON.stringify(newList);
+  }
+
+  //ALTERADO POR HYGOR FIM
+
   const connection = useMemo(() => new Connection("18", true), []);
 
   async function getTaskInformations2(): Promise<void> {
     setLoading(true);
     try {
-      const getStatusTask = await connection.get("", "GTPP/TaskState.php");
-      setCardStateTask(getStatusTask);
+      await statesManagement();
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
@@ -45,9 +84,6 @@ export default function Gtpp(): JSX.Element {
     }
   }
 
-  useEffect(() => {
-    getTaskInformations2();
-  }, []);
 
   const getTaskInformations = useCallback(async () => {
     const connection = new Connection("18", true);
@@ -63,22 +99,10 @@ export default function Gtpp(): JSX.Element {
     getTaskInformations();
   }, [getTaskInformations]);
 
-  const [selectedStateIds, setSelectedStateIds] = useState<number[]>([]);
-
-  const handleCheckboxChange = (stateId: number) => {
-    setSelectedStateIds((prevSelectedStateIds: number[]) => {
-      if (prevSelectedStateIds.includes(stateId)) {
-        return prevSelectedStateIds.filter((id) => id !== stateId);
-      } else {
-        return [...prevSelectedStateIds, stateId];
-      }
-    });
-  };
 
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
-
 
   if (loading) return (<React.Fragment>Carregando...</React.Fragment>);
 
@@ -86,23 +110,17 @@ export default function Gtpp(): JSX.Element {
     <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
-        {/* <Row className="flex-grow-0"> */}
-          {/* <Col xs={12}> */}
-          {/* <header id="headerGipp" className="menu-link"> */}
-          {/* </header> */}
-          {/* </Col> */}
-        {/* </Row> */}
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative filter-style">
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
             <div className="position-absolute filter-modal">
               {openFilter ? (
                 <div className="bg-light border-dark p-3">
-                  {cardStateTask?.data.map(
+                  {cardStateTask?.map(
                     (cardTaskStateValue: any, idxValueState: any) => (
                       <div key={idxValueState}>
                         <label className="cursor-pointer">
-                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={!selectedStateIds.includes(cardTaskStateValue.id)} />
+                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={cardTaskStateValue.active} />
                           {cardTaskStateValue.description}
                         </label>
                       </div>
@@ -113,7 +131,7 @@ export default function Gtpp(): JSX.Element {
             </div>
           </div>
           <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
-            {cardStateTask?.data.map(
+            {cardStateTask?.map(
               (cardTaskStateValue: any, idxValueState: any) => {
                 const filteredTasks = cardTask?.data.filter(
                   (task: any) => task.state_id === cardTaskStateValue.id
@@ -121,12 +139,8 @@ export default function Gtpp(): JSX.Element {
 
                 const isFirstColumnTaskState = idxValueState === 0;
 
-                const isHidden = selectedStateIds.includes(
-                  cardTaskStateValue.id
-                );
-
                 return (
-                  !isHidden && (
+                  cardTaskStateValue.active && (
                     <div
                       key={idxValueState}
                       className="column-task-container p-2 align-items-start flex-shrink-0"
