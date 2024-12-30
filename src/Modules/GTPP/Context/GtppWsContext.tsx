@@ -20,7 +20,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
-  const [notifications,setNotifications] = useState<CustomNotification[]>([]);
+  const [notifications, setNotifications] = useState<CustomNotification[]>([]);
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -31,14 +31,14 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
-    return ()=>{
-      if(ws.current && ws.current.isConnected) ws.current.disconnect();
+    return () => {
+      if (ws.current && ws.current.isConnected) ws.current.disconnect();
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(notifications)
-  },[notifications]);
+  }, [notifications]);
 
   // Garante a atualização do callback.
   useEffect(() => {
@@ -66,21 +66,18 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
-  
+
     setMessageNotification(response);
-    
+
     if (
       response.error &&
       response.message.includes("This user has been connected to another place")
     ) {
       console.error("Derrubar usuário");
     }
-    
+
     if (!response.error && response.type == 2) {
-      const item =JSON.parse(event.data);
-      console.log(item);
-      notifications.push({message:`${item.object.description} : ${item.object.itemUp.description}`,id:item.object.itemUp.id});
-      setNotifications([...notifications]);
+      updateNotification(JSON.parse(event.data));
       if (response.object) {
         if (response.object.isItemUp) {
           itemUp(response.object);
@@ -102,6 +99,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  function updateNotification(item:any){
+    let newList = [...notifications];
+    newList.push({ message: `${item.object.description} : ${item.object.itemUp.description}`, id: item.object.itemUp.id });
+    setNotifications([...newList]);
+  }
   function itemUp(itemUp: any) {
     setTaskPercent(itemUp.percent);
 

@@ -23,7 +23,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails,notifications } = useWebSocket();
+  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -110,7 +110,7 @@ export default function Gtpp(): JSX.Element {
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
         <div className="mt-4">
-          <NotificationBell notifications={notifications} />
+          <NotificationBell />
         </div>
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative filter-style">

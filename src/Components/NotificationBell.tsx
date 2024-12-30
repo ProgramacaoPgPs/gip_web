@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { CustomNotification } from "../Interface/iGIPP";
+import { useWebSocket } from "../Modules/GTPP/Context/GtppWsContext";
 
 
-export default function NotificationBell(props: { notifications: CustomNotification[] }): JSX.Element {
-    const { notifications } = props;
-    console.log(notifications);
+export default function NotificationBell(): JSX.Element {
+    const { notifications,setNotifications } = useWebSocket();
     const [isHovered, setIsHovered] = useState(false);
 
     const handleClick = () => {
@@ -13,6 +13,7 @@ export default function NotificationBell(props: { notifications: CustomNotificat
                 .map((n) => `- ${n.message}`)
                 .join("\n") || "Sem notificações"}`
         );
+        setNotifications([]);
     };
 
     return (
