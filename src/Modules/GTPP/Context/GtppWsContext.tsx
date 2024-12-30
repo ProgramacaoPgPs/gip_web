@@ -43,7 +43,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Garante a atualização do callback.
   useEffect(() => {
     ws.current.callbackOnMessage = callbackOnMessage;
-  }, [task, taskDetails]);
+  }, [task, taskDetails, notifications]);
 
   // Recupera as informações detalhadas da tarefa.
   useEffect(() => {
@@ -100,9 +100,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   function updateNotification(item:any){
-    let newList = [...notifications];
-    newList.push({ message: `${item.object.description} : ${item.object.itemUp.description}`, id: item.object.itemUp.id });
-    setNotifications([...newList]);
+    notifications.push({ message: `${item.object.description} : ${item.object.itemUp.description}`, id: item.object.itemUp.id });
+    setNotifications([...notifications]);
   }
   function itemUp(itemUp: any) {
     setTaskPercent(itemUp.percent);
