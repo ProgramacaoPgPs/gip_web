@@ -21,7 +21,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const {task,setTask,setTaskPercent,clearGtppWsContext, taskDetails} = useWebSocket();
+  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails } = useWebSocket();
 
   useEffect(() => {
     setTitleHead({
@@ -79,19 +79,19 @@ export default function Gtpp(): JSX.Element {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
 
-  
-  if(loading) return (<React.Fragment>Carregando...</React.Fragment>);
-  
+
+  if (loading) return (<React.Fragment>Carregando...</React.Fragment>);
+
   return (
-    <div id="moduleGTPP" className="h-100 w-100 position-relative">
-      <Container fluid className={`h-100 d-flex`}>
-        <Row className="flex-grow-0">
-          <Col xs={12}>
-            {/* <header id="headerGipp" className="menu-link"> */}
-              <NavBar list={listPath} />
-            {/* </header> */}
-          </Col>
-        </Row>      
+    <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
+      <NavBar list={listPath} />
+      <Container className={`h-100 d-flex`}>
+        {/* <Row className="flex-grow-0"> */}
+          {/* <Col xs={12}> */}
+          {/* <header id="headerGipp" className="menu-link"> */}
+          {/* </header> */}
+          {/* </Col> */}
+        {/* </Row> */}
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative filter-style">
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
@@ -140,7 +140,7 @@ export default function Gtpp(): JSX.Element {
                           setModalPage(true);
                         }}
                         exportCsv={() => {
-                          generateAndDownloadCSV(filteredTasks,"teste","GTPP-documento");
+                          generateAndDownloadCSV(filteredTasks, "teste", "GTPP-documento");
                         }}
                         exportPdf={() => {
                           setModalPageElement(
@@ -187,7 +187,7 @@ export default function Gtpp(): JSX.Element {
             )}
           </Col>
         </div>
-        {openCardDefault && <ModalDefault taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext()}} />}
+        {openCardDefault && <ModalDefault taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext() }} />}
       </Container>
     </div>
   );
