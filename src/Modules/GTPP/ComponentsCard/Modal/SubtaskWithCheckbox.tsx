@@ -84,40 +84,42 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 
   return (
     <div className="overflow-auto mt-3 border-secondary rounded taskGtpp">
-      {ModalEdit()}
-      {subTasks.map((task, index: number) => (
-        <div 
-          key={task.id} 
-          className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative 
-          ${markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "bg-secondary" : ""}`}
-        >
-          {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
-          <InputCheckbox
-            textColor={markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "text-white" : ""}
-            label={task.description}
-            onChange={(e: any) => {
-              checkedItem(
-                task.id,
-                e.target.checked,
-                task.task_id,
-                task
-              );
-            }}
-            value={task.check}
-            key={index}
-          />
-          <div className="d-flex gap-2">
-            <AnexoImage />
-            <ButtonIcon title="Observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
-              handleLineMarked(task.id);
-              setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
-            }}/>
-            <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
-              setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id}));
-            }}/>
+      <div className="container">
+        {ModalEdit()}
+        {subTasks.map((task, index: number) => (
+          <div 
+            key={task.id}
+            className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative
+            ${markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "bg-secondary" : ""}`}
+          >
+            {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
+            <InputCheckbox
+              textColor={markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "text-white" : ""}
+              label={task.description}
+              onChange={(e: any) => {
+                checkedItem(
+                  task.id,
+                  e.target.checked,
+                  task.task_id,
+                  task
+                );
+              }}
+              value={task.check}
+              key={index}
+            />
+            <div className="d-flex gap-2">
+              <AnexoImage />
+              <ButtonIcon title="Observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
+                handleLineMarked(task.id);
+                setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
+              }}/>
+              <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
+                setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id}));
+              }}/>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

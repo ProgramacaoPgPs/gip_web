@@ -108,7 +108,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function checkedItem(
+  async function checkedItem (
     id: number,
     checked: boolean,
     idTask: any,

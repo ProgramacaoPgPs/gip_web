@@ -1,22 +1,27 @@
-// App.js
 import React, { useState } from 'react';
 
-function AnexoImage() {
-  const [image, setImage] = useState(null);
+function AnexoImage(props: any) {
+  const [image, setImage] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFileChange = (event: any) => {
     const file = event.target.files[0];
     if (file) {
-      // @ts-ignore
-      setImage(URL.createObjectURL(file));
-      setIsModalOpen(true);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64Image(reader.result?.toString() || '');
+        setImage(URL.createObjectURL(file));
+        setIsModalOpen(true);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setImage(null);
+    setBase64Image(null);
   };
 
   return (
@@ -36,7 +41,16 @@ function AnexoImage() {
           <div className="modal-content rounded" onClick={(e) => e.stopPropagation()}>
             <span>Imagem anexada  </span>
             <img className='rounded' src={image || ""} alt="Imagem selecionada" style={{ width: '100%', maxWidth: '500px' }} />
-            <button onClick={closeModal} className="btn btn-danger">Fechar</button>
+            <button onClick={() => {
+                console.log({
+                    file: base64Image
+                })
+            }} className="btn btn-success" style={{ marginTop: '10px' }}>
+              Salvar
+            </button>
+            <button onClick={closeModal} className="btn btn-danger" style={{ marginTop: '10px' }}>
+              Fechar
+            </button>
           </div>
         </div>
       )}

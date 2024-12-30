@@ -93,7 +93,7 @@ export default function Gtpp(): JSX.Element {
           </Col>
         </Row>      
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
-          <div className="position-relative" style={{ padding: 0, marginLeft: 15 }}>
+          <div className="position-relative filter-style">
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
             <div className="position-absolute filter-modal">
               {openFilter ? (
