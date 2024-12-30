@@ -109,28 +109,29 @@ export default function Gtpp(): JSX.Element {
     <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
-        <div className="mt-4">
-          <NotificationBell />
-        </div>
+
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
-          <div className="position-relative filter-style">
-            <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
-            <div className="position-absolute filter-modal">
-              {openFilter ? (
-                <div className="bg-light border-dark p-3">
-                  {cardStateTask?.map(
-                    (cardTaskStateValue: any, idxValueState: any) => (
-                      <div key={idxValueState}>
-                        <label className="cursor-pointer">
-                          <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={cardTaskStateValue.active} />
-                          {cardTaskStateValue.description}
-                        </label>
-                      </div>
-                    )
-                  )}
-                </div>
-              ) : null}
+          <div className="d-flex w-100 align-items-center justify-content-between my-2">
+            <div className="position-relative filter-style">
+              <h1 onClick={handleOpenFilter} className="cursor-pointer">Filtros <i className="fa fa-angle-down"></i></h1>
+              <div className="position-absolute filter-modal">
+                {openFilter ? (
+                  <div className="bg-light border-dark p-3">
+                    {cardStateTask?.map(
+                      (cardTaskStateValue: any, idxValueState: any) => (
+                        <div key={idxValueState}>
+                          <label className="cursor-pointer">
+                            <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={cardTaskStateValue.active} />
+                            {cardTaskStateValue.description}
+                          </label>
+                        </div>
+                      )
+                    )}
+                  </div>
+                ) : null}
+              </div>
             </div>
+            <NotificationBell />
           </div>
           <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
             {cardStateTask?.map(
