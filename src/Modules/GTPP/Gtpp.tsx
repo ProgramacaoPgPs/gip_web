@@ -67,7 +67,6 @@ export default function Gtpp(): JSX.Element {
     setCardStateTask([...newList]);
     localStorage.gtppStates = JSON.stringify(newList);
   }
-
   //ALTERADO POR HYGOR FIM
 
   const connection = useMemo(() => new Connection("18", true), []);
