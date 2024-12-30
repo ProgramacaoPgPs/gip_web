@@ -1,5 +1,5 @@
 export const listPath = [
-    { page: '/home', children: 'Home' },
+    { page: '/home', children: 'Home', icon:'fa fa-home' },
 ];
 
 
