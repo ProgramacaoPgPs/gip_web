@@ -50,6 +50,7 @@ export interface iGtppWsContextType {
     changeDescription: (description: string, id: number, descLocal: string) => void;
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;
     changeObservedForm: (taskId: number, subId: any, description: string, message?: any, isNote?: any) => void;
+    inviteImagePushed: ( baseFileG4: string,  taskId: number, description: string) => void;
 }
 
 export interface iTaskReq {
@@ -72,7 +73,6 @@ export interface iTaskReq {
 }
 
 export interface iWebSocketContextType {
-
     contactList: iUser[];
     sender: iSender;
     ws: MutableRefObject<WebSocketCLPP>;

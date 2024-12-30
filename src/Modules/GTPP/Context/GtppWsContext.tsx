@@ -296,6 +296,24 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 }
 
+  async function inviteImagePushed(
+    baseFileG4: string, 
+    taskId: number,
+    description: string
+  ) {
+    try {
+      const connection = new Connection("18", true);
+      const response = await connection.post({ 
+        file: baseFileG4, 
+        task_id: taskId, 
+        description: description 
+      },"GTPP/TaskItem.php");
+      console.log(response);
+    } catch (error: any) {
+      console.warn("Error sending image to the server: " + error.message);
+    }
+  }
+
 
   async function stopAndToBackTask(
     taskId: number,
@@ -391,10 +409,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  function setUpdateUserAndAdd() {
-    console.log("setUpdateUserAndAdd");
-  }
-
   function clearGtppWsContext() {
     setTask({});
     setTaskDetails({});
@@ -417,6 +431,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         checkTaskComShoDepSub,
         changeDescription,
         stopAndToBackTask,
+        inviteImagePushed,
         changeObservedForm
       }}
     >

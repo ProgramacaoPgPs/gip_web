@@ -14,7 +14,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   const { checkedItem, changeObservedForm } = useWebSocket();
   const [selectedOption, setSelectedOption] = useState("description");
   const [markedLines, setMarkedLines] = useState<Record<string | number, boolean>>({});
-  const [getMarked, setMarked] = useState<{}>({});
 
   const [subTask, setSubtask] = useState<{
     isObservable: boolean,
@@ -36,7 +35,8 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   const getInviteImageOfServer = (base64Image: string | null) => {
     if (base64Image) {
       // You can now send the image to a server or do whatever you need with the base64 data.
-      console.log('Image base64:', base64Image);
+      // console.log('Image base64:', base64Image);
+      console.log(allData);
       
       // Example: sending image data to a server
       // const response = await axios.post('your-server-endpoint', { image: base64Image });
@@ -86,8 +86,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     );
   }
 
-  console.log(getMarked);
-
   const ModalInformation = ({description}: {description: string}) => {
     return (
       <div className="cloud-balloon">
@@ -124,7 +122,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
               key={index}
             />
             <div className="d-flex gap-2">
-              <AnexoImage getInviteImageOfServer={getInviteImageOfServer}/>
+              <AnexoImage getInviteImageOfServer={getInviteImageOfServer} />
               <ButtonIcon title="Observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
                 handleLineMarked(task.id);
                 setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))

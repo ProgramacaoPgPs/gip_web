@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 interface IAnexoImageProps {
   // This prop will be used to get the base64 image to send to the server
   getInviteImageOfServer?: (base64Image: string | null) => void;
+  taskId?: string;
 }
 
 function AnexoImage(props: IAnexoImageProps) {
@@ -61,32 +62,26 @@ function AnexoImage(props: IAnexoImageProps) {
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content rounded" onClick={(e) => e.stopPropagation()}>
-            <span>Imagem anexada</span>
+            <h3>Imagem anexada</h3>
             <img
               className="rounded"
               src={image || ''}
               alt="Imagem selecionada"
               style={{ width: '100%', maxWidth: '500px' }}
             />
-            <div style={{ marginTop: '10px' }}>
-              <button
-                onClick={() => {
-                  if (props.getInviteImageOfServer) {
-                    props.getInviteImageOfServer(base64Image); // Send base64 image to parent
-                  }
-                  closeModal(); // Close modal after saving
-                }}
-                className="btn btn-success"
-              >
-                Salvar
-              </button>
-              <button
-                onClick={closeModal}
-                className="btn btn-danger"
-                style={{ marginTop: '10px' }}
-              >
-                Fechar
-              </button>
+            <div className="d-flex justify-content-between mt-3">
+              <div>
+                <button
+                  onClick={() => {
+                    if (props.getInviteImageOfServer) {
+                      props.getInviteImageOfServer(base64Image); // Send base64 image to parent
+                    }
+                    closeModal(); // Close modal after saving
+                  }} className="btn btn-success">Salvar</button>
+              </div>
+              <div>
+                <button onClick={closeModal} className="btn btn-danger">Fechar</button>
+              </div>
             </div>
           </div>
         </div>
