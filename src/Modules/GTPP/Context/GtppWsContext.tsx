@@ -390,10 +390,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  function setUpdateUserAndAdd() {
-    console.log("setUpdateUserAndAdd");
-  }
-
   function clearGtppWsContext() {
     setTask({});
     setTaskDetails({});
