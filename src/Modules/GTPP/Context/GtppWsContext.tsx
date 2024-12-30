@@ -5,10 +5,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { iGtppWsContextType, iTaskReq } from "../../../Interface/iGIPP";
+import { CustomNotification, iGtppWsContextType, iTaskReq } from "../../../Interface/iGIPP";
 import GtppWebSocket from "./GtppWebSocket";
 import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
+import { Console } from "console";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
@@ -18,9 +19,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
   const [taskPercent, setTaskPercent] = useState<number>(0);
-  const [messageNotification, setMessageNotification] = useState<
-    Record<string, unknown>
-  >({});
+  const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
+  const [notifications,setNotifications] = useState<CustomNotification[]>([]);
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -35,6 +35,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       if(ws.current && ws.current.isConnected) ws.current.disconnect();
     }
   }, []);
+
+  useEffect(()=>{
+    console.log(notifications)
+  },[notifications]);
 
   // Garante a atualização do callback.
   useEffect(() => {
@@ -62,16 +66,21 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
-
+  
     setMessageNotification(response);
-
+    
     if (
       response.error &&
       response.message.includes("This user has been connected to another place")
     ) {
+      console.error("Derrubar usuário");
     }
-
+    
     if (!response.error && response.type == 2) {
+      const item =JSON.parse(event.data);
+      console.log(item);
+      notifications.push({message:`${item.object.description} : ${item.object.itemUp.description}`,id:item.object.itemUp.id});
+      setNotifications([...notifications]);
       if (response.object) {
         if (response.object.isItemUp) {
           itemUp(response.object);
@@ -408,6 +417,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         taskPercent,
         messageNotification,
         userTaskBind,
+        notifications,
+        setNotifications,
         setTaskPercent,
         setTask,
         handleAddTask,

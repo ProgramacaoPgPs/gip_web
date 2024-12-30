@@ -16,6 +16,10 @@ export interface iUser {
     administrator: number;
     session: string;
 }
+export interface CustomNotification  {
+    id: number;
+    message: string;
+}
 
 export interface iSender {
     id: number;
@@ -36,17 +40,19 @@ export interface iWebSocketCLPP {
 }
 export interface iGtppWsContextType {
     task: any;
-    taskDetails:iTaskReq;
-    taskPercent:number;
+    taskDetails: iTaskReq;
+    taskPercent: number;
     messageNotification: Record<string, any>;
     userTaskBind: any;
-    setTaskPercent:(value:number)=>void;
+    notifications: CustomNotification[],
+    setNotifications: (value: CustomNotification[]) => void,
+    setTaskPercent: (value: number) => void;
     setTask: (value: any) => void;
     setTaskDetails: (value: any) => void;
     handleAddTask: (description: string, task_id: string) => void;
-    clearGtppWsContext:()=>void;
-    checkedItem:(id: number, checked: boolean, idTask: any, task: any)=>void;
-    checkTaskComShoDepSub:(task_id:number, company_id:number, shop_id:number, depart_id:number, taskLocal: any)=>void;
+    clearGtppWsContext: () => void;
+    checkedItem: (id: number, checked: boolean, idTask: any, task: any) => void;
+    checkTaskComShoDepSub: (task_id: number, company_id: number, shop_id: number, depart_id: number, taskLocal: any) => void;
     changeDescription: (description: string, id: number, descLocal: string) => void;
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;
     changeObservedForm: (taskId: number, subId: any, description: string, message?: any, isNote?: any) => void;

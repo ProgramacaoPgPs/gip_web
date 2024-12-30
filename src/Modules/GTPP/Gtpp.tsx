@@ -12,6 +12,7 @@ import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
 import { error } from "console";
+import NotificationBell from "../../Components/NotificationBell";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
@@ -22,7 +23,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails } = useWebSocket();
+  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails,notifications } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -108,6 +109,9 @@ export default function Gtpp(): JSX.Element {
     <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
+        <div className="mt-4">
+          <NotificationBell notifications={notifications} />
+        </div>
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="position-relative filter-style">
             <h1 onClick={handleOpenFilter} className="cursor-pointer mt-3">Filtros <i className="fa fa-angle-down"></i></h1>
