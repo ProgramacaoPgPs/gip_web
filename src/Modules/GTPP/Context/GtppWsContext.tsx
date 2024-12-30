@@ -36,6 +36,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Garante a atualização do callback.
   useEffect(() => {
     ws.current.callbackOnMessage = callbackOnMessage;
+    console.log('re-rendering message 2x')
   }, [task, taskDetails]);
 
   // Recupera as informações detalhadas da tarefa.
