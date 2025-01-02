@@ -12,7 +12,6 @@ export default class NotificationGTPP {
 
     filterTypeNotify(element: any): CustomNotification {
         let item: CustomNotification = { id: 0, message: '' };
-        console.log(element);
         switch (parseInt(element.type)) {
             case 2:
                 item.id = parseInt(element.id);
@@ -30,7 +29,6 @@ export default class NotificationGTPP {
 
     filterStateName(id: number): string {
         let result: string = '';
-        console.log(this.states,id)
         console.log(
             this.states?.filter((value:iStates)=>  value.id = id)
         )

@@ -15,8 +15,6 @@ const UserProfile = (props: any) => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);  
 
-  console.log(photos);
-
   useEffect(() => {
     const loadPhotos = async () => {
       try {

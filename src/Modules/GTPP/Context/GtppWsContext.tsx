@@ -355,7 +355,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
     } catch (error) {
-      console.log("Erro ao tentar salvar:", error);
       alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
     } finally {
       setLoading(false); // Finaliza o carregamento

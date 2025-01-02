@@ -114,7 +114,6 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
                 captureDep={setCaptureDep}
                 items={departmentOptions}
                 getCheck={(item: any) => {
-                  console.log(departmentOptions);
                   // @ts-ignore
                   checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
                 }}
