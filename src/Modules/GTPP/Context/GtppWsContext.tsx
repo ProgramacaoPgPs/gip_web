@@ -9,9 +9,9 @@ import { CustomNotification, iGtppWsContextType, iStates, iTaskReq } from "../..
 import GtppWebSocket from "./GtppWebSocket";
 import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
-import NotficationGTPP from "../Class/NotficationGTPP";
 import InformSending from "../Class/InformSending";
 import { classToJSON } from "../../../Util/Util";
+import NotificationGTPP from "../Class/NotificationGTPP";
 
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
@@ -115,7 +115,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Derrubar usuário");
     }
 
-    if (!response.error && response.type == 2) {
+    if (!response.error && response.type == 2 && response.user_id != userLog.id) {
       if (response.object) {
         updateNotification([JSON.parse(event.data)]);
         if (response.object.isItemUp) {
@@ -139,18 +139,16 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   function updateNotification(item: any[]) {
-    const notify = new NotficationGTPP(item);
+    const notify = new NotificationGTPP(item);
     notifications.push(...notify.list);
     setNotifications([...notifications]);
   }
   function itemUp(itemUp: any) {
     setTaskPercent(itemUp.percent);
-
     taskDetails.data?.task_item.forEach((element, index) => {
       if (taskDetails.data && element.id == itemUp.itemUp.id)
         taskDetails.data.task_item[index] = itemUp.itemUp;
     });
-
     setTaskDetails({ ...taskDetails });
   }
 
