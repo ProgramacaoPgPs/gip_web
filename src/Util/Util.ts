@@ -40,3 +40,15 @@ export function isJSON(obj: string): boolean {
         return false;
     }
 }
+
+export function classToJSON(instance: object): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
+
+    // Itera sobre os próprios getters da classe
+    Object.entries(Object.getOwnPropertyDescriptors(instance.constructor.prototype))
+        .filter(([_, descriptor]) => typeof descriptor.get === "function") // Apenas getters
+        .forEach(([key]) => {
+            json[key] = (instance as any)[key];
+        });
+    return json;
+}

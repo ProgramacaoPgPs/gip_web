@@ -9,7 +9,10 @@ import { CustomNotification, iGtppWsContextType, iTaskReq } from "../../../Inter
 import GtppWebSocket from "./GtppWebSocket";
 import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
-import { Console } from "console";
+import NotficationGTPP from "../Class/NotficationGTPP";
+import InformSending from "../Class/InformSending";
+import { classToJSON } from "../../../Util/Util";
+
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
@@ -18,6 +21,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
+  const [states, setStates] = useState<any>([]);
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
@@ -31,14 +35,21 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
+    (async () => {
+      try {
+        const connection = new Connection("18", true);
+        const getNotify: any = await connection.get(`&id_user=${userLog.id}`, '/GTPP/Notify.php');
+        if (getNotify.error) throw new Error(getNotify.message);
+        updateNotification(getNotify.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
     return () => {
       if (ws.current && ws.current.isConnected) ws.current.disconnect();
     }
   }, []);
-
-  useEffect(() => {
-    console.log(notifications)
-  }, [notifications]);
 
   // Garante a atualização do callback.
   useEffect(() => {
@@ -50,6 +61,16 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     task.id && getTaskInformations();
   }, [task]);
 
+  async function getStateformations() {
+    try {
+      const connection = new Connection("18", true);
+      const getTaskItem: any = await connection.get("", "GTPP/TaskState.php")
+      if (getTaskItem.error) throw new Error(getTaskItem.message);
+      setTaskDetails(getTaskItem);
+    } catch (error) {
+      console.error("Erro ao obter as informações da tarefa:", error);
+    }
+  }
   async function getTaskInformations() {
     try {
       const connection = new Connection("18", true);
@@ -77,8 +98,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (!response.error && response.type == 2) {
-      updateNotification(JSON.parse(event.data));
       if (response.object) {
+        updateNotification([JSON.parse(event.data)]);
         if (response.object.isItemUp) {
           itemUp(response.object);
         } else if (response.object.isStopAndToBackTask) {
@@ -99,8 +120,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  function updateNotification(item:any){
-    notifications.push({ message: `${item.object.description} : ${item.object.itemUp.description}`, id: item.object.itemUp.id });
+  function updateNotification(item: any[]) {
+    const notify = new NotficationGTPP(item);
+    notifications.push(...notify.list);
     setNotifications([...notifications]);
   }
   function itemUp(itemUp: any) {
@@ -134,20 +156,14 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     );
     taskLocal.check = checked;
     setTaskPercent(result.data?.percent);
-    ws.current.informSending({
-      error: false,
-      user_id: userLog.id,
-      object: {
-        description: taskLocal.check
-          ? "Um item foi marcado"
-          : "Um item foi desmarcado",
-        percent: result.data?.percent,
-        itemUp: taskLocal,
-        isItemUp: true,
-      },
-      task_id: taskLocal.task_id,
-      type: 2,
-    });
+    ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 2, {
+      description: taskLocal.check
+        ? "Um item foi marcado"
+        : "Um item foi desmarcado",
+      percent: result.data?.percent,
+      itemUp: taskLocal,
+      isItemUp: true,
+    })));
   }
 
   async function checkTaskComShoDepSub(
@@ -252,7 +268,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   ) {
     setLoading(true);
     try {
-      console.log(type);
       const connection = new Connection("18"); // Instanciando a conexão com o ID
       const response: any = await connection.put(type === "description" ? {
         id: subId,
@@ -310,7 +325,21 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-
+  async function upTask(
+    taskId: number,
+    resource: string | null,
+    date: string | null,
+    taskList: any,
+    message: string
+  ) {
+    await updateTask(taskId, resource, date);
+    ws.current.informSending(new InformSending(false, userLog.id, taskId, 2, { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id }));
+  }
+  async function updateTask(taskId: number, resource: string | null, date: string | null) {
+    const connection = new Connection("18", true);
+    const req: { error: boolean, message?: string, data?: any[] } = await connection.put({ task_id: taskId, reason: resource, days: date }, "GTPP/TaskState.php") || { error: false };
+    if (req.error) throw new Error();
+  }
   async function stopAndToBackTask(
     taskId: number,
     resource: string | null,
@@ -318,88 +347,15 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     taskList: any
   ) {
     try {
-      const connection = new Connection("18", true);
-
       if (taskList.state_id == 5) {
-        await connection.put(
-          { task_id: taskId, reason: resource, days: date },
-          "GTPP/TaskState.php"
-        );
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            description: `Tarefa que estava bloquado está de volta!`,
-            task_id: taskId,
-            reason: resource,
-            days: date,
-            taskState: taskList.state_id, // pegando o id do estado da tarefa.
-          },
-          task_id: taskId,
-          type: 2,
-        });
+        upTask(taskId, resource, date, taskList, `Tarefa que estava bloquado está de volta!`);
+      } else if (taskList.state_id == 4 || taskList.state_id == 6) {
+        upTask(taskId, resource, date, taskList, taskList.state_id == 4 ? `Tarefa que estava parado está de volta!` : 'Tarefa que estava completa teve que retornar!');
+      } else if (taskList.state_id == 2) {
+        upTask(taskId, resource, date, taskList, "A tarefa que estava ativa foi parada!");
+      } else if (taskList.state_id == 3) {
+        upTask(taskId, resource, date, taskList, "A tarefa finalizada!");
       }
-
-      if (taskList.state_id == 4 || taskList.state_id == 6) {
-        await connection.put(
-          { task_id: taskId, reason: resource, days: date },
-          "GTPP/TaskState.php"
-        );
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            description: taskList.state_id == 4 ? `Tarefa que estava parado está de volta!` : 'Tarefa que estava completa teve que retornar!',
-            task_id: taskId,
-            reason: resource,
-            days: date,
-            taskState: taskList.state_id,
-          },
-          task_id: taskId,
-          type: 2,
-        });
-      }
-
-      if (taskList.state_id == 2) {
-        await connection.put(
-          { task_id: taskId, reason: resource, days: date },
-          "GTPP/TaskState.php"
-        );
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            description: "A tarefa que estava ativa foi parada!",
-            task_id: taskId,
-            reason: resource,
-            days: date,
-            taskState: taskList.state_id,
-          },
-          task_id: taskId,
-          type: 2,
-        });
-      }
-
-      if (taskList.state_id == 3) {
-        await connection.put(
-          { task_id: taskId, reason: resource, days: date },
-          "GTPP/TaskState.php"
-        );
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            description: "A tarefa finalizada!",
-            task_id: taskId,
-            reason: resource,
-            days: date,
-            taskState: taskList.state_id,
-          },
-          task_id: taskId,
-          type: 2,
-        });
-      }
-
     } catch (error) {
       console.log("erro ao fazer o PUT em TaskState.php");
     }
