@@ -114,7 +114,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
-
     if (!response.error && response.type == 2 && response.user_id != userLog.id) {
       if (response.object) {
         updateNotification([JSON.parse(event.data)]);
@@ -172,11 +171,33 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     );
     taskLocal.check = checked;
     setTaskPercent(result.data?.percent);
+    
+    // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
+    if (result.data.state_id != task.state_id) {
+      infSenStates(taskLocal,result.data);
+    }
+    //Informa que um item foi marcado.
+    infSenCheckItem(taskLocal,result.data);
+  }
+
+  function infSenStates(taskLocal:any,result:any){
+    task.state_id = result.state_id;
+      setTask({...task});
+      ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 6, {
+        description: "Mudou para",
+        task_id: taskLocal.task_id,
+        percent: result.percent, 
+        state_id: result.state_id,
+        task: task,
+      })));
+  }
+
+  function infSenCheckItem(taskLocal:any,result:any){
     ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 2, {
       description: taskLocal.check
         ? "Um item foi marcado"
         : "Um item foi desmarcado",
-      percent: result.data?.percent,
+      percent: result.percent,
       itemUp: taskLocal,
       isItemUp: true,
     })));
