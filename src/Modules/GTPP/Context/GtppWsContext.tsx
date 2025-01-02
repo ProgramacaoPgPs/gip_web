@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { CustomNotification, iGtppWsContextType, iTaskReq } from "../../../Interface/iGIPP";
+import { CustomNotification, iGtppWsContextType, iStates, iTaskReq } from "../../../Interface/iGIPP";
 import GtppWebSocket from "./GtppWebSocket";
 import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
@@ -21,7 +21,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
-  const [states, setStates] = useState<any>([]);
+  const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
@@ -45,9 +45,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(error);
       }
     })();
-
+    getStateformations();
     return () => {
-      if (ws.current && ws.current.isConnected) ws.current.disconnect();
+      if (ws.current && ws.current.isConnected) {
+        localStorage.removeItem('gtppStates');
+        ws.current.disconnect();
+      }
     }
   }, []);
 
@@ -61,15 +64,32 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     task.id && getTaskInformations();
   }, [task]);
 
+
   async function getStateformations() {
+    let listState: iStates[] = [{ id: 0, description: '', color: '' }];
     try {
-      const connection = new Connection("18", true);
-      const getTaskItem: any = await connection.get("", "GTPP/TaskState.php")
-      if (getTaskItem.error) throw new Error(getTaskItem.message);
-      setTaskDetails(getTaskItem);
+      if (localStorage.gtppStates) {
+        listState = JSON.parse(localStorage.gtppStates);
+      } else {
+        const connection = new Connection("18", true);
+        const getStatusTask: { error: boolean, message?: string, data?: [{ id: number, description: string, color: string }] } = await connection.get("", "GTPP/TaskState.php") || { error: false };
+        if (getStatusTask.error) throw new Error(getStatusTask.message || 'Error generic');
+        const list = createStorageState(getStatusTask.data || [{ id: 0, description: '', color: '' }]);
+        localStorage.gtppStates = JSON.stringify(list);
+        listState = list;
+      }
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
+    setStates(listState);
+  }
+  function createStorageState(list: iStates[]) {
+    let listState: [{ id: number, description: string, color: string }] = [{ id: 0, description: '', color: '' }];
+    list.forEach((element: { id: number, description: string, color: string }, index) => {
+      const item = { id: element.id, description: element.description, color: element.color, active: true }
+      index == 0 ? listState[index] = item : listState.push(item);
+    });
+    return listState
   }
   async function getTaskInformations() {
     try {
@@ -87,9 +107,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
-
     setMessageNotification(response);
-
     if (
       response.error &&
       response.message.includes("This user has been connected to another place")
@@ -325,16 +343,15 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function upTask(
-    taskId: number,
-    resource: string | null,
-    date: string | null,
-    taskList: any,
-    message: string
-  ) {
+  async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string) {
     await updateTask(taskId, resource, date);
-    ws.current.informSending(new InformSending(false, userLog.id, taskId, 2, { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id }));
+    ws.current.informSending(
+      classToJSON(
+        new InformSending(false, userLog.id, taskId, 2, { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
+      )
+    );
   }
+
   async function updateTask(taskId: number, resource: string | null, date: string | null) {
     const connection = new Connection("18", true);
     const req: { error: boolean, message?: string, data?: any[] } = await connection.put({ task_id: taskId, reason: resource, days: date }, "GTPP/TaskState.php") || { error: false };
@@ -375,6 +392,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         messageNotification,
         userTaskBind,
         notifications,
+        states,
         setNotifications,
         setTaskPercent,
         setTask,

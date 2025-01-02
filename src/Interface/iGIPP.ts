@@ -45,6 +45,7 @@ export interface iGtppWsContextType {
     messageNotification: Record<string, any>;
     userTaskBind: any;
     notifications: CustomNotification[],
+    states:iStates[],
     setNotifications: (value: CustomNotification[]) => void,
     setTaskPercent: (value: number) => void;
     setTask: (value: any) => void;
@@ -57,7 +58,11 @@ export interface iGtppWsContextType {
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;
     changeObservedForm: (taskId: number, subId: any, description: string, message?: any, isNote?: any) => void;
 }
-
+export interface iStates { 
+    color: string, 
+    description: string, 
+    id: number 
+};
 export interface iTaskReq {
     error?: boolean,
     data?: {

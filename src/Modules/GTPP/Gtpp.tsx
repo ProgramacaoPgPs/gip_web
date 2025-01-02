@@ -13,6 +13,7 @@ import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
 import { error } from "console";
 import NotificationBell from "../../Components/NotificationBell";
+import { iStates } from "../../Interface/iGIPP";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
@@ -23,7 +24,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails } = useWebSocket();
+  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails, states } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -32,30 +33,8 @@ export default function Gtpp(): JSX.Element {
   }, [setTitleHead]);
 
   useEffect(() => {
-    getTaskInformations2();
-  }, []);
-
-  //ALTERADO POR HYGOR INÍCIO 12/2024
-  async function statesManagement() {
-    let listState: any = [];
-    if (localStorage.gtppStates) {
-      listState = JSON.parse(localStorage.gtppStates);
-    } else {
-      const getStatusTask: { error: boolean, message?: string, data?: [{ id: number, description: string, color: string }] } = await connection.get("", "GTPP/TaskState.php") || { error: false };
-      if (getStatusTask.error) throw new Error(getStatusTask.message || 'Error generic')
-      listState = createStorageState(getStatusTask.data || [{ id: 0, description: '', color: '' }])
-    }
-    updateCardStateTask(listState);
-  }
-
-  function createStorageState(list: [{ id: number, description: string, color: string }]) {
-    let listState: [{ id: number, description: string, color: string }] = [{ id: 0, description: '', color: '' }];
-    list.forEach((element: { id: number, description: string, color: string }, index) => {
-      const item = { id: element.id, description: element.description, color: element.color, active: true }
-      index == 0 ? listState[index] = item : listState.push(item);
-    });
-    return listState;
-  }
+    updateCardStateTask(states);
+  }, [states]);
 
   function handleCheckboxChange(stateId: number) {
     const newItem: any = [...cardStateTask];
@@ -65,23 +44,9 @@ export default function Gtpp(): JSX.Element {
 
   function updateCardStateTask(newList: any) {
     setCardStateTask([...newList]);
-    localStorage.gtppStates = JSON.stringify(newList);
   }
   //ALTERADO POR HYGOR FIM
 
-  const connection = useMemo(() => new Connection("18", true), []);
-
-  async function getTaskInformations2(): Promise<void> {
-    setLoading(true);
-    try {
-      await statesManagement();
-    } catch (error) {
-      console.error("Erro ao obter as informações da tarefa:", error);
-    }
-    finally {
-      setLoading(false);
-    }
-  }
 
 
   const getTaskInformations = useCallback(async () => {
