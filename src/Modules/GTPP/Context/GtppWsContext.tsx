@@ -13,7 +13,7 @@ import InformSending from "../Class/InformSending";
 import { classToJSON } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
 import { Store } from "react-notifications-component";
-
+import soundFile from "../../../Assets/Sounds/notify.mp3";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
@@ -152,6 +152,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function updateNotification(item: any[]) {
+    const audio = new Audio(soundFile); // Caminho relativo ao `public`
+    audio.play().catch((error) => {
+      console.error('Erro ao reproduzir o som:', error);
+    });
     const notify = new NotificationGTPP();
     await notify.loadNotify(item, states);
     notifications.push(...notify.list);
