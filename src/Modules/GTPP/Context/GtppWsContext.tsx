@@ -94,10 +94,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function getTaskInformations() {
     try {
       const connection = new Connection("18", true);
-      const getTaskItem: any = await connection.get(
-        `&id=${task.id}`,
-        "GTPP/Task.php"
-      );
+      const getTaskItem: any = await connection.get(`&id=${task.id}`,"GTPP/Task.php");
       if (getTaskItem.error) throw new Error(getTaskItem.message);
       setTaskDetails(getTaskItem);
     } catch (error) {
@@ -114,9 +111,13 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
-    if (!response.error && response.type == 2 && response.user_id != userLog.id) {
+
+    if (!response.error && response.type == 2 && response.send_user_id != userLog.id) {
       if (response.object) {
-        updateNotification([JSON.parse(event.data)]);
+        
+        if(response.task_id != task.id) {
+          updateNotification([response]);
+        };
         if (response.object.isItemUp) {
           itemUp(response.object);
         } else if (response.object.isStopAndToBackTask) {

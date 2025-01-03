@@ -11,10 +11,11 @@ export default class NotificationGTPP {
     }
 
     filterTypeNotify(element: any): CustomNotification {
-        let item: CustomNotification = { id: 0, message: '' };
+        let item: CustomNotification = { id: 0, message: '',task_id:0 };
         switch (parseInt(element.type)) {
             case 2:
-                item.id = parseInt(element.id);
+                item.id = parseInt(element.object.itemUp.id);
+                item.task_id = element.task_id
                 item.message = `${element.object.description}:\n ${element.object?.itemUp.description}`
                 break;
             case 6:

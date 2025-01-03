@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useMyContext } from '../Context/MainContext';
+import { ReactNotifications } from 'react-notifications-component';
 
 type Props = {
   children: JSX.Element; // Tipo para o children
@@ -15,6 +16,7 @@ export default function RenderPage(props: Props): JSX.Element {
       <section className='d-flex flex-column align-items-center justify-content-center'>
         {props.children}
       </section>
+      <ReactNotifications />
       <footer>
         &#169; Peg Pese Supermercados Importação e Exportação Ltda. Desenvolvido por Hygor Bueno
       </footer>

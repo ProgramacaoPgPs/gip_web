@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { CustomNotification } from "../Interface/iGIPP";
 import { useWebSocket } from "../Modules/GTPP/Context/GtppWsContext";
 
 
-export default function NotificationBell(): JSX.Element {
-    const { notifications,setNotifications } = useWebSocket();
+export default function NotificationBell(props: { idTask?: number }): JSX.Element {
+    const { notifications, setNotifications } = useWebSocket();
     const [isHovered, setIsHovered] = useState(false);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        setCount(props.idTask ? notifications.filter(item => item.task_id == props.idTask).length : notifications.length)
+    }, [notifications]);
 
     const handleClick = () => {
         alert(
-            `Mensagens:\n${notifications
+            `Mensagens:\n${(props.idTask ? notifications.filter(item => item.task_id == props.idTask) : notifications)
                 .map((n) => `- ${n.message}`)
                 .join("\n") || "Sem notificações"}`
         );
-        setNotifications([]);
+
+        setNotifications(props.idTask ? notifications.filter(item => item.task_id != props.idTask) : []);
     };
 
     return (
@@ -35,7 +40,7 @@ export default function NotificationBell(): JSX.Element {
             ></i>
 
             {/* Contador de Notificações */}
-            {notifications.length > 0 && (
+            {count > 0 && (
                 <span
                     className="position-absolute top-0 end-0 translate-middle badge rounded-pill"
                     style={{
@@ -49,7 +54,7 @@ export default function NotificationBell(): JSX.Element {
                         alignItems: "center",
                     }}
                 >
-                    {notifications.length}
+                    {count}
                 </span>
             )}
         </div>

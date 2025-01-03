@@ -11,9 +11,8 @@ import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator"
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
-import { error } from "console";
 import NotificationBell from "../../Components/NotificationBell";
-import { iStates } from "../../Interface/iGIPP";
+import { Store } from "react-notifications-component";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
@@ -47,8 +46,6 @@ export default function Gtpp(): JSX.Element {
   }
   //ALTERADO POR HYGOR FIM
 
-
-
   const getTaskInformations = useCallback(async () => {
     const connection = new Connection("18", true);
     try {
@@ -70,11 +67,30 @@ export default function Gtpp(): JSX.Element {
 
   if (loading) return (<React.Fragment>Carregando...</React.Fragment>);
 
+
+
+
+  const handleNotification = () => {
+    Store.addNotification({
+      title: "Sucesso!",
+      message: "A ação foi concluída com sucesso.",
+      type: "success", // Tipos: "success", "danger", "info", "default", "warning"
+      insert: "top", // Posição na tela: "top" ou "bottom"
+      container: "top-right", // Locais: "top-left", "top-right", "bottom-left", "bottom-right"
+      animationIn: ["animate__animated", "animate__fadeIn"],
+      animationOut: ["animate__animated", "animate__fadeOut"],
+      dismiss: {
+        duration: 5000, // Tempo em ms
+        onScreen: true,
+      },
+    });
+  }
+
   return (
     <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
-
+        <button onClick={handleNotification}>Mostrar Notificação</button>
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="d-flex w-100 align-items-center justify-content-between my-2">
             <div className="position-relative filter-style">
@@ -147,6 +163,7 @@ export default function Gtpp(): JSX.Element {
                               return (
                                 <CardTask
                                   key={idx}
+                                  id={task.id}
                                   initial_date={task.initial_date}
                                   final_date={task.final_date}
                                   title_card={task.description}
