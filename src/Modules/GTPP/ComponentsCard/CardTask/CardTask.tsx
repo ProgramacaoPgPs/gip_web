@@ -1,7 +1,6 @@
 import React from "react";
 import "./CardTask.css"; // Importando o estilo
 import { convertdate } from "../../../../Util/Util";
-import { useMyContext } from "../../../../Context/MainContext";
 import NotificationBell from "../../../../Components/NotificationBell";
 
 type CardTaskProps = {

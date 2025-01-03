@@ -13,13 +13,15 @@ export interface iUser {
     sub?: string;
     CSDS?: string;
     photo?: string;
-    administrator: number;
-    session: string;
+    administrator?: number;
+    session?: string;
 }
 export interface CustomNotification  {
     id: number;
     task_id:number,
+    title: string;
     message: string;
+    typeNotify: 'success' | 'danger' | 'info' | 'default' | 'warning';
 }
 
 export interface iSender {

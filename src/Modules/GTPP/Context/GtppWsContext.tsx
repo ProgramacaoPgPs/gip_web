@@ -12,6 +12,7 @@ import { useMyContext } from "../../../Context/MainContext";
 import InformSending from "../Class/InformSending";
 import { classToJSON } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
+import { Store } from "react-notifications-component";
 
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
@@ -94,7 +95,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function getTaskInformations() {
     try {
       const connection = new Connection("18", true);
-      const getTaskItem: any = await connection.get(`&id=${task.id}`,"GTPP/Task.php");
+      const getTaskItem: any = await connection.get(`&id=${task.id}`, "GTPP/Task.php");
       if (getTaskItem.error) throw new Error(getTaskItem.message);
       setTaskDetails(getTaskItem);
     } catch (error) {
@@ -112,12 +113,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Derrubar usuário");
     }
 
-    if (!response.error && response.type == 2 && response.send_user_id != userLog.id) {
+    if (!response.error && (response.type == -1 || response.type == 2 || response.type == 6) && response.send_user_id != userLog.id) {
+      updateNotification([response]);
       if (response.object) {
-        
-        if(response.task_id != task.id) {
-          updateNotification([response]);
-        };
         if (response.object.isItemUp) {
           itemUp(response.object);
         } else if (response.object.isStopAndToBackTask) {
@@ -137,11 +135,28 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
   }
+  function handleNotification(title: string, message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type, // Tipos: "success", "danger", "info", "default", "warning"
+      insert: "top", // Posição na tela: "top" ou "bottom"
+      container: "bottom-left",
+      animationIn: ["animate__animated animate__zoomIn"],
+      animationOut: ["animate__animated animate__flipOutX"],
+      dismiss: {
+        duration: 5000, // Tempo em ms
+        onScreen: true,
+      },
+    });
+  }
 
-  function updateNotification(item: any[]) {
-    const notify = new NotificationGTPP(item);
+  async function updateNotification(item: any[]) {
+    const notify = new NotificationGTPP();
+    await notify.loadNotify(item, states);
     notifications.push(...notify.list);
     setNotifications([...notifications]);
+    handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
   }
   function itemUp(itemUp: any) {
     setTaskPercent(itemUp.percent);
@@ -172,28 +187,28 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     );
     taskLocal.check = checked;
     setTaskPercent(result.data?.percent);
-    
+
     // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
     if (result.data.state_id != task.state_id) {
-      infSenStates(taskLocal,result.data);
+      infSenStates(taskLocal, result.data);
     }
     //Informa que um item foi marcado.
-    infSenCheckItem(taskLocal,result.data);
+    infSenCheckItem(taskLocal, result.data);
   }
 
-  function infSenStates(taskLocal:any,result:any){
+  function infSenStates(taskLocal: any, result: any) {
     task.state_id = result.state_id;
-      setTask({...task});
-      ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 6, {
-        description: "Mudou para",
-        task_id: taskLocal.task_id,
-        percent: result.percent, 
-        state_id: result.state_id,
-        task: task,
-      })));
+    setTask({ ...task });
+    ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 6, {
+      description: "Mudou para",
+      task_id: taskLocal.task_id,
+      percent: result.percent,
+      state_id: result.state_id,
+      task: task,
+    })));
   }
 
-  function infSenCheckItem(taskLocal:any,result:any){
+  function infSenCheckItem(taskLocal: any, result: any) {
     ws.current.informSending(classToJSON(new InformSending(false, userLog.id, taskLocal.task_id, 2, {
       description: taskLocal.check
         ? "Um item foi marcado"

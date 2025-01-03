@@ -8,8 +8,8 @@ export default class User {
     #pendingMessage?: number;
     #name?: string;
     #company?: string;
-    #administrator: number;
-    #session: string;
+    #administrator: number = 0;
+    #session: string = '';
     photo: string = '';
     shop: number = 0;
     departament: string = '';
@@ -19,10 +19,8 @@ export default class User {
 
     constructor(user: iUser) {
         this.#id = user.id;
-        user.id && this.loadInfo();
-        this.#administrator = user.administrator;
-        this.#session = user.session;
-
+        if (user.administrator) this.#administrator = user.administrator;
+        if (user.session) this.#session = user.session;
         // Optional properties
         this.#yourContact = user.yourContact;
         this.#notification = user.notification;
@@ -56,11 +54,11 @@ export default class User {
     get pendingMessage(): number | undefined {
         return this.#pendingMessage;
     }
-    
+
     set pendingMessage(pendingMessage: number | undefined) {
         this.#pendingMessage = pendingMessage;
     }
-    
+
     get name(): string | undefined {
         return this.#name;
     }
@@ -96,14 +94,14 @@ export default class User {
         this.#session = session;
     }
 
-    async loadInfo(): Promise<void> {
-        await this.loadPhotos();
+    async loadInfo(isPhoto?: boolean): Promise<void> {
+        isPhoto && await this.loadPhotos();
         await this.loadDetails();
     }
 
     async loadPhotos(): Promise<void> {
         try {
-            const userPhoto: any = await this.#connection.get(`&id=${this.id}`, 'CCPP/EmployeePhoto.php');
+            const userPhoto: any = await this.#connection.get(`&id=${this.#id}`, 'CCPP/EmployeePhoto.php');
             if (userPhoto.error && !userPhoto.message.includes('No data')) {
                 throw new Error(userPhoto.message);
             } else if (!userPhoto.message) {
@@ -116,9 +114,8 @@ export default class User {
 
     async loadDetails(): Promise<void> {
         try {
-            const details: any = await this.#connection.get(`&id=${this.id}`, 'CCPP/Employee.php');
+            const details: any = await this.#connection.get(`&id=${this.#id}`, 'CCPP/Employee.php');
             if (details.error && !details.message.includes('No data')) throw new Error(details.message);
-
             this.name = details.data[0]["name"];
             this.company = details.data[0]["company"];
             this.shop = details.data[0]["shop"];
@@ -131,5 +128,4 @@ export default class User {
             console.log(error);
         }
     }
-
 }

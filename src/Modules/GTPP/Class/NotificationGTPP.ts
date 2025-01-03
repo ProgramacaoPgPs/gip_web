@@ -1,26 +1,43 @@
+import User from "../../../Class/User";
 import { CustomNotification, iStates } from "../../../Interface/iGIPP";
 
 export default class NotificationGTPP {
     list: CustomNotification[] = [];
-    states?: iStates[];
-    constructor(array: any[], states?: iStates[]) {
-        array.forEach(element => {
-            this.list.push(this.filterTypeNotify(element));
-        });
-        this.states = states;
+
+    async loadNotify(array: any[], states?: iStates[]) {
+        for await (let element of array){
+            const user = new User({ id: element.send_user_id });
+            await user.loadInfo();
+            this.list.push(this.filterTypeNotify(element,user.name || '', states));
+        };
     }
 
-    filterTypeNotify(element: any): CustomNotification {
-        let item: CustomNotification = { id: 0, message: '',task_id:0 };
+    filterTypeNotify(element: any, name:string ,states?: iStates[]): CustomNotification {
+        let item: CustomNotification = { id: 0, title: '', message: '', task_id: 0, typeNotify:'success' };
+        if(element.state == 'connected'){
+            console.log("conectado");
+        }else{
+            console.log("desconectar");
+        }
         switch (parseInt(element.type)) {
             case 2:
                 item.id = parseInt(element.object.itemUp.id);
                 item.task_id = element.task_id
-                item.message = `${element.object.description}:\n ${element.object?.itemUp.description}`
+                item.title = `${element.object.description} por ${name}`
+                item.message = element.object?.itemUp.description;
+                item.typeNotify = 'success';
                 break;
             case 6:
-                item.id = parseInt(element.id);
-                item.message = `${element.object.description}:\n ${this.filterStateName(element.object?.task?.state_id)}`;
+                item.id = parseInt(element.task_id);
+                item.task_id = element.task_id
+                item.title = `${name} mudou o status da tarefa ${element.object?.task?.description} para:`
+                item.message = this.filterStateName(element.object?.task?.state_id, states);
+                item.typeNotify = 'success';
+                break;
+            case -1:
+                item.title = `${name}`
+                item.message = `Acabou de ${element.state == "connected" ? 'entrar':'sair'}`;
+                item.typeNotify = 'info';
                 break;
             default:
                 break;
@@ -28,12 +45,9 @@ export default class NotificationGTPP {
         return item;
     }
 
-    filterStateName(id: number): string {
-        let result: string = '';
-        console.log(
-            this.states?.filter((value:iStates)=>  value.id = id)
-        )
-
+    filterStateName(id: number, states?: iStates[]): string {
+        let result: any = '';
+        result = states?.filter((value: iStates) => value.id == id)[0]['description']
         return result;
     }
 }
