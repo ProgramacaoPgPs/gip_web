@@ -14,7 +14,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
     const handleClick = () => {
         alert(
             `Mensagens:\n${(props.idTask ? notifications.filter(item => item.task_id == props.idTask) : notifications)
-                .map((n) => `- ${n.message}`)
+                .map((n) => `- ${n.title}: ${n.message}`)
                 .join("\n") || "Sem notificações"}`
         );
 

@@ -14,11 +14,6 @@ export default class NotificationGTPP {
 
     filterTypeNotify(element: any, name:string ,states?: iStates[]): CustomNotification {
         let item: CustomNotification = { id: 0, title: '', message: '', task_id: 0, typeNotify:'success' };
-        if(element.state == 'connected'){
-            console.log("conectado");
-        }else{
-            console.log("desconectar");
-        }
         switch (parseInt(element.type)) {
             case 2:
                 item.id = parseInt(element.object.itemUp.id);
