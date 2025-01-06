@@ -77,14 +77,19 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         const getStatusTask: { error: boolean, message?: string, data?: [{ id: number, description: string, color: string }] } = await connection.get("", "GTPP/TaskState.php") || { error: false };
         if (getStatusTask.error) throw new Error(getStatusTask.message || 'Error generic');
         const list = createStorageState(getStatusTask.data || [{ id: 0, description: '', color: '' }]);
-        localStorage.gtppStates = JSON.stringify(list);
         listState = list;
       }
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
-    setStates(listState);
+    updateStates(listState);
   }
+  
+  function updateStates(newList: any[]) {
+    localStorage.gtppStates = JSON.stringify(newList);
+    setStates([...newList]);
+  }
+
   function createStorageState(list: iStates[]) {
     let listState: [{ id: number, description: string, color: string }] = [{ id: 0, description: '', color: '' }];
     list.forEach((element: { id: number, description: string, color: string }, index) => {
@@ -435,6 +440,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         notifications,
         states,
         onSounds,
+        updateStates,
         setOnSounds,
         setNotifications,
         setTaskPercent,

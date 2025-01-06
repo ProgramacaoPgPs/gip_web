@@ -50,6 +50,7 @@ export interface iGtppWsContextType {
     notifications: CustomNotification[];
     states:iStates[];
     onSounds:boolean; 
+    updateStates:(array:any[])=>void;
     setOnSounds:(value:boolean)=>void
     setNotifications: (value: CustomNotification[]) => void;
     setTaskPercent: (value: number) => void;

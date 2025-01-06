@@ -22,7 +22,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const {  setTask, setTaskPercent, clearGtppWsContext, setOnSounds, taskDetails, states, onSounds,task, } = useWebSocket();
+  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, taskDetails, states, onSounds, task, } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -30,19 +30,15 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
-  useEffect(() => {
-    updateCardStateTask(states);
-  }, [states]);
+
 
   function handleCheckboxChange(stateId: number) {
-    const newItem: any = [...cardStateTask];
+    const newItem: any = [...states];
     newItem[newItem.findIndex((item: any) => item.id == stateId)].active = !newItem[newItem.findIndex((item: any) => item.id == stateId)].active;
-    updateCardStateTask(newItem);
+    updateStates(newItem);
   };
 
-  function updateCardStateTask(newList: any) {
-    setCardStateTask([...newList]);
-  }
+
   //ALTERADO POR HYGOR FIM
 
   const getTaskInformations = useCallback(async () => {
@@ -72,13 +68,14 @@ export default function Gtpp(): JSX.Element {
       <NavBar list={listPath} />
       <Container className={`h-100 d-flex`}>
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
-          <div className="d-flex w-100 align-items-center justify-content-between my-2">
-            <div className="position-relative filter-style">
+          <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
+
+            <div className="position-relative">
               <h1 onClick={handleOpenFilter} className="cursor-pointer">Filtros <i className="fa fa-angle-down"></i></h1>
               <div className="position-absolute filter-modal">
                 {openFilter ? (
                   <div className="bg-light border-dark p-3">
-                    {cardStateTask?.map(
+                    {states?.map(
                       (cardTaskStateValue: any, idxValueState: any) => (
                         <div key={idxValueState}>
                           <label className="cursor-pointer">
@@ -92,15 +89,18 @@ export default function Gtpp(): JSX.Element {
                 ) : null}
               </div>
             </div>
-            <div className="d-flex flex-row">
-              <div className="mx-2 cursor-pointer" onClick={()=>{setOnSounds(!onSounds)}}>
-                {onSounds ? <i className="fa-solid fa-volume-high"></i>: <i className="fa-solid fa-volume-xmark"></i>}
+            <div className="d-flex flex-row w-50 justify-content-end">
+              <div className="mx-2 cursor-pointer" onClick={() => { setOnSounds(!onSounds) }}>
+                {onSounds ? <i className="fa-solid fa-volume-high"></i> : <i className="fa-solid fa-volume-xmark"></i>}
               </div>
-              <NotificationBell />
+              <div className="mx-2">
+                <NotificationBell />
+              </div>
             </div>
+
           </div>
           <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
-            {cardStateTask?.map(
+            {states?.map(
               (cardTaskStateValue: any, idxValueState: any) => {
                 const filteredTasks = cardTask?.data.filter(
                   (task: any) => task.state_id === cardTaskStateValue.id

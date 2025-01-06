@@ -23,7 +23,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
 
     return (
         <div
-            className="d-flex justify-content-center align-items-center mx-2 position-relative"
+            className="d-flex justify-content-center align-items-center position-relative"
             style={{ width: "fit-content", cursor: "pointer" }}
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
@@ -36,6 +36,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
                     fontSize: "calc(1.5rem + 1vw)", // Responsivo: aumenta conforme o tamanho da tela
                     color: notifications.length > 0 ? "red" : "gray",
                     transition: "color 0.3s",
+                    marginRight:"10px"
                 }}
             ></i>
             {/* Contador de Notificações */}
@@ -44,7 +45,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
                     className="position-absolute"
                     style={{
                         top: "-10px", // Ajuste para ficar acima do sino
-                        right: "-10px", // Posicionado no lado direito
+                        right: "-4px", // Posicionado no lado direito
                         backgroundColor: isHovered ? "#ffc107" : "#dc3545",
                         color: "white",
                         fontSize: "calc(0.6rem + 0.2vw)", // Responsivo
