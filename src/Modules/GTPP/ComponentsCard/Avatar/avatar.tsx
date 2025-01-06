@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./AvatarGroup.css";
 import ImageUser from "../../../../Assets/Image/user.png";
 import { convertImage } from "../../../../Util/Util";
 import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
+import { useMyContext } from "../../../../Context/MainContext";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -11,26 +12,28 @@ const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
 
 // Aqui nesse user estou puxando as informações da conexão de employee e colocando suas informações em uma lista e enviando essa lista para um objeto e mostrando ela em tela com a foto do usuario  e suas informações.
 const UserProfile = (props: any) => {
-  const {userId} = props;
+  const { userId } = props;
   const [photos, setPhotos] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);  
+  const [error, setError] = useState<string | null>(null);
+  const { setLoading } = useMyContext();
 
   useEffect(() => {
+    setLoading(true);
     const loadPhotos = async () => {
       try {
         const conn = new Connection('18');
         const userList: any = [];
-        
+
         // Temos que fazer um filtro para pesquisar um usuario a pedido do marcio
 
         // Verifica se userId é um array e mapeia sobre ele
         if (Array.isArray(userId)) {
           for (let user of userId) {
-            const responsePhotos:any = await conn.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
-            const responseDetails:any = await conn.get(`&id=${user.user_id}`, 'CCPP/Employee.php');
+            const responsePhotos: any = await conn.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
+            const responseDetails: any = await conn.get(`&id=${user.user_id}`, 'CCPP/Employee.php');
 
             // Aqui estou rendenrizando antes um JSON com as informações do usuario + suas photos em um mesmo JSON para não ter necessidade de tratar isso separadamente.
-            if((responseDetails && !responseDetails.error) && (responsePhotos && !responsePhotos.error)) {
+            if ((responseDetails && !responseDetails.error) && (responsePhotos && !responsePhotos.error)) {
               const details = responseDetails.data[0];
               userList.push({
                 name: details.name,
@@ -50,8 +53,8 @@ const UserProfile = (props: any) => {
         }
       } catch (error: any) {
         setError(error.message);
-        console.log(error);
       }
+      setLoading(false);
     };
 
     loadPhotos();
@@ -60,7 +63,7 @@ const UserProfile = (props: any) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
+  
   return (
     <div className="">
       {/* Aqui vamos fazer o botão para fechar a lista de usuários */}
@@ -69,22 +72,21 @@ const UserProfile = (props: any) => {
           <strong>Colaboradores</strong>
         </div>
         <button className="btn btn-danger text-white" onClick={() => props.detailsmodaluser(true)}>X</button>
-      </div>      
+      </div>
 
       {/* Aqui vamos carregar a lista de usuarios */}
-      {photos.length > 0 ? (
+      {
         photos.map((photo, index) => (
-          //@ts-ignore
-          <div className="d-flex gap-4 align-items-center mb-2">
-            <div key={photo.taskId} onClick={() => {
+          <div key={`photo_user_task_${index}`} className="d-flex gap-4 align-items-center mb-2">
+            <div onClick={() => {
               // Aqui quero fazer um modal aonde que eu clicar quero pegar os dados do usuário e exibir esses dados para mostrar as informações dele.
               props.setOpenDetailUser(true);
               props.listuser(photo);
             }} className={`avatar`}>
               <Image
                 title={photo.name} // Aqui vamos exibir o nome do usuario
-                src={convertImage(photo.photo) || ImageUser} 
-                alt={`User ${index}`} 
+                src={convertImage(photo.photo) || ImageUser}
+                alt={`User ${index}`}
               />
             </div>
             <div>
@@ -92,15 +94,14 @@ const UserProfile = (props: any) => {
             </div>
           </div>
         ))
-      ) : (
-        <p>Carregando colaboradores...</p>
-      )}
+      }
     </div>
   );
 };
 
 const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   const [isChecked, setIsChecked] = useState(item.check);
+  const { getTaskInformations } = useWebSocket();
   const connection = new Connection('18');
 
   const handleActiveUser = async () => {
@@ -112,7 +113,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
     if (response.message && !response.error) {
       alert('Usuário atualizado com sucesso!');
       // Recarregar a lista de usuários após a atualização
-      loadUserTaskLis();  // Chamando a função passada via props
+      loadUserTaskLis();
     } else {
       alert('Erro ao salvar a taréfa!');
     }
@@ -123,7 +124,8 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
       className={`d-flex gap-4 rounded w-100 align-items-center p-1 mb-2 ${isChecked ? 'bg-secondary' : 'bg-normal'}`}
       onClick={async () => {
         setIsChecked(!isChecked);
-        handleActiveUser();
+        await handleActiveUser();
+        await getTaskInformations();
       }}
     >
       <input
@@ -144,7 +146,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
 
 const LoadUserCheck = (props: any) => {
   const [userTaskBind, setUserTaskBind] = useState([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setLoading, loading } = useMyContext();
   const [searchTerm, setSearchTerm] = useState<string>('');  // Estado para armazenar o termo de pesquisa
 
   async function loadUserTaskLis() {
@@ -160,7 +162,7 @@ const LoadUserCheck = (props: any) => {
         // const responsePhotos: any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
         // console.log(responsePhotos);
         userList.push({
-          photo: null, 
+          photo: null,
           check: user.check,
           name: user.name,
           user: user.user_id
@@ -189,31 +191,27 @@ const LoadUserCheck = (props: any) => {
     setSearchTerm(e.target.value);
   };
 
-  if (loading) {
-    return <div>Carregando usuários...</div>;
-  } else {
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <input
-            placeholder="Nome do colaborador..."
-            type="text"
-            className="form-control mb-3"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
-        {filteredUserList.map((item: any) => (
-          <ListUserTask
-            item={item}
-            taskid={props.list.data.datatask.id}
-            key={item.user}
-            loadUserTaskLis={loadUserTaskLis}
-          />
-        ))}
+        <input
+          placeholder="Nome do colaborador..."
+          type="text"
+          className="form-control mb-3"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
       </div>
-    );
-  }
+      {filteredUserList.map((item: any) => (
+        <ListUserTask
+          item={item}
+          taskid={props.list.data.datatask.id}
+          key={item.user}
+          loadUserTaskLis={loadUserTaskLis}
+        />
+      ))}
+    </div>
+  )
 };
 
 
@@ -271,14 +269,16 @@ const Avatar = () => {
   );
 };
 
-const Modal = (props:any) => {
+const Modal = (props: any) => {
   const [getInfoUser, setInfoUser] = useState();
   const [openDetailUser, setOpenDetailUser] = useState();
 
   return (
     <div className="modal-list d-flex align-items-center gap-3">
       <div>
-        <ModalUser data={props} list={getInfoUser} openDetailUser={openDetailUser} setOpenDetailUser={setOpenDetailUser} children={<UserProfile detailsmodaluser={props.detailsmodaluser} listuser={setInfoUser} setOpenDetailUser={setOpenDetailUser} userId={props.user} />}/>
+        <ModalUser data={props} list={getInfoUser} openDetailUser={openDetailUser} setOpenDetailUser={setOpenDetailUser} >
+          <UserProfile detailsmodaluser={props.detailsmodaluser} listuser={setInfoUser} setOpenDetailUser={setOpenDetailUser} userId={props.user} />
+        </ModalUser>
       </div>
     </div>
   );
@@ -286,12 +286,11 @@ const Modal = (props:any) => {
 
 const AvatarGroup = (props: { users: any, dataTask: any }) => {
   const [openDetailsUser, setOpenDetailsUserModal] = useState(true);
-
   return (
     <React.Fragment>
       <div className="cursor-pointer">
         {openDetailsUser ? (
-          <div onClick={() => setOpenDetailsUserModal(prev => !prev)}>
+          <div onClick={async () => setOpenDetailsUserModal(prev => !prev)}>
             <Avatar />
           </div>
         ) : (

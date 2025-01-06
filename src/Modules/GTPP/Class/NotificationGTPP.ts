@@ -22,6 +22,13 @@ export default class NotificationGTPP {
                 item.message = element.object?.itemUp.description;
                 item.typeNotify = 'success';
                 break;
+            case 5:
+                item.id = parseInt(element.task_id);
+                item.task_id = element.task_id
+                item.title = `${name}, você:`
+                item.message = element.object.description;;
+                item.typeNotify = 'info';
+                break;
             case 6:
                 item.id = parseInt(element.task_id);
                 item.task_id = element.task_id
@@ -32,6 +39,11 @@ export default class NotificationGTPP {
             case -1:
                 item.title = `${name}`
                 item.message = `Acabou de ${element.state == "connected" ? 'entrar':'sair'}`;
+                item.typeNotify = 'info';
+                break;
+            case -3:
+                item.title = `${name}, você:`
+                item.message = element.object.description;
                 item.typeNotify = 'info';
                 break;
             default:

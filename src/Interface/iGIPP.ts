@@ -50,6 +50,12 @@ export interface iGtppWsContextType {
     notifications: CustomNotification[];
     states:iStates[];
     onSounds:boolean; 
+    getTask:any[];
+    openCardDefault:boolean;
+    getTaskInformations:()=>void;
+    setOpenCardDefault:(value:boolean)=>void;
+    loadTasks:()=>void;
+    setGetTask:(array:any[])=>void;
     updateStates:(array:any[])=>void;
     setOnSounds:(value:boolean)=>void
     setNotifications: (value: CustomNotification[]) => void;
@@ -89,7 +95,6 @@ export interface iTaskReq {
 }
 
 export interface iWebSocketContextType {
-
     contactList: iUser[];
     sender: iSender;
     ws: MutableRefObject<WebSocketCLPP>;

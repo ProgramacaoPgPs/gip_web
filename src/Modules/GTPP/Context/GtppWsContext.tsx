@@ -20,17 +20,19 @@ const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [taskPercent, setTaskPercent] = useState<number>(0);
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
-  const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
-  const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
-  const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [onSounds, setOnSounds] = useState<boolean>(true);
+  const [openCardDefault, setOpenCardDefault] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<CustomNotification[]>([]);
+  const [getTask, setGetTask] = useState<any[]>([]);
+  const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const {  setLoading  } = useMyContext();
 
   const ws = useRef(new GtppWebSocket());
   const { userLog } = useMyContext();
@@ -38,6 +40,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     // Abre a coonexão com o websocket.
     ws.current.connect();
     (async () => {
+      setLoading(true);
       try {
         const connection = new Connection("18", true);
         const getNotify: any = await connection.get(`&id_user=${userLog.id}`, '/GTPP/Notify.php');
@@ -45,8 +48,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         updateNotification(getNotify.data);
       } catch (error) {
         console.log(error);
+      } finally{
+        setLoading(false);
       }
     })();
+
     getStateformations();
     return () => {
       if (ws.current && ws.current.isConnected) {
@@ -59,15 +65,39 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Garante a atualização do callback.
   useEffect(() => {
     ws.current.callbackOnMessage = callbackOnMessage;
-  }, [task, taskDetails, notifications,onSounds]);
+  }, [task, taskDetails, notifications, onSounds, openCardDefault]);
 
   // Recupera as informações detalhadas da tarefa.
   useEffect(() => {
-    task.id && getTaskInformations();
+    (
+      async () => {
+        task.id && await getTaskInformations();
+      }
+    )();
   }, [task]);
 
+  // Carrega lista de tarefas que você criou ou vc foi vínculado.
+  useEffect(() => {
+    (
+      async () => {
+        await loadTasks();
+      }
+    )();
+  }, []);
+
+  async function loadTasks() {
+    const connection = new Connection("18", true);
+    try {
+      const getTask: any = await connection.get("", "GTPP/Task.php");
+      if (getTask.error) throw new Error(getTask.message);
+      setGetTask(getTask.data);
+    } catch (error) {
+      console.error("Erro ao obter as informações da tarefa:", error);
+    }
+  }
 
   async function getStateformations() {
+    setLoading(true);
     let listState: iStates[] = [{ id: 0, description: '', color: '' }];
     try {
       if (localStorage.gtppStates) {
@@ -81,10 +111,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
+    }finally{
+      updateStates(listState);
+      setLoading(false);
     }
-    updateStates(listState);
   }
-  
+
   function updateStates(newList: any[]) {
     localStorage.gtppStates = JSON.stringify(newList);
     setStates([...newList]);
@@ -98,7 +130,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     return listState
   }
-  async function getTaskInformations() {
+  async function getTaskInformations():Promise<void> {
+    setLoading(true);
     try {
       const connection = new Connection("18", true);
       const getTaskItem: any = await connection.get(`&id=${task.id}`, "GTPP/Task.php");
@@ -106,6 +139,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setTaskDetails(getTaskItem);
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -119,19 +154,29 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Derrubar usuário");
     }
 
-    if (!response.error && (response.type == -1 || response.type == 2 || response.type == 6) && response.send_user_id != userLog.id) {
+    // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
+    if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
-      if (response.object) {
-        if (response.object.isItemUp) {
-          itemUp(response.object);
-        } else if (response.object.isStopAndToBackTask) {
-          if (response.object.taskState == 2) {
+      if (response.type == -1 || response.type == 2 || response.type == 6) {
+        if (response.object) {
+          if (response.object.isItemUp) {
+            itemUp(response.object);
+          } else if (response.object.isStopAndToBackTask) {
+            if (response.object.taskState == 2) {
+            }
+            if (response.object.taskState == 4) {
+            }
+          } else {
+            console.log("Sem retorno");
           }
-          if (response.object.taskState == 4) {
-          }
-        } else {
-          console.log("Sem retorno");
         }
+      } else if (response.type == -3 || response.type == 5) {
+        //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
+        if(task.id == response.task_id && response.type == -3){
+          setOpenCardDefault(false);
+        }
+
+        await loadTasks();
       }
     }
 
@@ -158,6 +203,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function updateNotification(item: any[]) {
+    setLoading(true);
     if (onSounds) {
       const audio = new Audio(soundFile);
       audio.play().catch((error) => {
@@ -169,7 +215,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     notifications.push(...notify.list);
     setNotifications([...notifications]);
     handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
+    setLoading(false);
   }
+
   function itemUp(itemUp: any) {
     setTaskPercent(itemUp.percent);
     taskDetails.data?.task_item.forEach((element, index) => {
@@ -192,20 +240,28 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     idTask: any,
     taskLocal: any
   ) {
-    const connection = new Connection("18");
-    let result: any = await connection.put(
-      { check: checked, id: id, task_id: idTask },
-      "GTPP/TaskItem.php"
-    );
-    taskLocal.check = checked;
-    setTaskPercent(result.data?.percent);
+    setLoading(true);
+    try {
+      const connection = new Connection("18");
+      let result: {error:boolean,data?:any,message?:string} = await connection.put(
+        { check: checked, id: id, task_id: idTask },
+        "GTPP/TaskItem.php"
+      ) || {error:false};
+      if(result.error) throw new Error(result.message);
+      taskLocal.check = checked;
+      setTaskPercent(result.data.percent);
 
-    // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
-    if (result.data.state_id != task.state_id) {
-      infSenStates(taskLocal, result.data);
+      // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
+      if (result.data.state_id != task.state_id) {
+        infSenStates(taskLocal, result.data);
+      }
+      //Informa que um item foi marcado.
+      infSenCheckItem(taskLocal, result.data);
+    } catch (error) {
+      alert(error);
+    } finally{
+      setLoading(false);
     }
-    //Informa que um item foi marcado.
-    infSenCheckItem(taskLocal, result.data);
   }
 
   function infSenStates(taskLocal: any, result: any) {
@@ -238,6 +294,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     depart_id: number,
     taskLocal: any
   ) {
+    setLoading(true);
     try {
       const connection = new Connection("18");
       await connection.post(
@@ -264,6 +321,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -281,7 +340,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }, "GTPP/TaskItem.php");
 
       if (response.data && !response.error) {
-        getTaskInformations();
+        await getTaskInformations();
         alert('Salvo com sucesso!');
       } else {
         alert('Error saved task.');
@@ -301,6 +360,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     id: number,
     descLocal: string
   ) {
+    setLoading(true);
     try {
       const connection = new Connection("18");
       await connection.put(
@@ -320,6 +380,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     } catch (error) {
       console.log("erro ao fazer o PUT em Task.php");
+    } finally{
+      setLoading(false);
     }
   }
 
@@ -345,10 +407,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       } : "", "GTPP/TaskItem.php");
 
       if (response.message && !response.error) {
-        getTaskInformations();
+        await getTaskInformations();
         alert('Salvo com sucesso!');
       } else if (response.data && !response.error) {
-        getTaskInformations();
+        await getTaskInformations();
         alert('Salvo com sucesso!');
       } else {
         alert('Erro ao atualizar a tarefa!');
@@ -390,18 +452,22 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string) {
+    setLoading(true);
     await updateTask(taskId, resource, date);
     ws.current.informSending(
       classToJSON(
         new InformSending(false, userLog.id, taskId, 2, { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
       )
     );
+    setLoading(false);
   }
 
   async function updateTask(taskId: number, resource: string | null, date: string | null) {
+    setLoading(true);
     const connection = new Connection("18", true);
     const req: { error: boolean, message?: string, data?: any[] } = await connection.put({ task_id: taskId, reason: resource, days: date }, "GTPP/TaskState.php") || { error: false };
     if (req.error) throw new Error();
+    setLoading(false);
   }
   async function stopAndToBackTask(
     taskId: number,
@@ -440,6 +506,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         notifications,
         states,
         onSounds,
+        getTask,
+        openCardDefault,
+        getTaskInformations,
+        setOpenCardDefault,
+        loadTasks,
+        setGetTask,
         updateStates,
         setOnSounds,
         setNotifications,

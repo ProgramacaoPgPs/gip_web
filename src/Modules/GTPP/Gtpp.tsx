@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Container, Row, Col } from "react-bootstrap";
-import { Connection } from "../../Connection/Connection";
 import CardTask from "./ComponentsCard/CardTask/CardTask";
 import NavBar from "../../Components/NavBar";
 import { listPath } from "./mock/mockTeste";
@@ -15,14 +14,10 @@ import NotificationBell from "../../Components/NotificationBell";
 
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
-  const [cardTask, setCardTask] = useState<any>();
-  const [cardStateTask, setCardStateTask] = useState<any>();
   const [openFilter, setOpenFilter] = useState<any>(false);
-  const [openCardDefault, setOpenCardDefault] = useState<any>(false);
-  const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, taskDetails, states, onSounds, task, } = useWebSocket();
+  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -38,31 +33,11 @@ export default function Gtpp(): JSX.Element {
     updateStates(newItem);
   };
 
-
-  //ALTERADO POR HYGOR FIM
-
-  const getTaskInformations = useCallback(async () => {
-    const connection = new Connection("18", true);
-    try {
-      const getTask = await connection.get("", "GTPP/Task.php");
-      setCardTask(getTask);
-    } catch (error) {
-      console.error("Erro ao obter as informações da tarefa:", error);
-    }
-  }, [task]);
-
-  useEffect(() => {
-    getTaskInformations();
-  }, [getTaskInformations]);
-
-
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
 
-  if (loading) return (<React.Fragment>Carregando...</React.Fragment>);
-
-
+  
   return (
     <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
       <NavBar list={listPath} />
@@ -102,7 +77,7 @@ export default function Gtpp(): JSX.Element {
           <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
             {states?.map(
               (cardTaskStateValue: any, idxValueState: any) => {
-                const filteredTasks = cardTask?.data.filter(
+                const filteredTasks = getTask.filter(
                   (task: any) => task.state_id === cardTaskStateValue.id
                 );
 
@@ -119,7 +94,7 @@ export default function Gtpp(): JSX.Element {
                         bg_color={cardTaskStateValue.color}
                         is_first_column={isFirstColumnTaskState}
                         addTask={() => {
-                          setModalPageElement(<Cardregister reloadtask={getTaskInformations} assistenceFunction={() => setModalPage(false)} />);
+                          setModalPageElement(<Cardregister reloadtask={loadTasks} assistenceFunction={() => setModalPage(false)} />);
                           setModalPage(true);
                         }}
                         exportCsv={() => {
