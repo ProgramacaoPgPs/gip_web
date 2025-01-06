@@ -159,8 +159,6 @@ const LoadUserCheck = (props: any) => {
         'GTPP/Task_User.php'
       );
       for (let user of responseUserTaskList.data) {
-        // const responsePhotos: any = await connection.get(`&id=${user.user_id}`, 'CCPP/EmployeePhoto.php');
-        // console.log(responsePhotos);
         userList.push({
           photo: null,
           check: user.check,

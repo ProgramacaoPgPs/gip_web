@@ -1,4 +1,3 @@
-// Aside.tsx
 import React from 'react';
 import './Aside.css'; // Aqui você pode personalizar o estilo do seu Aside
 

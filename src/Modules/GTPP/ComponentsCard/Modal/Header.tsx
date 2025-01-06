@@ -25,7 +25,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   ): void => {
     if (event.key === "Enter") {
       sendPut();
-      // onClick?.(); // Dispara a ação do botão se existir
+
     }
   };
 
@@ -47,7 +47,6 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           onBlur={(e) => {
             setDesc(e.target.value);
             sendPut();
-            // onClick?.();
           }}
           onKeyDown={handleKeyDown}
           className="bg-transparent w-100 font-weight-bold"

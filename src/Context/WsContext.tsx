@@ -2,15 +2,13 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { useMyContext } from './MainContext';
 import WebSocketCLPP from '../Services/Websocket';
 import { Connection } from '../Connection/Connection';
-import { iMessage, iSender, iUser, iWebSocketCLPP, iWebSocketContextType } from '../Interface/iGIPP';
+import {  iSender, iUser,  iWebSocketContextType } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
-import User from '../Class/User';
 
 
 const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // const [monitorScroll, setMonitorScroll] = useState<boolean>(false);
     const [msgLoad, setMsgLoad] = useState<boolean>(true);
 
     const [idReceived, setIdReceived] = React.useState<number>(0);
@@ -23,7 +21,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     const [sender, setSender] = useState<iSender>({ id: 0 });
-    // const changeScrollRef = useRef<() => void>(() => { });
+    
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
     const { setLoading, userLog } = useMyContext();
@@ -117,12 +115,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     async function callbackOnMessage(event: any) {
-        // Novos
-        // if (event.user == idReceived) {
-        //     console.log(event);
-        // }
-
-        //Antigos
         if (event.objectType === 'notification') {
             if (event.user === idReceived) {
                 await viewedMessage(event);
@@ -167,7 +159,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 "type": event.type
             });
             setListMessage([...listMessage])
-            // if (monitorScroll && changeScrollRef.current) changeScrollRef.current();
+
         } else {
             setContactList((prevContacts) =>
                 prevContacts.map((contact) =>

@@ -24,7 +24,6 @@ class GtppWebSocket {
       this.socket.onclose = () => {
         this.isConnected = false;
         this.stopPing();
-        // setTimeout(() => this.connect(), 10000);
       };
 
       this.socket.onmessage = (ev) => {

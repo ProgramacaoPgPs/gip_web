@@ -21,6 +21,7 @@ export default class User {
         this.#id = user.id;
         if (user.administrator) this.#administrator = user.administrator;
         if (user.session) this.#session = user.session;
+
         // Optional properties
         this.#yourContact = user.yourContact;
         this.#notification = user.notification;
@@ -62,9 +63,6 @@ export default class User {
     get name(): string | undefined {
         return this.#name;
     }
-    // getName(): string | undefined {
-    //     return this.#name;
-    // }
 
     set name(name: string | undefined) {
         this.#name = name;
@@ -124,8 +122,7 @@ export default class User {
             this.CSDS = details.data[0]["CSDS"];
             this.administrator = details.data[1]["administrator"];
         } catch (error) {
-            // alert(error);
-            console.log(error);
+            alert(error);
         }
     }
 }
