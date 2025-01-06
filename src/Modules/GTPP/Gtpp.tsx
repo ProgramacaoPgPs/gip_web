@@ -22,7 +22,7 @@ export default function Gtpp(): JSX.Element {
   const [loading, setLoading] = useState<any>(false);
 
   // Modified by Hygor
-  const { task, setTask, setTaskPercent, clearGtppWsContext, taskDetails, states } = useWebSocket();
+  const {  setTask, setTaskPercent, clearGtppWsContext, setOnSounds, taskDetails, states, onSounds,task, } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -92,7 +92,12 @@ export default function Gtpp(): JSX.Element {
                 ) : null}
               </div>
             </div>
-            <NotificationBell />
+            <div className="d-flex flex-row">
+              <div className="mx-2 cursor-pointer" onClick={()=>{setOnSounds(!onSounds)}}>
+                {onSounds ? <i className="fa-solid fa-volume-high"></i>: <i className="fa-solid fa-volume-xmark"></i>}
+              </div>
+              <NotificationBell />
+            </div>
           </div>
           <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
             {cardStateTask?.map(

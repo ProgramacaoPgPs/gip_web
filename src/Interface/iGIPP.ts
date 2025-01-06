@@ -47,9 +47,11 @@ export interface iGtppWsContextType {
     taskPercent: number;
     messageNotification: Record<string, any>;
     userTaskBind: any;
-    notifications: CustomNotification[],
-    states:iStates[],
-    setNotifications: (value: CustomNotification[]) => void,
+    notifications: CustomNotification[];
+    states:iStates[];
+    onSounds:boolean; 
+    setOnSounds:(value:boolean)=>void
+    setNotifications: (value: CustomNotification[]) => void;
     setTaskPercent: (value: number) => void;
     setTask: (value: any) => void;
     setTaskDetails: (value: any) => void;

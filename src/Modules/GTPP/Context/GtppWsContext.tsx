@@ -26,6 +26,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
+  const [onSounds, setOnSounds] = useState<boolean>(true);
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -58,7 +59,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Garante a atualização do callback.
   useEffect(() => {
     ws.current.callbackOnMessage = callbackOnMessage;
-  }, [task, taskDetails, notifications]);
+  }, [task, taskDetails, notifications,onSounds]);
 
   // Recupera as informações detalhadas da tarefa.
   useEffect(() => {
@@ -152,10 +153,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function updateNotification(item: any[]) {
-    const audio = new Audio(soundFile); // Caminho relativo ao `public`
-    audio.play().catch((error) => {
-      console.error('Erro ao reproduzir o som:', error);
-    });
+    if (onSounds) {
+      const audio = new Audio(soundFile);
+      audio.play().catch((error) => {
+        console.error('Erro ao reproduzir o som:', error);
+      });
+    }
     const notify = new NotificationGTPP();
     await notify.loadNotify(item, states);
     notifications.push(...notify.list);
@@ -431,6 +434,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         userTaskBind,
         notifications,
         states,
+        onSounds,
+        setOnSounds,
         setNotifications,
         setTaskPercent,
         setTask,
