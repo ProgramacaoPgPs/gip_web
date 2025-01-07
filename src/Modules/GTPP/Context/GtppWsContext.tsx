@@ -158,6 +158,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
+        if(response.type == 6){
+          await loadTasks();
+        }
         if (response.object) {
           if (response.object.isItemUp) {
             itemUp(response.object);
@@ -253,6 +256,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
       if (result.data.state_id != task.state_id) {
+        await loadTasks();
         infSenStates(taskLocal, result.data);
       }
       //Informa que um item foi marcado.

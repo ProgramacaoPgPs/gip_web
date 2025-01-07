@@ -13,7 +13,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
   const [selectedOption, setSelectedOption] = useState("description");
-  const [markedLines, setMarkedLines] = useState<Record<string | number, boolean>>({});
+  
 
   const [subTask, setSubtask] = useState<{
     isObservable: boolean,
@@ -35,12 +35,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     setSelectedOption(event.target.value);
   }
 
-  const handleLineMarked = (id: string | number) => {
-    setMarkedLines(prevState => ({
-      ...prevState,
-      [id]: !prevState[id]
-    }));
-  }
 
   const ModalEdit = () => {
     return (
@@ -108,7 +102,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
             <div className="d-flex gap-2">
               <AnexoImage />
               <ButtonIcon title="Visualizar observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
-                handleLineMarked(task.id);
                 setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
               }}/>
               <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
