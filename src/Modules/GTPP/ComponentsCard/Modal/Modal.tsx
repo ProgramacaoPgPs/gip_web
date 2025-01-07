@@ -281,6 +281,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           <HeaderModal
             color="danger"
             description={task.description}
+            task={task}
             onClick={props.close_modal}
           />
           <ProgressBar progressValue={taskPercent} />

@@ -4,13 +4,13 @@ import { Connection } from "../../../../Connection/Connection";
 interface HeaderModalProps {
   color: string;
   description: string;
-  task_id?: number;
+  task?: any;
   onClick?: () => void;
 }
 
 const HeaderModal: React.FC<HeaderModalProps> = ({
   color,
-  task_id,
+  task,
   description,
   onClick,
 }) => {
@@ -20,21 +20,15 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
     setDesc(description);
   }, [description]);
 
-  const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ): void => {
-    if (event.key === "Enter") {
-      sendPut();
-
-    }
-  };
-
-  async function sendPut() { 
+  async function sendPut(newTitle: string) {
     try {
+      if (newTitle == description) throw new Error("Não houve mudança");
       const connection = new Connection('18');
-      await connection.put({task_id: task_id, description: description}, "GTPP/Task.php");
+      const req: any = await connection.put({ id: task.id, priority: task.priority, description: newTitle }, "GTPP/Task.php");
+      if (req.error) throw new Error(req.data);
+      setDesc(newTitle);
     } catch (error) {
-      alert('error ao mudar a descrição da tarefa');
+      alert(error);
     }
   }
 
@@ -44,11 +38,10 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         <input
           value={desc || ""}
           onChange={(e) => setDesc(e.target.value)}
-          onBlur={(e) => {
-            setDesc(e.target.value);
-            sendPut();
+          onBlur={async (e) => {
+            await sendPut(e.target.value);
           }}
-          onKeyDown={handleKeyDown}
+          // onKeyDown={async (e) => { const title = e.target as HTMLInputElement; await sendPut(title.value) }}
           className="bg-transparent w-100 font-weight-bold"
           style={{ border: "none", fontWeight: "bold" }}
         ></input>
