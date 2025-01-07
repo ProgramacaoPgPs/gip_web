@@ -57,7 +57,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                 </div>
                 <div className="card-task-footer d-flex justify-content-between">
                     <div className="flex-grow-1">
-                        <ProgressBar progressValue={props.percent || 0} colorBar="#00DDB2" />
+                        <ProgressBar progressValue={props.percent || 0} colorBar="#00A875" />
                     </div>
                     {/* Aqui vou colocar seu niível e pessoas vinculadas */}
                     <div className={`card-task-priority bg-${color} text-white px-2 fw-bold rounded-4 font-small mt-2`}>{title}</div>
