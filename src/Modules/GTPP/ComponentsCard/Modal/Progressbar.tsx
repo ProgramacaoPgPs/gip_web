@@ -3,9 +3,10 @@ import React from 'react';
 interface ProgressBarProps {
   progressValue: number;
   resetValue?: boolean;
+  colorBar?:string
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue }) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue,colorBar }) => {
    const clampedValue = Math.min(Math.max((progressValue) , 0), 100);
 
   const getProgressClass = () => {
@@ -17,9 +18,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue }) => {
   return (
     <div className="progress mt-2 mx-2">
       <div
-        className={`progress-bar ${getProgressClass()}`}
+        className={`progress-bar ${!colorBar && getProgressClass()}`}
         role="progressbar"
-        style={{ width: `${clampedValue}%` }}
+        style={{ width: `${clampedValue}%`,backgroundColor:`${colorBar? colorBar:''}` }}
         aria-valuenow={clampedValue}
         aria-valuemin={0}
         aria-valuemax={100}

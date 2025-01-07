@@ -2,12 +2,15 @@ import React from "react";
 import "./CardTask.css"; // Importando o estilo
 import { convertdate } from "../../../../Util/Util";
 import NotificationBell from "../../../../Components/NotificationBell";
+import ProgressBar from "../Modal/Progressbar";
+
 
 type CardTaskProps = {
     title_card?: string;
     priority_card?: number;
     initial_date?: string;
     final_date?: string;
+    percent?:number;
 }
 
 type CardTaskAllPropsHTML = React.HTMLAttributes<HTMLDivElement> & {}
@@ -36,7 +39,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                     {/* Aqui vou colocar o titulo e o dropdown */}
                     <div className="d-flex justify-content-between col-12 mb-2">
                         <h3 className="fw-bold card-text">{props.title_card || "Tarefa sem nome"}</h3>
-                        <NotificationBell idTask={parseInt(props.id || '0')}/>
+                        <NotificationBell idTask={parseInt(props.id || '0')} />
                     </div>
                 </div>
                 <div className="card-task-body">
@@ -52,7 +55,10 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="card-task-footer d-flex justify-content-end">
+                <div className="card-task-footer d-flex justify-content-between">
+                    <div className="flex-grow-1">
+                        <ProgressBar progressValue={props.percent || 0} colorBar="#00DDB2" />
+                    </div>
                     {/* Aqui vou colocar seu niível e pessoas vinculadas */}
                     <div className={`card-task-priority bg-${color} text-white px-2 fw-bold rounded-4 font-small mt-2`}>{title}</div>
                 </div>

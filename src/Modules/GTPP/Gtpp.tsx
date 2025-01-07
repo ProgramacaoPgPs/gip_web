@@ -128,6 +128,7 @@ export default function Gtpp(): JSX.Element {
                                   final_date={task.final_date}
                                   title_card={task.description}
                                   priority_card={task.priority}
+                                  percent={task.percent}
                                   onClick={() => {
                                     setTask(task);
                                     setTaskPercent(task.percent);
