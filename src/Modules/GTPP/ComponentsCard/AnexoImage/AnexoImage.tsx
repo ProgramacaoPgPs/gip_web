@@ -25,7 +25,7 @@ function AnexoImage(props: any) {
   };
 
   return (
-    <div>
+    <div title="Anexar arquivo.">
       <label className="file-input-container">
         <div className='fa fa-paperclip p-2 cursor-pointer'/>
         <input

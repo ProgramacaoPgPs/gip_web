@@ -89,12 +89,10 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         {subTasks.map((task, index: number) => (
           <div 
             key={task.id}
-            className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative
-            ${markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "bg-secondary" : ""}`}
+            className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative`}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
             <InputCheckbox
-              textColor={markedLines[task.id] && (subTask.idSubTask === task.id && task.note) ? "text-white" : ""}
               label={task.description}
               onChange={(e: any) => {
                 checkedItem(
@@ -109,7 +107,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
             />
             <div className="d-flex gap-2">
               <AnexoImage />
-              <ButtonIcon title="Observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
+              <ButtonIcon title="Visualizar observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
                 handleLineMarked(task.id);
                 setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
               }}/>
