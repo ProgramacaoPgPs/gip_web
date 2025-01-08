@@ -17,7 +17,7 @@ export default function Gtpp(): JSX.Element {
   const [openFilter, setOpenFilter] = useState<any>(false);
 
   // Modified by Hygor
-  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
+  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks,setNotifications,notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -122,7 +122,7 @@ export default function Gtpp(): JSX.Element {
                             {filteredTasks?.map((task: any, idx: number) => {
                               return (
                                 <CardTask
-                                  key={idx}
+                                  key={`simple_card_task_${task.id}`}
                                   id={task.id}
                                   initial_date={task.initial_date}
                                   final_date={task.final_date}
@@ -133,6 +133,7 @@ export default function Gtpp(): JSX.Element {
                                     setTask(task);
                                     setTaskPercent(task.percent);
                                     setOpenCardDefault(true);
+                                    setNotifications(notifications.filter(item => item.task_id != task.id));
                                   }}
                                 />
                               );
