@@ -77,8 +77,8 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   };
 
   return (
-    <div className="overflow-auto mt-3 border-secondary rounded taskGtpp">
-      <div className="container">
+    <div className="overflow-auto my-2 border-secondary rounded taskGtpp flex-grow-1">
+      <div>
         {ModalEdit()}
         {subTasks.map((task, index: number) => (
           <div

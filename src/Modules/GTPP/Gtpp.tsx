@@ -17,7 +17,7 @@ export default function Gtpp(): JSX.Element {
   const [openFilter, setOpenFilter] = useState<any>(false);
 
   // Modified by Hygor
-  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks,setNotifications,notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
+  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, setNotifications, notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
@@ -37,16 +37,20 @@ export default function Gtpp(): JSX.Element {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
 
-  
+
   return (
-    <div id="moduleGTPP" className="d-flex h-100 w-100 position-relative">
+    <div
+      id="moduleGTPP"
+      className="d-flex flex-row h-100 w-100 position-relative"
+    >
       <NavBar list={listPath} />
-      <Container className={`h-100 d-flex`}>
+      <div className="h-100 w-100 d-flex overflowx-hidden">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
-
             <div className="position-relative">
-              <h1 onClick={handleOpenFilter} className="cursor-pointer">Filtros <i className="fa fa-angle-down"></i></h1>
+              <h1 onClick={handleOpenFilter} className="cursor-pointer">
+                Filtros <i className="fa fa-angle-down"></i>
+              </h1>
               <div className="position-absolute filter-modal">
                 {openFilter ? (
                   <div className="bg-light border-dark p-3">
@@ -54,7 +58,13 @@ export default function Gtpp(): JSX.Element {
                       (cardTaskStateValue: any, idxValueState: any) => (
                         <div key={idxValueState}>
                           <label className="cursor-pointer">
-                            <input type="checkbox" onChange={() => handleCheckboxChange(cardTaskStateValue.id)} checked={cardTaskStateValue.active} />
+                            <input
+                              type="checkbox"
+                              onChange={() =>
+                                handleCheckboxChange(cardTaskStateValue.id)
+                              }
+                              checked={cardTaskStateValue.active}
+                            />
                             {cardTaskStateValue.description}
                           </label>
                         </div>
@@ -65,91 +75,127 @@ export default function Gtpp(): JSX.Element {
               </div>
             </div>
             <div className="d-flex flex-row w-50 justify-content-end">
-              <div className="mx-2 cursor-pointer" onClick={() => { setOnSounds(!onSounds) }}>
-                {onSounds ? <i className="fa-solid fa-volume-high"></i> : <i className="fa-solid fa-volume-xmark"></i>}
+              <div
+                className="mx-2 cursor-pointer"
+                onClick={() => {
+                  setOnSounds(!onSounds);
+                }}
+              >
+                {onSounds ? (
+                  <i className="fa-solid fa-volume-high"></i>
+                ) : (
+                  <i className="fa-solid fa-volume-xmark"></i>
+                )}
               </div>
               <div className="mx-2">
                 <NotificationBell />
               </div>
             </div>
-
           </div>
-          <Col xs={12} className="d-flex flex-nowrap p-0" style={{ overflowX: 'auto', height: '91%' }}>
-            {states?.map(
-              (cardTaskStateValue: any, idxValueState: any) => {
-                const filteredTasks = getTask.filter(
-                  (task: any) => task.state_id === cardTaskStateValue.id
-                );
+          <Col
+            xs={12}
+            className="d-flex flex-nowrap p-0 menu-expansivo"
+            style={{ overflowX: "auto", height: "91%" }}
+          >
+            {states?.map((cardTaskStateValue: any, idxValueState: any) => {
+              const filteredTasks = getTask.filter(
+                (task: any) => task.state_id === cardTaskStateValue.id
+              );
 
-                const isFirstColumnTaskState = idxValueState === 0;
+              const isFirstColumnTaskState = idxValueState === 0;
 
-                return (
-                  cardTaskStateValue.active && (
-                    <div
-                      key={idxValueState}
-                      className="column-task-container p-2 align-items-start flex-shrink-0"
-                    >
-                      <ColumnTaskState
-                        title={cardTaskStateValue.description}
-                        bg_color={cardTaskStateValue.color}
-                        is_first_column={isFirstColumnTaskState}
-                        addTask={() => {
-                          setModalPageElement(<Cardregister reloadtask={loadTasks} assistenceFunction={() => setModalPage(false)} />);
-                          setModalPage(true);
-                        }}
-                        exportCsv={() => {
-                          generateAndDownloadCSV(filteredTasks, "teste", "GTPP-documento");
-                        }}
-                        exportPdf={() => {
-                          setModalPageElement(
-                            <div className="card w-75 position relative">
-                              <div className="d-flex justify-content-end align-items-center">
-                                <div className="">
-                                  <button className="btn fa fa-close m-4" onClick={() => setModalPage(false)}></button>
-                                </div>
-                              </div>
-                              <div className="overflow-auto h-75">
-                                <div className="m-3">
-                                  <PDFGenerator data={filteredTasks} />
-                                </div>
+              return (
+                cardTaskStateValue.active && (
+                  <div
+                    key={idxValueState}
+                    className="column-task-container p-2 align-items-start flex-shrink-0"
+                  >
+                    <ColumnTaskState
+                      title={cardTaskStateValue.description}
+                      bg_color={cardTaskStateValue.color}
+                      is_first_column={isFirstColumnTaskState}
+                      addTask={() => {
+                        setModalPageElement(
+                          <Cardregister
+                            reloadtask={loadTasks}
+                            assistenceFunction={() => setModalPage(false)}
+                          />
+                        );
+                        setModalPage(true);
+                      }}
+                      exportCsv={() => {
+                        generateAndDownloadCSV(
+                          filteredTasks,
+                          "teste",
+                          "GTPP-documento"
+                        );
+                      }}
+                      exportPdf={() => {
+                        setModalPageElement(
+                          <div className="card w-75 position relative">
+                            <div className="d-flex justify-content-end align-items-center">
+                              <div className="">
+                                <button
+                                  className="btn fa fa-close m-4"
+                                  onClick={() => setModalPage(false)}
+                                ></button>
                               </div>
                             </div>
-                          );
-                          setModalPage(true);
-                        }}
-                        content_body={
-                          <div className="task-cards-container">
-                            {filteredTasks?.map((task: any, idx: number) => {
-                              return (
-                                <CardTask
-                                  key={`simple_card_task_${task.id}`}
-                                  id={task.id}
-                                  initial_date={task.initial_date}
-                                  final_date={task.final_date}
-                                  title_card={task.description}
-                                  priority_card={task.priority}
-                                  percent={task.percent}
-                                  onClick={() => {
-                                    setTask(task);
-                                    setTaskPercent(task.percent);
-                                    setOpenCardDefault(true);
-                                    setNotifications(notifications.filter(item => item.task_id != task.id));
-                                  }}
-                                />
-                              );
-                            })}
+                            <div className="overflow-auto h-75">
+                              <div className="m-3">
+                                <PDFGenerator data={filteredTasks} />
+                              </div>
+                            </div>
                           </div>
-                        }
-                      />
-                    </div>
-                  )
-                );
-              }
-            )}
+                        );
+                        setModalPage(true);
+                      }}
+                      content_body={
+                        <div className="task-cards-container">
+                          {filteredTasks?.map((task: any, idx: number) => {
+                            return (
+                              <CardTask
+                                key={`simple_card_task_${task.id}`}
+                                id={task.id}
+                                initial_date={task.initial_date}
+                                final_date={task.final_date}
+                                title_card={task.description}
+                                priority_card={task.priority}
+                                percent={task.percent}
+                                onClick={() => {
+                                  setTask(task);
+                                  setTaskPercent(task.percent);
+                                  setOpenCardDefault(true);
+                                  setNotifications(
+                                    notifications.filter(
+                                      (item) => item.task_id != task.id
+                                    )
+                                  );
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                      }
+                    />
+                  </div>
+                )
+              );
+            })}
           </Col>
         </div>
-        {openCardDefault && <ModalDefault taskFilter={task} details={taskDetails} close_modal={() => { setOpenCardDefault(false); clearGtppWsContext() }} />}
-      </Container>
+        {openCardDefault && (
+          <ModalDefault
+            taskFilter={task}
+            details={taskDetails}
+            close_modal={() => {
+              setOpenCardDefault(false);
+              clearGtppWsContext();
+            }}
+          />
+        )}
+      </div>
     </div>
+
   );
 }

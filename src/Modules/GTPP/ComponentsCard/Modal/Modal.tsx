@@ -51,8 +51,8 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   });
 
   return (
-    <div className="row mt-3 h-100 overflow-hidden">
-      <div className="d-flex justify-content-between px-4">
+    <div className="d-flex flex-column h-100 p-2">
+      <div style={{height:"10%"}} className="d-flex justify-content-between align-items-center my-2">
         <div className="d-flex align-items-center">
           <AvatarGroup
             dataTask={props.taskListFiltered}
@@ -163,103 +163,101 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="col-md-12 row m-auto container overflow-hidden h-100">
-        <div className="col-md-12 h-100">
-          <FormTextAreaDefault
-            task={props.taskListFiltered}
-            details={props?.details?.data}
-            disabledForm={props.disabledForm}
-          />
-          <div className="mt-2">
-            <div className="d-flex flex-wrap gap-2">
-              <ButtonIcon
-                onClick={() => {
-                  setListTask((prev) => ({
-                    ...prev,
-                    isChat: false,
-                    isCompShopDep: false,
-                    isAttachment: false,
-                    isObservable: false,
-                    isQuastion: false,
-                  }));
-                  setValueTask((prev) => !prev);
-                }}
-                color="secondary"
-                icon="tasks"
-                description="Tarefas"
-              />
-              <ButtonIcon
-                onClick={() => {
-                  setListTask((prev) => ({
-                    ...prev,
-                    isChat: !prev.isChat,
-                    isCompShopDep: false,
-                    isAttachment: false,
-                    isObservable: false,
-                    isQuastion: false,
-                  }));
-                  setValueTask(false);
-                }}
-                color="secondary"
-                icon="message"
-                description="Chat"
-              />
-              <ButtonIcon
-                onClick={() => {
-                  setListTask((prev) => ({
-                    ...prev,
-                    isCompShopDep: !prev.isCompShopDep,
-                    isChat: false,
-                    isAttachment: false,
-                    isObservable: false,
-                    isQuastion: false,
-                  }));
-                  setValueTask(false);
-                }}
-                color="secondary"
-                icon="shop"
-                description="Comp/Loj/Dep"
-              />
-            </div>
-            {valueTask && (
-              <SubTasksWithCheckbox
-                message={props.message}
-                subTasks={taskDetails.data?.task_item || []}
-                onTaskChange={(e) => console.log(e)}
-                allData={props}
-              />
-            )}
+      <div style={{height:"90%"}} className="d-flex flex-column justify-content-between">
+        <FormTextAreaDefault
+          task={props.taskListFiltered}
+          details={props?.details?.data}
+          disabledForm={props.disabledForm}
+        />
+        <div className="d-flex flex-column h-75">
+          <div className="d-flex flex-wrap gap-2 my-2">
+            <ButtonIcon
+              onClick={() => {
+                setListTask((prev) => ({
+                  ...prev,
+                  isChat: false,
+                  isCompShopDep: false,
+                  isAttachment: false,
+                  isObservable: false,
+                  isQuastion: false,
+                }));
+                setValueTask((prev) => !prev);
+              }}
+              color="secondary"
+              icon="tasks"
+              description="Tarefas"
+            />
+            <ButtonIcon
+              onClick={() => {
+                setListTask((prev) => ({
+                  ...prev,
+                  isChat: !prev.isChat,
+                  isCompShopDep: false,
+                  isAttachment: false,
+                  isObservable: false,
+                  isQuastion: false,
+                }));
+                setValueTask(false);
+              }}
+              color="secondary"
+              icon="message"
+              description="Chat"
+            />
+            <ButtonIcon
+              onClick={() => {
+                setListTask((prev) => ({
+                  ...prev,
+                  isCompShopDep: !prev.isCompShopDep,
+                  isChat: false,
+                  isAttachment: false,
+                  isObservable: false,
+                  isQuastion: false,
+                }));
+                setValueTask(false);
+              }}
+              color="secondary"
+              icon="shop"
+              description="Comp/Loj/Dep"
+            />
           </div>
           {valueTask && (
-            <div className="d-flex justify-content-between gap-3 pt-3 pb-2">
-              <div className="w-100">
-                <input
-                  type="text"
-                  className="form-control d-block"
-                  onChange={(e) => setValueNewTask(e.target.value)}
-                  value={valueNewTask}
-                />
-              </div>
-              <div>
-                <ButtonIcon
-                  color="success"
-                  description="Enviar"
-                  icon="arrow-right"
-                  onClick={() => {
-                      handleAddTask(valueNewTask, props.taskListFiltered.id);
-                      setValueNewTask("");
-                    }
-                  }
-                />
-              </div>
-            </div>
-          )}
-          {ListTask.isCompShopDep && (
-            <div className="col-md-12 d-flex flex-column justify-content-between">
-              <SelectTaskItem data={props.taskListFiltered} />
-            </div>
+            <SubTasksWithCheckbox
+              message={props.message}
+              subTasks={taskDetails.data?.task_item || []}
+              onTaskChange={(e) => console.log(e)}
+              allData={props}
+            />
           )}
         </div>
+        {valueTask && (
+          <div style={{height:"10%"}} className="d-flex justify-content-between align-items-center">
+            <div className="mx-2">
+              <ButtonIcon
+                color="success"
+                description=""
+                icon="arrow-right"
+                onClick={() => {
+                  handleAddTask(valueNewTask, props.taskListFiltered.id);
+                  setValueNewTask("");
+                }
+                }
+              />
+            </div>
+            <div className="w-100 mx-2">
+              <input
+                type="text"
+                className="form-control d-block"
+                onChange={(e) => setValueNewTask(e.target.value)}
+                value={valueNewTask}
+              />
+            </div>
+          </div>
+        )}
+        {ListTask.isCompShopDep && (
+          <div className="col-md-12 d-flex flex-column justify-content-between">
+            <SelectTaskItem data={props.taskListFiltered} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -278,8 +276,14 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
 
   return (
     <div className="zIndex99">
-      <div className="card modal-card-default">
-        <section className="header-modal-default">
+      <div style={{
+        display:'flex',
+        flexDirection:'column',
+        backgroundColor:'white',
+        margin:"calc((1vh + 1vw) / 2)",
+        borderRadius:"calc((1vh + 1vw) / 2)"
+      }}>
+        <section style={{height:"10%"}} className="header-modal-default my-2">
           <HeaderModal
             color="danger"
             description={task.description}
@@ -288,7 +292,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           />
           <ProgressBar progressValue={taskPercent} />
         </section>
-        <section className="body-modal-default h-100">
+        <section style={{height:"90%",overflow: "auto",backgroundColor:'white'}} className="d-felx body-modal-default">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
         </section>
       </div>

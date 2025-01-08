@@ -30,9 +30,9 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   };
 
   return (
-    <div className="d-flex align-items-end gap-2 mt-2 flex-column position-relative">
+    <div style={{height:"15%"}} className="d-flex align-items-end flex-column position-relative">
       <textarea
-        style={{ resize: "none" }}
+        style={{ resize: "none",margin:"0px",padding:"0px" }}
         onChange={handleTextChange}
         disabled={disabledForm || !isOpenButton}
         value={value}
@@ -47,9 +47,6 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
           setIsOpenButton((prev) => !prev);
         }}
         className={`${buttonClasses}  position-absolute`} 
-        style={{
-          top: "82px",
-        }}
         aria-label={isOpenButton ? buttonTextOpen : buttonTextClosed}
       >
         <i className={`fa fa-${isOpenButton ? "unlock" : "lock" } text-${isOpenButton ? "success" : "danger"}`}></i>
