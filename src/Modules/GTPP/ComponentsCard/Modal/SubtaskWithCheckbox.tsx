@@ -13,7 +13,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
   const [selectedOption, setSelectedOption] = useState("description");
-  
+
 
   const [subTask, setSubtask] = useState<{
     isObservable: boolean,
@@ -45,20 +45,20 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
           changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, subTask.text, message, selectedOption);
         }}
         onClose={() => {
-          setSubtask((prev) => ({...prev, isObservable: false}));
+          setSubtask((prev) => ({ ...prev, isObservable: false }));
         }}
         children={(
           <div>
-            <textarea 
-              placeholder={selectedOption === "observed" ? "Digite aqui sua observação..." : "faça seu ajuste na descrição..."} 
-              onChange={(e) => setSubtask((prev) => ({...prev, text: e.target.value}))}></textarea>
+            <textarea
+              placeholder={selectedOption === "observed" ? "Digite aqui sua observação..." : "faça seu ajuste na descrição..."}
+              onChange={(e) => setSubtask((prev) => ({ ...prev, text: e.target.value }))}></textarea>
           </div>
         )}
         childrenButton={(
           <>
             <div className="d-flex justify-content-center flex-column">
-              <div><input type="radio" className="radio" value="description" checked={selectedOption === "description"} onChange={handleRadioChange}/> <strong>Descrição</strong></div>
-              <div><input type="radio" className="radio"value="observed" checked={selectedOption === "observed"} onChange={handleRadioChange}/> <strong>Observação</strong></div>
+              <div><input type="radio" className="radio" value="description" checked={selectedOption === "description"} onChange={handleRadioChange} /> <strong>Descrição</strong></div>
+              <div><input type="radio" className="radio" value="observed" checked={selectedOption === "observed"} onChange={handleRadioChange} /> <strong>Observação</strong></div>
             </div>
           </>
         )}
@@ -66,7 +66,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     );
   }
 
-  const ModalInformation = ({description}: {description: string}) => {
+  const ModalInformation = ({ description }: { description: string }) => {
     return (
       <div className="cloud-balloon">
         <div className="cloud-content">
@@ -81,33 +81,39 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
       <div className="container">
         {ModalEdit()}
         {subTasks.map((task, index: number) => (
-          <div 
+          <div
             key={task.id}
-            className={`d-flex p-1 justify-content-between gap-2 align-items-center mb-2 position-relative`}
+            className={"d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded"}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
-            <InputCheckbox
-              label={task.description}
-              onChange={(e: any) => {
-                checkedItem(
-                  task.id,
-                  e.target.checked,
-                  task.task_id,
-                  task
-                );
-              }}
-              value={task.check}
-              key={index}
-            />
-            <div className="d-flex gap-2">
+            <div className="w-75">
+              <div className="text-wrap text-break">
+              <InputCheckbox
+                label={task.description}
+                onChange={(e: any) => {
+                  checkedItem(
+                    task.id,
+                    e.target.checked,
+                    task.task_id,
+                    task
+                  );
+                }}
+                value={task.check}
+                key={index}
+              />
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-around w-25">
               <AnexoImage />
               <ButtonIcon title="Visualizar observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
-                setSubtask((prev) => ({...prev, idSubTask: task.id, openDialog: !prev.openDialog}))
-              }}/>
+                setSubtask((prev) => ({ ...prev, idSubTask: task.id, openDialog: !prev.openDialog }))
+              }} />
               <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
-                setSubtask((prev) => ({...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id}));
-              }}/>
+                setSubtask((prev) => ({ ...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id }));
+              }} />
             </div>
+
           </div>
         ))}
       </div>

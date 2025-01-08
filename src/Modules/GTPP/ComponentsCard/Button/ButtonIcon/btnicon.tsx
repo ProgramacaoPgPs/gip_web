@@ -10,7 +10,7 @@ function ButtonIcon({ color, icon, description, ...rest }: IButtonIcon) {
   return (
     <button
       {...rest}
-      className={`bg-${color} rounded font-weight-bold p-2 text-white d-flex gap-2 align-items-center`}
+      className={`btn-${color} btn rounded font-weight-bold p-2 text-white d-flex align-items-center`}
     >
       <i className={`fa fa-${icon} text-white`}></i>{description.length > 0 && <span>{description}</span>}
     </button>
