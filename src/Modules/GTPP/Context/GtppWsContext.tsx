@@ -32,7 +32,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
-  const {  setLoading  } = useMyContext();
+  const { setLoading } = useMyContext();
 
   const ws = useRef(new GtppWebSocket());
   const { userLog } = useMyContext();
@@ -48,7 +48,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         updateNotification(getNotify.data);
       } catch (error) {
         console.log(error);
-      } finally{
+      } finally {
         setLoading(false);
       }
     })();
@@ -111,7 +111,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
-    }finally{
+    } finally {
       updateStates(listState);
       setLoading(false);
     }
@@ -130,7 +130,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     return listState
   }
-  async function getTaskInformations():Promise<void> {
+  async function getTaskInformations(): Promise<void> {
     setLoading(true);
     try {
       const connection = new Connection("18", true);
@@ -139,7 +139,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setTaskDetails(getTaskItem);
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   }
@@ -158,7 +158,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
-        if(response.type == 6){
+        if (response.type == 6) {
           await loadTasks();
         }
         if (response.object) {
@@ -175,7 +175,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       } else if (response.type == -3 || response.type == 5) {
         //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
-        if(task.id == response.task_id && response.type == -3){
+        if (task.id == response.task_id && response.type == -3) {
           setOpenCardDefault(false);
         }
 
@@ -246,11 +246,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(true);
     try {
       const connection = new Connection("18");
-      let result: {error:boolean,data?:any,message?:string} = await connection.put(
+      let result: { error: boolean, data?: any, message?: string } = await connection.put(
         { check: checked, id: id, task_id: idTask },
         "GTPP/TaskItem.php"
-      ) || {error:false};
-      if(result.error) throw new Error(result.message);
+      ) || { error: false };
+      if (result.error) throw new Error(result.message);
       taskLocal.check = checked;
       setTaskPercent(result.data.percent);
 
@@ -263,7 +263,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       infSenCheckItem(taskLocal, result.data);
     } catch (error) {
       alert(error);
-    } finally{
+    } finally {
       setLoading(false);
     }
   }
@@ -343,15 +343,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         task_id: task_id
       }, "GTPP/TaskItem.php");
 
-      if (response.data && !response.error) {
-        await getTaskInformations();
-        alert('Salvo com sucesso!');
-      } else {
-        alert('Error saved task.');
-      }
+      if (response.error) throw new Error(response.message);
 
     } catch (error) {
-      console.error("Error adding task:", error);
+      alert("Error adding task:" + error);
 
     } finally {
       setLoading(false);
@@ -384,7 +379,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     } catch (error) {
       console.log("erro ao fazer o PUT em Task.php");
-    } finally{
+    } finally {
       setLoading(false);
     }
   }

@@ -83,7 +83,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         {subTasks.map((task, index: number) => (
           <div
             key={task.id}
-            className={"d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded"}
+            className={"d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded overflow-auto"}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
             <div className="w-75">

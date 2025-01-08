@@ -64,24 +64,24 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
             <MessageModal
               typeInput={
                 props.taskListFiltered.state_id == 2 ||
-                props.taskListFiltered.state_id == 4
+                  props.taskListFiltered.state_id == 4
                   ? "text"
                   : props.taskListFiltered.state_id == 5
-                  ? "number"
-                  : null
+                    ? "number"
+                    : null
               }
               title={
-                  props.taskListFiltered.state_id == 2
+                props.taskListFiltered.state_id == 2
                   ? "Deseja parar mesmo a tarefa?"
                   : props.taskListFiltered.state_id == 4
-                  ? "Deseja mesmo retomar a tarefa?"
-                  : props.taskListFiltered.state_id == 3
-                  ? "Deseja finalizar essa tarefa?"
-                  : props.taskListFiltered.state_id == 5
-                  ? "Insira o total de dias que voce precisa"
-                  : props.taskListFiltered.state_id == 6
-                  ? "Deseja mesmo retomar a tarefa?"
-                  : null
+                    ? "Deseja mesmo retomar a tarefa?"
+                    : props.taskListFiltered.state_id == 3
+                      ? "Deseja finalizar essa tarefa?"
+                      : props.taskListFiltered.state_id == 5
+                        ? "Insira o total de dias que voce precisa"
+                        : props.taskListFiltered.state_id == 6
+                          ? "Deseja mesmo retomar a tarefa?"
+                          : null
               }
               onChange={(e: any) =>
                 setListTask((prev) => ({
@@ -245,8 +245,10 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   color="success"
                   description="Enviar"
                   icon="arrow-right"
-                  onClick={() =>
-                    handleAddTask(valueNewTask, props.taskListFiltered.id)
+                  onClick={() => {
+                      handleAddTask(valueNewTask, props.taskListFiltered.id);
+                      setValueNewTask("");
+                    }
                   }
                 />
               </div>
