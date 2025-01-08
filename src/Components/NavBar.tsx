@@ -6,7 +6,7 @@ import { Container } from 'react-bootstrap';
 
 type NavBarProps = {
     list?: any[],
-    page?: string, 
+    page?: string,
     icon?: string,
     children?: React.ReactNode,
 }
@@ -23,11 +23,13 @@ const NavBar: React.FC<NavBarProps> = (props: any) => {
             <Container>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={handleToggleClick} />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
+                    <Nav>
                         {props.list && props.list.length > 0 ? (
                             props.list.map((item: any, index: any) => (
                                 <Nav.Link key={index} as={Link} to={item.page || "/home"}>
-                                   <div className={item.icon} ></div> {item.children || "Default Text"}
+                                    <div className='d-flex align-items-center'>
+                                        <div className={item.icon} ></div> <span className='mx-2'>{item.children || "Default Text"}</span>
+                                    </div>
                                 </Nav.Link>
                             ))
                         ) : (

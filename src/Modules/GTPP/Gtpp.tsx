@@ -44,7 +44,7 @@ export default function Gtpp(): JSX.Element {
       className="d-flex flex-row h-100 w-100 position-relative"
     >
       <NavBar list={listPath} />
-      <div className="h-100 w-100 d-flex overflowx-hidden">
+      <div className="h-100 d-flex overflow-hidden px-2">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
             <div className="position-relative">
@@ -196,6 +196,5 @@ export default function Gtpp(): JSX.Element {
         )}
       </div>
     </div>
-
   );
 }
