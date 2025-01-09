@@ -9,9 +9,11 @@ class GtppWebSocket {
   callbackOnMessage!: (notify: any) => Promise<void>;
 
   // Função para conectar ao WebSocket
+
   connect(): void {
+
     if (localStorage?.tokenGIPP) {
-      this.socket = new WebSocket("ws://192.168.0.99:3333");
+      this.socket = new WebSocket("ws://10.10.10.99:3333");
       const localWs = this.socket;
       this.socket.onopen = (ev) => {
         this.onOpen(localWs);

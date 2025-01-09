@@ -39,6 +39,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
+
     (async () => {
       setLoading(true);
       try {
@@ -146,6 +147,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
+    console.log(response);
     setMessageNotification(response);
     if (
       response.error &&

@@ -17,7 +17,7 @@ function useConnect({ getStateWebSocket, handleNewMessage }: ConnectProps) {
             return;
         }
 
-        const socket = new WebSocket(process.env.REACT_APP_WS_URL || "ws://192.168.0.99:3333");
+        const socket = new WebSocket(process.env.REACT_APP_WS_URL || "ws://10.10.10.99:3333");
 
         socket.onopen = () => {
             setIsConnected(true);

@@ -25,7 +25,7 @@ export default class WebSocketCLPP {
 
   connectWebSocket(): void {
     try {
-      const localWs = new WebSocket('ws://192.168.0.99:9193');
+      const localWs = new WebSocket('ws://10.10.10.99:9193');
       ws = localWs;
 
       localWs.onopen = () => {

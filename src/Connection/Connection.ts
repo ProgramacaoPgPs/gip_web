@@ -23,7 +23,7 @@ export class Connection{
     // Detecta se estamos na rede interna ou externa
     async detectNetwork() {
         try {
-            const response = await fetch('http://192.168.0.99:71/GLOBAL/');
+            const response = await fetch('http://gigpp.com.br:72/GLOBAL/');
             this.#isInternalNetwork = response.ok;
         } catch (e) {
             // Se a requisição falhar, assume que estamos na rede externa
@@ -101,7 +101,7 @@ export class Connection{
     }
     async settingUrl(middlewer: string, params?: string) {
         await this.initialize();
-        let server = this.#isInternalNetwork ? "http://192.168.0.99:71/GLOBAL" : "http://187.92.74.154:71/GLOBAL";
+        let server = this.#isInternalNetwork ? "http://gigpp.com.br:72/GLOBAL" : "http://187.92.74.154:71/GLOBAL";
         let token = localStorage.getItem("tokenGIPP");
         this.#URL = server + middlewer + token + (params ? params : "");
     }
