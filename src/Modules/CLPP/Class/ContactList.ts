@@ -30,6 +30,7 @@ export default class ContactList {
     async loadInfo(list: any[]): Promise<User[]> {
         const promises = list.map((item) => {
             const user = new User({ id: item.id, session: '', administrator: 0 });
+            user.loadInfo(true);
             return user;
         });
         const results = await Promise.all(promises);

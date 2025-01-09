@@ -71,7 +71,7 @@ export function MyProvider({ children }: Props) {
     new User({ id: 0, session: "", administrator: 0 })
   );
   const [contactList, setContactList] = useState<User[]>([]);
-  const [reset, setResetState] = useState<any>(1); 
+  const [reset, setResetState] = useState<any>(1);
 
    return (
     <MyContext.Provider

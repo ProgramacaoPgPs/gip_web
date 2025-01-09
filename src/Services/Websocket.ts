@@ -30,7 +30,6 @@ export default class WebSocketCLPP {
 
       localWs.onopen = () => {
         this.onOpen(localWs);
-        console.log('connected',localWs);
       };
 
       localWs.onerror = (ev: Event) => {

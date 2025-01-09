@@ -21,7 +21,6 @@ export default function Home(): JSX.Element {
             <section className='p-2 flex-grow-1'>
                 <CustomButton onClick={() => navigate('/home/GTPP')} className='btn btn-primary' value={'GTPP'} />
             </section>
-
         </div>
     );
 }

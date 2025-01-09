@@ -25,12 +25,13 @@ export default function PrivateRoute({ children }: Props) {
         let response = true;
         const conn = new Connection('18');
         const user: any = await conn.get(`&application_id=18&validation=1`, 'GIPP/LoginGipp.php', true);
-
-        setUserLog(new User({
+        const infoUser = new User({
             id: user.data[0]["user_id"],
             session: user.data[0]["session"],
             administrator: 1
-        }));
+        });
+        await infoUser.loadInfo(true);
+        setUserLog(infoUser);
 
         const req: any = await conn.get(`&application_id=18&user_id=${user.data[0]["user_id"]}`, 'CCPP/Token.php', true);
 

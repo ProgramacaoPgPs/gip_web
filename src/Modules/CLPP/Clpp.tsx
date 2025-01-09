@@ -13,14 +13,12 @@ const logo = require("../../Assets/Image/peg_pese_loading.png");
 
 
 export default function Clpp(): JSX.Element {
-    const { ws } = useWebSocket(); // Contexto de WebSocket
     const [openChat, setOpenChat] = React.useState<boolean>(false)
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const [windowsMessage, setWindowsMessage] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
-    const { contactList, changeListContact,idReceived, setIdReceived } = useWebSocket();
-
+    const { ws, contactList, changeListContact, idReceived, setIdReceived } = useWebSocket();
 
     return (
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
@@ -56,7 +54,6 @@ export default function Clpp(): JSX.Element {
             }
             <button className={`btn fa-solid my-2 ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
                 setOpenChat(!openChat);
-                /*ws.informPreview('68');*/
             }}></button>
         </div>
     );
@@ -73,15 +70,15 @@ export default function Clpp(): JSX.Element {
 
 function WindowsMessage(props: tWindowsMessage): JSX.Element {
     const { userLog } = useMyContext();
-    const {changeChat,handleScroll,messagesContainerRef,previousScrollHeight,listMessage,page,pageLimit,msgLoad} = useWebSocket();
+    const { changeChat, handleScroll, messagesContainerRef, previousScrollHeight, listMessage, page, pageLimit, msgLoad } = useWebSocket();
 
 
     useEffect(() => {
         if (messagesContainerRef.current) {
             messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
         }
-    }, [listMessage,page]);
-   
+    }, [listMessage, page]);
+
     return (
         <div id='divWindowsMessage' className='d-flex flex-column h-100 w-100'>
             {msgLoad && (
@@ -100,7 +97,7 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
                 onScroll={handleScroll}
                 className='d-flex flex-column overflow-auto h-100 w-100 p-2'
             >
-                {listMessage.map((item,index) => (
+                {listMessage.map((item, index) => (
                     <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
                         <div className="p-2 rounded">{controllerMessage(item)}</div>
                         {
@@ -148,8 +145,8 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
                 <div className="d-flex justify-content-end my-2" onClick={async () => {
                     try {
                         const conn = new Connection('18');
-                        const req: { error: boolean, fileName: string, fileContent: string, message?:'string' } = await conn.get(`&file=${message.message}`, 'GIPP/LoginGipp.php') || { error: true, fileName: '', fileContent: '' };
-                        if(req.error) throw new Error(req.message);
+                        const req: { error: boolean, fileName: string, fileContent: string, message?: 'string' } = await conn.get(`&file=${message.message}`, 'GIPP/LoginGipp.php') || { error: true, fileName: '', fileContent: '' };
+                        if (req.error) throw new Error(req.message);
                         downloadFile(req);
                     } catch (error) {
                         alert(error)
