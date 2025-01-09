@@ -52,7 +52,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
 
   return (
     <div className="d-flex flex-column h-100 p-2">
-      <div style={{height:"10%"}} className="d-flex justify-content-between align-items-center my-2">
+      <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center my-2">
         <div className="d-flex align-items-center">
           <AvatarGroup
             dataTask={props.taskListFiltered}
@@ -163,7 +163,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           </div>
         </div>
       </div>
-      <div style={{height:"90%"}} className="d-flex flex-column justify-content-between">
+      <div style={{ height: "90%" }} className="d-flex flex-column justify-content-between">
         <FormTextAreaDefault
           task={props.taskListFiltered}
           details={props?.details?.data}
@@ -230,7 +230,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           )}
         </div>
         {valueTask && (
-          <div style={{height:"10%"}} className="d-flex justify-content-between align-items-center">
+          <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
             <div className="mx-2">
               <ButtonIcon
                 color="success"
@@ -275,15 +275,15 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
   const { task, taskPercent } = useWebSocket();
 
   return (
-    <div className="zIndex99">
-      <div style={{
-        display:'flex',
-        flexDirection:'column',
-        backgroundColor:'white',
-        margin:"calc((1vh + 1vw) / 2)",
-        borderRadius:"calc((1vh + 1vw) / 2)"
+    <div className="zIndex99 row">
+      <div className="col-11 col-sm-10 col-md-8 col-lg-8 col-xl-6 h-100" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        borderRadius: "calc((1vh + 1vw) / 2)"        
       }}>
-        <section style={{height:"10%"}} className="header-modal-default my-2">
+
+        <section style={{ height: "10%" }} className="header-modal-default my-2">
           <HeaderModal
             color="danger"
             description={task.description}
@@ -292,7 +292,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           />
           <ProgressBar progressValue={taskPercent} />
         </section>
-        <section style={{height:"90%",overflow: "auto",backgroundColor:'white'}} className="d-felx body-modal-default">
+        <section style={{ height: "90%", overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
         </section>
       </div>

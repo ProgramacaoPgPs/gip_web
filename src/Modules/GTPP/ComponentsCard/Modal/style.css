@@ -45,12 +45,15 @@
     background-color: #0000006e;
     position: absolute;
     left: 0;
-    width: 100% !important;
-    height: 100%;
+    top:0;
+    width: 100vw !important;
+    height: 100vh;
     display: flex;
     justify-content: center;
     overflow: hidden;
+    margin:0px !important;
 }
+
 
 .border-online {
     border: 2px solid rgb(0, 234, 0);
@@ -96,7 +99,7 @@
 .taskGtpp {
     /* max-height: 450px;
     height: clamp(400px, 100%, calc(100% - 550px)); */
-    height: 450px;
+    /* height: 450px; */
 }
 
 @media screen and (max-width: 920px) {
@@ -106,15 +109,15 @@
         left: 15%;
     }
      
-    .portrait {
+    /* .portrait {
         left: 2% !important;
         height: 270px !important;
         top: 20% !important;
-    }
+    } */
 
-    .taskGtpp {
+    /* .taskGtpp {
         height: 400px;
-    }
+    } */
 }
 
 
@@ -133,18 +136,18 @@
         transform: translateX(-50%);
     }
 
-    .taskGtpp {
+    /* .taskGtpp {
         height: 370px;
-    }
+    } */
 
-    .portrait {
+    /* .portrait {
         left: 2% !important;
         height: 510px !important;
         top: 8% !important;
-    }
+    } */
 
-    .boxListCheck {
+    /* .boxListCheck {
         top: 100%;
         left: -86%;
-    }
+    } */
 }

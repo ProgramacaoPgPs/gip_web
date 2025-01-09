@@ -41,10 +41,10 @@ export default function Gtpp(): JSX.Element {
   return (
     <div
       id="moduleGTPP"
-      className="d-flex flex-row h-100 w-100 position-relative"
+      className="d-flex flex-row h-100 w-100 position-relative container-fluid"
     >
       <NavBar list={listPath} />
-      <div className="h-100 d-flex overflow-hidden px-2">
+      <div className="h-100 d-flex overflow-hidden px-2 flex-grow-1">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
             <div className="position-relative">
