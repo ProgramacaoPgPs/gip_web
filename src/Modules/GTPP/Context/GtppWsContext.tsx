@@ -147,7 +147,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
-    console.log(response);
+  
     setMessageNotification(response);
     if (
       response.error &&
