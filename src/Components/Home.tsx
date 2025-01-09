@@ -18,7 +18,7 @@ export default function Home(): JSX.Element {
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid'>
             <NavBar list={listPath} />
-            <section className='p-2 bg-dark flex-grow-1'>
+            <section className='p-2 flex-grow-1'>
                 <CustomButton onClick={() => navigate('/home/GTPP')} className='btn btn-primary' value={'GTPP'} />
             </section>
 
