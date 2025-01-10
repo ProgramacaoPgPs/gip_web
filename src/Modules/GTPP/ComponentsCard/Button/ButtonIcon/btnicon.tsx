@@ -12,7 +12,7 @@ function ButtonIcon({ color, icon, description, ...rest }: IButtonIcon) {
       {...rest}
       className={`btn-${color} btn rounded font-weight-bold p-2 text-white d-flex align-items-center`}
     >
-      <i className={`fa fa-${icon} text-white`}></i>{description.length > 0 && <span>{description}</span>}
+      <i className={`fa fa-${icon} text-white`}></i>{description.length > 0 && <span className='d-none d-md-inline'>{description}</span>}
     </button>
   );
 }

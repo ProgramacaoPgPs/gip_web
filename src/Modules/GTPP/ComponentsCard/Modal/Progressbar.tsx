@@ -25,7 +25,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue,colorBar }) => 
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        {clampedValue}%
+        <span className='fw-bold'>{clampedValue}%</span>
       </div>
     </div>
   );

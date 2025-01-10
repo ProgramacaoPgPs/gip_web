@@ -64,7 +64,7 @@ function Login() {
                 fieldsets={fieldsetsData}
                 onSubmit={handleSubmit}
                 method="post"
-                className='d-flex flex-column align-items-center justify-center col-8 col-sm-6 col-md-4 col-lg-2 rounded py-4'
+                className='d-flex flex-column align-items-center justify-center col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 rounded py-4'
                 id='loginCustomForm'
             />
             
