@@ -25,7 +25,7 @@ export default class NotificationGTPP {
             case 5:
                 item.id = parseInt(element.task_id);
                 item.task_id = element.task_id
-                item.title = `${name}, você:`
+                item.title = `${name}:`
                 item.message = element.object.description;;
                 item.typeNotify = 'info';
                 break;
@@ -42,9 +42,9 @@ export default class NotificationGTPP {
                 item.typeNotify = 'info';
                 break;
             case -3:
-                item.title = `${name}, você:`
+                item.title = `${name}:`
                 item.message = element.object.description;
-                item.typeNotify = 'info';
+                item.typeNotify = 'danger';
                 break;
             default:
                 break;

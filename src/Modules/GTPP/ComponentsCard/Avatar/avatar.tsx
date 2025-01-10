@@ -16,7 +16,6 @@ const UserProfile = (props: any) => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { setLoading } = useMyContext();
-
   useEffect(() => {
     setLoading(true);
     const loadPhotos = async () => {
@@ -63,7 +62,7 @@ const UserProfile = (props: any) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  
+
   return (
     <div className="">
       {/* Aqui vamos fazer o botão para fechar a lista de usuários */}
@@ -101,15 +100,18 @@ const UserProfile = (props: any) => {
 
 const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   const [isChecked, setIsChecked] = useState(item.check);
+  const { addUserTask } = useWebSocket();
   const { getTaskInformations } = useWebSocket();
   const connection = new Connection('18');
 
-  const handleActiveUser = async () => {
+  const handleActiveUser = async (checkUser:boolean) => {
+    const user = { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid };
     const response: any = await connection.put(
-      { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid },
+      user,
       'GTPP/Task_User.php'
     );
-
+    console.error(checkUser ? 5 : -3,checkUser);
+    addUserTask(user, checkUser ? 5 : -3);
     if (response.message && !response.error) {
       alert('Usuário atualizado com sucesso!');
       // Recarregar a lista de usuários após a atualização
@@ -124,7 +126,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
       className={`d-flex gap-4 rounded w-100 align-items-center p-1 mb-2 ${isChecked ? 'bg-secondary' : 'bg-normal'}`}
       onClick={async () => {
         setIsChecked(!isChecked);
-        await handleActiveUser();
+        await handleActiveUser(!isChecked);
         await getTaskInformations();
       }}
     >

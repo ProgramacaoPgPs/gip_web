@@ -145,9 +145,43 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  function addUserTask(element: any, type: number) {
+    // const object = type === 5 ? {
+    //   "description": `${element.name} foi vinculado a tarefa`, //Message
+    //   "task_id": element.task_id, // Id da tarefa.
+    //   "changeUser": element.user_id // Id do usuário que foi vínculado 
+    // } : { description: `${element.name} foi removido da tarefa` }
+
+    const info:{
+      error:boolean;
+      user_id:number;
+      send_user_id:number;
+      object:{
+        description:string;
+        changeUser?:number;
+        task_id?:number;
+      };
+      task_id:number;
+      type:number
+    } = {
+      "error": false,
+      "user_id": element.user_id,
+      "send_user_id": userLog.id,
+      "object": {
+        "description": type === 5 ? `${element.name} foi vinculado a tarefa` : `${element.name} foi removido da tarefa`
+      },
+      "task_id": element.task_id,
+      "type": type
+    }
+    if(type ===5) info.object.changeUser = element.user_id;
+    if(type ===5) info.object.task_id = element.task_id;
+    console.log(info);
+    ws.current.informSending(info);
+  }
+
   async function callbackOnMessage(event: any) {
     let response = JSON.parse(event.data);
-  
+
     setMessageNotification(response);
     if (
       response.error &&
@@ -155,6 +189,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
+    // console.error(response);
 
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
@@ -509,6 +544,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         onSounds,
         getTask,
         openCardDefault,
+        addUserTask,
         getTaskInformations,
         setOpenCardDefault,
         loadTasks,
