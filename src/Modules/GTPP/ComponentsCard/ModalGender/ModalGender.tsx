@@ -22,11 +22,11 @@ const ModalGender: React.FC<TModalGender> = ({ isOpen, onClose, children, childr
         <section className="content">
           {children}
         </section>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex flex-column">
           {childrenButton}
-          <div className="modal-actions">
-            <button className="btn btn-primary"onClick={onSave}>Salvar</button>
-            <button className="btn btn-danger" onClick={onClose}>Cancelar</button>
+          <div className="modal-actions d-flex justify-content-around">
+            <button onClick={onSave}>Salvar</button>
+            <button onClick={onClose}>Cancelar</button>
           </div>
         </div>
       </div>

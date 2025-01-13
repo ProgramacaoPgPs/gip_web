@@ -5,6 +5,7 @@ import { useWebSocket } from "../../Context/GtppWsContext";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import ModalGender from "../ModalGender/ModalGender";
 import AnexoImage from "../AnexoImage/AnexoImage";
+import ConfirmModal from "../../../../Components/CustomConfirm";
 
 interface iSubTask {
   isObservable: boolean;
@@ -22,6 +23,9 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
   const [selectedOption, setSelectedOption] = useState("description");
+  const [editTask, setEditTask] = useState<any>("");
+  const [isObservation, setIsObservation] = useState<boolean>(false);
+  const [onEditTask, setOnEditTask] = useState<boolean>(false);
 
 
   const [subTask, setSubtask] = useState<iSubTask>({
@@ -38,13 +42,14 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   }
 
 
-  const ModalEdit = () => {
+  const ModalEdit = (props: any) => {
+    const { task, setEditTask } = props;
     return (
       <ModalGender
         isOpen={subTask.isObservable}
         title={selectedOption === "observed" ? "Observação" : "Descrição"}
         onSave={() => {
-          changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, subTask.text, message, selectedOption);
+          // changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, subTask.text, message, selectedOption);
         }}
         onClose={() => {
           setSubtask((prev) => ({ ...prev, isObservable: false }));
@@ -52,17 +57,23 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         children={(
           <div>
             <textarea
+              value={selectedOption === "observed" ? task.note : task.description}
               placeholder={selectedOption === "observed" ? "Digite aqui sua observação..." : "faça seu ajuste na descrição..."}
-              onChange={(e) => setSubtask((prev) => ({ ...prev, text: e.target.value }))}></textarea>
+              onChange={(e) => {
+                e.preventDefault();
+                // setSubtask((prev) => ({ ...prev, text: e.target.value }));
+                task.note = e.target.value
+                setEditTask({ ...task });
+              }}></textarea>
           </div>
         )}
         childrenButton={(
-          <>
+          <React.Fragment>
             <div className="d-flex justify-content-center flex-column">
               <div><input type="radio" className="radio" value="description" checked={selectedOption === "description"} onChange={handleRadioChange} /> <strong>Descrição</strong></div>
               <div><input type="radio" className="radio" value="observed" checked={selectedOption === "observed"} onChange={handleRadioChange} /> <strong>Observação</strong></div>
             </div>
-          </>
+          </React.Fragment>
         )}
       />
     );
@@ -80,11 +91,65 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
       </div>
     );
   };
-
+  function ModalEditTask(props: any) {
+    const { onEditTask, editTask, setEditTask, isObservation, setIsObservation, onClose } = props;
+    const [note, setNote] = useState<string>(editTask.note);
+    const [description, setDescription] = useState<string>(editTask.description);
+    const [confirm, setConfirm] = useState<boolean>(false);
+    const [msgConfirm, setMsgConfirm] = useState<{ title: string, message: string }>({ title: '', message: '' });
+    return onEditTask && (
+      <div className="d-flex align-items-center justify-content-center" style={{
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        background: "#00000088",
+        top: 0,
+        left: 0
+      }}>
+        {confirm && <ConfirmModal {...msgConfirm} onConfirm={()=>setIsObservation(!isObservation)} onClose={() => setConfirm(false)} />}
+        <div
+          style={{
+            maxHeight: "75%"
+          }}
+          className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3 p-4 rounded">
+          <header className="d-flex align-items-center justify-content-between w-100">
+            <h1>Editar item da tarefa</h1>
+            <button onClick={() => onClose()} className="btn btn-danger py-0">Fechar</button>
+          </header>
+          <section className="w-100">
+            <button onClick={() => {
+              if (editTask.description != description || editTask.note != note) {
+                setMsgConfirm({ title: "Atenção", message: "Salve os dados antes de trocar de aba" });
+                setConfirm(true);
+              } else {
+                setIsObservation(!isObservation);
+              }
+            }} className={`btn btn-${isObservation ? 'primary' : 'secondary'} py-0`}>{isObservation ? "Observação" : "Descrição"}</button>
+            <textarea
+              onChange={(event) => {
+                const value = event.target.value;
+                isObservation ? setNote(value) : setDescription(value);
+              }}
+              value={isObservation ? note : description}
+            />
+          </section>
+          <button onClick={() => {
+            if (editTask.description != description || editTask.note != note) {
+              const value = editTask.description != description ? description : note;
+              changeObservedForm(editTask.task_id, editTask.id, value, isObservation);
+              editTask[isObservation?'note':'description'] = value;
+              setEditTask({...editTask});
+            }
+          }} className="btn btn-success col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3">Salvar</button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="overflow-auto my-2 border-secondary rounded flex-grow-1">
       <div>
-        {ModalEdit()}
+        {/* <ModalEdit setEditTask={setEditTask} task={editTask} /> */}
+        <ModalEditTask onEditTask={onEditTask} onClose={() => setOnEditTask(false)} isObservation={isObservation} setIsObservation={setIsObservation} editTask={editTask} setEditTask={setEditTask} />
         {subTasks.map((task, index: number) => (
           <div
             key={task.id}
@@ -116,7 +181,9 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
                 }} />
               }
               <ButtonIcon title="Observação" color="primary" icon="pencil" description="" onClick={() => {
-                setSubtask((prev) => ({ ...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id }));
+                setEditTask(task);
+                setOnEditTask(true);
+                // setSubtask((prev) => ({ ...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id }));
               }} />
               <AnexoImage />
             </div>

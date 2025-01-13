@@ -152,17 +152,17 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     //   "changeUser": element.user_id // Id do usuário que foi vínculado 
     // } : { description: `${element.name} foi removido da tarefa` }
 
-    const info:{
-      error:boolean;
-      user_id:number;
-      send_user_id:number;
-      object:{
-        description:string;
-        changeUser?:number;
-        task_id?:number;
+    const info: {
+      error: boolean;
+      user_id: number;
+      send_user_id: number;
+      object: {
+        description: string;
+        changeUser?: number;
+        task_id?: number;
       };
-      task_id:number;
-      type:number
+      task_id: number;
+      type: number
     } = {
       "error": false,
       "user_id": element.user_id,
@@ -173,8 +173,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       "task_id": element.task_id,
       "type": type
     }
-    if(type ===5) info.object.changeUser = element.user_id;
-    if(type ===5) info.object.task_id = element.task_id;
+    if (type === 5) info.object.changeUser = element.user_id;
+    if (type === 5) info.object.task_id = element.task_id;
     console.log(info);
     ws.current.informSending(info);
   }
@@ -425,60 +425,30 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function changeObservedForm(
     taskId: number,
     subId: number,
-    description: string,
-    _: string,
-    type: string
+    value: string,
+    isObservation: boolean,
   ) {
     setLoading(true);
     try {
       const connection = new Connection("18"); // Instanciando a conexão com o ID
-      const response: any = await connection.put(type === "description" ? {
+      const item: any = {
         id: subId,
+        task_id: taskId
+      };
+      item[isObservation ? 'note' : 'description'] = value;
+      const response: any = await connection.put(item, "GTPP/TaskItem.php");
+
+      if (response.error) throw new Error(response.message);
+
+      await getTaskInformations();
+
+      ws.current.informSending({
+        error: false,
+        user_id: userLog.id,
+        object: item,
         task_id: taskId,
-        description: description
-      } : type === "observed" ? {
-        id: subId,
-        task_id: taskId,
-        note: description
-      } : "", "GTPP/TaskItem.php");
-
-      if (response.message && !response.error) {
-        await getTaskInformations();
-        alert('Salvo com sucesso!');
-      } else if (response.data && !response.error) {
-        await getTaskInformations();
-        alert('Salvo com sucesso!');
-      } else {
-        alert('Erro ao atualizar a tarefa!');
-      }
-
-      if (type === "description") {
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            id: subId,
-            task_id: taskId,
-            description: description,
-          },
-          task_id: taskId,
-          type: 2,
-        })
-      }
-
-      if (type === "observed") {
-        ws.current.informSending({
-          error: false,
-          user_id: userLog.id,
-          object: {
-            id: subId,
-            task_id: taskId,
-            note: description,
-          },
-          task_id: taskId,
-          type: 2,
-        })
-      }
+        type: 2,
+      })
 
     } catch (error) {
       alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
