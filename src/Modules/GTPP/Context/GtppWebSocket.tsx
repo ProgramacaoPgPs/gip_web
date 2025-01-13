@@ -13,7 +13,7 @@ class GtppWebSocket {
   connect(): void {
 
     if (localStorage?.tokenGIPP) {
-      this.socket = new WebSocket("ws://192.168.0.99:3333");
+      this.socket = new WebSocket("ws://gigpp.com.br:3333");
       const localWs = this.socket;
       this.socket.onopen = (ev) => {
         this.onOpen(localWs);

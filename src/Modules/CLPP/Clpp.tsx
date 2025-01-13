@@ -118,7 +118,7 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
         if (parseInt(message.type) === 1) {
             response = message.message;
         } else if (parseInt(message.type) === 2) {
-            response = <a href={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'><img alt="Mensagem no formato de imagem." className='fileStyle' src={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} /></a>;
+            response = <a href={`http://gigpp.com.br:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'><img alt="Mensagem no formato de imagem." className='fileStyle' src={`http://gigpp.com.br:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} /></a>;
         } else {
             response = iconFileMessage(message);
         }
@@ -139,7 +139,7 @@ function WindowsMessage(props: tWindowsMessage): JSX.Element {
     function componentFile(message: any, style: string, icon: string): JSX.Element {
         return (
             <div id='divMessageFile' className="d-flex flex-column fileStyle bg-white p-2 rounded ">
-                <a href={`http://192.168.0.99:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'>
+                <a href={`http://gigpp.com.br:71/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'>
                     <i className={`${style} ${icon}`} />
                 </a>
                 <div className="d-flex justify-content-end my-2" onClick={async () => {

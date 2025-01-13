@@ -14,7 +14,7 @@ class WebSocketGTPPClass {
   // Função para conectar ao WebSocket
   private connect(): void {
     if (localStorage?.tokenGIPP) {
-      this.socket = new WebSocket("ws://192.168.0.99:3333");
+      this.socket = new WebSocket("ws://gigpp.com.br:3333");
 
       this.socket.onopen = () => {
         const authMessage = {

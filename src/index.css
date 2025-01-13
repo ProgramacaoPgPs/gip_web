@@ -7,7 +7,38 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+@media (max-width: 579px) {
+
+  /* Para telas menores que 580px */
+  #moduleGTPP .GIPP-section {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  #moduleGTPP .GIPP-section-sm {
+    width: 100% !important;
+  }
+
+  #moduleGTPP .GIPP-aside-sm {
+    width: 100% !important;
+  }
+}
+
+#moduleGTPP .GIPP-section {
+  display: flex !important;
+  flex-direction: row;
+}
+
+#moduleGTPP .GIPP-section-sm {
+  width: 60%;
+}
+
+#moduleGTPP .GIPP-aside-sm {
+  width: 40%;
 }

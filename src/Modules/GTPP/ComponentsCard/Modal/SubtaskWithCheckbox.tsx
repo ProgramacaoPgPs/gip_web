@@ -83,10 +83,10 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         {subTasks.map((task, index: number) => (
           <div
             key={task.id}
-            className={"d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded overflow-auto"}
+            className={"GIPP-section d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded overflow-auto"}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
-            <div className="w-75">
+            <div className="GIPP-section-sm">
               <div className="text-wrap text-break">
               <InputCheckbox
                 label={task.description}
@@ -104,7 +104,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
               </div>
             </div>
 
-            <div className="d-flex justify-content-around w-25">
+            <div className="GIPP-aside-sm d-flex justify-content-around">
               <AnexoImage />
               <ButtonIcon title="Visualizar observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
                 setSubtask((prev) => ({ ...prev, idSubTask: task.id, openDialog: !prev.openDialog }))
