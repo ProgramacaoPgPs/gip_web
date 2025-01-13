@@ -67,7 +67,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
           className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3 p-4 rounded">
           <header className="d-flex align-items-center justify-content-between w-100">
             <h1>Editar item da tarefa</h1>
-            <button onClick={() => onClose()} className="btn btn-danger py-0">Fechar</button>
+            <button onClick={() => onClose()} className="btn btn-danger py-0">X</button>
           </header>
           <section className="w-100">
             <button onClick={() => {
@@ -78,12 +78,13 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
                 setIsObservation(!isObservation);
               }
             }} className={`btn btn-${isObservation ? 'primary' : 'secondary'} py-0`}>{isObservation ? "Observação" : "Descrição"}</button>
-            <textarea
-              onChange={(event) => {
+            <textarea rows={8} style={{resize: "none"}} className="form-control my-4"
+              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
                 const value = event.target.value;
                 isObservation ? setNote(value) : setDescription(value);
               }}
-              value={isObservation ? note : description}
+              value={(isObservation ? note : description) || ""}
+              placeholder={`${isObservation ? "Escreva detalhes e observações desse item":"Edite a descrição dessa tarefa."}`}
             />
           </section>
           <button onClick={() => {
@@ -92,6 +93,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
               changeObservedForm(editTask.task_id, editTask.id, value, isObservation);
               editTask[isObservation?'note':'description'] = value;
               setEditTask({...editTask});
+              onClose();
             }
           }} className="btn btn-success col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3">Salvar</button>
         </div>
@@ -101,7 +103,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   return (
     <div className="overflow-auto my-2 border-secondary rounded flex-grow-1">
       <div>
-        {/* <ModalEdit setEditTask={setEditTask} task={editTask} /> */}
         <ModalEditTask onEditTask={onEditTask} onClose={() => setOnEditTask(false)} isObservation={isObservation} setIsObservation={setIsObservation} editTask={editTask} setEditTask={setEditTask} />
         {subTasks.map((task, index: number) => (
           <div
@@ -136,7 +137,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
               <ButtonIcon title="Observação" color="primary" icon="pencil" description="" onClick={() => {
                 setEditTask(task);
                 setOnEditTask(true);
-                // setSubtask((prev) => ({ ...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id }));
               }} />
               <AnexoImage />
             </div>
