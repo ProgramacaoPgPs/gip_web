@@ -111,7 +111,6 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
         user,
         'GTPP/Task_User.php'
       );
-      console.error(checkUser ? 5 : -3, checkUser);
       addUserTask(user, checkUser ? 5 : -3);
       if (response.error) throw new Error(response.message);
       loadUserTaskLis();

@@ -146,12 +146,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   function addUserTask(element: any, type: number) {
-    // const object = type === 5 ? {
-    //   "description": `${element.name} foi vinculado a tarefa`, //Message
-    //   "task_id": element.task_id, // Id da tarefa.
-    //   "changeUser": element.user_id // Id do usuário que foi vínculado 
-    // } : { description: `${element.name} foi removido da tarefa` }
-
     const info: {
       error: boolean;
       user_id: number;
@@ -192,6 +186,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     // console.error(response);
 
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
+  
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
@@ -379,7 +374,28 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         file: null,
         task_id: task_id
       }, "GTPP/TaskItem.php");
-
+      const item = {
+        "id": response.data.last_id,
+        "description": description,
+        "check": false,
+        "task_id": parseInt(task_id),
+        "order": response.data.order,
+        "yes_no": response.data.yes_no,
+        "file": 0,
+        "note": null
+      };
+      taskDetails.data?.task_item.push(item);
+      ws.current.informSending({
+        user_id: userLog,
+        object: {
+          "description": "Novo item adicionado",
+          "percent": response.data.percent,
+          "itemUp": item,
+        },
+        task_id,
+        type: 2
+      })
+      setTaskDetails({ ...taskDetails });
       if (response.error) throw new Error(response.message);
 
     } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InputCheckbox } from "../../../../Components/CustomForm";
 import { SubTasksWithCheckboxProps } from "./Types";
 import { useWebSocket } from "../../Context/GtppWsContext";
@@ -15,13 +15,18 @@ interface iSubTask {
   openDialog: boolean
 }
 
-const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
-  subTasks
-}) => {
-  const { checkedItem, changeObservedForm } = useWebSocket();
+const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
+  const { checkedItem, changeObservedForm,taskDetails } = useWebSocket();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
   const [onEditTask, setOnEditTask] = useState<boolean>(false);
+  const containerTaskItemsRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (containerTaskItemsRef.current) {
+      containerTaskItemsRef.current.scrollTop = containerTaskItemsRef.current.scrollHeight;
+    }
+  }, [taskDetails]);
 
   const [subTask, setSubtask] = useState<iSubTask>({
     isObservable: false,
@@ -39,7 +44,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
           {props.description}
         </div>
         <div className="d-flex align-items-center justify-content-center h-25 ">
-          <button className="d-block btn btn-danger">Fechar</button>
+          <button className="d-block btn btn-danger mt-3">Fechar</button>
         </div>
       </div>
     );
@@ -59,7 +64,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         top: 0,
         left: 0
       }}>
-        {confirm && <ConfirmModal {...msgConfirm} onConfirm={()=>setIsObservation(!isObservation)} onClose={() => setConfirm(false)} />}
+        {confirm && <ConfirmModal {...msgConfirm} onConfirm={() => setIsObservation(!isObservation)} onClose={() => setConfirm(false)} />}
         <div
           style={{
             maxHeight: "75%"
@@ -78,21 +83,21 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
                 setIsObservation(!isObservation);
               }
             }} className={`btn btn-${isObservation ? 'primary' : 'secondary'} py-0`}>{isObservation ? "Observação" : "Descrição"}</button>
-            <textarea rows={8} style={{resize: "none"}} className="form-control my-4"
-              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+            <textarea rows={8} style={{ resize: "none" }} className="form-control my-4"
+              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                 const value = event.target.value;
                 isObservation ? setNote(value) : setDescription(value);
               }}
               value={(isObservation ? note : description) || ""}
-              placeholder={`${isObservation ? "Escreva detalhes e observações desse item":"Edite a descrição dessa tarefa."}`}
+              placeholder={`${isObservation ? "Escreva detalhes e observações desse item" : "Edite a descrição dessa tarefa."}`}
             />
           </section>
           <button onClick={() => {
             if (editTask.description != description || editTask.note != note) {
               const value = editTask.description != description ? description : note;
               changeObservedForm(editTask.task_id, editTask.id, value, isObservation);
-              editTask[isObservation?'note':'description'] = value;
-              setEditTask({...editTask});
+              editTask[isObservation ? 'note' : 'description'] = value;
+              setEditTask({ ...editTask });
               onClose();
             }
           }} className="btn btn-success col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3">Salvar</button>
@@ -101,10 +106,10 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     );
   }
   return (
-    <div className="overflow-auto my-2 border-secondary rounded flex-grow-1">
+    <div ref={containerTaskItemsRef} className="overflow-auto my-2 rounded flex-grow-1">
       <div>
         <ModalEditTask onEditTask={onEditTask} onClose={() => setOnEditTask(false)} isObservation={isObservation} setIsObservation={setIsObservation} editTask={editTask} setEditTask={setEditTask} />
-        {subTasks.map((task, index: number) => (
+        {taskDetails.data?.task_item.map((task, index: number) => (
           <div
             key={task.id}
             className={"GIPP-section d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-2 rounded overflow-auto"}
@@ -116,13 +121,13 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
                   label={task.description}
                   onChange={(e: any) => {
                     checkedItem(
-                      task.id,
+                      task.id || 0,
                       e.target.checked,
                       task.task_id,
                       task
                     );
                   }}
-                  value={task.check}
+                  value={task.check || false}
                   key={index}
                 />
               </div>

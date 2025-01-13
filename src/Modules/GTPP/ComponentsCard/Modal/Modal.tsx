@@ -223,7 +223,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           {valueTask && (
             <SubTasksWithCheckbox
               message={props.message}
-              subTasks={taskDetails.data?.task_item || []}
               onTaskChange={(e) => console.log(e)}
               allData={props}
             />
@@ -237,6 +236,11 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 description=""
                 icon="arrow-right"
                 onClick={() => {
+                  console.log(valueNewTask, props.taskListFiltered.id,{
+                    description: valueNewTask,
+                    file: null,
+                    task_id: props.taskListFiltered.id
+                  },taskDetails);
                   handleAddTask(valueNewTask, props.taskListFiltered.id);
                   setValueNewTask("");
                 }
@@ -290,7 +294,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
             task={task}
             onClick={props.close_modal}
           />
-          <ProgressBar progressValue={taskPercent} />
+          <ProgressBar progressValue={taskPercent} colorBar="#00A875"/>
         </section>
         <section style={{ height: "90%", overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
