@@ -3,7 +3,6 @@ import { InputCheckbox } from "../../../../Components/CustomForm";
 import { SubTasksWithCheckboxProps } from "./Types";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
-import ModalGender from "../ModalGender/ModalGender";
 import AnexoImage from "../AnexoImage/AnexoImage";
 import ConfirmModal from "../../../../Components/CustomConfirm";
 
@@ -17,16 +16,12 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
-  subTasks,
-  allData,
-  message
+  subTasks
 }) => {
   const { checkedItem, changeObservedForm } = useWebSocket();
-  const [selectedOption, setSelectedOption] = useState("description");
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
   const [onEditTask, setOnEditTask] = useState<boolean>(false);
-
 
   const [subTask, setSubtask] = useState<iSubTask>({
     isObservable: false,
@@ -36,48 +31,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     idSubTask: "",
     openDialog: false
   });
-
-  const handleRadioChange = (event: any) => {
-    setSelectedOption(event.target.value);
-  }
-
-
-  const ModalEdit = (props: any) => {
-    const { task, setEditTask } = props;
-    return (
-      <ModalGender
-        isOpen={subTask.isObservable}
-        title={selectedOption === "observed" ? "Observação" : "Descrição"}
-        onSave={() => {
-          // changeObservedForm(allData.taskListFiltered.id, subTask.idSubTask, subTask.text, message, selectedOption);
-        }}
-        onClose={() => {
-          setSubtask((prev) => ({ ...prev, isObservable: false }));
-        }}
-        children={(
-          <div>
-            <textarea
-              value={selectedOption === "observed" ? task.note : task.description}
-              placeholder={selectedOption === "observed" ? "Digite aqui sua observação..." : "faça seu ajuste na descrição..."}
-              onChange={(e) => {
-                e.preventDefault();
-                // setSubtask((prev) => ({ ...prev, text: e.target.value }));
-                task.note = e.target.value
-                setEditTask({ ...task });
-              }}></textarea>
-          </div>
-        )}
-        childrenButton={(
-          <React.Fragment>
-            <div className="d-flex justify-content-center flex-column">
-              <div><input type="radio" className="radio" value="description" checked={selectedOption === "description"} onChange={handleRadioChange} /> <strong>Descrição</strong></div>
-              <div><input type="radio" className="radio" value="observed" checked={selectedOption === "observed"} onChange={handleRadioChange} /> <strong>Observação</strong></div>
-            </div>
-          </React.Fragment>
-        )}
-      />
-    );
-  }
 
   const ModalInformation = (props: any) => {
     return (
