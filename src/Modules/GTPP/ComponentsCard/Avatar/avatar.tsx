@@ -104,20 +104,19 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   const { getTaskInformations } = useWebSocket();
   const connection = new Connection('18');
 
-  const handleActiveUser = async (checkUser:boolean) => {
-    const user = { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid };
-    const response: any = await connection.put(
-      user,
-      'GTPP/Task_User.php'
-    );
-    console.error(checkUser ? 5 : -3,checkUser);
-    addUserTask(user, checkUser ? 5 : -3);
-    if (response.message && !response.error) {
-      alert('Usuário atualizado com sucesso!');
-      // Recarregar a lista de usuários após a atualização
+  const handleActiveUser = async (checkUser: boolean) => {
+    try {
+      const user = { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid };
+      const response: any = await connection.put(
+        user,
+        'GTPP/Task_User.php'
+      );
+      console.error(checkUser ? 5 : -3, checkUser);
+      addUserTask(user, checkUser ? 5 : -3);
+      if (response.error) throw new Error(response.message);
       loadUserTaskLis();
-    } else {
-      alert('Erro ao salvar a taréfa!');
+    } catch (error) {
+      alert('Erro ao salvar a tarefa!');
     }
   };
 
