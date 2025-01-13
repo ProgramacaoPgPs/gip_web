@@ -12,9 +12,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
 @media (max-width: 579px) {
-
   /* Para telas menores que 580px */
   #moduleGTPP .GIPP-section {
     display: flex !important;
@@ -27,8 +25,26 @@ code {
 
   #moduleGTPP .GIPP-aside-sm {
     width: 100% !important;
+    justify-content: start !important;
   }
 }
+
+@media (min-width: 580px) and (max-width: 1024px) {
+  /* Para telas entre 580px e 1024px */
+  #moduleGTPP .GIPP-section {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+
+  #moduleGTPP .GIPP-section-sm {
+    width: 60% !important;
+  }
+
+  #moduleGTPP .GIPP-aside-sm {
+    width: 40% !important;
+  }
+}
+
 
 #moduleGTPP .GIPP-section {
   display: flex !important;
@@ -36,9 +52,9 @@ code {
 }
 
 #moduleGTPP .GIPP-section-sm {
-  width: 60%;
+  width: 70%;
 }
 
 #moduleGTPP .GIPP-aside-sm {
-  width: 40%;
+  width: 30%;
 }

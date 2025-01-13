@@ -6,6 +6,15 @@ import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import ModalGender from "../ModalGender/ModalGender";
 import AnexoImage from "../AnexoImage/AnexoImage";
 
+interface iSubTask {
+  isObservable: boolean;
+  isQuestion: boolean;
+  isAttachment: boolean;
+  text: string;
+  idSubTask: string | number;
+  openDialog: boolean
+}
+
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   subTasks,
   allData,
@@ -15,14 +24,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
   const [selectedOption, setSelectedOption] = useState("description");
 
 
-  const [subTask, setSubtask] = useState<{
-    isObservable: boolean,
-    isQuestion: boolean,
-    isAttachment: boolean,
-    text: string,
-    idSubTask: string | number,
-    openDialog: boolean,
-  }>({
+  const [subTask, setSubtask] = useState<iSubTask>({
     isObservable: false,
     isQuestion: false,
     isAttachment: false,
@@ -66,11 +68,14 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
     );
   }
 
-  const ModalInformation = ({ description }: { description: string }) => {
+  const ModalInformation = (props: any) => {
     return (
-      <div className="cloud-balloon">
-        <div className="cloud-content">
-          {description}
+      <div onClick={() => props.onClose(props.task)} className="cloud-balloon w-50 rounded p-2">
+        <div className="cloud-content overflow-auto h-75">
+          {props.description}
+        </div>
+        <div className="d-flex align-items-center justify-content-center h-25 ">
+          <button className="d-block btn btn-danger">Fechar</button>
         </div>
       </div>
     );
@@ -83,35 +88,37 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
         {subTasks.map((task, index: number) => (
           <div
             key={task.id}
-            className={"GIPP-section d-flex justify-content-between align-items-center mb-2 position-relative bg-light border w-100 p-3 rounded overflow-auto"}
+            className={"GIPP-section d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-2 rounded overflow-auto"}
           >
-            {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation description={task.note} />}
-            <div className="GIPP-section-sm">
+            {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation onClose={closeObservation} task description={task.note} />}
+            <div className="GIPP-section-sm my-2">
               <div className="text-wrap text-break">
-              <InputCheckbox
-                label={task.description}
-                onChange={(e: any) => {
-                  checkedItem(
-                    task.id,
-                    e.target.checked,
-                    task.task_id,
-                    task
-                  );
-                }}
-                value={task.check}
-                key={index}
-              />
+                <InputCheckbox
+                  label={task.description}
+                  onChange={(e: any) => {
+                    checkedItem(
+                      task.id,
+                      e.target.checked,
+                      task.task_id,
+                      task
+                    );
+                  }}
+                  value={task.check}
+                  key={index}
+                />
               </div>
             </div>
 
-            <div className="GIPP-aside-sm d-flex justify-content-around">
-              <AnexoImage />
-              <ButtonIcon title="Visualizar observação" color={task.note ? "success" : "secondary"} icon="eye" description="" onClick={() => {
-                setSubtask((prev) => ({ ...prev, idSubTask: task.id, openDialog: !prev.openDialog }))
-              }} />
-              <ButtonIcon title="Observação" color="primary" icon="bars" description="" onClick={() => {
+            <div className="GIPP-aside-sm d-flex justify-content-end gap-2 my-2">
+              {task.note &&
+                <ButtonIcon title="Visualizar observação" color="primary" icon="circle-info" description="" onClick={() => {
+                  closeObservation(task);
+                }} />
+              }
+              <ButtonIcon title="Observação" color="primary" icon="pencil" description="" onClick={() => {
                 setSubtask((prev) => ({ ...prev, isObservable: !prev.isObservable, isAttachment: false, isQuestion: false, openDialog: false, idSubTask: task.id }));
               }} />
+              <AnexoImage />
             </div>
 
           </div>
@@ -119,6 +126,9 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = ({
       </div>
     </div>
   );
+  function closeObservation(task: any) {
+    setSubtask((prev) => ({ ...prev, idSubTask: task.id, openDialog: !prev.openDialog }));
+  }
 };
 
 export default SubTasksWithCheckbox;
