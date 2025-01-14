@@ -8,7 +8,6 @@ export default class NotificationGTPP {
         for await (let element of array){
             const user = new User({ id: element.send_user_id });
             await user.loadInfo();
-            console.log(element);
             this.list.push(this.filterTypeNotify(element,user.name || '', states));
         };
     }

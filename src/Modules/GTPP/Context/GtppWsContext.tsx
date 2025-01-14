@@ -186,7 +186,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     // console.error(response);
 
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
-  
+
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
@@ -238,19 +238,25 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function updateNotification(item: any[]) {
-    setLoading(true);
-    if (onSounds) {
-      const audio = new Audio(soundFile);
-      audio.play().catch((error) => {
-        console.error('Erro ao reproduzir o som:', error);
-      });
+    try {
+      setLoading(true);
+      if (onSounds) {
+        const audio = new Audio(soundFile);
+        audio.play().catch((error) => {
+          console.error('Erro ao reproduzir o som:', error);
+        });
+      }
+      const notify = new NotificationGTPP();
+      await notify.loadNotify(item, states);
+      if(notify.list.length) throw new Error("Lista Vazia");
+      notifications.push(...notify.list);
+      setNotifications([...notifications]);
+      handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-    const notify = new NotificationGTPP();
-    await notify.loadNotify(item, states);
-    notifications.push(...notify.list);
-    setNotifications([...notifications]);
-    handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
-    setLoading(false);
   }
 
   function itemUp(itemUp: any) {
