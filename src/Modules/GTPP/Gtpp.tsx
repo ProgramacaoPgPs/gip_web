@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
-import { Container, Row, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import CardTask from "./ComponentsCard/CardTask/CardTask";
 import NavBar from "../../Components/NavBar";
 import { listPath } from "./mock/mockTeste";

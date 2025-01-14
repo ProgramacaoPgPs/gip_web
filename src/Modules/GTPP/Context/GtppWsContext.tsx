@@ -186,7 +186,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     // console.error(response);
 
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
-
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
@@ -248,7 +247,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
       const notify = new NotificationGTPP();
       await notify.loadNotify(item, states);
-      if(notify.list.length) throw new Error("Lista Vazia");
       notifications.push(...notify.list);
       setNotifications([...notifications]);
       handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
@@ -518,6 +516,15 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  function deleteItemTaskWS(object:any){
+    ws.current.informSending({
+      "user_id": userLog.id,
+      object,
+      "task_id": task.id,
+      "type": 2
+  });
+  console.log(task,object);
+  }
   function clearGtppWsContext() {
     setTask({});
     setTaskDetails({});
@@ -536,6 +543,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         onSounds,
         getTask,
         openCardDefault,
+        deleteItemTaskWS,
         addUserTask,
         getTaskInformations,
         setOpenCardDefault,

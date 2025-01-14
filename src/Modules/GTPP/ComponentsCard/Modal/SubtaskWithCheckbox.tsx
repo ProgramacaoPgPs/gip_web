@@ -5,6 +5,8 @@ import { useWebSocket } from "../../Context/GtppWsContext";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import AnexoImage from "../AnexoImage/AnexoImage";
 import ConfirmModal from "../../../../Components/CustomConfirm";
+import { Connection } from "../../../../Connection/Connection";
+import { useMyContext } from "../../../../Context/MainContext";
 
 interface iSubTask {
   isObservable: boolean;
@@ -16,12 +18,13 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm,taskDetails } = useWebSocket();
+  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, setTaskPercent, getTask, setGetTask, deleteItemTaskWS } = useWebSocket();
+  const { setLoading } = useMyContext();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
   const [onEditTask, setOnEditTask] = useState<boolean>(false);
   const containerTaskItemsRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (containerTaskItemsRef.current) {
       containerTaskItemsRef.current.scrollTop = containerTaskItemsRef.current.scrollHeight;
@@ -143,6 +146,29 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                 setEditTask(task);
                 setOnEditTask(true);
               }} />
+              <ButtonIcon title="Observação" color="danger" icon="trash" description="" onClick={async () => {
+                try {
+                  setLoading(true);
+                  if (task.id && task.task_id) {
+                    const result = await deleteTaskItem({ id: task.id, task_id: task.task_id });
+                    if (result.error) throw new Error(result.message);
+                    setTaskPercent(parseInt(result.data.percent));
+                    removeItemOfList(task.id);
+                    getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(result.data.percent);
+                    setGetTask([...getTask]);
+                    deleteItemTaskWS({
+                      description: "Um item foi removido.",
+                      itemUp: task.id,
+                      percent:parseInt(result.data.percent),
+                      remove: true
+                    });
+                  }
+                } catch (error: any) {
+                  alert(error.message);
+                } finally {
+                  setLoading(false);
+                }
+              }} />
               <AnexoImage />
             </div>
 
@@ -153,6 +179,21 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
   );
   function closeObservation(task: any) {
     setSubtask((prev) => ({ ...prev, idSubTask: task.id, openDialog: !prev.openDialog }));
+  }
+
+  async function deleteTaskItem(item: { id: number; task_id: number }) {
+    const connection = new Connection('18');
+    // const req: any = await connection.delete(`&id=${item.id}&task_id=${item.task_id}`, 'GTPP/TaskItem.php');
+    const req: any = await connection.delete({ id: item.id, task_id: item.task_id }, 'GTPP/TaskItem.php');
+    return req;
+  }
+
+  function removeItemOfList(id: number) {
+    const indexDelete: number | undefined = taskDetails.data?.task_item.findIndex(item => item.id == id);
+    if (indexDelete != undefined && indexDelete >= 0) {
+      taskDetails.data?.task_item.splice(indexDelete, 1);
+      setTaskDetails({ ...taskDetails });
+    }
   }
 };
 
