@@ -16,12 +16,12 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm,taskDetails } = useWebSocket();
+  const { checkedItem, changeObservedForm, taskDetails } = useWebSocket();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
   const [onEditTask, setOnEditTask] = useState<boolean>(false);
   const containerTaskItemsRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (containerTaskItemsRef.current) {
       containerTaskItemsRef.current.scrollTop = containerTaskItemsRef.current.scrollHeight;
@@ -117,19 +117,21 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation onClose={closeObservation} task description={task.note} />}
             <div className="GIPP-section-sm my-2">
               <div className="text-wrap text-break">
-                <InputCheckbox
+                {<InputCheckbox
                   label={task.description}
                   onChange={(e: any) => {
                     checkedItem(
+                      
                       task.id || 0,
                       e.target.checked,
                       task.task_id,
                       task
                     );
                   }}
+                  
                   value={task.check || false}
                   key={index}
-                />
+                />}
               </div>
             </div>
 
