@@ -235,13 +235,8 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 color="success"
                 description=""
                 icon="arrow-right"
-                onClick={() => {
-                  console.log(valueNewTask, props.taskListFiltered.id,{
-                    description: valueNewTask,
-                    file: null,
-                    task_id: props.taskListFiltered.id
-                  },taskDetails);
-                  handleAddTask(valueNewTask, props.taskListFiltered.id);
+                onClick={async () => {
+                  await handleAddTask(valueNewTask, props.taskListFiltered.id);
                   setValueNewTask("");
                 }
                 }
@@ -284,7 +279,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'white',
-        borderRadius: "calc((1vh + 1vw) / 2)"        
+        borderRadius: "calc((1vh + 1vw) / 2)"
       }}>
 
         <section style={{ height: "10%" }} className="header-modal-default my-2">
@@ -294,7 +289,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
             task={task}
             onClick={props.close_modal}
           />
-          <ProgressBar progressValue={taskPercent} colorBar="#00A875"/>
+          <ProgressBar progressValue={taskPercent} colorBar="#00A875" />
         </section>
         <section style={{ height: "90%", overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />

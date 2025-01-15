@@ -18,7 +18,7 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, setTaskPercent, getTask, setGetTask, deleteItemTaskWS } = useWebSocket();
+  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, reloadPagePercent, setTaskPercent, getTask, setGetTask, deleteItemTaskWS } = useWebSocket();
   const { setLoading } = useMyContext();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
@@ -152,10 +152,8 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                   if (task.id && task.task_id) {
                     const result = await deleteTaskItem({ id: task.id, task_id: task.task_id });
                     if (result.error) throw new Error(result.message);
-                    setTaskPercent(parseInt(result.data.percent));
                     removeItemOfList(task.id);
-                    getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(result.data.percent);
-                    setGetTask([...getTask]);
+                    reloadPagePercent(result.data,task);
                     deleteItemTaskWS({
                       description: "Um item foi removido.",
                       itemUp: task.id,

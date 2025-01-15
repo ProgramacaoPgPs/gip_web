@@ -132,8 +132,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     return listState
   }
   async function getTaskInformations(): Promise<void> {
-    setLoading(true);
     try {
+      setLoading(true);
       const connection = new Connection("18", true);
       const getTaskItem: any = await connection.get(`&id=${task.id}`, "GTPP/Task.php");
       if (getTaskItem.error) throw new Error(getTaskItem.message);
@@ -183,7 +183,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
-    // console.error(response);
 
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
@@ -191,19 +190,20 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (response.type == -1 || response.type == 2 || response.type == 6) {
         if (response.type == 6) {
           await loadTasks();
-        }
-        if (response.object) {
-          if (response.object.isItemUp) {
-            itemUp(response.object);
-          } else if (response.object.isStopAndToBackTask) {
-            if (response.object.taskState == 2) {
+        } else if (response.object) {
+          if (response.type == 2) {
+
+            if (response.object.isItemUp) {
+              itemUp(response.object);
+            } else if (response.object.remove) {
+              reloadPageDeleteItem(response);
+            } else {
+              reloadPageAddItem(response.object);
             }
-            if (response.object.taskState == 4) {
-            }
-          } else {
-            console.log("Sem retorno");
+            
           }
         }
+
       } else if (response.type == -3 || response.type == 5) {
         //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
         if (task.id == response.task_id && response.type == -3) {
@@ -257,14 +257,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  function itemUp(itemUp: any) {
-    setTaskPercent(itemUp.percent);
-    taskDetails.data?.task_item.forEach((element, index) => {
-      if (taskDetails.data && element.id == itemUp.itemUp.id)
-        taskDetails.data.task_item[index] = itemUp.itemUp;
-    });
-    setTaskDetails({ ...taskDetails });
-  }
+
 
   function getDescription(description: any) {
     if (taskDetails.data) {
@@ -288,7 +281,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       ) || { error: false };
       if (result.error) throw new Error(result.message);
       taskLocal.check = checked;
-      setTaskPercent(result.data.percent);
+
+
+      // Atualiza o percentual da tarafa na tela principal. 
+      reloadPagePercent(result.data, { task_id: idTask });
 
       // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
       if (result.data.state_id != task.state_id) {
@@ -366,10 +362,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const handleAddTask = async (
+  async function handleAddTask(
     description: string,
     task_id: string
-  ) => {
+  ) {
     setLoading(true);
     try {
       const connection = new Connection('18');
@@ -398,9 +394,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         task_id,
         type: 2
-      })
+      });
       setTaskDetails({ ...taskDetails });
       if (response.error) throw new Error(response.message);
+      reloadPagePercent(response.data, { task_id: task_id })
 
     } catch (error) {
       alert("Error adding task:" + error);
@@ -516,15 +513,45 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  function deleteItemTaskWS(object:any){
+  function deleteItemTaskWS(object: any) {
     ws.current.informSending({
       "user_id": userLog.id,
       object,
       "task_id": task.id,
       "type": 2
-  });
-  console.log(task,object);
+    });
   }
+  // FUNÇÕES PARA ATUALIZAR AS INFORMAÇÕES DA PÁGINA:
+  function reloadPagePercent(value: any, task: any) {
+    setTaskPercent(parseInt(value.percent));
+    getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(value.percent);
+    setGetTask([...getTask]);
+  }
+
+  function reloadPageDeleteItem(value: any) {
+    const indexDelete: number | undefined = taskDetails.data?.task_item.findIndex(item => item.id == value.object.itemUp);
+    if (indexDelete != undefined && indexDelete >= 0) {
+      taskDetails.data?.task_item.splice(indexDelete, 1);
+      setTaskDetails({ ...taskDetails });
+    }
+    reloadPagePercent(value.object, value);
+  }
+
+  function reloadPageAddItem(object: any) {
+    taskDetails.data?.task_item.push(object.itemUp);
+    setTaskDetails({ ...taskDetails });
+    reloadPagePercent(object, object.itemUp);
+  }
+
+  function itemUp(value: any) {
+    taskDetails.data?.task_item.forEach((element, index) => {
+      if (taskDetails.data && element.id == value.itemUp.id)
+        taskDetails.data.task_item[index] = value.itemUp;
+    });
+    setTaskDetails({ ...taskDetails });
+    reloadPagePercent(value, value.itemUp);
+  }
+
   function clearGtppWsContext() {
     setTask({});
     setTaskDetails({});
@@ -543,6 +570,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         onSounds,
         getTask,
         openCardDefault,
+        reloadPagePercent,
         deleteItemTaskWS,
         addUserTask,
         getTaskInformations,

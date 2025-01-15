@@ -53,6 +53,7 @@ export interface iGtppWsContextType {
     onSounds:boolean; 
     getTask:any[];
     openCardDefault:boolean;
+    reloadPagePercent: (value:any,task:any)=>void;
     deleteItemTaskWS: (object:any)=>void;
     addUserTask:(value:any,num:number)=>void;
     getTaskInformations:()=>void;
