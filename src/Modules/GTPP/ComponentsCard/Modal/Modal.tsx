@@ -10,6 +10,7 @@ import SelectTaskItem from "./SelectTaskItem";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import MessageModal from "../ModalMessage/messagemodal";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
+import AttachmentFile from "../../../../Components/AttachmentFile";
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -37,6 +38,7 @@ interface ValueStateTask {
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [valueTask, setValueTask] = useState<boolean>(true);
+  const [attachmentFile, setAttachmentFile] = useState<string>('');
   const { taskDetails, task, stopAndToBackTask, handleAddTask } = useWebSocket();
 
   const [ListTask, setListTask] = useState<ValueStateTask>({
@@ -235,13 +237,16 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 color="success"
                 description=""
                 icon="arrow-right"
-                onClick={async () => {
-                  await handleAddTask(valueNewTask, props.taskListFiltered.id);
-                  setValueNewTask("");
-                }
+                onClick={
+                  async () => {
+                    await handleAddTask(valueNewTask, props.taskListFiltered.id, attachmentFile);
+                    setValueNewTask("");
+                    setAttachmentFile("");
+                  }
                 }
               />
             </div>
+            <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
             <div className="w-100 mx-2">
               <input
                 type="text"

@@ -364,16 +364,18 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function handleAddTask(
     description: string,
-    task_id: string
+    task_id: string,
+    file?:string
   ) {
     setLoading(true);
     try {
       const connection = new Connection('18');
       const response: any = await connection.post({
         description: description,
-        file: null,
+        file: file ? file : '',
         task_id: task_id
       }, "GTPP/TaskItem.php");
+      
       const item = {
         "id": response.data.last_id,
         "description": description,
@@ -381,7 +383,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         "task_id": parseInt(task_id),
         "order": response.data.order,
         "yes_no": response.data.yes_no,
-        "file": 0,
+        "file": file ? 1 : 0,
         "note": null
       };
       taskDetails.data?.task_item.push(item);

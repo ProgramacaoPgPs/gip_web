@@ -3,7 +3,7 @@ import { InputCheckbox } from "../../../../Components/CustomForm";
 import { SubTasksWithCheckboxProps } from "./Types";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
-import AnexoImage from "../AnexoImage/AnexoImage";
+import AnexoImage from "../../../../Components/AttachmentFile";
 import ConfirmModal from "../../../../Components/CustomConfirm";
 import { Connection } from "../../../../Connection/Connection";
 import { useMyContext } from "../../../../Context/MainContext";
@@ -18,7 +18,7 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, reloadPagePercent, setTaskPercent, getTask, setGetTask, deleteItemTaskWS } = useWebSocket();
+  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS } = useWebSocket();
   const { setLoading } = useMyContext();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
@@ -167,7 +167,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                   setLoading(false);
                 }
               }} />
-              <AnexoImage />
+              <AnexoImage item_id={task.id || 0} file={task.file || 0} />
             </div>
 
           </div>
