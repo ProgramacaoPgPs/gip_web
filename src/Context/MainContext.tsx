@@ -109,13 +109,15 @@ export function MyProvider({ children }: Props) {
 
       {modal && (
         <StructureModal className="StructureModal ModalBgBlack">
-          <MessageModal
+          {/* <MessageModal
             message={message.text}
             type={message.type}
             onClose={() => {
+              console.log("BOM");
               setModal(false);
             }}
-          />
+          /> */}
+          <p>OI</p>
         </StructureModal>
       )}
       {modalPage && (

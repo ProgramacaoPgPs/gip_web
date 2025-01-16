@@ -39,7 +39,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [valueTask, setValueTask] = useState<boolean>(true);
   const [attachmentFile, setAttachmentFile] = useState<string>('');
-  const { taskDetails, task, stopAndToBackTask, handleAddTask } = useWebSocket();
+  const { taskDetails, stopAndToBackTask, handleAddTask } = useWebSocket();
 
   const [ListTask, setListTask] = useState<ValueStateTask>({
     stopTask: false,
@@ -65,7 +65,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           {ListTask.openModalQuastionTask ? (
             <MessageModal
               typeInput={
-                props.taskListFiltered.state_id == 2 ||
+                props.taskListFiltered.state_id == 1 || props.taskListFiltered.state_id == 2 ||
                   props.taskListFiltered.state_id == 4
                   ? "text"
                   : props.taskListFiltered.state_id == 5
@@ -73,7 +73,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                     : null
               }
               title={
-                props.taskListFiltered.state_id == 2
+                props.taskListFiltered.state_id == 1 ||  props.taskListFiltered.state_id == 2
                   ? "Deseja parar mesmo a tarefa?"
                   : props.taskListFiltered.state_id == 4
                     ? "Deseja mesmo retomar a tarefa?"
@@ -93,6 +93,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               }
               openClock={ListTask}
               onClick={() => {
+                console.log(props.taskListFiltered)
                 if (ListTask.description.length > 0) {
                   stopAndToBackTask(
                     props.taskListFiltered?.id,
@@ -130,7 +131,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   icon="power-off"
                   description="Retomar tarefas"
                 />
-              ) : props.taskListFiltered.state_id == 2 ? (
+              ) : props.taskListFiltered.state_id == 1 || props.taskListFiltered.state_id == 2 ? (
                 <ButtonIcon
                   color="danger"
                   icon="power-off"

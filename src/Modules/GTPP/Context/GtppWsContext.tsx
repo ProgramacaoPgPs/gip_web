@@ -183,7 +183,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
-
+    console.log(response);
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
@@ -476,23 +476,24 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string) {
+  async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string,type:number,object?:{}) {
     setLoading(true);
-    await updateTask(taskId, resource, date);
     ws.current.informSending(
       classToJSON(
-        new InformSending(false, userLog.id, taskId, 2, { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
+        new InformSending(false, userLog.id, taskId, type,object || { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
       )
     );
+    await loadTasks();
     setLoading(false);
   }
 
-  async function updateTask(taskId: number, resource: string | null, date: string | null) {
+  async function updateStateTask(taskId: number, resource: string | null, date: string | null){
     setLoading(true);
     const connection = new Connection("18", true);
     const req: { error: boolean, message?: string, data?: any[] } = await connection.put({ task_id: taskId, reason: resource, days: date }, "GTPP/TaskState.php") || { error: false };
-    if (req.error) throw new Error();
     setLoading(false);
+    if (req.error) throw new Error(req.message);
+    return req.data ? req.data[0] : {};
   }
   async function stopAndToBackTask(
     taskId: number,
@@ -501,17 +502,26 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     taskList: any
   ) {
     try {
+      const taskState:any = await updateStateTask(taskId, resource, date);
       if (taskList.state_id == 5) {
-        upTask(taskId, resource, date, taskList, `Tarefa que estava bloquado está de volta!`);
+        upTask(taskId, resource, date, taskList, `Tarefa que estava bloquado está de volta!`,2);
       } else if (taskList.state_id == 4 || taskList.state_id == 6) {
-        upTask(taskId, resource, date, taskList, taskList.state_id == 4 ? `Tarefa que estava parado está de volta!` : 'Tarefa que estava completa teve que retornar!');
-      } else if (taskList.state_id == 2) {
-        upTask(taskId, resource, date, taskList, "A tarefa que estava ativa foi parada!");
+        upTask(taskId, resource, date, taskList, taskList.state_id == 4 ? `send` : 'send',6,{
+          "description": "send",
+          "task_id": taskId,
+          "state_id": taskState.id
+      });
+      } else if (taskList.state_id == 1 || taskList.state_id == 2) {
+        upTask(taskId, resource, date, taskList, "A tarefa foi parada!",6,{
+          "description": "send",
+          "task_id": taskId,
+          "state_id": taskState.id
+      });
       } else if (taskList.state_id == 3) {
-        upTask(taskId, resource, date, taskList, "A tarefa finalizada!");
+        upTask(taskId, resource, date, taskList, "A tarefa finalizada!",2);
       }
     } catch (error) {
-      console.log("erro ao fazer o PUT em TaskState.php");
+      alert(error);
     }
   }
 

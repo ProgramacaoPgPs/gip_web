@@ -32,8 +32,8 @@ export default class NotificationGTPP {
             case 6:
                 item.id = parseInt(element.task_id);
                 item.task_id = element.task_id
-                item.title = `${name} mudou o status da tarefa ${element.object?.task?.description} para:`
-                item.message = this.filterStateName(element.object?.task?.state_id, states);
+                item.title = `${name} mudou o status da tarefa ${element.object?.task?.description || ''} para:`
+                item.message = this.filterStateName(element.object?.task?.state_id || element.object?.state_id, states);
                 item.typeNotify = 'success';
                 break;
             case -1:
