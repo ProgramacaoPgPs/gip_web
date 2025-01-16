@@ -108,11 +108,12 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
       </div>
     );
   }
+  console.warn(taskDetails.data);
   return (
     <div ref={containerTaskItemsRef} className="overflow-auto my-2 rounded flex-grow-1">
       <div>
         <ModalEditTask onEditTask={onEditTask} onClose={() => setOnEditTask(false)} isObservation={isObservation} setIsObservation={setIsObservation} editTask={editTask} setEditTask={setEditTask} />
-        {taskDetails.data?.task_item.map((task, index: number) => (
+        {(taskDetails.data?.task_item || []).map((task, index: number) => (
           <div
             key={task.id}
             className={"GIPP-section d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-2 rounded overflow-auto"}

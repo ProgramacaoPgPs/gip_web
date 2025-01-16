@@ -101,7 +101,7 @@ export default function Gtpp(): JSX.Element {
               const filteredTasks = getTask.filter(
                 (task: any) => task.state_id === cardTaskStateValue.id
               );
-
+              // console.log(filteredTasks);
               const isFirstColumnTaskState = idxValueState === 0;
 
               return (
@@ -162,6 +162,7 @@ export default function Gtpp(): JSX.Element {
                                 title_card={task.description}
                                 priority_card={task.priority}
                                 percent={task.percent}
+                                create_by={task.user_id}
                                 onClick={() => {
                                   setTask(task);
                                   setTaskPercent(task.percent);

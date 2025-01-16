@@ -200,7 +200,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             } else {
               reloadPageAddItem(response.object);
             }
-            
+
           }
         }
 
@@ -365,7 +365,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function handleAddTask(
     description: string,
     task_id: string,
-    file?:string
+    file?: string
   ) {
     setLoading(true);
     try {
@@ -375,7 +375,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         file: file ? file : '',
         task_id: task_id
       }, "GTPP/TaskItem.php");
-      
+
       const item = {
         "id": response.data.last_id,
         "description": description,
@@ -460,14 +460,13 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (response.error) throw new Error(response.message);
 
       await getTaskInformations();
-
       ws.current.informSending({
         error: false,
         user_id: userLog.id,
         object: item,
         task_id: taskId,
         type: 2,
-      })
+      });
 
     } catch (error) {
       alert("Ocorreu um erro ao salvar a tarefa. Tente novamente."); // Notificação amigável ao usuário
@@ -476,24 +475,29 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string,type:number,object?:{}) {
+  async function upTask(taskId: number, resource: string | null, date: string | null, taskList: any, message: string, type: number, object?: {}) {
     setLoading(true);
     ws.current.informSending(
       classToJSON(
-        new InformSending(false, userLog.id, taskId, type,object || { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
+        new InformSending(false, userLog.id, taskId, type, object || { description: message, task_id: taskId, reason: resource, days: date, taskState: taskList.state_id })
       )
     );
     await loadTasks();
     setLoading(false);
   }
 
-  async function updateStateTask(taskId: number, resource: string | null, date: string | null){
+  async function updateStateTask(taskId: number, resource: string | null, date: string | null) {
     setLoading(true);
     const connection = new Connection("18", true);
-    const req: { error: boolean, message?: string, data?: any[] } = await connection.put({ task_id: taskId, reason: resource, days: date }, "GTPP/TaskState.php") || { error: false };
+    const req: any = await connection.put({ task_id: taskId, reason: resource, days: parseInt(date ? date : "0") }, "GTPP/TaskState.php") || { error: false };
     setLoading(false);
-    if (req.error) throw new Error(req.message);
-    return req.data ? req.data[0] : {};
+    const response = req.error ? {} : req.data instanceof Array ? req.data[0].id : req.data.id;
+    return response;
+  }
+  function addDays(daysToAdd: number) {
+    const date = new Date(); // Pega a data atual
+    date.setDate(date.getDate() + daysToAdd); // Adiciona os dias
+    return date.toISOString().split('T')[0]; // Retorna no formato "YYYY-MM-DD"
   }
   async function stopAndToBackTask(
     taskId: number,
@@ -502,23 +506,35 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     taskList: any
   ) {
     try {
-      const taskState:any = await updateStateTask(taskId, resource, date);
+      const taskState: any = await updateStateTask(taskId, resource, date);
+      if (!taskState || taskState.error) throw new Error(taskState.message || "Falha genérica")
       if (taskList.state_id == 5) {
-        upTask(taskId, resource, date, taskList, `Tarefa que estava bloquado está de volta!`,2);
+        upTask(taskId, resource, date, taskList, `Tarefa que estava bloquado está de volta!`, 6, {
+          "description": "send",
+          "task_id": taskId,
+          "state_id": taskState.id,
+          "percent": taskList.percent,
+          "new_final_date": addDays(parseInt(date || "0"))
+        });
       } else if (taskList.state_id == 4 || taskList.state_id == 6) {
-        upTask(taskId, resource, date, taskList, taskList.state_id == 4 ? `send` : 'send',6,{
+        upTask(taskId, resource, date, taskList, taskList.state_id == 4 ? `send` : 'send', 6, {
           "description": "send",
           "task_id": taskId,
           "state_id": taskState.id
-      });
+        });
       } else if (taskList.state_id == 1 || taskList.state_id == 2) {
-        upTask(taskId, resource, date, taskList, "A tarefa foi parada!",6,{
+        upTask(taskId, resource, date, taskList, "A tarefa foi parada!", 6, {
           "description": "send",
           "task_id": taskId,
           "state_id": taskState.id
-      });
+        });
       } else if (taskList.state_id == 3) {
-        upTask(taskId, resource, date, taskList, "A tarefa finalizada!",2);
+        upTask(taskId, resource, date, taskList, "A tarefa finalizada!", 6, {
+          "description": "send",
+          "task_id": taskId,
+          "state_id": taskState.id,
+          "percent": taskList.percent,
+        });
       }
     } catch (error) {
       alert(error);

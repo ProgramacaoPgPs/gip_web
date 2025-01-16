@@ -3,6 +3,7 @@ import "./CardTask.css"; // Importando o estilo
 import { convertdate } from "../../../../Util/Util";
 import NotificationBell from "../../../../Components/NotificationBell";
 import ProgressBar from "../Modal/Progressbar";
+import { useMyContext } from "../../../../Context/MainContext";
 
 
 type CardTaskProps = {
@@ -11,6 +12,7 @@ type CardTaskProps = {
     initial_date?: string;
     final_date?: string;
     percent?:number;
+    create_by:number;
 }
 
 type CardTaskAllPropsHTML = React.HTMLAttributes<HTMLDivElement> & {}
@@ -21,6 +23,8 @@ type PriorityCardResult = {
 }
 
 const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
+    const {userLog} = useMyContext();
+    
     const colorPriorityCard = (numberKey: Number | string = 0): PriorityCardResult => {
         switch (numberKey) {
             case 0: return { color: 'primary', title: 'baixa' }
@@ -33,7 +37,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
     let { color, title } = colorPriorityCard(props.priority_card);
 
     return (
-        <div title={`Trefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
+        <div title={`Trefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2 ${userLog.id == props.create_by ? "border border-success":''}`}>
             <React.Fragment>
                 <div className="card-task-header d-flex justify-content-between col-12 gap-3">
                     {/* Aqui vou colocar o titulo e o dropdown */}

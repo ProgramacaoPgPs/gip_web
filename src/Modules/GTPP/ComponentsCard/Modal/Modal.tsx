@@ -65,8 +65,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           {ListTask.openModalQuastionTask ? (
             <MessageModal
               typeInput={
-                props.taskListFiltered.state_id == 1 || props.taskListFiltered.state_id == 2 ||
-                  props.taskListFiltered.state_id == 4
+                props.taskListFiltered.state_id == 1 || props.taskListFiltered.state_id == 2
                   ? "text"
                   : props.taskListFiltered.state_id == 5
                     ? "number"
@@ -74,9 +73,9 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               }
               title={
                 props.taskListFiltered.state_id == 1 ||  props.taskListFiltered.state_id == 2
-                  ? "Deseja parar mesmo a tarefa?"
+                  ? "Alterar tarefa para o estado Parado (informe o motivo)?"
                   : props.taskListFiltered.state_id == 4
-                    ? "Deseja mesmo retomar a tarefa?"
+                    ? "Deseja reabrir a tarefa?"
                     : props.taskListFiltered.state_id == 3
                       ? "Deseja finalizar essa tarefa?"
                       : props.taskListFiltered.state_id == 5
@@ -93,12 +92,11 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               }
               openClock={ListTask}
               onClick={() => {
-                console.log(props.taskListFiltered)
                 if (ListTask.description.length > 0) {
                   stopAndToBackTask(
                     props.taskListFiltered?.id,
-                    props.taskListFiltered.state_id == 4
-                      ? null
+                    (props.taskListFiltered.state_id == 4 || props.taskListFiltered.state_id == 5)
+                      ? props.taskListFiltered.state_id == 4  ? null : ""
                       : ListTask.description,
                     props.taskListFiltered.state_id == 5
                       ? ListTask.description
