@@ -37,7 +37,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
     let { color, title } = colorPriorityCard(props.priority_card);
 
     return (
-        <div title={`Trefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2 ${userLog.id == props.create_by ? "border border-success":''}`}>
+        <div title={`Trefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
             <React.Fragment>
                 <div className="card-task-header d-flex justify-content-between col-12 gap-3">
                     {/* Aqui vou colocar o titulo e o dropdown */}
@@ -59,7 +59,9 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="card-task-footer d-flex justify-content-between">
+                <div className="card-task-footer d-flex justify-content-between align-items-center mt-2">
+                {/* <i class="fa-solid fa-handshake"></i> */}
+                    <i className={`fa-solid  ${userLog.id == props.create_by? "fa-star text-warning":"fa-handshake text-muted"}`}></i>
                     <div className="flex-grow-1">
                         <ProgressBar progressValue={props.percent || 0} colorBar="#00A875" />
                     </div>

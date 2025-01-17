@@ -72,14 +72,14 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                     : null
               }
               title={
-                props.taskListFiltered.state_id == 1 ||  props.taskListFiltered.state_id == 2
+                props.taskListFiltered.state_id == 1 || props.taskListFiltered.state_id == 2
                   ? "Alterar tarefa para o estado Parado (informe o motivo)?"
                   : props.taskListFiltered.state_id == 4
-                    ? "Deseja reabrir a tarefa?"
+                    ? "Por quê deseja reabrir a tarefa?"
                     : props.taskListFiltered.state_id == 3
                       ? "Deseja finalizar essa tarefa?"
                       : props.taskListFiltered.state_id == 5
-                        ? "Insira o total de dias que voce precisa"
+                        ? "Insira o total de dias que você precisa."
                         : props.taskListFiltered.state_id == 6
                           ? "Deseja mesmo retomar a tarefa?"
                           : null
@@ -90,25 +90,46 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   description: e.target.value,
                 }))
               }
+              onClose={() =>
+                setListTask((prev) => ({
+                  ...prev,
+                  openModalQuastionTask: !prev.openModalQuastionTask,
+                }))
+              }
               openClock={ListTask}
+              isInput={props.taskListFiltered.state_id != 3}
               onClick={() => {
-                if (ListTask.description.length > 0) {
-                  stopAndToBackTask(
-                    props.taskListFiltered?.id,
-                    (props.taskListFiltered.state_id == 4 || props.taskListFiltered.state_id == 5)
-                      ? props.taskListFiltered.state_id == 4  ? null : ""
-                      : ListTask.description,
-                    props.taskListFiltered.state_id == 5
-                      ? ListTask.description
-                      : null,
-                    props.taskListFiltered
-                  );
+                try {
+                  if (props.taskListFiltered.state_id != 3) throw new Error("Preencha o campo obrigatório");
+                  let object: { taskId: number, resource: string | null, date: string | null, taskList: any } = {
+                    taskId: props.taskListFiltered?.id,
+                    resource: null,
+                    date: null,
+                    taskList: props.taskListFiltered
+                  };
+
+                  switch (props.taskListFiltered.state_id) {
+                    case 4:
+                      object.resource = null;
+                      object.date = null;
+                      break;
+                    case 5:
+                      object.resource = "";
+                      object.date = ListTask.description;
+                      break;
+                    default:
+                      object.resource = ListTask.description;
+                      object.date = null;
+                      break;
+                  }
+                  stopAndToBackTask(object.taskId, object.resource, object.date, object.taskList);
                   setListTask((prev) => ({
                     ...prev,
                     openModalQuastionTask: !prev.openModalQuastionTask,
                   }));
-                } else {
-                  alert("escreva algo");
+
+                } catch (error) {
+                  alert(error);
                 }
               }}
             />

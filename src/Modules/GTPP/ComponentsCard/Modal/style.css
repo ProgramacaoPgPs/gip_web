@@ -84,35 +84,18 @@
 }
 
 .box-dialog {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 300px;
-    top: 12%;
-    left: 60%;
     z-index: 1;
 }
-
-
-
-@media screen and (max-width: 920px) {
-    .box-dialog {
-        width: 300px;
-        top: 32%;
-        left: 15%;
-    }
-     }
-
 
 
 @media screen and (max-width: 768px) {
     .position-box-users {
         top: 90%;
         left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .box-dialog {
-        top: 14%;
-        left: 50%;
-        width: 300px;
         transform: translateX(-50%);
     }
 }

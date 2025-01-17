@@ -36,7 +36,7 @@ export default function Gtpp(): JSX.Element {
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
-
+  console.log(states)
 
   return (
     <div
@@ -53,18 +53,20 @@ export default function Gtpp(): JSX.Element {
               </h1>
               <div className="position-absolute filter-modal">
                 {openFilter ? (
-                  <div className="bg-light border-dark p-3">
+                  <div className="form-control">
                     {states?.map(
                       (cardTaskStateValue: any, idxValueState: any) => (
-                        <div key={idxValueState}>
-                          <label className="cursor-pointer">
-                            <input
-                              type="checkbox"
-                              onChange={() =>
-                                handleCheckboxChange(cardTaskStateValue.id)
-                              }
-                              checked={cardTaskStateValue.active}
-                            />
+                        <div className="d-flex align-items-center" key={idxValueState}>
+                          <input
+                            id={`filter_state_${cardTaskStateValue.id}`}
+                            className="form-check-input"
+                            type="checkbox"
+                            onChange={() =>
+                              handleCheckboxChange(cardTaskStateValue.id)
+                            }
+                            checked={cardTaskStateValue.active}
+                          />
+                          <label htmlFor={`filter_state_${cardTaskStateValue.id}`} className="form-check-label mx-2">
                             {cardTaskStateValue.description}
                           </label>
                         </div>

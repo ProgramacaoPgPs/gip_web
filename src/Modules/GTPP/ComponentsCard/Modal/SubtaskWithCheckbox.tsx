@@ -108,7 +108,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
       </div>
     );
   }
-  console.warn(taskDetails.data);
+
   return (
     <div ref={containerTaskItemsRef} className="overflow-auto my-2 rounded flex-grow-1">
       <div>

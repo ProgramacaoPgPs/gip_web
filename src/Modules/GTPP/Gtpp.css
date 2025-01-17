@@ -38,7 +38,8 @@
 
 .filter-modal {
     z-index: 1;
-    width: 150px;
+    max-width: 300px;
+    width: 50vw;
 }
 
 .z-index-modal {
