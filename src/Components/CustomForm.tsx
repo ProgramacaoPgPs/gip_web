@@ -7,16 +7,16 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       label: string;
       mandatory?: boolean;
       captureValue:
-        | React.InputHTMLAttributes<HTMLInputElement>
-        | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
-        | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+      | React.InputHTMLAttributes<HTMLInputElement>
+      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
+      | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
     };
     legend?: {
       style?: string;
       text?: string;
     };
     buttons?: [];
-    
+
   }[];
   onAction?: any;
   titleButton?: any;
@@ -27,7 +27,7 @@ interface SelectOption {
   label: string;
 }
 
-function CustomForm({ fieldsets, titleButton="Login", ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, titleButton = "Login", ...formProps }: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset, fieldsetIndex) => (
@@ -62,7 +62,7 @@ function renderField(
           <SelectField
             {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
             // @ts-ignore
-            options={captureValue?.options || []} 
+            options={captureValue?.options || []}
           />
         );
       case 'textarea':
@@ -92,20 +92,20 @@ export function SelectField(
   );
 }
 
-export function SelectFieldDefault (props: {
+export function SelectFieldDefault(props: {
   label?: string;
   value?: string | number;
   onChange?: any;
   className?: string;
   disabled?: boolean;
-  options: {label?: string, value?: string | number}[];
+  options: { label?: string, value?: string | number }[];
 }) {
   return (
     <label className='fw-bold'>
       {props.label}
       <select value={props.value} onChange={props.onChange} className={`form-select ${props.className ? props.className : ""}`} disabled={props.disabled}>
         <option hidden={true} defaultValue={""} value={""}>Selecione</option>
-        {props.options.map(({label, value}, key: number) => (
+        {props.options.map(({ label, value }, key: number) => (
           <option key={`opt_${key}`} value={value}>{label}</option>
         ))}
       </select>
@@ -114,14 +114,40 @@ export function SelectFieldDefault (props: {
 }
 
 
-export function InputCheckbox(props: {label?: string, value: boolean , onChange: any, textColor?: string}) {
+export function InputCheckbox(props: { label?: string, value: boolean, onChange: any, textColor?: string, yes_no: number, id: string, order: number }) {
   return (
-    <label className='cursor-pointer'>
-      <input type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />{" "}
-      <span className={`fs-6 ${props.textColor}`}>{props.label}</span>
-    </label>
+    <div className='d-flex align-items-center col-12'>
+      <div className='col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</div>
+      {props.yes_no == 0 ? <OptionItem /> : <QuestionItem />}
+      <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7'>{props.label}</label> 
+    </div>
   )
+
+  function QuestionItem() {
+    return (
+      <div className='d-flex flex-column col-3 col-sm-2'>
+        <label className='fs-6'>
+          <input type="radio" name={props.id} checked={props.yes_no == 1 ? true : false} onChange={props.onChange} className='form-check-input me-1' />
+          Sim
+        </label>
+        <label className='fs-6'>
+          <input type="radio" name={props.id} checked={props.yes_no == 2 ? true : false} onChange={props.onChange} className='form-check-input me-1' />
+          Não
+        </label>
+      </div>
+    );
+  }
+  function OptionItem() {
+    return (
+      <div className='d-flex col-3 col-sm-2'>
+        <label className={`fs-6 ${props.textColor} cursor-pointer`}>
+          <input id={`item_task_${props.id}`} type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />
+        </label>
+      </div>
+    );
+  }
 }
+
 
 export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} />;

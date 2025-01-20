@@ -131,8 +131,11 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                       task
                     );
                   }}
+                  yes_no={task.yes_no || 0}
                   value={task.check || false}
                   key={index}
+                  id={(task.id || "0").toString()}
+                  order={task.order || 0}
                 />
               </div>
             </div>

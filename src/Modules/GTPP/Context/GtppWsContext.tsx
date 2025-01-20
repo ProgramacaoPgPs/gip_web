@@ -36,6 +36,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const ws = useRef(new GtppWebSocket());
   const { userLog } = useMyContext();
+  useEffect(()=>{
+    console.log(taskDetails,task)
+  },[taskDetails,task]);
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
