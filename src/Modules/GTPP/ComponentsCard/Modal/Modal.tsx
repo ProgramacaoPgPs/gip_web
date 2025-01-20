@@ -185,7 +185,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           </div>
         </div>
       </div>
-      <div style={{ height: "90%" }} className="d-flex flex-column justify-content-between">
+      <div style={{height:"90%"}} className="d-flex flex-column justify-content-between">
         <FormTextAreaDefault
           task={props.taskListFiltered}
           details={props?.details?.data}
@@ -209,7 +209,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               icon="tasks"
               description="Tarefas"
             />
-            <ButtonIcon
+            {/* <ButtonIcon
               onClick={() => {
                 setListTask((prev) => ({
                   ...prev,
@@ -224,7 +224,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               color="secondary"
               icon="message"
               description="Chat"
-            />
+            /> */}
             <ButtonIcon
               onClick={() => {
                 setListTask((prev) => ({
@@ -249,39 +249,40 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               allData={props}
             />
           )}
-        </div>
-        {valueTask && (
-          <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
-            <div className="mx-2">
-              <ButtonIcon
-                color="success"
-                description=""
-                icon="arrow-right"
-                onClick={
-                  async () => {
-                    await handleAddTask(valueNewTask, props.taskListFiltered.id, attachmentFile);
-                    setValueNewTask("");
-                    setAttachmentFile("");
+
+          {valueTask && (
+            <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
+              <div className="mx-2">
+                <ButtonIcon
+                  color="success"
+                  description=""
+                  icon="arrow-right"
+                  onClick={
+                    async () => {
+                      await handleAddTask(valueNewTask, props.taskListFiltered.id, attachmentFile);
+                      setValueNewTask("");
+                      setAttachmentFile("");
+                    }
                   }
-                }
-              />
+                />
+              </div>
+              <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
+              <div className="w-100 mx-2">
+                <input
+                  type="text"
+                  className="form-control d-block"
+                  onChange={(e) => setValueNewTask(e.target.value)}
+                  value={valueNewTask}
+                />
+              </div>
             </div>
-            <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
-            <div className="w-100 mx-2">
-              <input
-                type="text"
-                className="form-control d-block"
-                onChange={(e) => setValueNewTask(e.target.value)}
-                value={valueNewTask}
-              />
+          )}
+          {ListTask.isCompShopDep && (
+            <div className="col-md-12 d-flex flex-column justify-content-between">
+              <SelectTaskItem data={props.taskListFiltered} />
             </div>
-          </div>
-        )}
-        {ListTask.isCompShopDep && (
-          <div className="col-md-12 d-flex flex-column justify-content-between">
-            <SelectTaskItem data={props.taskListFiltered} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

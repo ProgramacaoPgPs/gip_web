@@ -37,7 +37,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
     let { color, title } = colorPriorityCard(props.priority_card);
 
     return (
-        <div title={`Trefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
+        <div title={`Tarefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
             <React.Fragment>
                 <div className="card-task-header d-flex justify-content-between col-12 gap-3">
                     {/* Aqui vou colocar o titulo e o dropdown */}

@@ -14,9 +14,10 @@ interface SelectTaskItemProps {
 
 const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const { data } = props;
+  const {taskDetails,task} = useWebSocket();
 
   const { checkTaskComShoDepSub } = useWebSocket();
-  
+
   const [shopOptions, setShopOptions] = useState<{ id: number; description: string }[]>([]);
   const [companyOptions, setCompanyOptions] = useState<{ id: number; description: string }[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<{ id: number; description: string }[] | any>([]);
@@ -40,11 +41,35 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
         setDepartmentOptions(departmentsRes?.data || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-      } 
+      }
     };
 
-    fetchDepartmentData();
-  }, [selectedCompany, selectedShop, data?.id]);
+    (
+      async () => {
+        if (taskDetails.data?.csds) {
+          await fetchDepartmentData();
+        } else {
+          const connection = new Connection("18", true);
+          const req: any = await connection.get("", "CCPP/Company.php");
+          setCompanyOptions(req.data || []);
+        }
+      }
+    )();
+  }, [selectedCompany, selectedShop, taskDetails]);
+
+  //busca das lojas
+  async function getStore(idCompany:number){
+    const connection = new Connection("18");
+    const req:any = await connection.get(`&company_id=${idCompany}`, "CCPP/Shop.php");
+    setShopOptions(req?.data || []);
+  }
+  async function getDepartament(idStore:number){
+    console.log(idStore)
+    const connection = new Connection("18");
+    const req:any = await connection.get(`&shop_id=${idStore}`, "CCPP/Department.php");
+    console.log(req);
+    setDepartmentOptions(req?.data || []);
+  }
 
   // Função para fechar o modal ao clicar fora
   const handleClickOutside = (event: MouseEvent) => {
@@ -62,17 +87,19 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   }, []);
 
   const booleanDep = departmentOptions?.some((item: any) => item.check === true) || false;
-
+  useEffect(() => console.log(selectedCompany,companyOptions), [selectedCompany,companyOptions]);
   return (
     <div className="d-flex gap-2 mt-4">
       <div>
-        <p><strong>Loja</strong></p>
+        <p><strong>Compania</strong></p>
         <SelectFieldDefault
           label=""
           disabled={booleanDep}
           value={selectedCompany}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setSelectedCompany(Number(e.target.value))
+          onChange={async (e: React.ChangeEvent<HTMLSelectElement>) => {
+            await getStore(Number(e.target.value));
+            setSelectedCompany(Number(e.target.value));
+          }
           }
           options={companyOptions.map((company) => ({
             label: company.description,
@@ -81,13 +108,15 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
         />
       </div>
       <div>
-        <p><strong>Compania</strong></p>
+        <p><strong>Loja</strong></p>
         <SelectFieldDefault
           label=""
           disabled={booleanDep}
           value={selectedShop}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setSelectedShop(Number(e.target.value))
+          onChange={async (e: React.ChangeEvent<HTMLSelectElement>) =>{
+            await getDepartament(Number(e.target.value));
+            setSelectedShop(Number(e.target.value));
+          }
           }
           options={shopOptions.map((shop) => ({
             label: shop.description,
@@ -98,7 +127,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
       <div>
         <i className="fa"></i>
         <div
-          className="d-flex align-items-center position-relative"
+          className="d-flex align-items-center"
           id="department-modal"
         >
           <div
@@ -109,8 +138,8 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
             Departamento
           </div>
           {openModal && departmentOptions.length > 0 && (
-            <div className="position-absolute bg-light rounded boxListCheck">
-              <CheckboxList 
+            <div className="d-flex form-control position-absolute boxListCheck">
+              <CheckboxList
                 captureDep={setCaptureDep}
                 items={departmentOptions}
                 getCheck={(item: any) => {
