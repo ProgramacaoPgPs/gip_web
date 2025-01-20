@@ -91,7 +91,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   }, []);
 
   const booleanDep = departmentOptions?.some((item: any) => item.check === true) || false;
-  useEffect(() => console.log(selectedCompany, companyOptions), [selectedCompany, companyOptions]);
+  
   return (
     <div className="d-flex gap-2 mt-4">
       <div>
