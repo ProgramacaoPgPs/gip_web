@@ -185,7 +185,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           </div>
         </div>
       </div>
-      <div style={{height:"90%"}} className="d-flex flex-column justify-content-between">
+      <div style={{ height: "90%" }} className="d-flex flex-column justify-content-between">
         <FormTextAreaDefault
           task={props.taskListFiltered}
           details={props?.details?.data}
@@ -257,13 +257,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   color="success"
                   description=""
                   icon="arrow-right"
-                  onClick={
-                    async () => {
-                      await handleAddTask(valueNewTask, props.taskListFiltered.id, attachmentFile);
-                      setValueNewTask("");
-                      setAttachmentFile("");
-                    }
-                  }
+                  onClick={async () =>{await insertItemTask()}}
                 />
               </div>
               <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
@@ -272,6 +266,11 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   type="text"
                   className="form-control d-block"
                   onChange={(e) => setValueNewTask(e.target.value)}
+                  onKeyDown={async (e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key.includes("Enter")) {
+                      await insertItemTask();
+                    }
+                  }}
                   value={valueNewTask}
                 />
               </div>
@@ -286,6 +285,11 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
       </div>
     </div>
   );
+  async function insertItemTask() {
+    await handleAddTask(valueNewTask, props.taskListFiltered.id, attachmentFile);
+    setValueNewTask("");
+    setAttachmentFile("");
+  }
 };
 
 const ModalDefault: React.FC<TaskItem> = (props) => {

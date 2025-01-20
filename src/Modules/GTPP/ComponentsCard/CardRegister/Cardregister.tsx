@@ -7,6 +7,7 @@ type Cardregister = {
   assistenceFunction?: any;
   reloadtask?: any;
   setReset?: any;
+  onClose:()=>void;
 };
 
 const Cardregister: React.FC<Cardregister> = (props) => {
@@ -28,15 +29,15 @@ const Cardregister: React.FC<Cardregister> = (props) => {
   };
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    const connection = new Connection("18", true);
-    const response: any = await connection.post(formDataRef.current, "GTPP/Task.php");
-    if(response.message && !response.error) {
-      // aqui vamos re-renderizar o componente chamando ele novamente.
+    try {
+      e.preventDefault();
+      const connection = new Connection("18", true);
+      const response: any = await connection.post(formDataRef.current, "GTPP/Task.php");
+      if (response.error) throw new Error(response.message);
       props.reloadtask();
-      alert('Tarefa enviada com sucesso!')
-    } else {
-      alert('Erro na tarefa.')
+      props.onClose();
+    } catch (error) {
+      alert(error);
     }
   };
 
@@ -50,14 +51,14 @@ const Cardregister: React.FC<Cardregister> = (props) => {
           ></button>
         </div>
       </div>
-      <CustomForm 
-         fieldsets={fieldsetsRegister}
-         onSubmit={handleSubmit}
-         onChange={(event)=>handleChange(event)}
-         titleButton={"Enviar"}
-         method="post"
-         className='p-3'
-         id='loginCustomForm'
+      <CustomForm
+        fieldsets={fieldsetsRegister}
+        onSubmit={handleSubmit}
+        onChange={(event) => handleChange(event)}
+        titleButton={"Enviar"}
+        method="post"
+        className='p-3'
+        id='loginCustomForm'
       />
     </div>
   );

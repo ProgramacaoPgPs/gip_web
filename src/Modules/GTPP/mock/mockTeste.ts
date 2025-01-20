@@ -11,7 +11,7 @@ export const fieldsetsRegister = [
             mandatory: true,
             captureValue: {
                 type: 'text',
-                placeholder: 'Digite a taréfa',
+                placeholder: 'Digite a tarefa',
                 name: 'description',
                 className: 'form-control',
                 required: true,
@@ -49,20 +49,20 @@ export const fieldsetsRegister = [
     },{
         attributes: { id: '', className: 'w-100', },
         item: {
-            label: 'Status',
+            label: 'Prioridade',
             mandatory: true,
             captureValue: {
                 type: 'select',
                 placeholder: '',
-                name: 'date_initial',
+                name: 'priority',
                 className: 'form-control',
                 required: true,
                 id: '',
                 options: [
                   {value: '', label: 'selectione'},
-                  {value: '1', label: 'baixo'},
-                  {value: '2', label: 'médio'},
-                  {value: '3', label: 'alto'},
+                  {value: '0', label: 'Baixa'},
+                  {value: '1', label: 'Média'},
+                  {value: '2', label: 'Alta'},
                 ]
             },
         },

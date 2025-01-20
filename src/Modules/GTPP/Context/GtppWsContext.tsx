@@ -386,7 +386,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         "file": file ? 1 : 0,
         "note": null
       };
-      taskDetails.data?.task_item.push(item);
+
+      if(taskDetails.data){
+        Array.isArray(taskDetails.data?.task_item) ? taskDetails.data?.task_item.push(item) : taskDetails.data.task_item = [item];
+      }
+      console.log(taskDetails);
       ws.current.informSending({
         user_id: userLog,
         object: {

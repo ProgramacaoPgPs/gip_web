@@ -103,8 +103,8 @@ export function SelectFieldDefault (props: {
   return (
     <label className='fw-bold'>
       {props.label}
-      <select value={props.value} onChange={props.onChange} className={`form-select ${props.className}`} disabled={props.disabled}>
-        <option defaultValue={""} value={""}>Selecione</option>
+      <select value={props.value} onChange={props.onChange} className={`form-select ${props.className ? props.className : ""}`} disabled={props.disabled}>
+        <option hidden={true} defaultValue={""} value={""}>Selecione</option>
         {props.options.map(({label, value}, key: number) => (
           <option key={`opt_${key}`} value={value}>{label}</option>
         ))}

@@ -121,6 +121,7 @@ export default function Gtpp(): JSX.Element {
                           <Cardregister
                             reloadtask={loadTasks}
                             assistenceFunction={() => setModalPage(false)}
+                            onClose={()=>setModalPage(false)}
                           />
                         );
                         setModalPage(true);

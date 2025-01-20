@@ -6,7 +6,7 @@ export const fieldsetsData = [
             mandatory: true,
             captureValue: {
                 type: 'text',
-                placeholder: 'Digite a taréfa',
+                placeholder: 'Digite a tarefa',
                 name: 'description',
                 className: 'form-control',
                 required: true,

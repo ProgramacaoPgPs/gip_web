@@ -14,7 +14,7 @@ interface SelectTaskItemProps {
 
 const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const { data } = props;
-  const {taskDetails,task} = useWebSocket();
+  const { taskDetails, task } = useWebSocket();
 
   const { checkTaskComShoDepSub } = useWebSocket();
 
@@ -26,23 +26,29 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const [captureDep, setCaptureDep] = useState<number | any>();
   const [openModal, setOpenModal] = useState(false);
 
+
   useEffect(() => {
     const fetchDepartmentData = async () => {
-      const connection = new Connection("18", true);
       try {
-        const [companiesRes, shopsRes, departmentsRes]: any = await Promise.all([
-          connection.get("", "CCPP/Company.php"),
-          connection.get(`&company_id=${selectedCompany}`, "CCPP/Shop.php"),
+        const req: any = await Promise.all([
+          fastLoad("", "CCPP/Company.php"),
+          fastLoad(`&company_id=${selectedCompany}`, "CCPP/Shop.php"),
           // @ts-ignore
-          connection.get(`&company_id=${selectedCompany}&shop_id=${selectedShop}&task_id=${data.id}`, "CCPP/Department.php"),
+          fastLoad(`&company_id=${selectedCompany}&shop_id=${selectedShop}&task_id=${data.id}`, "CCPP/Department.php")
         ]);
-        setCompanyOptions(companiesRes?.data || []);
-        setShopOptions(shopsRes?.data || []);
-        setDepartmentOptions(departmentsRes?.data || []);
+        setCompanyOptions(req[0]?.data || []);
+        setShopOptions(req[1]?.data || []);
+        setDepartmentOptions(req[2]?.data || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
     };
+
+    function fastLoad(param: string, path: string) {
+      const connection = new Connection("18", true);
+      const req = connection.get(param, path);
+      return req;
+    }
 
     (
       async () => {
@@ -58,15 +64,15 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   }, [selectedCompany, selectedShop, taskDetails]);
 
   //busca das lojas
-  async function getStore(idCompany:number){
+  async function getStore(idCompany: number) {
     const connection = new Connection("18");
-    const req:any = await connection.get(`&company_id=${idCompany}`, "CCPP/Shop.php");
+    const req: any = await connection.get(`&company_id=${idCompany}`, "CCPP/Shop.php");
     setShopOptions(req?.data || []);
   }
-  async function getDepartament(idStore:number){
+  async function getDepartament(idStore: number) {
     console.log(idStore)
     const connection = new Connection("18");
-    const req:any = await connection.get(`&shop_id=${idStore}`, "CCPP/Department.php");
+    const req: any = await connection.get(`&shop_id=${idStore}`, "CCPP/Department.php");
     console.log(req);
     setDepartmentOptions(req?.data || []);
   }
@@ -87,7 +93,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   }, []);
 
   const booleanDep = departmentOptions?.some((item: any) => item.check === true) || false;
-  useEffect(() => console.log(selectedCompany,companyOptions), [selectedCompany,companyOptions]);
+  useEffect(() => console.log(selectedCompany, companyOptions), [selectedCompany, companyOptions]);
   return (
     <div className="d-flex gap-2 mt-4">
       <div>
@@ -113,7 +119,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
           label=""
           disabled={booleanDep}
           value={selectedShop}
-          onChange={async (e: React.ChangeEvent<HTMLSelectElement>) =>{
+          onChange={async (e: React.ChangeEvent<HTMLSelectElement>) => {
             await getDepartament(Number(e.target.value));
             setSelectedShop(Number(e.target.value));
           }
