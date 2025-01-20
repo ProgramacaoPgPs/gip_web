@@ -16,11 +16,11 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
   details
 }) => {
   const [isOpenButton, setIsOpenButton] = useState<boolean>(false);
-  const [value, setValueChange] = useState<string>(details?.full_description);
+  const [valueChange, setValueChange] = useState<string>("");
   const {changeDescription} = useWebSocket();
 
   useEffect(() => {
-    setValueChange(details?.full_description);
+    setValueChange(details?.full_description || "");
   }, [details?.full_description]);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,7 +35,7 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
         style={{ resize: "none",margin:"0px",padding:"0px" }}
         onChange={handleTextChange}
         disabled={disabledForm || !isOpenButton}
-        value={value}
+        value={valueChange}
         className={`${textAreaClasses}`}
         cols={cols}
         rows={rows}
@@ -43,7 +43,7 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
       />
       <button
         onClick={() => {
-          changeDescription(value, task.id, task.id);
+          changeDescription(valueChange, task.id, task.id);
           setIsOpenButton((prev) => !prev);
         }}
         className={`${buttonClasses}  position-absolute`} 

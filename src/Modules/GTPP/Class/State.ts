@@ -8,6 +8,5 @@ export default class State{
     async getState(){
         const connection = new Connection('18');
         const req = await connection.get('',"GTPP/TaskState.php");
-        console.log(req);
     }
 }

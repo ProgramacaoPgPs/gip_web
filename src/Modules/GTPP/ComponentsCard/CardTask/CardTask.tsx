@@ -59,7 +59,7 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="card-task-footer d-flex justify-content-between align-items-center mt-2">
+                <div className="card-task-footer d-flex justify-content-between align-items-center">
                 {/* <i class="fa-solid fa-handshake"></i> */}
                     <i className={`fa-solid  ${userLog.id == props.create_by? "fa-star text-warning":"fa-handshake text-muted"}`}></i>
                     <div className="flex-grow-1">

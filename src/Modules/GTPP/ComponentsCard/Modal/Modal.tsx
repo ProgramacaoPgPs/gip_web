@@ -54,7 +54,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
 
   return (
     <div className="d-flex flex-column h-100 p-2">
-      <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center my-2">
+      <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           <AvatarGroup
             dataTask={props.taskListFiltered}
@@ -203,7 +203,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   isObservable: false,
                   isQuastion: false,
                 }));
-                setValueTask((prev) => !prev);
+                setValueTask(true);
               }}
               color="secondary"
               icon="tasks"
@@ -276,7 +276,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               </div>
             </div>
           )}
-          {ListTask.isCompShopDep && (
+          {!valueTask &&  (
             <div className="col-md-12 d-flex flex-column justify-content-between">
               <SelectTaskItem data={props.taskListFiltered} />
             </div>

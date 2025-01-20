@@ -36,7 +36,6 @@ export default function Gtpp(): JSX.Element {
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
-  console.log(states)
 
   return (
     <div

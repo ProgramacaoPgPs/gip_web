@@ -70,10 +70,8 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
     setShopOptions(req?.data || []);
   }
   async function getDepartament(idStore: number) {
-    console.log(idStore)
     const connection = new Connection("18");
     const req: any = await connection.get(`&shop_id=${idStore}`, "CCPP/Department.php");
-    console.log(req);
     setDepartmentOptions(req?.data || []);
   }
 

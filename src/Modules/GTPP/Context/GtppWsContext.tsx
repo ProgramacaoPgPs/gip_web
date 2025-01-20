@@ -169,7 +169,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     if (type === 5) info.object.changeUser = element.user_id;
     if (type === 5) info.object.task_id = element.task_id;
-    console.log(info);
     ws.current.informSending(info);
   }
 
@@ -183,7 +182,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     ) {
       console.error("Derrubar usuário");
     }
-    console.log(response);
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
       updateNotification([response]);
@@ -272,8 +270,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     idTask: any,
     taskLocal: any
   ) {
-    setLoading(true);
     try {
+      setLoading(true);
       const connection = new Connection("18");
       let result: { error: boolean, data?: any, message?: string } = await connection.put(
         { check: checked, id: id, task_id: idTask },
@@ -287,16 +285,21 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       reloadPagePercent(result.data, { task_id: idTask });
 
       // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
-      if (result.data.state_id != task.state_id) {
-        await loadTasks();
-        infSenStates(taskLocal, result.data);
-      }
+      await verifyChangeState(result.data.state_id, task.state_id, taskLocal, result.data);
+
       //Informa que um item foi marcado.
       infSenCheckItem(taskLocal, result.data);
     } catch (error) {
       alert(error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function verifyChangeState(newState: number, oldState: number, taskLocal: any, result: any) {
+    if (newState != oldState) {
+      await loadTasks();
+      infSenStates(taskLocal, result);
     }
   }
 
@@ -387,10 +390,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         "note": null
       };
 
-      if(taskDetails.data){
+      if (taskDetails.data) {
         Array.isArray(taskDetails.data?.task_item) ? taskDetails.data?.task_item.push(item) : taskDetails.data.task_item = [item];
       }
-      console.log(taskDetails);
+
       ws.current.informSending({
         user_id: userLog,
         object: {
@@ -403,7 +406,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       });
       setTaskDetails({ ...taskDetails });
       if (response.error) throw new Error(response.message);
-      reloadPagePercent(response.data, { task_id: task_id })
+      reloadPagePercent(response.data, { task_id: task_id });
+
+      // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!
+      if (task.state_id != response.data.state_id) {
+        await verifyChangeState(response.data.state_id, task.state_id, { task_id: task.id }, response.data);
+      }
 
     } catch (error) {
       alert("Error adding task:" + error);
