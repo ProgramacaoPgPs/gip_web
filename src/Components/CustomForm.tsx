@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   fieldsets: {
@@ -115,7 +115,8 @@ export function SelectFieldDefault(props: {
 
 
 export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number }) {
-  const [yesNo, setYesNo] = useState(props.yesNo);
+  const {yesNo } = props;
+
   return (
     <div className='d-flex align-items-center col-12'>
       <button title='Alterar posição do item' className='btn btn-secondary p-0 me-2 roedond rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</button>
@@ -149,7 +150,6 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
   function submitQuestionItem(event: any, response: number) {
     const value = yesNo == response ? -1 : event.value;
     props.onChange(props.id, event.checked, props.task.task_id, props.task, value);
-    setYesNo(value);
   }
   function OptionItem() {
     return (

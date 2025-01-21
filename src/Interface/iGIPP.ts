@@ -53,6 +53,7 @@ export interface iGtppWsContextType {
     onSounds:boolean; 
     getTask:any[];
     openCardDefault:boolean;
+    updatedForQuestion:(item:{task_id:number;id:number;yes_no:number})=>void;
     reloadPagePercent: (value:any,task:any)=>void;
     deleteItemTaskWS: (object:any)=>void;
     addUserTask:(value:any,num:number)=>void;

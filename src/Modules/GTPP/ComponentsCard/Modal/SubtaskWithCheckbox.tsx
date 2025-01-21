@@ -18,7 +18,7 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS } = useWebSocket();
+  const { checkedItem, changeObservedForm, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion } = useWebSocket();
   const { setLoading } = useMyContext();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
@@ -57,6 +57,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
     const [note, setNote] = useState<string>(editTask.note);
     const [description, setDescription] = useState<string>(editTask.description);
     const [confirm, setConfirm] = useState<boolean>(false);
+    const [isQuest, setIsQuest] = useState<boolean>(editTask.yes_no == 0 ? false : true);
     const [msgConfirm, setMsgConfirm] = useState<{ title: string, message: string }>({ title: '', message: '' });
     return onEditTask && (
       <div className="d-flex align-items-center justify-content-center" style={{
@@ -70,7 +71,8 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
         {confirm && <ConfirmModal {...msgConfirm} onConfirm={() => setIsObservation(!isObservation)} onClose={() => setConfirm(false)} />}
         <div
           style={{
-            maxHeight: "75%"
+            maxHeight: "75%",
+            zIndex:1
           }}
           className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3 p-4 rounded">
           <header className="d-flex flex-column w-100">
@@ -80,8 +82,13 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             </div>
             <div className="d-flex align-items-center">
               <input
-                defaultChecked={editTask.yes_no == 0 ? false : true}
-                onClick={(event: any) => { console.log(event.target.checked, editTask) }}
+                defaultChecked={isQuest}
+                onClick={
+                  async (event: any) => {
+                    await updatedForQuestion({ id: editTask.id, task_id: editTask.task_id, yes_no: event.target.checked ? -1 : 0 });
+                    setIsQuest(event.target.checked);
+                  }
+                }
                 id={`item_quest_edit_${editTask.task_id}`} type="checkbox" className="form-check-input" />
               <label htmlFor={`item_quest_edit_${editTask.task_id}`} className="form-check-label ms-2">Promover para questão</label>
             </div>
@@ -117,7 +124,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
       </div>
     );
   }
-
+  // useEffect(()=>{console.warn(taskDetails)},[taskDetails]);
   return (
     <div ref={containerTaskItemsRef} className="overflow-auto rounded flex-grow-1">
       <div>

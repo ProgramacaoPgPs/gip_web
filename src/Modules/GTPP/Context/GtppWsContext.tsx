@@ -191,7 +191,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
           await loadTasks();
         } else if (response.object) {
           if (response.type == 2) {
-
             if (response.object.isItemUp) {
               itemUp(response.object);
             } else if (response.object.remove) {
@@ -199,7 +198,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             } else {
               reloadPageAddItem(response.object);
             }
-
           }
         }
 
@@ -270,17 +268,17 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     checked: boolean,
     idTask: any,
     taskLocal: any,
-    yes_no?:number
+    yes_no?: number
   ) {
     try {
       setLoading(true);
       const connection = new Connection("18");
-      const item = yes_no ? { id: parseInt(id.toString()), task_id: idTask.toString(), yes_no:parseInt(yes_no.toString()) } :{ check: checked, id: id, task_id: idTask }
+      const item = yes_no ? { id: parseInt(id.toString()), task_id: idTask.toString(), yes_no: parseInt(yes_no.toString()) } : { check: checked, id: id, task_id: idTask }
       let result: { error: boolean, data?: any, message?: string } = await connection.put(
         item,
         "GTPP/TaskItem.php"
       ) || { error: false };
-      
+
       if (result.error) throw new Error(result.message);
       taskLocal.check = checked;
 
@@ -558,6 +556,29 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       alert(error);
     }
   }
+  async function updatedForQuestion(item: { task_id: number; id: number; yes_no: number }) {
+    try {
+      setLoading(true);
+      const connection = new Connection("18");
+      const req: any = await connection.put(item, "GTPP/TaskItem.php");
+      if (req.error) throw new Error(req.message);
+      const newItem = taskDetails.data?.task_item.filter((element) => element.id == item.id);
+      if (!newItem) throw new Error("Falha ao recuperar a tarefa");
+      newItem[0].yes_no = item.yes_no;
+      itemUp({ itemUp: newItem[0], id: item.task_id, percent: task.percent });
+      await upTask(item.task_id, null, null, null, "Agora é um item comum", 2, {
+        "description": item.yes_no == 0 ? "Agora é um item comum" : "Agora é uma questão",
+        "percent": task.percent,
+        "itemUp": {
+          ...newItem[0]
+        },isItemUp:true
+      });
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function deleteItemTaskWS(object: any) {
     ws.current.informSending({
@@ -594,6 +615,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       if (taskDetails.data && element.id == value.itemUp.id)
         taskDetails.data.task_item[index] = value.itemUp;
     });
+
     setTaskDetails({ ...taskDetails });
     reloadPagePercent(value, value.itemUp);
   }
@@ -616,6 +638,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         onSounds,
         getTask,
         openCardDefault,
+        updatedForQuestion,
         reloadPagePercent,
         deleteItemTaskWS,
         addUserTask,
