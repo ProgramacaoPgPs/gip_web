@@ -567,7 +567,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       newItem[0].yes_no = item.yes_no;
       itemUp({ itemUp: newItem[0], id: item.task_id, percent: task.percent });
       await upTask(item.task_id, null, null, null, "Agora é um item comum", 2, {
-        "description": item.yes_no == 0 ? "Agora é um item comum" : "Agora é uma questão",
+        "description": item.yes_no == 0 ? "Alterado para um item comum" : "Alterado para questão ",
         "percent": task.percent,
         "itemUp": {
           ...newItem[0]
