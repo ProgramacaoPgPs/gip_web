@@ -39,7 +39,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [valueTask, setValueTask] = useState<boolean>(true);
   const [attachmentFile, setAttachmentFile] = useState<string>('');
-  const [isQuest,setIsQuest] = useState<number>(0);
+  const [isQuest, setIsQuest] = useState<number>(0);
   const { taskDetails, stopAndToBackTask, handleAddTask } = useWebSocket();
 
   const [ListTask, setListTask] = useState<ValueStateTask>({
@@ -252,18 +252,18 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           )}
 
           {valueTask && (
-            <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
-              <div className="mx-2">
-                <ButtonIcon
-                  color="success"
-                  description=""
-                  icon="arrow-right"
-                  onClick={async () =>{await insertItemTask()}}
-                />
+            <div className="d-flex justify-content-between align-items-center GIPP-section my-2">
+              <div className="d-flex justify-content-around col-12 col-sm-4 col-md-3 ">
+                  <ButtonIcon
+                    color="success"
+                    description=""
+                    icon="arrow-right"
+                    onClick={async () => { await insertItemTask() }}
+                  />
+                <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
+                <button onClick={() => { setIsQuest(isQuest == 0 ? -1 : 0) }} title="Marca como questão?" className={`btn btn-primary fa-solid fa-question ${isQuest == 0 ? 'opacity-25' : 'opacity-100'}`}></button>
               </div>
-              <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
-              <button onClick={()=>{setIsQuest(isQuest == 0 ? -1 : 0)}} title="Marca como questão?" className={`btn btn-primary fa-solid fa-question ${isQuest == 0 ? 'opacity-25' : 'opacity-100'}`}></button>
-              <div className="w-100 mx-2">
+              <div className="col-12 col-sm-8 col-md-9 my-2">
                 <input
                   type="text"
                   className="form-control d-block"
@@ -278,7 +278,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               </div>
             </div>
           )}
-          {!valueTask &&  (
+          {!valueTask && (
             <div className={"col-md-12 d-flex flex-column justify-content-between"}>
               <SelectTaskItem data={props.taskListFiltered} />
             </div>
@@ -288,7 +288,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
     </div>
   );
   async function insertItemTask() {
-    await handleAddTask(valueNewTask, props.taskListFiltered.id,isQuest, attachmentFile);
+    await handleAddTask(valueNewTask, props.taskListFiltered.id, isQuest, attachmentFile);
     setValueNewTask("");
     setAttachmentFile("");
     setIsQuest(0);
