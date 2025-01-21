@@ -73,9 +73,18 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             maxHeight: "75%"
           }}
           className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3 p-4 rounded">
-          <header className="d-flex align-items-center justify-content-between w-100">
-            <h1>Editar item da tarefa</h1>
-            <button onClick={() => onClose()} className="btn btn-danger py-0">X</button>
+          <header className="d-flex flex-column w-100">
+            <div className="d-flex align-items-center justify-content-between w-100">
+              <h1>Editar item da tarefa</h1>
+              <button onClick={() => onClose()} className="btn btn-danger py-0">X</button>
+            </div>
+            <div className="d-flex align-items-center">
+              <input
+                defaultChecked={editTask.yes_no == 0 ? false : true}
+                onClick={(event: any) => { console.log(event.target.checked, editTask) }}
+                id={`item_quest_edit_${editTask.task_id}`} type="checkbox" className="form-check-input" />
+              <label htmlFor={`item_quest_edit_${editTask.task_id}`} className="form-check-label ms-2">Promover para questão</label>
+            </div>
           </header>
           <section className="w-100">
             <button onClick={() => {
@@ -122,7 +131,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             <div className="GIPP-section-sm my-2">
               <div className="text-wrap text-break">
                 <InputCheckbox
-                  label={task.description}                
+                  label={task.description}
                   task={task}
                   onChange={checkedItem}
                   yesNo={task.yes_no || 0}
@@ -151,11 +160,11 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                     const result = await deleteTaskItem({ id: task.id, task_id: task.task_id });
                     if (result.error) throw new Error(result.message);
                     removeItemOfList(task.id);
-                    reloadPagePercent(result.data,task);
+                    reloadPagePercent(result.data, task);
                     deleteItemTaskWS({
                       description: "Um item foi removido.",
                       itemUp: task.id,
-                      percent:parseInt(result.data.percent),
+                      percent: parseInt(result.data.percent),
                       remove: true
                     });
                   }
