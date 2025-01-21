@@ -101,7 +101,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
               isInput={props.taskListFiltered.state_id != 3}
               onClick={() => {
                 try {
-                  console.log(ListTask.description);
                   if (props.taskListFiltered.state_id != 3 && ListTask.description == '') throw new Error("Preencha o campo obrigatório");
                   let object: { taskId: number, resource: string | null, date: string | null, taskList: any } = {
                     taskId: props.taskListFiltered?.id,
