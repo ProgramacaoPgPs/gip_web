@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   fieldsets: {
@@ -114,12 +114,13 @@ export function SelectFieldDefault(props: {
 }
 
 
-export function InputCheckbox(props: { label?: string, value: boolean, onChange: any, textColor?: string, yes_no: number, id: string, order: number }) {
+export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number }) {
+  const [yesNo, setYesNo] = useState(props.yesNo);
   return (
     <div className='d-flex align-items-center col-12'>
-      <div className='col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</div>
-      {props.yes_no == 0 ? <OptionItem /> : <QuestionItem />}
-      <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7'>{props.label}</label> 
+      <button title='Alterar posição do item' className='btn btn-secondary p-0 me-2 roedond rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</button>
+      {yesNo == 0 ? <OptionItem /> : <QuestionItem />}
+      <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7'>{props.label}</label>
     </div>
   )
 
@@ -127,21 +128,36 @@ export function InputCheckbox(props: { label?: string, value: boolean, onChange:
     return (
       <div className='d-flex flex-column col-3 col-sm-2'>
         <label className='fs-6'>
-          <input type="radio" name={props.id} checked={props.yes_no == 1 ? true : false} onChange={props.onChange} className='form-check-input me-1' />
+          <input type="checkbox" name={props.id} checked={yesNo == 1 ? true : false} value={1} onChange={
+            (e: any) => {
+              submitQuestionItem(e.target, 1);
+            }
+          } className='form-check-input me-1' />
           Sim
         </label>
         <label className='fs-6'>
-          <input type="radio" name={props.id} checked={props.yes_no == 2 ? true : false} onChange={props.onChange} className='form-check-input me-1' />
+          <input type="checkbox" name={props.id} checked={yesNo == 2 ? true : false} value={2} onChange={
+            (e: any) => {
+              submitQuestionItem(e.target, 2);
+            }
+          } className='form-check-input me-1' />
           Não
         </label>
       </div>
     );
   }
+  function submitQuestionItem(event: any, response: number) {
+    const value = yesNo == response ? -1 : event.value;
+    props.onChange(props.id, event.checked, props.task.task_id, props.task, value);
+    setYesNo(value);
+  }
   function OptionItem() {
     return (
       <div className='d-flex col-3 col-sm-2'>
         <label className={`fs-6 ${props.textColor} cursor-pointer`}>
-          <input id={`item_task_${props.id}`} type="checkbox" checked={props.value} onChange={props.onChange} className='form-check-input' />
+          <input id={`item_task_${props.id}`} type="checkbox" value={0} checked={props.checked} onChange={(e: any) => {
+            props.onChange(props.id, e.target.checked, props.task.task_id, props.task);
+          }} className='form-check-input' />
         </label>
       </div>
     );

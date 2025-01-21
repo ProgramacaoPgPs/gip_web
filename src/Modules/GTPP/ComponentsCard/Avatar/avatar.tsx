@@ -251,7 +251,7 @@ function ModalUser(props: any) {
           </React.Fragment>
         )}
         <div className="d-flex justify-content-end">
-          {loadUserTask && <i className="btn fa fa-plus text-white" onClick={() => setLoadUserTask(false)}></i>}
+          {loadUserTask && <i className="btn fa fa-pencil text-white" onClick={() => setLoadUserTask(false)}></i>}
         </div>
       </div>
     </React.Fragment>

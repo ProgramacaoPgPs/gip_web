@@ -68,7 +68,7 @@ export interface iGtppWsContextType {
     setTaskDetails: (value: any) => void;
     handleAddTask: (description: string, task_id: string, file?:string) => void;
     clearGtppWsContext: () => void;
-    checkedItem: (id: number, checked: boolean, idTask: any, task: any) => void;
+    checkedItem: (id: number, checked: boolean, idTask: any, task: any, yes_no:number) => void;
     checkTaskComShoDepSub: (task_id: number, company_id: number, shop_id: number, depart_id: number, taskLocal: any) => void;
     changeDescription: (description: string, id: number, descLocal: string) => void;
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;

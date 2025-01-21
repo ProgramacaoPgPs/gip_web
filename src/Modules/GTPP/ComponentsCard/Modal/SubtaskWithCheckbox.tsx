@@ -122,17 +122,11 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             <div className="GIPP-section-sm my-2">
               <div className="text-wrap text-break">
                 <InputCheckbox
-                  label={task.description}
-                  onChange={(e: any) => {
-                    checkedItem(
-                      task.id || 0,
-                      e.target.checked,
-                      task.task_id,
-                      task
-                    );
-                  }}
-                  yes_no={task.yes_no || 0}
-                  value={task.check || false}
+                  label={task.description}                
+                  task={task}
+                  onChange={checkedItem}
+                  yesNo={task.yes_no || 0}
+                  checked={task.check || false}
                   key={index}
                   id={(task.id || "0").toString()}
                   order={task.order || 0}

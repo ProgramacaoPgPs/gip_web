@@ -46,10 +46,10 @@ const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({
           changeDescription(valueChange, task.id, task.id);
           setIsOpenButton((prev) => !prev);
         }}
-        className={`${buttonClasses}  position-absolute`} 
+        className={`${buttonClasses} position-absolute`} 
         aria-label={isOpenButton ? buttonTextOpen : buttonTextClosed}
       >
-        <i className={`fa fa-${isOpenButton ? "unlock" : "lock" } text-${isOpenButton ? "success" : "danger"}`}></i>
+        <i className={`fa fa-pencil text-${isOpenButton ? "success" : "secundary"}`}></i>
       </button>
     </div>
   );

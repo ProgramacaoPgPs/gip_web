@@ -36,9 +36,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const ws = useRef(new GtppWebSocket());
   const { userLog } = useMyContext();
-  useEffect(()=>{
-    console.log(taskDetails,task)
-  },[taskDetails,task]);
+
   useEffect(() => {
     // Abre a coonexão com o websocket.
     ws.current.connect();
@@ -271,15 +269,18 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     id: number,
     checked: boolean,
     idTask: any,
-    taskLocal: any
+    taskLocal: any,
+    yes_no?:number
   ) {
     try {
       setLoading(true);
       const connection = new Connection("18");
+      const item = yes_no ? { id: parseInt(id.toString()), task_id: idTask.toString(), yes_no:parseInt(yes_no.toString()) } :{ check: checked, id: id, task_id: idTask }
       let result: { error: boolean, data?: any, message?: string } = await connection.put(
-        { check: checked, id: id, task_id: idTask },
+        item,
         "GTPP/TaskItem.php"
       ) || { error: false };
+      
       if (result.error) throw new Error(result.message);
       taskLocal.check = checked;
 
