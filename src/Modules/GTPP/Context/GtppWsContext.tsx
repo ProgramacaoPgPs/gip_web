@@ -372,6 +372,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function handleAddTask(
     description: string,
     task_id: string,
+    yes_no: number,
     file?: string
   ) {
     setLoading(true);
@@ -380,7 +381,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       const response: any = await connection.post({
         description: description,
         file: file ? file : '',
-        task_id: task_id
+        task_id: task_id,
+        yes_no
       }, "GTPP/TaskItem.php");
 
       const item = {
