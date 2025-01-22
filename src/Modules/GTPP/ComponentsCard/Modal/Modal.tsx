@@ -256,7 +256,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 }}
                 color="secondary"
                 icon={expand ? "down-left-and-up-right-to-center" : "up-right-and-down-left-from-center"}
-                description={expand ? "retrair" : "Expandir"}
+                description={expand ? "Retrair" : "Expandir"}
               />
             </div>
           </div>
