@@ -111,7 +111,7 @@
     height: 100% !important;
     width: 100% !important;
     padding: 2%;
-    animation: expandToTop 2s ease-in-out forwards; /* 2 segundos para a animação */
+    animation: expandToTop 1s ease-in-out forwards; /* 2 segundos para a animação */
 }
 
 @keyframes expandToTop {
