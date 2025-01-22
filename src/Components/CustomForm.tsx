@@ -119,9 +119,9 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
 
   return (
     <div className='d-flex align-items-center col-12'>
-      <button title='Alterar posição do item' className='btn btn-secondary p-0 me-2 roedond rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</button>
+      <button title='Alterar posição do item' className='btn btn-secondary p-0 roedond rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}º</button>
       {yesNo == 0 ? <OptionItem /> : <QuestionItem />}
-      <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7'>{props.label}</label>
+      <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7 col-sm-9'>{props.label}</label>
     </div>
   )
 
@@ -153,7 +153,7 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
   }
   function OptionItem() {
     return (
-      <div className='d-flex col-3 col-sm-2'>
+      <div className='d-flex col-3 col-sm-2 ps-2'>
         <label className={`fs-6 ${props.textColor} cursor-pointer`}>
           <input id={`item_task_${props.id}`} type="checkbox" value={0} checked={props.checked} onChange={(e: any) => {
             props.onChange(props.id, e.target.checked, props.task.task_id, props.task);

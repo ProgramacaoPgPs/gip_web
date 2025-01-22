@@ -132,10 +132,10 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
         {(taskDetails.data?.task_item || []).map((task, index: number) => (
           <div
             key={task.id}
-            className={"GIPP-section d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-2 rounded overflow-auto"}
+            className={"GIPP-section d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-1 rounded overflow-auto"}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation onClose={closeObservation} task description={task.note} />}
-            <div className="GIPP-section-sm my-2">
+            <div className="GIPP-section-sm">
               <div className="text-wrap text-break">
                 <InputCheckbox
                   label={task.description}

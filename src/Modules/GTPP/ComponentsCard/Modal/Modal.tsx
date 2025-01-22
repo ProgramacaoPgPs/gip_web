@@ -11,6 +11,7 @@ import { useWebSocket } from "../../Context/GtppWsContext";
 import MessageModal from "../ModalMessage/messagemodal";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import AttachmentFile from "../../../../Components/AttachmentFile";
+import "./style.css"
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -38,6 +39,7 @@ interface ValueStateTask {
 const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [valueNewTask, setValueNewTask] = useState<string>("");
   const [valueTask, setValueTask] = useState<boolean>(true);
+  const [expand, setExpand] = useState<boolean>(false);
   const [attachmentFile, setAttachmentFile] = useState<string>('');
   const [isQuest, setIsQuest] = useState<number>(0);
   const { taskDetails, stopAndToBackTask, handleAddTask } = useWebSocket();
@@ -182,6 +184,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   description="Descancelar tarefa"
                 />
               ) : null}
+
             </div>
           </div>
         </div>
@@ -192,56 +195,70 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           details={props?.details?.data}
           disabledForm={props.disabledForm}
         />
-        <div className="d-flex flex-column h-75">
-          <div className="d-flex flex-wrap gap-2 my-2">
-            <ButtonIcon
-              onClick={() => {
-                setListTask((prev) => ({
-                  ...prev,
-                  isChat: false,
-                  isCompShopDep: false,
-                  isAttachment: false,
-                  isObservable: false,
-                  isQuastion: false,
-                }));
-                setValueTask(true);
-              }}
-              color="secondary"
-              icon="tasks"
-              description="Tarefas"
-            />
-            {/* <ButtonIcon
-              onClick={() => {
-                setListTask((prev) => ({
-                  ...prev,
-                  isChat: !prev.isChat,
-                  isCompShopDep: false,
-                  isAttachment: false,
-                  isObservable: false,
-                  isQuastion: false,
-                }));
-                setValueTask(false);
-              }}
-              color="secondary"
-              icon="message"
-              description="Chat"
-            /> */}
-            <ButtonIcon
-              onClick={() => {
-                setListTask((prev) => ({
-                  ...prev,
-                  isCompShopDep: !prev.isCompShopDep,
-                  isChat: false,
-                  isAttachment: false,
-                  isObservable: false,
-                  isQuastion: false,
-                }));
-                setValueTask(false);
-              }}
-              color="secondary"
-              icon="shop"
-              description="Comp/Loj/Dep"
-            />
+        <div className={expand ? "expandFullScreen":"d-flex flex-column h-75"}>
+          <div className="d-flex justify-content-between gap-2 my-2">
+            <div className="d-flex flex-wrap gap-2 my-2">
+              <ButtonIcon
+                onClick={() => {
+                  setListTask((prev) => ({
+                    ...prev,
+                    isChat: false,
+                    isCompShopDep: false,
+                    isAttachment: false,
+                    isObservable: false,
+                    isQuastion: false,
+                  }));
+                  setValueTask(true);
+                }}
+                color="secondary"
+                icon="tasks"
+                description="Tarefas"
+              />
+              {/* <ButtonIcon
+                  onClick={() => {
+                    setListTask((prev) => ({
+                      ...prev,
+                      isChat: !prev.isChat,
+                      isCompShopDep: false,
+                      isAttachment: false,
+                      isObservable: false,
+                      isQuastion: false,
+                    }));
+                    setValueTask(false);
+                  }}
+                  color="secondary"
+                  icon="message"
+                  description="Chat"
+                  <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
+                /> */}
+              <ButtonIcon
+                onClick={() => {
+                  setListTask((prev) => ({
+                    ...prev,
+                    isCompShopDep: !prev.isCompShopDep,
+                    isChat: false,
+                    isAttachment: false,
+                    isObservable: false,
+                    isQuastion: false,
+                  }));
+                  setValueTask(false);
+                }}
+                color="secondary"
+                icon="shop"
+                description="Comp/Loj/Dep"
+              />
+            </div>
+            <div className="d-flex -2 my-2">
+              <ButtonIcon
+                onClick={() => {
+                  setExpand(!expand);
+                }}
+                color="secondary"
+                icon={expand ? "down-left-and-up-right-to-center" : "up-right-and-down-left-from-center"}
+                description={expand ? "retrair" : "Expandir"}
+              />
+            </div>
           </div>
           {valueTask && (
             <SubTasksWithCheckbox
@@ -254,12 +271,12 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           {valueTask && (
             <div className="d-flex justify-content-between align-items-center GIPP-section my-2">
               <div className="d-flex justify-content-around col-12 col-sm-4 col-md-3 ">
-                  <ButtonIcon
-                    color="success"
-                    description=""
-                    icon="arrow-right"
-                    onClick={async () => { await insertItemTask() }}
-                  />
+                <ButtonIcon
+                  color="success"
+                  description=""
+                  icon="arrow-right"
+                  onClick={async () => { await insertItemTask() }}
+                />
                 <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
                 <button onClick={() => { setIsQuest(isQuest == 0 ? -1 : 0) }} title="Marca como questão?" className={`btn btn-primary fa-solid fa-question ${isQuest == 0 ? 'opacity-25' : 'opacity-100'}`}></button>
               </div>
@@ -308,7 +325,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
 
   return (
     <div className="zIndex99 row">
-      <div className="col-11 col-sm-10 col-md-8 col-lg-8 col-xl-6 h-100" style={{
+      <div className="col-11 col-sm-10 col-md-8 col-lg-8 col-xl-6 h-100 position-relative" style={{
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'white',
