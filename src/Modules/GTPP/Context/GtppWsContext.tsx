@@ -274,14 +274,15 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(true);
       const connection = new Connection("18");
       const item = yes_no ? { id: parseInt(id.toString()), task_id: idTask.toString(), yes_no: parseInt(yes_no.toString()) } : { check: checked, id: id, task_id: idTask }
+
       let result: { error: boolean, data?: any, message?: string } = await connection.put(
         item,
         "GTPP/TaskItem.php"
       ) || { error: false };
 
       if (result.error) throw new Error(result.message);
-      taskLocal.check = checked;
-
+      if (!yes_no) taskLocal.check = checked;
+      if (yes_no) reloadPageChangeQuestion(yes_no, id);
 
       // Atualiza o percentual da tarafa na tela principal. 
       reloadPagePercent(result.data, { task_id: idTask });
@@ -571,7 +572,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         "percent": task.percent,
         "itemUp": {
           ...newItem[0]
-        },isItemUp:true
+        }, isItemUp: true
       });
     } catch (error) {
       alert(error);
@@ -593,6 +594,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     setTaskPercent(parseInt(value.percent));
     getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(value.percent);
     setGetTask([...getTask]);
+  }
+
+  function reloadPageChangeQuestion(yes_no: number, item_id: number) {
+    if (taskDetails.data?.task_item) {
+      taskDetails.data.task_item[taskDetails.data?.task_item.findIndex(item => item.id == item_id)].yes_no = yes_no;
+    }
   }
 
   function reloadPageDeleteItem(value: any) {

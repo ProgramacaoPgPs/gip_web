@@ -25,7 +25,6 @@ export default class InformSending {
         this.#type = type;
         this.#itemUp = itemUp;
         this.#isItemUp = isItemUp;
-        console.log(object);
     }
 
     // Getters para expor as propriedades privadas
