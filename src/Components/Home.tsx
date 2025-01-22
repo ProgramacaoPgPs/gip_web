@@ -12,7 +12,10 @@ export default function Home(): JSX.Element {
         setTitleHead({ title: 'Home - GIPP', icon: 'fa fa-home' });
     }, []);
 
-    const listPath = [{ page: '/home', children: 'Home', icon: 'fa fa-home' }, { page: '/config', children: 'Configuração', icon: 'fa fa-gear' }, { page: '/', children: 'Sair', icon: 'fa fa-sign-out' }];
+    const listPath = [{ page: '/home', children: 'Home', icon: 'fa fa-home' }, { page: '/config', children: 'Configuração', icon: 'fa fa-gear' }, { page: '/', children: 'Sair',icon: 'fa fa-sign-out', actionAdd:()=>{
+        localStorage.removeItem("tokenGIPP");
+        localStorage.removeItem("codUserGIPP");
+    } }];
     const navigate = useNavigate();
 
     return (

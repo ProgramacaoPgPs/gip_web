@@ -68,7 +68,7 @@ export function MyProvider({ children }: Props) {
     icon: "",
   });
   const [userLog, setUserLog] = useState<User>(
-    new User({ id: 0, session: "", administrator: 0 })
+    new User({ id: parseInt(localStorage.getItem('codUserGIPP')|| "0"), session: "", administrator: 0 })
   );
   const [contactList, setContactList] = useState<User[]>([]);
   const [reset, setResetState] = useState<any>(1);
@@ -109,15 +109,15 @@ export function MyProvider({ children }: Props) {
 
       {modal && (
         <StructureModal className="StructureModal ModalBgBlack">
-          {/* <MessageModal
+          <MessageModal
             message={message.text}
             type={message.type}
             onClose={() => {
               console.log("BOM");
               setModal(false);
             }}
-          /> */}
-          <p>OI</p>
+          />
+          
         </StructureModal>
       )}
       {modalPage && (

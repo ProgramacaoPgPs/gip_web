@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomForm from './CustomForm';
 import { useMyContext } from '../Context/MainContext';
 import User from '../Class/User';
@@ -91,10 +91,12 @@ function Login() {
                 administrator:req.data.administrator
             }));
             localStorage.setItem("tokenGIPP",req.data.session);
+            localStorage.setItem("codUserGIPP",req.data.id);
             
             setIsLogged(true);
             navigate('/home');
         } catch (error: any) {
+            console.log(error)
             setModal(true);
             setMessage({text:error.message,type:2});
         }
