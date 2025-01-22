@@ -1,3 +1,4 @@
+import { Store } from "react-notifications-component";
 import { Connection } from "../Connection/Connection";
 
 const connection = new Connection("18", true);
@@ -52,3 +53,19 @@ export function classToJSON(instance: object): Record<string, unknown> {
         });
     return json;
 }
+
+export function handleNotification(title: string, message: string, type: 'success' | 'danger' | 'info' | 'default' | 'warning') {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type, // Tipos: "success", "danger", "info", "default", "warning"
+      insert: "top", // Posição na tela: "top" ou "bottom"
+      container: "bottom-left",
+      animationIn: ["animate__animated animate__zoomIn"],
+      animationOut: ["animate__animated animate__flipOutX"],
+      dismiss: {
+        duration: 5000, // Tempo em ms
+        onScreen: true,
+      },
+    });
+  }

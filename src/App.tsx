@@ -46,8 +46,6 @@ function App() {
             </PrivateRoute>
           </MyProvider>
         } />
-
-
       </Routes>
     </HashRouter>
   );
