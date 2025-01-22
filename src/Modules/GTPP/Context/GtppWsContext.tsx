@@ -576,8 +576,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // FUNÇÕES PARA ATUALIZAR AS INFORMAÇÕES DA PÁGINA:
   function reloadPagePercent(value: any, task: any) {
     setTaskPercent(parseInt(value.percent));
-    getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(value.percent);
-    setGetTask([...getTask]);
+    if(getTask.length > 0){
+      getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(value.percent);
+      setGetTask([...getTask]);
+    }
   }
 
   function reloadPageChangeQuestion(yes_no: number, item_id: number) {
