@@ -35,8 +35,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
                 style={{
                     fontSize: "calc(1.5rem + 1vw)", // Responsivo: aumenta conforme o tamanho da tela
                     color: notifications.length > 0 ? "red" : "gray",
-                    transition: "color 0.3s",
-                    marginRight:"10px"
+                    transition: "color 0.3s"
                 }}
             ></i>
             {/* Contador de Notificações */}

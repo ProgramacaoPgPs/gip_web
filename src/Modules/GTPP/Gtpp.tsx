@@ -15,6 +15,7 @@ import NotificationBell from "../../Components/NotificationBell";
 export default function Gtpp(): JSX.Element {
   const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
   const [openFilter, setOpenFilter] = useState<any>(false);
+  const [openMenu, setOpenMenu] = useState<any>(true);
 
   // Modified by Hygor
   const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, setNotifications, notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
@@ -42,8 +43,8 @@ export default function Gtpp(): JSX.Element {
       id="moduleGTPP"
       className="d-flex flex-row h-100 w-100 position-relative container-fluid m-0 p-0"
     >
-      <NavBar list={listPath} />
-      <div className="h-100 d-flex overflow-hidden px-2 flex-grow-1">
+      {openMenu && <NavBar list={listPath} />}
+      <div className="h-100 d-flex overflow-hidden px-3 flex-grow-1">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
             <div className="position-relative">
@@ -75,22 +76,22 @@ export default function Gtpp(): JSX.Element {
                 ) : null}
               </div>
             </div>
-            <div className="d-flex flex-row w-50 justify-content-end">
-              <div
-                className="mx-2 cursor-pointer"
+            <div className="d-flex flex-row w-50 justify-content-end gap-2">
+              <button title={openMenu ? "Ocultar menu" : "Exibir Menu"} onClick={()=>setOpenMenu(!openMenu)} className={`btn p-0 d-block d-md-none`} >
+                <i className={`fa-solid fa-eye${openMenu ? "-slash":''}`}></i>
+              </button>
+              <button
+                className="btn p-0 mx-2 cursor-pointer"
+                title={`${onSounds ? "Com audio" : "Sem audio"}`}
                 onClick={() => {
                   setOnSounds(!onSounds);
                 }}
               >
-                {onSounds ? (
-                  <i className="fa-solid fa-volume-high"></i>
-                ) : (
-                  <i className="fa-solid fa-volume-xmark"></i>
-                )}
-              </div>
-              <div className="mx-2">
+                <i className={`fa-solid fa-volume-${onSounds ? "high" : "xmark"}`}></i>
+              </button>
+              <button className="btn p-0">
                 <NotificationBell />
-              </div>
+              </button>
             </div>
           </div>
           <Col
@@ -120,7 +121,7 @@ export default function Gtpp(): JSX.Element {
                           <Cardregister
                             reloadtask={loadTasks}
                             assistenceFunction={() => setModalPage(false)}
-                            onClose={()=>setModalPage(false)}
+                            onClose={() => setModalPage(false)}
                           />
                         );
                         setModalPage(true);
