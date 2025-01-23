@@ -43,7 +43,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     (async () => {
       setLoading(true);
       try {
-        const connection = new Connection("18", true);
+        const connection = new Connection("18");
         const getNotify: any = await connection.get(`&id_user=${userLog.id}`, '/GTPP/Notify.php');
         if (getNotify.error) throw new Error(getNotify.message);
         updateNotification(getNotify.data);
@@ -368,6 +368,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         task_id: task_id,
         yes_no
       }, "GTPP/TaskItem.php");
+      if (response.error) throw new Error(response.message);
 
       const item = {
         "id": response.data.last_id,
@@ -395,7 +396,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         type: 2
       });
       setTaskDetails({ ...taskDetails });
-      if (response.error) throw new Error(response.message);
       reloadPagePercent(response.data, { task_id: task_id });
 
       // Verifica se o checked realizado alterou o status da tarefa. Se sim ele envia um alerta!

@@ -5,10 +5,12 @@ export class Connection{
     #err:boolean = false;
     #appId:string='';
     #login:string='';
+    #defaultPass:string='';
 
-    constructor(appId:string,isLogin?:boolean){
+    constructor(appId:string,isLogin?:boolean,isDefaultPass?:boolean){
         this.#appId = appId;
         if(isLogin) this.#login = '&login=';
+        // if(isDefaultPass) this.#defaultPass = '\login=';
     }
 
     async get(params:string, pathFile:string, err?:boolean) {

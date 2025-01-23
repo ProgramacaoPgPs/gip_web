@@ -1,0 +1,38 @@
+export const fieldsetsData = [
+    {
+        attributes: { id: 'personal-info', className: 'row  col-8 my-2', },
+        item: {
+            label: 'Login',
+            mandatory: true,
+            captureValue: {
+                type: 'text',
+                placeholder: 'Usuário',
+                name: 'login',
+                className: 'form-control',
+                required: true,
+                id: 'loginUserInput'
+            },
+        },
+
+        legend: {
+            text: 'Bem vindo(a)!',
+            style: 'my-2 h5 d-flex aligm-items-center justify-content-center'
+        }
+    },
+
+    {
+        attributes: { id: 'contact-info', className: 'row col-8 my-2' },
+        item: {
+            label: 'Senha',
+            mandatory: true,
+            captureValue: {
+                type: 'password',
+                placeholder: '******',
+                name: 'senha',
+                className: 'form-control',
+                required: true,
+                id: 'passwordUserInput'
+            },
+        },
+    }
+];

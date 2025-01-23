@@ -20,6 +20,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   }[];
   onAction?: any;
   titleButton?: any;
+  classButton?: string;
 };
 
 interface SelectOption {
@@ -27,7 +28,7 @@ interface SelectOption {
   label: string;
 }
 
-function CustomForm({ fieldsets, titleButton = "Login", ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProps }: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset, fieldsetIndex) => (
@@ -44,7 +45,7 @@ function CustomForm({ fieldsets, titleButton = "Login", ...formProps }: CustomFo
         </fieldset>
       ))}
       {/* <button className='btn mt-5 my-2'>Enviar</button> */}
-      <button className="btn my-2">{titleButton}</button>
+      <button className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
     </form>
   );
 }
@@ -114,8 +115,8 @@ export function SelectFieldDefault(props: {
 }
 
 
-export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number,onPosition:()=>void }) {
-  const {yesNo,onPosition } = props;
+export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number, onPosition: () => void }) {
+  const { yesNo, onPosition } = props;
 
   return (
     <div className='d-flex align-items-center col-12'>
