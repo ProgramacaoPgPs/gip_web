@@ -8,7 +8,7 @@ export default class NotificationGTPP {
         for await (let element of array){
             const user = new User({ id: element.send_user_id });
             await user.loadInfo();
-            this.list.push(this.filterTypeNotify(element,user.name || '', states));
+            this.list.push(this.filterTypeNotify(element,user.name  || '', states));
         };
     }
 
@@ -16,10 +16,10 @@ export default class NotificationGTPP {
         let item: CustomNotification = { id: 0, title: '', message: '', task_id: 0, typeNotify:'success' };
         switch (parseInt(element.type)) {
             case 2:
-                item.id = parseInt(element.object.itemUp.id);
+                item.id = element.object.itemUp ? parseInt(element.object.itemUp.id) : parseInt(element.object.id);
                 item.task_id = element.task_id
                 item.title = `${element.object.description} por ${name}`
-                item.message = element.object?.itemUp.description;
+                item.message = element.object.itemUp ? element.object.itemUp.description : element.object.note;
                 item.typeNotify = 'success';
                 break;
             case 5:

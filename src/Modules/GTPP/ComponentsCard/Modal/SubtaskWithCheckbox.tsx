@@ -76,7 +76,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             maxHeight: "75%",
             zIndex: 1
           }}
-          className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6 col-lg-5 col-xl-3 p-4 rounded">
+          className="d-flex flex-column align-items-center bg-white col-10 col-sm-8 col-md-6  p-4 rounded">
           <header className="d-flex flex-column w-100">
             <div className="d-flex align-items-center justify-content-between w-100">
               <h1>Editar item da tarefa</h1>
