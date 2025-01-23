@@ -13,6 +13,7 @@ import InformSending from "../Class/InformSending";
 import { classToJSON, handleNotification } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
 import soundFile from "../../../Assets/Sounds/notify.mp3";
+import { useNavigate } from "react-router-dom";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
@@ -28,6 +29,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [getTask, setGetTask] = useState<any[]>([]);
   const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
+  const navigate = useNavigate();
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -182,7 +184,13 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       response.error &&
       response.message.includes("This user has been connected to another place")
     ) {
-      console.error("Derrubar usuário");
+      handleNotification("Você será desconectado.","Usuário logado em outro dispositivo!","danger");
+      setTimeout(() => {
+        navigate("/");
+        localStorage.removeItem("tokenGIPP");
+        localStorage.removeItem("codUserGIPP");
+      }, 5000);
+      console.error("Derrubar usuário",response);
     }
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
