@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Connection } from "../../../../Connection/Connection";
 
 interface HeaderModalProps {
@@ -15,6 +15,8 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   onClick,
 }) => {
   const [desc, setDesc] = React.useState<string | null>(description || "");
+  const [habilitEditionOfText, setHabilitEditionOfText] = useState<boolean>(false);
+  const titleTaskInput = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setDesc(description);
@@ -22,26 +24,42 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 
   async function sendPut(newTitle: string) {
     try {
-      if (newTitle == description) throw new Error("Não houve mudança");
       const connection = new Connection('18');
       const req: any = await connection.put({ id: task.id, priority: task.priority, description: newTitle }, "GTPP/Task.php");
-      if (req.error) throw new Error(req.data);
+      if (req.error) throw new Error(req.message);
       setDesc(newTitle);
-    } catch (error) {
-      alert(error);
+    } catch (error:any) {
+      console.log(error)
+      if(!error.message.toUpperCase().includes("NO DATA")){
+        alert(error.message)
+      }
     }
   }
+  useEffect(() => {
+    if (titleTaskInput.current) {
+      if (habilitEditionOfText) {
+        titleTaskInput.current.focus();
+      } else {
+        titleTaskInput.current.blur();
+      }
+    }
+  }, [habilitEditionOfText]);
 
   return (
     <div className="w-100">
       <div className="d-flex justify-content-between align-items-center pt-2 px-2">
+        <button className={`fa  p-1 me-2 btn btn-outline-${habilitEditionOfText ? "success fa-check" : "danger fa-pencil"}`} onClick={() => {
+          setHabilitEditionOfText(!habilitEditionOfText);
+        }
+        }></button>
         <input
+          ref={titleTaskInput}
           value={desc || ""}
+          disabled={!habilitEditionOfText}
           onChange={(e) => setDesc(e.target.value)}
           onBlur={async (e) => {
             await sendPut(e.target.value);
           }}
-          // onKeyDown={async (e) => { const title = e.target as HTMLInputElement; await sendPut(title.value) }}
           className="bg-transparent w-100 font-weight-bold"
           style={{ border: "none", fontWeight: "bold" }}
         ></input>

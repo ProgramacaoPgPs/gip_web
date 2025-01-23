@@ -47,8 +47,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         const getNotify: any = await connection.get(`&id_user=${userLog.id}`, '/GTPP/Notify.php');
         if (getNotify.error) throw new Error(getNotify.message);
         updateNotification(getNotify.data);
-      } catch (error) {
-        console.log(error);
+      } catch (error:any) {
+        if(!error.message.toUpperCase().includes("NO DATA")){
+          alert(error.message)
+        }
       } finally {
         setLoading(false);
       }
