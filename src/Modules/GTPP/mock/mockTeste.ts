@@ -1,6 +1,13 @@
 export const listPath = [
-    { page: '/home', children: 'Home', icon:'fa fa-home' },
+    { page: '/home', children: 'Home', icon: 'fa fa-home', },
+    {
+        page: '/', children: 'Sair', icon: 'fa fa-sign-out', actionAdd: () => {
+            localStorage.removeItem("tokenGIPP");
+            localStorage.removeItem("codUserGIPP");
+        }
+    }
 ];
+
 
 
 export const fieldsetsRegister = [
@@ -18,7 +25,7 @@ export const fieldsetsRegister = [
                 id: ''
             },
         },
-    },{
+    }, {
         attributes: { id: '', className: 'w-100', },
         item: {
             label: 'Data Inicial',
@@ -32,7 +39,7 @@ export const fieldsetsRegister = [
                 id: ''
             },
         },
-    },{
+    }, {
         attributes: { id: '', className: 'w-100', },
         item: {
             label: 'Data Final',
@@ -46,7 +53,7 @@ export const fieldsetsRegister = [
                 id: ''
             },
         },
-    },{
+    }, {
         attributes: { id: '', className: 'w-100', },
         item: {
             label: 'Prioridade',
@@ -59,10 +66,10 @@ export const fieldsetsRegister = [
                 required: true,
                 id: '',
                 options: [
-                  {value: '', label: 'selectione'},
-                  {value: '0', label: 'Baixa'},
-                  {value: '1', label: 'Média'},
-                  {value: '2', label: 'Alta'},
+                    { value: '', label: 'selectione' },
+                    { value: '0', label: 'Baixa' },
+                    { value: '1', label: 'Média' },
+                    { value: '2', label: 'Alta' },
                 ]
             },
         },
