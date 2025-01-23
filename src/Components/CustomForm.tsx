@@ -120,7 +120,7 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
 
   return (
     <div className='d-flex align-items-center col-12'>
-      <button onClick={onPosition} title='Alterar posição do item' className='btn btn-secondary p-0 roedond rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}</button>
+      <button onClick={onPosition} title='Alterar posição do item' className='btn btn-secondary p-0 rounded rounded-circle col-2 col-sm-1'>{props.order.toString().padStart(2, "0")}</button>
       {yesNo == 0 ? <OptionItem /> : <QuestionItem />}
       <label htmlFor={`item_task_${props.id}`} className='fs-6 col-7 col-sm-9'>{props.label}</label>
     </div>

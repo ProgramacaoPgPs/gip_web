@@ -26,7 +26,7 @@ export default function CardUser(props: tCardUser): JSX.Element {
                     </span>
                 </div>
                 {props.isSend &&
-                    <button onClick={() => props.sendMessage(props)} className='btn'>
+                    <button onClick={() => props.openMessage(props)} className='btn'>
                         <IconButton {...props} />
                     </button>
                 }

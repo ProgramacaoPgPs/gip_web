@@ -20,5 +20,5 @@ export type tCardUser = {
     yourContact?: number;
     isSend?:boolean;
     notification?:number;
-    sendMessage:(value:any)=>void;
+    openMessage:(value:any)=>void;
 }
