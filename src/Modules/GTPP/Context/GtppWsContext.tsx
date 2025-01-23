@@ -12,7 +12,6 @@ import { useMyContext } from "../../../Context/MainContext";
 import InformSending from "../Class/InformSending";
 import { classToJSON, handleNotification } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
-import { Store } from "react-notifications-component";
 import soundFile from "../../../Assets/Sounds/notify.mp3";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
@@ -24,7 +23,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
   const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
-  const [onSounds, setOnSounds] = useState<boolean>(true);
+  const [onSounds, setOnSounds] = useState<boolean>(false);
   const [openCardDefault, setOpenCardDefault] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [getTask, setGetTask] = useState<any[]>([]);

@@ -174,7 +174,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
         {(taskDetails.data?.task_item || []).map((task, index: number) => (
           <div
             key={task.id}
-            className={"d-flex justify-content-between align-items-center mb-2 bg-light border w-100 p-1 rounded overflow-auto"}
+            className={"d-flex justify-content-between align-items-center mb-1 bg-light border w-100 p-1 rounded overflow-auto"}
           >
             {(subTask.openDialog && subTask.idSubTask === task.id && task.note) && <ModalInformation onClose={closeObservation} task description={task.note} />}
             {(task.id && positionTaskStates[task.id]) &&
@@ -189,7 +189,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                 }} title="Descer uma posição" className="btn py-1 px-3 my-1 btn-outline-danger fa-solid fa-arrow-down-long"></button>
               </div>
             }
-            <div className="GIPP-section d-flex justify-content-between align-items-center mb-2 w-100 p-1">
+            <div className="GIPP-section d-flex justify-content-between align-items-center w-100">
               <div className="GIPP-section-sm">
                 <div className="text-wrap text-break">
                   <InputCheckbox

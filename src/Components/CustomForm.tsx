@@ -127,7 +127,7 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
 
   function QuestionItem() {
     return (
-      <div className='d-flex flex-column col-3 col-sm-2'>
+      <div className='d-flex flex-column col-3 col-sm-2 ps-2'>
         <label className='fs-6'>
           <input type="checkbox" name={props.id} checked={yesNo == 1 ? true : false} value={1} onChange={
             (e: any) => {
