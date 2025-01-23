@@ -33,7 +33,7 @@ export default function DefaultPassword(props: {
         }
     };
     return props.open ? (
-        <div className='d-flex  align-items-center justify-content-center bg-black bg-opacity-25 position-absolute h-100 w-100 top-0'>
+        <div onClick={()=>props.onClose()} className='d-flex  align-items-center justify-content-center bg-black bg-opacity-25 position-absolute h-100 w-100 top-0'>
             <div className='d-flex flex-column bg-white col-8 col-sm-6 col-md-4 col-lg-3  py-4 rounded'>
                 <header className='d-flex aligm-itens-center justify-content-center my-4  w-100'>
                     <h1>Hora de trocar sua senha!</h1>
