@@ -19,7 +19,7 @@ export default function Home(): JSX.Element {
     const navigate = useNavigate();
 
     return (
-        <div className='d-flex flex-row w-100 h-100 container-fluid'>
+        <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='p-2 flex-grow-1'>
                 <CustomButton onClick={() => navigate('/home/GTPP')} className='btn btn-primary' value={'GTPP'} />

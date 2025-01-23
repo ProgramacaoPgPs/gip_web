@@ -21,7 +21,7 @@ const NavBar: React.FC<NavBarProps> = (props: any) => {
 
     return (
         <Navbar expand="" id='navGipp' className="align-items-start bg-transparent">
-            <Container>
+            <Container className='p-1'>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={()=>handleToggleClick} />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav>
