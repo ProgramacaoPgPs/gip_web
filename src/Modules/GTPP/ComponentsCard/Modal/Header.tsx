@@ -1,22 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Connection } from "../../../../Connection/Connection";
+import { useWebSocket } from "../../Context/GtppWsContext";
 
 interface HeaderModalProps {
   color: string;
   description: string;
-  task?: any;
+  taskParam?: any;
   onClick?: () => void;
 }
 
 const HeaderModal: React.FC<HeaderModalProps> = ({
   color,
-  task,
+  taskParam,
   description,
   onClick,
 }) => {
   const [desc, setDesc] = React.useState<string | null>(description || "");
   const [habilitEditionOfText, setHabilitEditionOfText] = useState<boolean>(false);
   const titleTaskInput = useRef<HTMLInputElement>(null);
+  const {getTask,task} = useWebSocket();
 
   React.useEffect(() => {
     setDesc(description);
@@ -25,9 +27,10 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   async function sendPut(newTitle: string) {
     try {
       const connection = new Connection('18');
-      const req: any = await connection.put({ id: task.id, priority: task.priority, description: newTitle }, "GTPP/Task.php");
+      const req: any = await connection.put({ id: taskParam.id, priority: taskParam.priority, description: newTitle }, "GTPP/Task.php");
       if (req.error) throw new Error(req.message);
       setDesc(newTitle);
+      getTask.filter(item=>item.id==task.id)[0].description = newTitle;
     } catch (error:any) {
       console.log(error)
       if(!error.message.toUpperCase().includes("NO DATA")){

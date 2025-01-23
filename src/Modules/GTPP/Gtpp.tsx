@@ -49,7 +49,7 @@ export default function Gtpp(): JSX.Element {
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
             <div className="position-relative">
               <h1 onClick={handleOpenFilter} className="cursor-pointer">
-                Filtros <i className="fa fa-angle-down"></i>
+                Estados <i className="fa fa-angle-down"></i>
               </h1>
               <div className="position-absolute filter-modal">
                 {openFilter ? (
@@ -77,8 +77,8 @@ export default function Gtpp(): JSX.Element {
               </div>
             </div>
             <div className="d-flex flex-row w-50 justify-content-end gap-2">
-              <button title={openMenu ? "Ocultar menu" : "Exibir Menu"} onClick={()=>setOpenMenu(!openMenu)} className={`btn p-0 d-block d-md-none`} >
-                <i className={`fa-solid fa-eye${openMenu ? "-slash":''}`}></i>
+              <button title={openMenu ? "Ocultar menu" : "Exibir Menu"} onClick={() => setOpenMenu(!openMenu)} className={`btn p-0 d-block d-md-none`} >
+                <i className={`fa-solid fa-eye${openMenu ? "-slash" : ''}`}></i>
               </button>
               <button
                 className="btn p-0 mx-2 cursor-pointer"

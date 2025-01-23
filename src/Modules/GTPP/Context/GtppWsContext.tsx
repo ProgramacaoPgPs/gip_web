@@ -185,12 +185,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       response.message.includes("This user has been connected to another place")
     ) {
       handleNotification("Você será desconectado.","Usuário logado em outro dispositivo!","danger");
-      setTimeout(() => {
-        navigate("/");
-        localStorage.removeItem("tokenGIPP");
-        localStorage.removeItem("codUserGIPP");
-      }, 5000);
-      console.error("Derrubar usuário",response);
+      // setTimeout(() => {
+      //   navigate("/");
+      //   localStorage.removeItem("tokenGIPP");
+      //   localStorage.removeItem("codUserGIPP");
+      // }, 5000);
     }
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
     if (!response.error && response.send_user_id != userLog.id) {
