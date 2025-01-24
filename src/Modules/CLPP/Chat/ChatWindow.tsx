@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useMyContext } from "../../../Context/MainContext";
+import { useEffect } from "react";
 import { useWebSocket } from "../../../Context/WsContext";
 import { tChatWindow } from "../../../types/types";
-import StructureModal from "../../../Components/CustomModal";
-import { Connection } from "../../../Connection/Connection";
-import AttachmentFile from "../../../Components/AttachmentFile";
 import ChatControls from "./ChatControls";
 import ChatLoading from "./ChatLoading";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 
 export default function ChatWindow(props: tChatWindow): JSX.Element {
-    const { messagesContainerRef, previousScrollHeight, listMessage, page, pageLimit } = useWebSocket();
+    const { messagesContainerRef, previousScrollHeight, listMessage, page } = useWebSocket();
 
     useEffect(() => {
-        if (messagesContainerRef.current) {
-            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
-        }
+        setTimeout(()=>{
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight ;
+            }
+        },100);
     }, [listMessage, page]);
 
     return (

@@ -33,7 +33,7 @@ export default function FilePreview(props: FilePreviewProps) {
       // Formata o XML de forma indentada
       return formatXML(rawXML);
     } catch (error) {
-      console.error('Erro ao decodificar ou formatar o XML:', error);
+      alert(`Erro ao decodificar ou formatar o XML: ${error}`);
       return 'Erro ao carregar o XML.';
     }
   };
@@ -57,7 +57,6 @@ export default function FilePreview(props: FilePreviewProps) {
         } else {
           indent = 0; // Conteúdo
         }
-
         const padding = PADDING.repeat(pad);
         pad += indent;
         return padding + line;

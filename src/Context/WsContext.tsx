@@ -27,6 +27,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const { setLoading, userLog } = useMyContext();
     const ws = useRef(new WebSocketCLPP(userLog.session, callbackOnMessage));
 
+    
     useEffect(() => {
         // Abre a coonexão com o websocket.
         (async () => {
@@ -74,15 +75,26 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMessages();
     }, [page, idReceived]);
 
-  
-    // Verifica quando o usuário rola até o topo
-    function handleScroll() {
+    function includesMessage(message:{ id: number, id_user: number, message: string, notification: number, type: number }){
+        listMessage.push(message);
+        setListMessage([...listMessage]);
         if (messagesContainerRef.current) {
             if (messagesContainerRef.current.scrollTop === 0 && page < pageLimit) {
                 previousScrollHeight.current = messagesContainerRef.current.scrollHeight;
-                setPage(page + 1);
             }
         }
+    }
+  
+    // Verifica quando o usuário rola até o topo
+    function handleScroll() {
+        setTimeout(()=>{
+            if (messagesContainerRef.current) {
+                if (messagesContainerRef.current.scrollTop === 0 && page < pageLimit) {
+                    previousScrollHeight.current = messagesContainerRef.current.scrollHeight;
+                    setPage(page + 1);
+                }
+            }
+        },250);
     };
 
     async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
@@ -192,7 +204,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

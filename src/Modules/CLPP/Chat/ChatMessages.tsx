@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
 import { useWebSocket } from "../../../Context/WsContext";
@@ -6,6 +7,7 @@ export default
 function ChatMessages() {
     const { userLog } = useMyContext();
     const { handleScroll, messagesContainerRef, listMessage } = useWebSocket();
+    useEffect(()=>{if(messagesContainerRef.current) console.log(messagesContainerRef.current.scrollHeight)},[listMessage]);
     return (
         <section
             ref={messagesContainerRef}
