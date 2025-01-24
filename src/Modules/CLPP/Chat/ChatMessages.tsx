@@ -1,58 +1,29 @@
-import { useEffect, useState } from "react";
+import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
 import { useWebSocket } from "../../../Context/WsContext";
-import { tWindowsMessage } from "../../../types/types";
-import StructureModal from "../../../Components/CustomModal";
-import { Connection } from "../../../Connection/Connection";
-import AttachmentFile from "../../../Components/AttachmentFile";
-const logo = require("../../../Assets/Image/peg_pese_loading.png");
 
-export default function WindowsMessage(props: tWindowsMessage): JSX.Element {
-    const [attachmentFile, setAttachmentFile] = useState<string>('');
+export default 
+function ChatMessages() {
     const { userLog } = useMyContext();
-    const { changeChat, handleScroll, messagesContainerRef, previousScrollHeight, listMessage, page, pageLimit, msgLoad } = useWebSocket();
-    
-    useEffect(() => {
-        if (messagesContainerRef.current) {
-            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
-        }
-    }, [listMessage, page]);
-
+    const { handleScroll, messagesContainerRef, listMessage } = useWebSocket();
     return (
-        <div id='divWindowsMessage' className='d-flex flex-column h-100 w-100'>
-            {msgLoad && (
-                <StructureModal className="StructureModal ModalBgWhite">
-                    <div className="d-flex flex-column align-items-center">
-                        <img className="spinner-grow-img" src={logo} alt="Logo Peg Pese" />
-                    </div>
-                </StructureModal>
-            )}
-            <i onClick={() => {
-                changeChat();
-                props.onClose();
-            }} className="fa-solid fa-rotate-left text-end text-danger my-2"> Voltar</i>
-            <div
-                ref={messagesContainerRef}
-                onScroll={handleScroll}
-                className='d-flex flex-column overflow-auto h-100 w-100 p-2'
-            >
-                {listMessage.map((item, index) => (
-                    <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
-                        <div className="p-2 rounded">{controllerMessage(item)}</div>
-                        {
-                            item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>
-                        }
-                    </div>
-                ))}
-                <div />
-            </div>
-            <div className="d-flex align-items-center rounded p-2">
-                <button className="btn btn-success fa-solid fa-paper-plane col-2" title="Enviar mensagem"></button>
-                <textarea rows={2} style={{ resize: "none" }} className="mx-2 col-8 border rounded" />
-                <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)}/>
-            </div>
-        </div>
-    );
+        <section
+            ref={messagesContainerRef}
+            onScroll={handleScroll}
+            className='d-flex flex-column overflow-auto h-100 w-100 p-2'
+        >
+            {listMessage.map((item, index) => (
+                <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
+                    <div className="p-2 rounded">{controllerMessage(item)}</div>
+                    {
+                        item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>
+                    }
+                </div>
+            ))}
+            <div />
+        </section>
+    )
+
 
     function controllerMessage(message: any): any {
         let response;
@@ -81,7 +52,7 @@ export default function WindowsMessage(props: tWindowsMessage): JSX.Element {
 
     function componentFile(message: any, style: string, icon: string): JSX.Element {
         return (
-            <div id='divMessageFile' className="d-flex flex-column fileStyle bg-white p-2 rounded ">
+            <footer id='divMessageFile' className="d-flex flex-column fileStyle bg-white p-2 rounded ">
                 <a href={`http://gigpp.com.br:72/GLOBAL/Controller/CLPP/uploads/${message.message}`} target='_blank'>
                     <i className={`${style} ${icon}`} />
                 </a>
@@ -97,7 +68,7 @@ export default function WindowsMessage(props: tWindowsMessage): JSX.Element {
                 }}>
                     <i className='text-dark fa-solid fa-download' />
                 </div>
-            </div>
+            </footer>
         );
     }
     async function downloadFile(reqFile: { error: boolean, fileName: string, fileContent: string }) {

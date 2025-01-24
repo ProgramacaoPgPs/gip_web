@@ -80,34 +80,34 @@
 }
 
 /* Estilo complementar do chat */
-#divWindowsMessage {
+#divChatWindow {
     position: relative;
 }
 
-#divWindowsMessage>i {
+#divChatWindow>header>i {
     cursor: pointer;
 }
 
-#divWindowsMessage .notifyMessage{
+#divChatWindow .notifyMessage{
     font-size: clamp(2px, calc(0.15rem + 1vw + 1vh), 12px) !important;
 }
-#divWindowsMessage>div>.messageReceived>div {
+#divChatWindow>section>.messageReceived>div {
     background: #f1f0f0;
     word-wrap: break-word;
     max-width: 70%;
 }
 
-#divWindowsMessage>div>.messageSent>div {
+#divChatWindow>section>.messageSent>div {
     background: #3cb371;
     word-wrap: break-word;
     color: white;
     max-width: 70%;
 }
 
-#divWindowsMessage>div>div>div>a>img{
+#divChatWindow>div>div>div>a>img{
     width: 100%;
 }
-#divWindowsMessage>i {
+#divChatWindow>header>i {
     font-size: clamp(2px, calc(0.15rem + 1vw + 1vh), 10px) !important;
 }
 

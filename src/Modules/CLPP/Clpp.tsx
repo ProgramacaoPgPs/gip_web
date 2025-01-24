@@ -4,8 +4,9 @@ import './Clpp.css';
 import { useMyContext } from '../../Context/MainContext';
 import User from '../../Class/User';
 import CardUser from './Components/CardUser';
-import WindowsMessage from './Chat/WindowsMessage';
+import ChatWindow from './Chat/ChatWindow';
 import Contacts from './Components/Contacts';
+
 
 
 
@@ -13,7 +14,7 @@ export default function Clpp(): JSX.Element {
     const [openChat, setOpenChat] = React.useState<boolean>(false)
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
-    const [windowsMessage, setWindowsMessage] = React.useState<boolean>(false);
+    const [chat, setChat] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
     const { ws, contactList, changeListContact, idReceived, setIdReceived } = useWebSocket();
 
@@ -35,8 +36,8 @@ export default function Clpp(): JSX.Element {
 
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
                         {
-                            windowsMessage ?
-                                <WindowsMessage idReceived={idReceived} onClose={() => setWindowsMessage(false)} />
+                            ChatWindow ?
+                                <ChatWindow idReceived={idReceived} onClose={() => setChat(false)} />
                                 :
                                 <Contacts setIsConverse={() => setIsConverse(!isConverse)} isConverse={isConverse} contactList={contactList} openMessage={openMessage} />
                         }
@@ -52,7 +53,7 @@ export default function Clpp(): JSX.Element {
     function openMessage(user: User) {
         changeListContact(user.id);
         ws.current.informPreview(user.id.toString());
-        setWindowsMessage(true);
+        setChat(true);
         setIdReceived(user.id);
     }
 }

@@ -5,7 +5,7 @@ export type tUser ={
     administrator:number;
     session:string;
 };
-export type tWindowsMessage ={
+export type tChatWindow ={
     onClose:(value?:any)=>void;
     idReceived:number;
 };

@@ -64,9 +64,8 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
       <div style={{ maxWidth: "75%", maxHeight: "90%" }} className="d-flex flex-column align-items-center bg-white p-4 rounded" onClick={(e) => e.stopPropagation()}>
         <div className='d-flex align-items-center justify-content-between w-100'>
           <span className='h5'>Anexo:  </span>
-          {base64File && <button style={{ minWidth: "25%" }} onClick={async () => {
+          {base64File && <button title="Remover anexo." style={{ minWidth: "25%" }} onClick={async () => {
             if (props.updateAttachmentFile) {
-              console.log("Primeiro stop");
               await props.updateAttachmentFile('', item_id);
             }
             setBase64File('');
@@ -88,7 +87,7 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
         </div>
 
         <div className='d-flex align-items-center justify-content-around w-100'>
-          <button disabled={!item_id} style={{ minWidth: "25%" }} onClick={async () => {
+          <button title={"Salvar arquivo"} disabled={!item_id} style={{ minWidth: "25%" }} onClick={async () => {
             if (props.updateAttachmentFile) {
               await props.updateAttachmentFile(base64File.replace(/^data:image\/\w+;base64,/, ""), item_id);
             }
@@ -96,8 +95,8 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
           }} className="btn btn-success m-2">
             Salvar
           </button>
-          <button style={{ minWidth: "25%" }} onClick={closeModal} className="btn btn-danger m-2">
-            Fechar
+          <button title={"Voltar"} style={{ minWidth: "25%" }} onClick={closeModal} className="btn btn-danger m-2">
+            Voltar
           </button>
         </div>
 
