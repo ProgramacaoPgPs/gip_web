@@ -104,7 +104,7 @@
     max-width: 70%;
 }
 
-#divChatWindow>div>div>div>a>img{
+#divChatWindow>section>div>div>a>img{
     width: 100%;
 }
 #divChatWindow>header>i {

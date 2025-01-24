@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Connection } from '../Connection/Connection';
+import FilePreview from './FilePreview';
 
 function AttachmentFile(props:
-  | { item_id: number; file: number; onClose?: (file: string) => void; reset?: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> } // item_id é obrigatório, onClose opcional
-  | { item_id?: number; file: number; onClose: (file: string) => void; reset: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> } // onClose é obrigatório, item_id opcional
+  | { item_id: number; file: number; onClose?: (file: string) => void; reset?: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean } // item_id é obrigatório, onClose opcional
+  | { item_id?: number; file: number; onClose: (file: string) => void; reset: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean } // onClose é obrigatório, item_id opcional
 ) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [base64File, setBase64File] = useState<string>('');
@@ -32,7 +33,7 @@ function AttachmentFile(props:
 
   const closeModal = () => {
     setIsModalOpen(false);
-    props.onClose?.(base64File.replace(/^data:image\/\w+;base64,/, ""));
+    props.onClose?.(props.fullFiles ? base64File : base64File.replace(/^data:image\/\w+;base64,/, ""));
   };
   return (
     <div title="Anexar arquivo." onClick={() => setIsModalOpen(true)}>
@@ -40,12 +41,12 @@ function AttachmentFile(props:
         <div className={`fa fa-paperclip p-2 cursor-pointer  ${(base64File) && 'text-success shadow rounded-circle'}`}
         />
       </label>
-      {isModalOpen && <AttachmentPreview item_id={props.item_id || 0} closeModal={closeModal} base64File={base64File} setBase64File={setBase64File} updateAttachmentFile={props.updateAttachmentFile} />}
+      {isModalOpen && <AttachmentPreview item_id={props.item_id || 0} closeModal={closeModal} base64File={base64File} setBase64File={setBase64File} updateAttachmentFile={props.updateAttachmentFile} fullFiles={props.fullFiles} />}
     </div>
   );
 }
 
-function AttachmentPreview(props: { closeModal: () => void; item_id: number, base64File: string, setBase64File: (value: string) => void, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> }) {
+function AttachmentPreview(props: { closeModal: () => void; item_id: number, base64File: string, setBase64File: (value: string) => void, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean }) {
   const { base64File, setBase64File, closeModal, item_id } = props;
 
   function handleFileChange(event: any) {
@@ -73,12 +74,12 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
         </div>
         <div className='d-flex flex-column align-items-center w-100 h-100 overflow-auto'>
           {base64File ?
-            <img className='rounded w-100 h-100' src={base64File} alt="Imagem selecionada" style={{ width: '100%', maxWidth: '500px' }} />
+            <FilePreview base64File={base64File}/>
             :
-            <label style={{ minHeight: "60px", height: "6vw", minWidth: "60px", width: "6vw" }} className='d-flex justify-content-center align-items-center btn btn-outline-primary text-primary fa fa-paperclip' >
+            <label style={{ minHeight: "60px", height: "4vw", minWidth: "60px", width: "4vw" }} className='d-flex justify-content-center align-items-center btn btn-outline-primary text-primary fa fa-paperclip' >
               <input
                 type="file"
-                accept="image/*"
+                accept={props.fullFiles ? "text/xml, image/png, image/jpeg, image/gif, video/mp4, application/pdf" : "image/*"}
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
               />

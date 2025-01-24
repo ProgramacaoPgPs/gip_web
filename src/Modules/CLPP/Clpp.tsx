@@ -36,7 +36,7 @@ export default function Clpp(): JSX.Element {
 
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
                         {
-                            ChatWindow ?
+                            chat ?
                                 <ChatWindow idReceived={idReceived} onClose={() => setChat(false)} />
                                 :
                                 <Contacts setIsConverse={() => setIsConverse(!isConverse)} isConverse={isConverse} contactList={contactList} openMessage={openMessage} />
