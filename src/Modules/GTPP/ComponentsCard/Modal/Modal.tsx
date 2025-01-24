@@ -12,6 +12,7 @@ import MessageModal from "../ModalMessage/messagemodal";
 import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import AttachmentFile from "../../../../Components/AttachmentFile";
 import "./style.css"
+import { Connection } from "../../../../Connection/Connection";
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -42,7 +43,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
   const [expand, setExpand] = useState<boolean>(false);
   const [attachmentFile, setAttachmentFile] = useState<string>('');
   const [isQuest, setIsQuest] = useState<number>(0);
-  const { taskDetails, stopAndToBackTask, handleAddTask } = useWebSocket();
+  const { taskDetails,task, stopAndToBackTask, handleAddTask,updateItemTaskFile } = useWebSocket();
 
   const [ListTask, setListTask] = useState<ValueStateTask>({
     stopTask: false,
@@ -195,7 +196,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
           details={props?.details?.data}
           disabledForm={props.disabledForm}
         />
-        <div className={expand ? "expandFullScreen":"d-flex flex-column h-75"}>
+        <div className={expand ? "expandFullScreen" : "d-flex flex-column h-75"}>
           <div className="d-flex justify-content-between gap-2 my-2">
             <div className="d-flex flex-wrap gap-2 my-2">
               <ButtonIcon
@@ -277,7 +278,7 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   icon="arrow-right"
                   onClick={async () => { await insertItemTask() }}
                 />
-                <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} />
+                <AttachmentFile reset={attachmentFile ? false : true} file={0} onClose={(value) => setAttachmentFile(value)} updateAttachmentFile={updateItemTaskFile} />
                 <button onClick={() => { setIsQuest(isQuest == 0 ? -1 : 0) }} title="Marca como questão?" className={`btn btn-primary fa-solid fa-question ${isQuest == 0 ? 'opacity-25' : 'opacity-100'}`}></button>
               </div>
               <div className="col-12 col-sm-8 col-md-9 my-2">

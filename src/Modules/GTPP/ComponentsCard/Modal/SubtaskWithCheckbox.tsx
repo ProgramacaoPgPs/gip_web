@@ -18,7 +18,7 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm, task, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion } = useWebSocket();
+  const { checkedItem, changeObservedForm, task, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion,updateItemTaskFile } = useWebSocket();
   const { setLoading } = useMyContext();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
@@ -240,7 +240,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                     setLoading(false);
                   }
                 }} />
-                <AnexoImage item_id={task.id || 0} file={task.file || 0} />
+                <AnexoImage item_id={task.id || 0} file={task.file || 0} updateAttachmentFile={updateItemTaskFile} />
               </div>
             </div>
           </div>

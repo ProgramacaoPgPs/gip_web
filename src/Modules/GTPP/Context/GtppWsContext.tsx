@@ -49,8 +49,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         const getNotify: any = await connection.get(`&id_user=${userLog.id}`, '/GTPP/Notify.php');
         if (getNotify.error) throw new Error(getNotify.message);
         updateNotification(getNotify.data);
-      } catch (error:any) {
-        if(!error.message.toUpperCase().includes("NO DATA")){
+      } catch (error: any) {
+        if (!error.message.toUpperCase().includes("NO DATA")) {
           alert(error.message)
         }
       } finally {
@@ -184,7 +184,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       response.error &&
       response.message.includes("This user has been connected to another place")
     ) {
-      handleNotification("Você será desconectado.","Usuário logado em outro dispositivo!","danger");
+      handleNotification("Você será desconectado.", "Usuário logado em outro dispositivo!", "danger");
       // setTimeout(() => {
       //   navigate("/");
       //   localStorage.removeItem("tokenGIPP");
@@ -448,6 +448,21 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     }
   }
+  async function updateItemTaskFile(file: string, item_id?: number) {
+    try {
+      if (item_id) {
+        const connection = new Connection("18");
+        const req: any = await connection.put({
+          "task_id": task.id,
+          "id": item_id,
+          "file": file
+        }, 'GTPP/TaskItem.php');
+        if (req.error) throw new Error();
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  }
 
   // AQUI VOU PRECISAR MONTAR UMA CONDICIONAL PARA MUDAR A DESCRIÇÃO E COLOCAR UMA OBSERVAÇÃO.
   async function changeObservedForm(
@@ -584,7 +599,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   // FUNÇÕES PARA ATUALIZAR AS INFORMAÇÕES DA PÁGINA:
   function reloadPagePercent(value: any, task: any) {
     setTaskPercent(parseInt(value.percent));
-    if(getTask.length > 0){
+    if (getTask.length > 0) {
       getTask[getTask.findIndex(item => item.id == task.task_id)].percent = parseInt(value.percent);
       setGetTask([...getTask]);
     }
@@ -639,6 +654,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         onSounds,
         getTask,
         openCardDefault,
+        updateItemTaskFile,
         updatedForQuestion,
         reloadPagePercent,
         deleteItemTaskWS,

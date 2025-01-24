@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useWebSocket } from '../Modules/GTPP/Context/GtppWsContext';
 import { Connection } from '../Connection/Connection';
 
 function AttachmentFile(props:
-  | { item_id: number; file: number; onClose?: (file: string) => void; reset?:boolean } // item_id é obrigatório, onClose opcional
-  | { item_id?: number; file: number; onClose: (file: string) => void; reset:boolean } // onClose é obrigatório, item_id opcional
+  | { item_id: number; file: number; onClose?: (file: string) => void; reset?: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> } // item_id é obrigatório, onClose opcional
+  | { item_id?: number; file: number; onClose: (file: string) => void; reset: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> } // onClose é obrigatório, item_id opcional
 ) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [base64File, setBase64File] = useState<string>('');
-  const {reset} =props;
+  const { reset } = props;
   useEffect(() => {
     if (reset) {
       setBase64File('');
@@ -41,14 +40,13 @@ function AttachmentFile(props:
         <div className={`fa fa-paperclip p-2 cursor-pointer  ${(base64File) && 'text-success shadow rounded-circle'}`}
         />
       </label>
-      {isModalOpen && <AttachmentPreview item_id={props.item_id || 0} closeModal={closeModal} base64File={base64File} setBase64File={setBase64File} />}
+      {isModalOpen && <AttachmentPreview item_id={props.item_id || 0} closeModal={closeModal} base64File={base64File} setBase64File={setBase64File} updateAttachmentFile={props.updateAttachmentFile} />}
     </div>
   );
 }
 
-function AttachmentPreview(props: { closeModal: () => void; item_id: number, base64File: string, setBase64File: (value: string) => void }) {
+function AttachmentPreview(props: { closeModal: () => void; item_id: number, base64File: string, setBase64File: (value: string) => void, updateAttachmentFile?: (file: string, item_id: number) => Promise<void> }) {
   const { base64File, setBase64File, closeModal, item_id } = props;
-  const { task } = useWebSocket();
 
   function handleFileChange(event: any) {
     const file = event.target.files[0];
@@ -67,7 +65,10 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
         <div className='d-flex align-items-center justify-content-between w-100'>
           <span className='h5'>Anexo:  </span>
           {base64File && <button style={{ minWidth: "25%" }} onClick={async () => {
-            await updateItemTaskFile('');
+            if (props.updateAttachmentFile) {
+              console.log("Primeiro stop");
+              await props.updateAttachmentFile('', item_id);
+            }
             setBase64File('');
           }} className="btn btn-danger m-2 fa-solid fa-trash" />}
         </div>
@@ -87,7 +88,12 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
         </div>
 
         <div className='d-flex align-items-center justify-content-around w-100'>
-          <button disabled={!item_id} style={{ minWidth: "25%" }} onClick={async () => await updateItemTaskFile(base64File.replace(/^data:image\/\w+;base64,/, ""))} className="btn btn-success m-2">
+          <button disabled={!item_id} style={{ minWidth: "25%" }} onClick={async () => {
+            if (props.updateAttachmentFile) {
+              await props.updateAttachmentFile(base64File.replace(/^data:image\/\w+;base64,/, ""), item_id);
+            }
+            closeModal();
+          }} className="btn btn-success m-2">
             Salvar
           </button>
           <button style={{ minWidth: "25%" }} onClick={closeModal} className="btn btn-danger m-2">
@@ -98,22 +104,7 @@ function AttachmentPreview(props: { closeModal: () => void; item_id: number, bas
       </div>
     </div>
   );
-  async function updateItemTaskFile(file: string) {
-    try {
-      if (item_id) {
-        const connection = new Connection("18");
-        const req: any = await connection.put({
-          "task_id": task.id,
-          "id": item_id,
-          "file": file
-        }, 'GTPP/TaskItem.php');
-        if (req.error) throw new Error();
-        if (file) closeModal();
-      }
-    } catch (error: any) {
-      console.error(error.message);
-    }
-  }
+
 }
 
 export default AttachmentFile;
