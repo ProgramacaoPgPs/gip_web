@@ -11,13 +11,13 @@ export default function ChatWindow(props: tChatWindow): JSX.Element {
 
     useEffect(() => {
         setTimeout(() => {
+
             if (messagesContainerRef.current) {
-                const container = messagesContainerRef.current;
-                container.scrollTop = container.scrollHeight - container.clientHeight;
+                messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - previousScrollHeight.current;
             }
         }, 100);
-    }, [listMessage, page]);
 
+    }, [listMessage, page]);
     return (
         <div id='divChatWindow' className='d-flex flex-column h-100 w-100'>
             <ChatLoading />
