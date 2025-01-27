@@ -2,37 +2,46 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { useMyContext } from './MainContext';
 import WebSocketCLPP from '../Services/Websocket';
 import { Connection } from '../Connection/Connection';
-import {  iSender, iUser,  iWebSocketContextType } from '../Interface/iGIPP';
+import { iSender, iUser, iWebSocketContextType } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
+import { error } from 'console';
 
 
 const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [msgLoad, setMsgLoad] = useState<boolean>(true);
-
+    //Variáveis do chat
     const [idReceived, setIdReceived] = React.useState<number>(0);
     const [pageLimit, setPageLimit] = useState<number>(1);
     const [page, setPage] = useState<number>(1);
     const previousScrollHeight = useRef<number>(0);
-
-    const [contactList, setContactList] = useState<iUser[]>([]);
-
     const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-    const [sender, setSender] = useState<iSender>({ id: 0 });
-    
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
-    const { setLoading, userLog } = useMyContext();
-    const ws = useRef(new WebSocketCLPP(userLog.session, callbackOnMessage));
+    function closeChat(){
+        setIdReceived(0);
+        setPageLimit(1);
+        setPage(1);
+        setListMessage([]);
+        if(previousScrollHeight.current) previousScrollHeight.current = 0;
+    }
 
-    
-    useEffect(() => {
+    //Variáveis dos contatos
+    const [msgLoad, setMsgLoad] = useState<boolean>(true);
+    const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
+    const [contactList, setContactList] = useState<iUser[]>([]);
+    const [sender, setSender] = useState<iSender>({ id: 0 });
+
+
+    const { setLoading, userLog } = useMyContext();
+    const ws = useRef(new WebSocketCLPP(localStorage.getItem("tokenGIPP"), callbackOnMessage));
+
+
+    useEffect(() => { 
         // Abre a coonexão com o websocket.
         (async () => {
             try {
-                if (userLog.session) {
+                if (userLog.session && ws.current && !ws.current.isConnected) {
                     ws.current.connectWebSocket();
                 }
             } catch (error) {
@@ -48,14 +57,18 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             }
         }
         )();
+        return clearChatAll(); 
     }, [userLog]);
-
+    function clearChatAll(){
+        closeChat();
+        changeChat();
+    }
     // Garante a atualização do callback.
     useEffect(() => {
         ws.current.callbackOnMessage = callbackOnMessage;
     }, [idReceived, listMessage]);
 
-    useEffect(() => {
+    useEffect(() => { 
         const fetchMessages = async () => {
             setMsgLoad(true);
             try {
@@ -65,9 +78,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     setPageLimit(req.pages);
                     setListMessage(reloadList(req.data.reverse()));
                 }
-            } catch (error) {
-                console.error(error);
-                alert(error);
+            } catch (error: any) {
+                if (!error.message.includes("No data")) alert(error);
             }
             setMsgLoad(false);
         };
@@ -75,7 +87,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMessages();
     }, [page, idReceived]);
 
-    function includesMessage(message:{ id: number, id_user: number, message: string, notification: number, type: number }){
+    function includesMessage(message: { id: number, id_user: number, message: string, notification: number, type: number }) {
         listMessage.push(message);
         setListMessage([...listMessage]);
         if (messagesContainerRef.current) {
@@ -84,17 +96,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             }
         }
     }
-  
+
     // Verifica quando o usuário rola até o topo
     function handleScroll() {
-        setTimeout(()=>{
+        setTimeout(() => {
             if (messagesContainerRef.current) {
                 if (messagesContainerRef.current.scrollTop === 0 && page < pageLimit) {
                     previousScrollHeight.current = messagesContainerRef.current.scrollHeight;
                     setPage(page + 1);
                 }
             }
-        },250);
+        }, 250);
     };
 
     async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
@@ -117,10 +129,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     // Função para atualizar contato com base no evento
-    function updateContact(event: any, contact: iUser) {
-        if (contact.yourContact === 0) contact.yourContact = 1;
-        if (contact.notification === 0) {
-            const pattern = /^(.{0,25}).*/;
+    function updateContact(contact: iUser) {
+        if (contact.yourContact === 0 || contact.notification === undefined) contact.yourContact = 1;
+        if (contact.notification === 0 || contact.notification === undefined) {
             contact.notification = 1;
         }
         return contact;
@@ -128,15 +139,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     async function callbackOnMessage(event: any) {
         if (event.objectType === 'notification') {
-            if (event.user === idReceived) {
+            if(event.notify && event.user == idReceived) {
+                listMessage.forEach((item,index)=>{
+                    if(item.notification == 1){
+                        listMessage[index].notification = 0;
+                    }
+                });
+                setListMessage([...listMessage]);
                 await viewedMessage(event);
             }
         } else if (event.message && !event.error) {
             await receivedMessage(event);
-            // Se a janela de batepapo estiver aberta, ele informa que a msg já foi visualizada.
-            if (event.send_user === idReceived) {
-                ws.current.informPreview(idReceived.toString());
-            }
         }
     }
 
@@ -157,59 +170,55 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             console.log(error)
         }
     }
-
+    // useEffect(() => { console.log(hasNewMessage) }, [hasNewMessage]);
     async function receivedMessage(event: any) {
-        const { send_user, message, type } = event;
-
+        const { send_user, message, type } = event; 
         if (parseInt(send_user) === idReceived) {
-            
             listMessage.push({
-                id: 999,
+                id: 99999, 
                 "id_user": event.send_user,
                 "message": event.message,
-                "notification": 0,
+                "notification": 0, 
                 "type": event.type
             });
-            setListMessage([...listMessage])
-
+            setListMessage([...listMessage]);
+            await ws.current.informPreview(send_user.toString())
         } else {
+            setHasNewMessage(true);
             setContactList((prevContacts) =>
-                prevContacts.map((contact) =>
-                    contact.id === send_user ? updateContact(event, contact) : contact
+                prevContacts.map((contact) => 
+                    contact.id === send_user ? updateContact(contact) : contact
                 )
-            );
+            ); 
         }
     };
 
     async function viewedMessage(event: any) {
-        // console.log(event)
-        // const { user } = event;
-        // setContactList((prevContacts) =>
-        //     prevContacts.map((contact) =>
-        //         contact.id === parseInt(user) ? { ...contact, pendingMessage: 0 } : contact
-        //     )
-        // );
-
-        // const connection = new Connection('7');
-        // await connection.put(
-        //     {
-        //         id_user: user,
-        //         id_sender: userLog.id,
-        //         UpdateNotification: 1,
-        //     },
-        //     'CLPP/Message.php'
-        // );
-
-        // setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
+        const { user } = event;
+        /*
+        setContactList((prevContacts) =>
+            prevContacts.map((contact) =>
+                contact.id === parseInt(user) ? { ...contact, pendingMessage: 0 } : contact
+            )
+        );*/
+        const connection = new Connection('18');
+        await connection.put(
+            {
+                id_user: user,
+                id_sender: userLog.id,
+                UpdateNotification: 1,
+            },
+            'CLPP/Message.php'
+        );
+        //setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page,hasNewMessage, setHasNewMessage, closeChat,includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );
 };
-
 export const useWebSocket = () => {
     const context = useContext(WebSocketContext);
     if (!context) {

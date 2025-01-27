@@ -32,11 +32,17 @@ export default function ChatControls() {
             setFile(fileBase64);
         }
     }
-
+    // async function sendMessage(item:{id:number,id_user:number,message:string,notification:number,type:number},idReceived:number,base64?:string) {
+    //     const connection = new Connection("18");
+    //     const req: any = await connection.post(classToJSON(new SendMessage(base64 || item.message, idReceived, userLog.id, item.type)), "CLPP/Message.php");
+    //     if (req.error) throw new Error(req.message);
+    //     includesMessage({...item});
+    //     ws.current.informSending(2, idReceived.toString(), req.last_id);
+    // }
     async function sendAllMessage() {
         try {
             const connection = new Connection("18");
-            if (file) {
+            if (file != '') {
                 const type =changeTypeMessageForFile(file);
                 const req: any = await connection.post(classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), "CLPP/Message.php");
                 if (req.error) throw new Error(req.message);
@@ -49,7 +55,7 @@ export default function ChatControls() {
                 });
                 ws.current.informSending(2, idReceived.toString(), req.last_id);
             }
-            if (message) {
+            if (message!='') {
                 const req: any = await connection.post(classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), "CLPP/Message.php");
                 if (req.error) throw new Error(req.message);
                 includesMessage({

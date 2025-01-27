@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../../Context/WsContext';
 import './Clpp.css';
 import { useMyContext } from '../../Context/MainContext';
@@ -16,8 +16,23 @@ export default function Clpp(): JSX.Element {
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const [chat, setChat] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
-    const { ws, contactList, changeListContact, idReceived, setIdReceived } = useWebSocket();
+    const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage } = useWebSocket();
+    const [blink, setBlink] = useState(false);
 
+    useEffect(() => {
+        if (hasNewMessage) {
+            setBlink(true);
+            const timer = setInterval(() => {
+                setBlink((prev) => !prev);
+            }, 1000); // Alterna a cada 500ms
+
+            setTimeout(() => {
+                clearInterval(timer);
+                setBlink(false);
+            }, 6000); // Pisca por 3 segundos
+        }
+    }, [hasNewMessage]);
+    useEffect(() => console.log("#", blink), [blink])
     return (
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
             {
@@ -26,7 +41,7 @@ export default function Clpp(): JSX.Element {
                     <header className='d-flex flex-column align-items-center'>
                         <div className='d-flex justify-content-between align-items-center bg-light w-100 rounded p-2'>
                             <div>
-                                <i className='fa-solid fa-comments'></i> Chat Log Peg Pese - CLPP
+                                <i className={`fa-solid fa-comments`}></i> Chat Log Peg Pese - CLPP
                             </div>
                             <i onClick={() => setDetailsChat(!detailsChat)} className={`btn text-primary fa-solid fa-circle-info`}></i>
                         </div>
@@ -37,22 +52,26 @@ export default function Clpp(): JSX.Element {
                     <section className='d-flex justify-content-between h-100 overflow-hidden'>
                         {
                             chat ?
-                                <ChatWindow idReceived={idReceived} onClose={() => setChat(false)} />
+                                <ChatWindow idReceived={idReceived} onClose={() => {
+                                    setChat(false);
+                                    closeChat();
+                                }
+                                } />
                                 :
                                 <Contacts setIsConverse={() => setIsConverse(!isConverse)} isConverse={isConverse} contactList={contactList} openMessage={openMessage} />
                         }
                     </section>
                 </div>
             }
-            <button className={`btn fa-solid my-2 ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
+            <button className={`btn fa-solid my-2 ${blink ? 'opacity-25' : 'opacity-100'} ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
                 setOpenChat(!openChat);
             }}></button>
         </div>
     );
 
-    function openMessage(user: User) {
+    async function openMessage(user: User) {
+        await ws.current.informPreview(user.id.toString());
         changeListContact(user.id);
-        ws.current.informPreview(user.id.toString());
         setChat(true);
         setIdReceived(user.id);
     }
