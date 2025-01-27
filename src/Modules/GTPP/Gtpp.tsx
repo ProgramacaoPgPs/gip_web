@@ -26,8 +26,6 @@ export default function Gtpp(): JSX.Element {
     });
   }, [setTitleHead]);
 
-
-
   function handleCheckboxChange(stateId: number) {
     const newItem: any = [...states];
     newItem[newItem.findIndex((item: any) => item.id == stateId)].active = !newItem[newItem.findIndex((item: any) => item.id == stateId)].active;
