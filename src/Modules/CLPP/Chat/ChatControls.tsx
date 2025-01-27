@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { useState } from "react";
 import AttachmentFile from "../../../Components/AttachmentFile";
 import SendMessage from "../Class/SendMessage";
 import { useWebSocket } from "../../../Context/WsContext";
@@ -32,59 +32,54 @@ export default function ChatControls() {
             setFile(fileBase64);
         }
     }
-    // async function sendMessage(item:{id:number,id_user:number,message:string,notification:number,type:number},idReceived:number,base64?:string) {
-    //     const connection = new Connection("18");
-    //     const req: any = await connection.post(classToJSON(new SendMessage(base64 || item.message, idReceived, userLog.id, item.type)), "CLPP/Message.php");
-    //     if (req.error) throw new Error(req.message);
-    //     includesMessage({...item});
-    //     ws.current.informSending(2, idReceived.toString(), req.last_id);
-    // }
+
+    async function sendFile() {
+        const connection = new Connection("18");
+        const type = changeTypeMessageForFile(file);
+        const req: any = await connection.post(classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), "CLPP/Message.php");
+        if (req.error) throw new Error(req.message);
+        includesMessage({
+            id: req.last_id,
+            id_user: userLog.id,
+            message: `${idReceived}_${userLog.id}_${req.last_id}.${getBase64FileExtension(file)}`,
+            notification: 1,
+            type: type
+        });
+        ws.current.informSending(2, idReceived.toString(), req.last_id);
+    }
+
+    async function sendText() {
+        const connection = new Connection("18");
+        const req: any = await connection.post(classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), "CLPP/Message.php");
+        if (req.error) throw new Error(req.message);
+        includesMessage({
+            id: req.last_id,
+            id_user: userLog.id,
+            message: message,
+            notification: 1,
+            type: 1
+        });
+        ws.current.informSending(2, idReceived.toString(), req.last_id);
+    }
+
     async function sendAllMessage() {
         try {
-            const connection = new Connection("18");
             if (file.trim() != '') {
-                const type = changeTypeMessageForFile(file);
-                const req: any = await connection.post(classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), "CLPP/Message.php");
-                if (req.error) throw new Error(req.message);
-                includesMessage({
-                    id: req.last_id,
-                    id_user: userLog.id,
-                    message: `${idReceived}_${userLog.id}_${req.last_id}.${changeTypeMessageForExtension(type)}`,
-                    notification: 1,
-                    type: type
-                });
-                ws.current.informSending(2, idReceived.toString(), req.last_id);
+                await sendFile();
             }
             if (message.trim() != '') {
-                const req: any = await connection.post(classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), "CLPP/Message.php");
-                if (req.error) throw new Error(req.message);
-                includesMessage({
-                    id: req.last_id,
-                    id_user: userLog.id,
-                    message: message,
-                    notification: 1,
-                    type: 1
-                });
-                ws.current.informSending(2, idReceived.toString(), req.last_id);
+                await sendText();
             };
         } catch (error: any) {
             alert(error.message);
         }
     }
+
     function clearChatControls() {
         setFile("");
         setMessage("");
     }
 
-    /*
-         function clearAreaMessage() {
-            setTextMessage('');
-            setFileMessage('');
-            setFileNameMessage('');
-            setInitScroll(0);
-        }
-        
-    */
     function changeTypeMessageForFile(type: string): number {
         const upperType = type.toUpperCase();
         let result = 0;
@@ -108,27 +103,16 @@ export default function ChatControls() {
         }
         return result;
     }
-    function changeTypeMessageForExtension(typeNumber: number): string {
-        let extension = '';
-        switch (typeNumber) {
-            case 2:
-                extension = 'png'; // Ou 'jpg', 'jpeg', dependendo do caso
-                break;
-            case 3:
-                extension = 'pdf';
-                break;
-            case 4:
-                extension = 'xml';
-                break;
-            case 5:
-                extension = 'csv';
-                break;
-            default:
-                console.log(`Número não reconhecido: ${typeNumber}`);
-                extension = 'unknown';
-                break;
+    function getBase64FileExtension(base64: string) {
+        // Verifica se o base64 possui a estrutura correta com "data:mime/type;base64,"
+        const match = base64.match(/^data:(.+);base64,/);
+        if (!match) {
+            throw new Error("Formato Base64 inválido");
         }
-        return extension;
-    }
 
+        const mimeType = match[1]; // Obtém o tipo MIME, exemplo: "image/png"
+        const extension = mimeType.split("/")[1]; // Pega a extensão após a barra "/"
+
+        return extension; // Retorna, por exemplo: "png"
+    };
 }

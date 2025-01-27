@@ -14,7 +14,7 @@ interface SelectTaskItemProps {
 
 const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   const { data } = props;
-  const { taskDetails, task } = useWebSocket();
+  const { taskDetails, task,loadTasks } = useWebSocket();
 
   const { checkTaskComShoDepSub } = useWebSocket();
 
@@ -146,9 +146,10 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
               <CheckboxList
                 captureDep={setCaptureDep}
                 items={departmentOptions}
-                getCheck={(item: any) => {
+                getCheck={async (item: any) => {
                   // @ts-ignore
                   checkTaskComShoDepSub(props.data.id, selectedCompany, selectedShop, item.id, props?.data?.id);
+                  await loadTasks();
                 }}
               />
             </div>

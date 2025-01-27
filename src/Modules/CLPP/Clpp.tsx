@@ -29,7 +29,7 @@ export default function Clpp(): JSX.Element {
             }, 6000); // Pisca por 3 segundos
         }
     }, [hasNewMessage]);
-    useEffect(() => console.log("#", blink), [blink])
+    
     return (
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
             {
