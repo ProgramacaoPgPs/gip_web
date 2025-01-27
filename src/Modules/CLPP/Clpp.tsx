@@ -6,10 +6,6 @@ import User from '../../Class/User';
 import CardUser from './Components/CardUser';
 import ChatWindow from './Chat/ChatWindow';
 import Contacts from './Components/Contacts';
-
-
-
-
 export default function Clpp(): JSX.Element {
     const [openChat, setOpenChat] = React.useState<boolean>(false)
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
@@ -29,6 +25,7 @@ export default function Clpp(): JSX.Element {
             setTimeout(() => {
                 clearInterval(timer);
                 setBlink(false);
+                setHasNewMessage(false);
             }, 6000); // Pisca por 3 segundos
         }
     }, [hasNewMessage]);

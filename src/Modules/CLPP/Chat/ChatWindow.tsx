@@ -10,11 +10,12 @@ export default function ChatWindow(props: tChatWindow): JSX.Element {
     const { messagesContainerRef, previousScrollHeight, listMessage, page } = useWebSocket();
 
     useEffect(() => {
-        setTimeout(()=>{
+        setTimeout(() => {
             if (messagesContainerRef.current) {
-                messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight ;
+                const container = messagesContainerRef.current;
+                container.scrollTop = container.scrollHeight - container.clientHeight;
             }
-        },100);
+        }, 100);
     }, [listMessage, page]);
 
     return (

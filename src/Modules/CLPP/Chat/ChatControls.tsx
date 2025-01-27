@@ -42,27 +42,27 @@ export default function ChatControls() {
     async function sendAllMessage() {
         try {
             const connection = new Connection("18");
-            if (file != '') {
-                const type =changeTypeMessageForFile(file);
+            if (file.trim() != '') {
+                const type = changeTypeMessageForFile(file);
                 const req: any = await connection.post(classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), "CLPP/Message.php");
                 if (req.error) throw new Error(req.message);
                 includesMessage({
-                    id:req.last_id, 
-                    id_user: userLog.id, 
-                    message:`${idReceived}_${userLog.id}_${req.last_id}.${changeTypeMessageForExtension(type)}`,
-                    notification: 1, 
+                    id: req.last_id,
+                    id_user: userLog.id,
+                    message: `${idReceived}_${userLog.id}_${req.last_id}.${changeTypeMessageForExtension(type)}`,
+                    notification: 1,
                     type: type
                 });
                 ws.current.informSending(2, idReceived.toString(), req.last_id);
             }
-            if (message!='') {
+            if (message.trim() != '') {
                 const req: any = await connection.post(classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), "CLPP/Message.php");
                 if (req.error) throw new Error(req.message);
                 includesMessage({
-                    id:req.last_id, 
-                    id_user: userLog.id, 
-                    message:message,
-                    notification: 1, 
+                    id: req.last_id,
+                    id_user: userLog.id,
+                    message: message,
+                    notification: 1,
                     type: 1
                 });
                 ws.current.informSending(2, idReceived.toString(), req.last_id);
@@ -111,24 +111,24 @@ export default function ChatControls() {
     function changeTypeMessageForExtension(typeNumber: number): string {
         let extension = '';
         switch (typeNumber) {
-          case 2:
-            extension = 'png'; // Ou 'jpg', 'jpeg', dependendo do caso
-            break;
-          case 3:
-            extension = 'pdf';
-            break;
-          case 4:
-            extension = 'xml';
-            break;
-          case 5:
-            extension = 'csv';
-            break;
-          default:
-            console.log(`Número não reconhecido: ${typeNumber}`);
-            extension = 'unknown';
-            break;
+            case 2:
+                extension = 'png'; // Ou 'jpg', 'jpeg', dependendo do caso
+                break;
+            case 3:
+                extension = 'pdf';
+                break;
+            case 4:
+                extension = 'xml';
+                break;
+            case 5:
+                extension = 'csv';
+                break;
+            default:
+                console.log(`Número não reconhecido: ${typeNumber}`);
+                extension = 'unknown';
+                break;
         }
         return extension;
-      }
-      
+    }
+
 }
