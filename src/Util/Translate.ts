@@ -31,6 +31,9 @@ export default class Translator {
             case 'FOREIGN':
                 this.#messagePT = 'Erro de chave estrangeira.'
                 break;
+            case 'Only administrator can do this':
+                this.#messagePT = 'Somente o administrador pode fazer isso.'
+                break;
             default:
                 this.#messagePT = messagePT;
                 break;
@@ -54,7 +57,6 @@ export default class Translator {
         } else {
             result = messagePT;
         }
-        console.log(result);
         return result;
     }
 
