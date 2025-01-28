@@ -23,7 +23,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         } catch (messageErr:any) {
             const translate = new Translator(messageErr.message);
             const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
-            handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger", "center");
+            handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
             result = { error: true, message: messageErr.message };
         }finally{
             return result;
