@@ -12,42 +12,44 @@ import RenderedModules from './Components/RenderedModules';
 import { EppWsProvider } from './Modules/GTPP/Context/GtppWsContext';
 import 'react-notifications-component/dist/theme.css'; // Tema básico
 import 'animate.css/animate.min.css'; // Animações opcionais
+import { ConnectionProvider } from './Context/ConnContext';
 
 function App() {
   return (
-    <HashRouter>
-      <Routes>
+    <ConnectionProvider>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={
+            <MyProvider>
+              <RenderPage>
+                <Login />
+              </RenderPage>
+            </MyProvider>
+          } />
 
-        <Route path="/" element={
-          <MyProvider>
-            <RenderPage>
-              <Login />
-            </RenderPage>
-          </MyProvider>
-        } />
-
-        <Route path="/home" element={
-          <MyProvider>
-            <PrivateRoute>
-              <RenderedModules>
-                <Home />
-              </RenderedModules>
-            </PrivateRoute>
-          </MyProvider>
-        } />
-        <Route path="/home/GTPP" element={
-          <MyProvider>
-            <PrivateRoute>
-              <RenderedModules>
-                <EppWsProvider>
-                  <Gtpp />
-                </EppWsProvider>
-              </RenderedModules>
-            </PrivateRoute>
-          </MyProvider>
-        } />
-      </Routes>
-    </HashRouter>
+          <Route path="/home" element={
+            <MyProvider>
+              <PrivateRoute>
+                <RenderedModules>
+                  <Home />
+                </RenderedModules>
+              </PrivateRoute>
+            </MyProvider>
+          } />
+          <Route path="/home/GTPP" element={
+            <MyProvider>
+              <PrivateRoute>
+                <RenderedModules>
+                  <EppWsProvider>
+                    <Gtpp />
+                  </EppWsProvider>
+                </RenderedModules>
+              </PrivateRoute>
+            </MyProvider>
+          } />
+        </Routes>
+      </HashRouter>
+    </ConnectionProvider>
   );
 }
 

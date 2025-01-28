@@ -1,6 +1,6 @@
 export const formChangePassword = (onPassword: (e: any) => void,onConfirm: (e: any) => void,password:string,confirm:string) => [
     {
-        attributes: { className: 'row col-8 my-2' },
+        attributes: { className: 'row col-10 my-2' },
         item: {
             label: 'Nova senha',
             mandatory: true,
@@ -17,7 +17,7 @@ export const formChangePassword = (onPassword: (e: any) => void,onConfirm: (e: a
         },
     },
     {
-        attributes: { className: 'row col-8 my-2' },
+        attributes: { className: 'row col-10 my-2' },
         item: {
             label: 'Confirmar senha',
             mandatory: true,
