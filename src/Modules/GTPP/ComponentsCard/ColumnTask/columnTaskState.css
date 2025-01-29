@@ -53,15 +53,21 @@
 }
 
 /* Responsividade para dispositivos móveis */
-@media (max-width: 768px) {
+@media (max-height: 668px) {
+    .columnTaskState-container {
+        max-height: 58vh;
+    }
+}
+
+@media (min-height: 768px) {
     .columnTaskState-container {
         max-height: 68vh;
     }
 }
 
-@media (min-width: 900px) {
+@media (min-height: 900px) {
     .columnTaskState-container {
-        max-height: 66vh;
+        max-height: 70vh;
     }
 }
 

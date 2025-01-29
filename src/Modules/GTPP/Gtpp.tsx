@@ -22,7 +22,7 @@ export default function Gtpp(): JSX.Element {
   const [isHeader, setIsHeader] = useState<boolean>(false);
   const listButtonInputs: iPropsInputCheckButton[] = [
     { inputId: `check_adm_${userLog.id}`, onAction: async (event: boolean) => { setLoading(true); await loadTasks(event); setLoading(false) }, labelIcon: "fa-solid fa-user-tie", highlight: true },
-    { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
+    // { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
     { inputId: `gttp_exp_ret`, onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
   ];
 
@@ -53,7 +53,7 @@ export default function Gtpp(): JSX.Element {
       {openMenu && <NavBar list={listPath} />}
       <div className="h-100 d-flex overflow-hidden px-3 flex-grow-1">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
-          <div className="d-none d-md-flex flex-column justify-content-between w-100">
+          <div className="d-flex flex-column justify-content-between w-100">
             <div className="flex-grow-1 me-2 w-100">
               {isHeader ? <CardUser {...userLog} name={userLog.name} /> : <React.Fragment />}
             </div>
