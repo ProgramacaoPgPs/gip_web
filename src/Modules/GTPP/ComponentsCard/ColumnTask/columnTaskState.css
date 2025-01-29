@@ -28,16 +28,6 @@
     border-radius: 6px 6px 0 0; */
 }
 
-.save {
-    
-}
-.file {
-    
-}
-.add {
-    
-}
-
 .columnTaskState-title h1 {
     color: #fff !important;
     font-weight: bold !important;
@@ -65,7 +55,7 @@
 /* Responsividade para dispositivos móveis */
 @media (max-width: 768px) {
     .columnTaskState-container {
-        max-height: 64vh;
+        max-height: 60vh;
     }
 }
 

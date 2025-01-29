@@ -19,6 +19,7 @@ export function InputCheckButton(props: iPropsInputCheckButton) {
     useEffect(() => {
         renderIcon(isChecked);
     }, [isChecked]);
+    
     return (
         <button type="button" className={`${props.containerClass ? props.containerClass : `btn btn-${(props.highlight && isChecked) ? 'success' : 'light'} p-0`}`}>
             <input hidden defaultChecked={isChecked} onClick={async (e: React.MouseEvent<HTMLInputElement>) => {

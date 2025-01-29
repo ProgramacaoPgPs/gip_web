@@ -333,7 +333,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
         borderRadius: "calc((1vh + 1vw) / 2)"
       }}>
 
-        <section style={{ height: "10%" }} className="header-modal-default my-2">
+        <section className="header-modal-default my-2">
           <HeaderModal
             color="danger"
             description={task.description}
@@ -342,7 +342,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
           />
           <ProgressBar progressValue={taskPercent} colorBar="#00A875" />
         </section>
-        <section style={{ height: "90%", overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default">
+        <section style={{ overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default flex-grow-1">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
         </section>
       </div>

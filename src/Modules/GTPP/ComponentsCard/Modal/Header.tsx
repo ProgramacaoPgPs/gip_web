@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
+import { InputCheckButton } from "../../../../Components/CustomButton";
+import CardUser from "../../../CLPP/Components/CardUser";
+import User from "../../../../Class/User";
+import { convertdate } from "../../../../Util/Util";
 
 interface HeaderModalProps {
   color: string;
@@ -17,8 +21,11 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 }) => {
   const [desc, setDesc] = React.useState<string | null>(description || "");
   const [habilitEditionOfText, setHabilitEditionOfText] = useState<boolean>(false);
+  const [detailUser, setDetailUser] = useState<boolean>(false);
+  const [detailTask, setDetailTask] = useState<boolean>(false);
+  const [userTask, setUserTask] = useState<User>();
   const titleTaskInput = useRef<HTMLInputElement>(null);
-  const {getTask,task} = useWebSocket();
+  const { getTask, task } = useWebSocket();
 
   React.useEffect(() => {
     setDesc(description);
@@ -30,15 +37,16 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       const req: any = await connection.put({ id: taskParam.id, priority: taskParam.priority, description: newTitle }, "GTPP/Task.php");
       if (req.error) throw new Error(req.message);
       setDesc(newTitle);
-      getTask.filter(item=>item.id==task.id)[0].description = newTitle;
-    } catch (error:any) {
+      getTask.filter(item => item.id == task.id)[0].description = newTitle;
+    } catch (error: any) {
       console.log(error)
-      if(!error.message.toUpperCase().includes("NO DATA")){
+      if (!error.message.toUpperCase().includes("NO DATA")) {
         alert(error.message)
       }
     }
   }
   useEffect(() => {
+    console.log(task);
     if (titleTaskInput.current) {
       if (habilitEditionOfText) {
         titleTaskInput.current.focus();
@@ -47,6 +55,24 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       }
     }
   }, [habilitEditionOfText]);
+  function DetailsTask() {
+    return (
+      <div className="d-flex flex-column h-100 border p-2 my-2 rounded cardContact">
+        <span className="d-flex justify-content-between">
+          <strong>Data inicial:</strong>
+          <div>{convertdate(task.initial_date)}</div>
+        </span>
+        <span className="d-flex justify-content-between">
+          <strong>Data Final:</strong>
+          <div>{convertdate(task.final_date)}</div>
+        </span>
+        <span className="d-flex justify-content-between">
+          <strong>Status:</strong>
+          <div>{task.state_description}</div>
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-100">
@@ -66,12 +92,30 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           className="bg-transparent w-100 font-weight-bold"
           style={{ border: "none", fontWeight: "bold" }}
         ></input>
-        <button
-          onClick={onClick || (() => console.warn("Valor indefinido!"))}
-          className={`btn btn-${color} text-light fa fa-x`}
-          aria-label="Fechar modal"
-        />
+        <div className="d-flex gap-2">
+          <InputCheckButton inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
+            setDetailUser(e);
+            if (e && !userTask) {
+              const user = new User({ id: task.user_id });
+              await user.loadInfo(true);
+              setUserTask(user);
+            } else {
+              setUserTask(undefined);
+            }
+          }} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
+          <InputCheckButton inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
+            setDetailTask(e);            
+          }} labelIcon={"fa-solid fa-circle-info"} highlight={true}/>
+
+          <button
+            onClick={onClick || (() => console.warn("Valor indefinido!"))}
+            className={`btn btn-${color} text-light fa fa-x`}
+            aria-label="Fechar modal"
+          />
+        </div>
       </div>
+      { detailUser ?  <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
+      { detailTask ?  <DetailsTask /> : <React.Fragment />}
     </div>
   );
 };
