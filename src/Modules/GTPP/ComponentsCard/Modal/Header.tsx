@@ -5,6 +5,7 @@ import { InputCheckButton } from "../../../../Components/CustomButton";
 import CardUser from "../../../CLPP/Components/CardUser";
 import User from "../../../../Class/User";
 import { convertdate } from "../../../../Util/Util";
+import { useMyContext } from "../../../../Context/MainContext";
 
 interface HeaderModalProps {
   color: string;
@@ -26,6 +27,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   const [userTask, setUserTask] = useState<User>();
   const titleTaskInput = useRef<HTMLInputElement>(null);
   const { getTask, task } = useWebSocket();
+  const { setLoading } = useMyContext();
 
   React.useEffect(() => {
     setDesc(description);
@@ -94,13 +96,20 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         ></input>
         <div className="d-flex gap-2">
           <InputCheckButton inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
-            setDetailUser(e);
-            if (e && !userTask) {
-              const user = new User({ id: task.user_id });
-              await user.loadInfo(true);
-              setUserTask(user);
-            } else {
-              setUserTask(undefined);
+            try {
+              setLoading(true);        
+              if (e && !userTask) {
+                const user = new User({ id: task.user_id });
+                await user.loadInfo(true);
+                setUserTask(user);
+              } else {
+                setUserTask(undefined);
+              }
+            } catch (error) {
+              alert(error);
+            }finally{
+              setDetailUser(e);
+              setLoading(false);
             }
           }} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
           <InputCheckButton inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
