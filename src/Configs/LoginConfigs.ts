@@ -5,6 +5,7 @@ export const fieldsetsData = [
             label: 'Login',
             mandatory: true,
             captureValue: {
+                autoComplete:"username",
                 type: 'text',
                 placeholder: 'Usuário',
                 name: 'login',
@@ -26,6 +27,7 @@ export const fieldsetsData = [
             label: 'Senha',
             mandatory: true,
             captureValue: {
+                autoComplete:"current-password",
                 type: 'password',
                 placeholder: '******',
                 name: 'senha',

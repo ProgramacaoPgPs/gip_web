@@ -72,6 +72,26 @@ export function MyProvider({ children }: Props) {
   );
   const [contactList, setContactList] = useState<User[]>([]);
   const [reset, setResetState] = useState<any>(1);
+    const requestNotificationPermission = async () => {
+      if (!("Notification" in window)) {
+        console.warn("Notificações não são suportadas neste navegador.");
+        return;
+      }
+    
+      if (Notification.permission === "granted") {
+        console.log("O som Já estava liberado.");
+      } else if (Notification.permission !== "denied") {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          console.log("Som liberado após a autorização.");
+        }
+      }
+    };
+  
+  
+    useEffect(() => {
+      requestNotificationPermission();
+    }, []);
 
    return (
     <MyContext.Provider

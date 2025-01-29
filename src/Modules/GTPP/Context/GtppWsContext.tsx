@@ -225,6 +225,28 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
   }
+
+  const requestNotificationPermission = async () => {
+    if (!("Notification" in window)) {
+      console.warn("Notificações não são suportadas neste navegador.");
+      return;
+    }
+  
+    if (Notification.permission === "granted") {
+      setOnSounds(true);
+    } else if (Notification.permission !== "denied") {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        setOnSounds(true);
+      }
+    }
+  };
+
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+  
   async function updateNotification(item: any[]) {
     try {
       setLoading(true);
