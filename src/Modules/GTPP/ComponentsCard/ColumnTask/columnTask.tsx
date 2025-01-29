@@ -23,7 +23,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
     const { exportCsv, exportPdf, addTask, is_first_column, ...rest } = props;
 
     return (
-        <div style={{ height: '100%', marginLeft: '1rem' }} {...rest}>
+        <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
             <div className={`columnTaskState-title  rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
                 <h1 className="rounded p-1">{props.title}</h1>
                 {props.buttonHeader}

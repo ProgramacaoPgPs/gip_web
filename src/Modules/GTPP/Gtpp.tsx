@@ -111,8 +111,8 @@ export default function Gtpp(): JSX.Element {
           </div>
           <Col
             xs={12}
-            className="d-flex flex-nowrap p-0 menu-expansivo"
-            style={{ overflowX: "auto", height: "85%" }}
+            className="d-flex flex-nowrap p-0 menu-expansivo flex-grow-1"
+            style={{ overflowX: "auto", /*height: "85%" */ flexFlow:"1"}}
           >
             {states?.map((cardTaskStateValue: any, idxValueState: any) => {
               const filteredTasks = getTask.filter(
