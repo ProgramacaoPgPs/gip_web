@@ -11,11 +11,20 @@ import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
 import ModalDefault from "./ComponentsCard/Modal/Modal";
 import { useWebSocket } from "./Context/GtppWsContext";
 import NotificationBell from "../../Components/NotificationBell";
+import { iPropsInputCheckButton } from "../../Interface/iGTPP";
+import CardUser from "../CLPP/Components/CardUser";
+import { InputCheckButton } from "../../Components/CustomButton";
 
 export default function Gtpp(): JSX.Element {
-  const { setTitleHead, setModalPage, setModalPageElement } = useMyContext();
+  const { setTitleHead, setModalPage, setModalPageElement, userLog, setLoading } = useMyContext();
   const [openFilter, setOpenFilter] = useState<any>(false);
   const [openMenu, setOpenMenu] = useState<any>(true);
+  const [isHeader, setIsHeader] = useState<boolean>(false);
+  const listButtonInputs: iPropsInputCheckButton[] = [
+    { inputId: `check_adm_${userLog.id}`, onAction: async (event: boolean) => { setLoading(true); await loadTasks(event); setLoading(false) }, labelIcon: "fa-solid fa-user-tie", highlight: true },
+    { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
+    { inputId: `gttp_exp_ret`, onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
+  ];
 
   // Modified by Hygor
   const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, setNotifications, notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
@@ -44,6 +53,14 @@ export default function Gtpp(): JSX.Element {
       {openMenu && <NavBar list={listPath} />}
       <div className="h-100 d-flex overflow-hidden px-3 flex-grow-1">
         <div className="flex-grow-1 d-flex flex-column justify-content-between align-items-start h-100 overflow-hidden">
+          <div className="d-none d-md-flex flex-column justify-content-between w-100">
+            <div className="flex-grow-1 me-2 w-100">
+              {isHeader ? <CardUser {...userLog} name={userLog.name} /> : <React.Fragment />}
+            </div>
+            <div className="d-flex flex-row mt-2 gap-2">
+              {listButtonInputs.map((button, index) => <InputCheckButton key={`btn_header_gtpp_${index}`} {...button} />)}
+            </div>
+          </div>
           <div className="d-flex w-100 align-items-center justify-content-between my-2 py-2">
             <div className="position-relative">
               <h1 onClick={handleOpenFilter} className="cursor-pointer">
@@ -95,7 +112,7 @@ export default function Gtpp(): JSX.Element {
           <Col
             xs={12}
             className="d-flex flex-nowrap p-0 menu-expansivo"
-            style={{ overflowX: "auto", height: "91%" }}
+            style={{ overflowX: "auto", height: "85%" }}
           >
             {states?.map((cardTaskStateValue: any, idxValueState: any) => {
               const filteredTasks = getTask.filter(

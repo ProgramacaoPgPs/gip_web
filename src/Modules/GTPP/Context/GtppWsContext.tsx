@@ -90,10 +90,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     )();
   }, []);
 
-  async function loadTasks() {
+  async function loadTasks(admin?:boolean) {
     const connection = new Connection("18", true);
     try {
-      const getTask: any = await connection.get("", "GTPP/Task.php");
+      const getTask: any = await connection.get(`${admin?'&administrator=1':''}`, "GTPP/Task.php");
       if (getTask.error) throw new Error(getTask.message);
       setGetTask(getTask.data);
     } catch (error) {

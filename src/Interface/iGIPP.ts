@@ -60,7 +60,7 @@ export interface iGtppWsContextType {
     addUserTask:(value:any,num:number)=>void;
     getTaskInformations:()=>void;
     setOpenCardDefault:(value:boolean)=>void;
-    loadTasks:()=>void;
+    loadTasks:(admin?:boolean)=>void;
     setGetTask:(array:any[])=>void;
     updateStates:(array:any[])=>void;
     setOnSounds:(value:boolean)=>void
