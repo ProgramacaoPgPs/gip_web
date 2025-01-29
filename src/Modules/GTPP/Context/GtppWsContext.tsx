@@ -242,7 +242,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-
   useEffect(() => {
     requestNotificationPermission();
   }, []);
