@@ -57,7 +57,7 @@ const SessionTimer: React.FC<SessionTimerProps> = ({ expirationDate }) => {
     };
 
     return (
-        <div style={{width:"88px"}} className="d-flex bg-secondary flex-column position-fixed bottom-0 rounded p-1 d-flex mx-0 my-4 ">
+        <div style={{width:"96px"}} className="d-flex bg-secondary flex-column position-fixed bottom-0 rounded p-1 d-flex mx-0 my-4 ">
             <div className="d-flex justify-content-between  w-100">
                 <span className="text-white h6 m-0">{formatTime(timeLeft)}</span>
                 <i className="d-flex align-items-center fa-solid fa-clock text-white h6 m-0"></i>
