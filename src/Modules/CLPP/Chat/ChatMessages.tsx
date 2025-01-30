@@ -14,10 +14,10 @@ function ChatMessages() {
             className='d-flex flex-column overflow-auto h-100 w-100 p-2'
         >
             {listMessage.map((item, index) => (
-                <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user === userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
+                <div key={`message_${index}`} className={`d-flex flex-column my-2 w-100 ${item.id_user == userLog.id ? 'text-end align-items-end ' + `${item.type <= 2 && 'messageSent'} ` : 'text-start align-items-start ' + `${item.type <= 2 && 'messageReceived'}`}`}>
                     <div className="p-2 rounded">{controllerMessage(item)}</div>
                     {
-                        item.id_user === userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>
+                        item.id_user == userLog.id && <span className={`fa-solid fa-check-double notifyMessage my-2 ${item.notification == 1 ? 'text-secundary' : 'text-primary'}`}></span>
                     }
                 </div>
             ))}

@@ -170,12 +170,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             console.log(error)
         }
     }
-    // useEffect(() => { console.log(hasNewMessage) }, [hasNewMessage]);
     async function receivedMessage(event: any) {
         const { send_user, message, type } = event; 
+        console.log(event);
         if (parseInt(send_user) === idReceived) {
             listMessage.push({
-                id: 99999, 
+                id: event.id, 
                 "id_user": event.send_user,
                 "message": event.message,
                 "notification": 0, 
