@@ -16,7 +16,8 @@ export default function Login() {
     }>({ login: '', password: '' });
 
     const navigate = useNavigate();
-    const { setIsLogged, setLoading, setTitleHead, setUserLog } = useMyContext();
+    const { setLoading, setTitleHead, setUserLog,loadDetailsToken } = useMyContext();
+    const {setIsLogged} = useConnection();
     const { fetchData } = useConnection();
 
     React.useEffect(() => {
@@ -42,16 +43,15 @@ export default function Login() {
             <ReactNotifications />
         </div>
     );
-    function openModalChangePassword(message:string){
+    function openModalChangePassword(message: string) {
         const passDefault = message.toLowerCase().includes('default password is not permited');
-        console.log(passDefault);
         if (passDefault) {
             setTimeout(() => {
                 setDefaulPassword(true);
             }, 5000);
         }
     }
-    function configUserData(user:any){
+    function configUserData(user: any) {
         setUserLog(new User({
             id: user.id,
             session: user.session,
@@ -60,8 +60,8 @@ export default function Login() {
         localStorage.setItem("tokenGIPP", user.session);
         localStorage.setItem("codUserGIPP", user.id);
     }
-    function buildUserLogin():{login:string,password:string}{
-        return  {
+    function buildUserLogin(): { login: string, password: string } {
+        return {
             login: (document.getElementById('loginUserInput') as HTMLInputElement).value,
             password: (document.getElementById('passwordUserInput') as HTMLInputElement).value
         }
@@ -72,11 +72,11 @@ export default function Login() {
             const userLogin = buildUserLogin();
             setUser(userLogin);
             let req: any = await fetchData({ method: "POST", params: { user: userLogin.login, password: userLogin.password }, pathFile: "CCPP/Login.php", urlComplement: "&login=" });
-
+            
             if (!req) throw new Error('No response from server');
             if (req.error) throw new Error(req.message);
-            configUserData(req.data);           
-
+            configUserData(req.data);
+            await loadDetailsToken();
             setIsLogged(true);
             navigate('/home');
         } catch (error: any) {
@@ -84,4 +84,5 @@ export default function Login() {
         }
         setLoading(false);
     }
+
 }

@@ -14,6 +14,7 @@ import 'react-notifications-component/dist/theme.css'; // Tema básico
 import 'animate.css/animate.min.css'; // Animações opcionais
 import { ConnectionProvider } from './Context/ConnContext';
 
+
 function App() {
   return (
     <ConnectionProvider>

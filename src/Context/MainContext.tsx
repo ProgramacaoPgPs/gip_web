@@ -6,9 +6,10 @@ import React, {
 } from "react";
 import StructureModal, { MessageModal } from "../Components/CustomModal";
 import User from "../Class/User";
+import SessionTimer from "../Components/SessionTimer";
+import { useConnection } from "./ConnContext";
 
 const logo = require("../Assets/Image/peg_pese_loading.png");
-
 
 // Definindo o tipo dos dados no contexto
 interface MyMainContext {
@@ -30,16 +31,14 @@ interface MyMainContext {
 
   setModalPageElement: (value: JSX.Element) => void;
 
-  isLogged: boolean;
-  setIsLogged: (step: boolean) => void;
-
   titleHead: { title: string; icon?: string };
   setTitleHead: (value: { title: string; icon?: string }) => void;
 
   userLog: User;
   setUserLog: (value: User) => void;
-
-
+  token: any;
+  setToken: ({ }: any) => void;
+  loadDetailsToken: () => void;
   contactList: User[];
 }
 
@@ -52,48 +51,66 @@ export const MyContext = createContext<MyMainContext | undefined>(undefined);
 
 // Componente que fornece o contexto
 export function MyProvider({ children }: Props) {
+  const { fetchData } = useConnection();
   const [loading, setLoading] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
   const [modalPage, setModalPage] = useState<boolean>(false);
   const [newProgressBar, setNewProgressBar] = useState<number | string | null>(null);
+  const [token, setToken] = useState<any>({});
 
   const [message, setMessage] = useState<{ text: string; type: 1 | 2 | 3 | 4 }>({
     text: "",
     type: 1,
   });
   const [modalPageElement, setModalPageElement] = useState<JSX.Element>(<div></div>);
-  const [isLogged, setIsLogged] = useState<boolean>(!false);
+  
   const [titleHead, setTitleHead] = useState<{ title: string; icon?: string }>({
     title: "Gestão Integrada Peg Pese - GIPP",
     icon: "",
   });
   const [userLog, setUserLog] = useState<User>(
-    new User({ id: parseInt(localStorage.getItem('codUserGIPP')|| "0"), session: "", administrator: 0 })
+    new User({ id: parseInt(localStorage.getItem('codUserGIPP') || "0"), session: "", administrator: 0 })
   );
   const [contactList, setContactList] = useState<User[]>([]);
   const [reset, setResetState] = useState<any>(1);
-    const requestNotificationPermission = async () => {
-      if (!("Notification" in window)) {
-        console.warn("Notificações não são suportadas neste navegador.");
-        return;
-      }
-    
-      if (Notification.permission === "granted") {
-        console.log("O som Já estava liberado.");
-      } else if (Notification.permission !== "denied") {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          console.log("Som liberado após a autorização.");
-        }
-      }
-    };
-  
-  
-    useEffect(() => {
-      requestNotificationPermission();
-    }, []);
+  const requestNotificationPermission = async () => {
+    if (!("Notification" in window)) {
+      console.warn("Notificações não são suportadas neste navegador.");
+      return;
+    }
 
-   return (
+    if (Notification.permission === "granted") {
+      console.log("O som Já estava liberado.");
+    } else if (Notification.permission !== "denied") {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("Som liberado após a autorização.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      await loadDetailsToken();
+    })();
+  }, [userLog]);
+
+  async function loadDetailsToken() {
+    if (userLog.id) {
+      try {
+        const token = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Token.php', urlComplement: `&application_id=18&user_id=${userLog.id}` });
+        if (token.error) throw new Error(token.message);
+        setToken(token.data[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  return (
     <MyContext.Provider
       value={{
         loading,
@@ -101,8 +118,7 @@ export function MyProvider({ children }: Props) {
         modal,
         setModal,
         setMessage,
-        isLogged,
-        setIsLogged,
+
         titleHead,
         setTitleHead,
         userLog,
@@ -116,7 +132,9 @@ export function MyProvider({ children }: Props) {
 
         reset,
         setResetState,
-
+        token,
+        setToken,
+        loadDetailsToken,
       }}
     >
       {loading && (
@@ -133,11 +151,10 @@ export function MyProvider({ children }: Props) {
             message={message.text}
             type={message.type}
             onClose={() => {
-              console.log("BOM");
               setModal(false);
             }}
           />
-          
+
         </StructureModal>
       )}
       {modalPage && (

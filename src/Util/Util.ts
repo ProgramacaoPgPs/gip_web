@@ -67,3 +67,13 @@ export function handleNotification(title: string, message: string, type: 'succes
         },
     });
 }
+
+export function isTokenExpired(expirationDate: string): boolean {
+    let result: boolean = true;
+    if (expirationDate) {
+        const expirationTime = new Date(expirationDate).getTime();
+        const currentTime = Date.now();
+        result = currentTime > expirationTime;
+    }
+    return result;
+};

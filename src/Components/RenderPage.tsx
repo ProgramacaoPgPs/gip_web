@@ -7,7 +7,7 @@ type Props = {
   children: JSX.Element; // Tipo para o children
 }
 export default function RenderPage(props: Props): JSX.Element {
-  const { titleHead,isLogged } = useMyContext();
+  const { titleHead } = useMyContext();
   return (
     <div className="App">
       <header className="App-header py-1 d-flex flex-row justify-content-center align-items-center">
