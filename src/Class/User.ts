@@ -100,14 +100,14 @@ export default class User {
 
     async loadPhotos(): Promise<void> {
         try {
-            const userPhoto: any = await this.#connection.get(`&id=${this.#id}`, 'CCPP/EmployeePhoto.php');
+            const userPhoto: any = await fetchDataFull({method:"GET",params:null,pathFile:"CCPP/EmployeePhoto.php",urlComplement:`&id=${this.#id}`});
             if (userPhoto.error && !userPhoto.message.includes('No data')) {
                 throw new Error(userPhoto.message);
             } else if (!userPhoto.message) {
                 this.photo = userPhoto.photo;
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

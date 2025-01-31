@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useMyContext } from './MainContext';
 import WebSocketCLPP from '../Services/Websocket';
-import { Connection } from '../Connection/Connection';
 import { iSender, iUser, iWebSocketContextType } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
-import { error } from 'console';
 import { handleNotification } from '../Util/Util';
 import { useConnection } from './ConnContext';
 
@@ -44,7 +42,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         // Abre a coonexão com o websocket.
         (async () => {
             try {
-                console.error(localStorage.tokenGIPP , ws.current , !ws.current.isConnected,localStorage.tokenGIPP && ws.current && !ws.current.isConnected);
                 if (localStorage.tokenGIPP && ws.current && !ws.current.isConnected) {
                     ws.current.connectWebSocket();
                 }

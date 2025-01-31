@@ -3,7 +3,6 @@ import AttachmentFile from "../../../Components/AttachmentFile";
 import SendMessage from "../Class/SendMessage";
 import { useWebSocket } from "../../../Context/WsContext";
 import { useMyContext } from "../../../Context/MainContext";
-import { Connection } from "../../../Connection/Connection";
 import { classToJSON } from "../../../Util/Util";
 import { useConnection } from "../../../Context/ConnContext";
 

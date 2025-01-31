@@ -14,7 +14,7 @@ export default class Translator {
                 this.#messagePT = 'Falha ao realizar a ação, dados não encontrados.';
                 break;
             case 'NO DATA TO UPDATE':
-                this.#messagePT = 'Não houve alterações';
+                this.#messagePT = 'Não houve alterações.';
                 break;
             case 'Default password is not permited':
                 this.#messagePT = 'Você será redirecionado para a página de alteração de senha.';

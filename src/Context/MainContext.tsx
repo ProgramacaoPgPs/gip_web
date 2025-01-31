@@ -106,7 +106,7 @@ export function MyProvider({ children }: Props) {
         if (token.error) throw new Error(token.message);
         setToken(token.data[0]);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
   }
