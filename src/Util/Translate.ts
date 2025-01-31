@@ -13,6 +13,9 @@ export default class Translator {
             case 'NO DATA':
                 this.#messagePT = 'Falha ao realizar a ação, dados não encontrados.';
                 break;
+            case 'NO DATA TO UPDATE':
+                this.#messagePT = 'Não houve alterações';
+                break;
             case 'Default password is not permited':
                 this.#messagePT = 'Você será redirecionado para a página de alteração de senha.';
                 break;
@@ -40,6 +43,9 @@ export default class Translator {
             case "Passwords don't match":
                 this.#messagePT = "As senhas não conferem";
                 break;
+            case "The final_date may not be less than the current date":
+                this.#messagePT = "A data final não pode ser menor que a data atual";
+                break;
 
             default:
                 this.#messagePT = messagePT;
@@ -55,6 +61,8 @@ export default class Translator {
         let result = '';
         if (messagePT.toUpperCase().includes('IS BROKEN')) {
             result = 'IS BROKEN';
+        }else if(messagePT.toUpperCase().includes('NO DATA TO UPDATE')){
+            result = 'NO DATA TO UPDATE';
         } else if (messagePT.toUpperCase().includes('NO DATA')) {
             result = 'NO DATA';
         } else if (messagePT.toUpperCase().includes('SUCCESS')) {

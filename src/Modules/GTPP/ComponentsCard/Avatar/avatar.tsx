@@ -5,6 +5,7 @@ import { convertImage } from "../../../../Util/Util";
 import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import { useMyContext } from "../../../../Context/MainContext";
+import { useConnection } from "../../../../Context/ConnContext";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -100,22 +101,18 @@ const UserProfile = (props: any) => {
 
 const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   const [isChecked, setIsChecked] = useState(item.check);
-  const { addUserTask } = useWebSocket();
-  const { getTaskInformations } = useWebSocket();
-  const connection = new Connection('18');
+  const { addUserTask, getTaskInformations } = useWebSocket();
+  const { fetchData } = useConnection();
 
   const handleActiveUser = async (checkUser: boolean) => {
     try {
       const user = { check: !isChecked, name: item.name, user_id: item.user, task_id: taskid };
-      const response: any = await connection.put(
-        user,
-        'GTPP/Task_User.php'
-      );
+      const response :any = await fetchData({method:"PUT",params:user,pathFile:"GTPP/Task_User.php"});
       addUserTask(user, checkUser ? 5 : -3);
       if (response.error) throw new Error(response.message);
       loadUserTaskLis();
     } catch (error) {
-      alert('Erro ao salvar a tarefa!');
+      console.error(error);
     }
   };
 

@@ -89,7 +89,6 @@ export async function fetchDataFull(req: iReqConn) {
         if (req.params) objectReq.body = JSON.stringify(req.params);
         const response = await fetch(URL, objectReq);
         const body = await response.json();
-        console.log(body,req.params,URL);
         result = body;
         if (body.error) throw new Error(body.message);
     } catch (messageErr: any) {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { Connection } from "../../../../Connection/Connection";
 import CustomForm from "../../../../Components/CustomForm";
 import { fieldsetsRegister } from "../../mock/mockTeste";
+import { useConnection } from "../../../../Context/ConnContext";
 
 type Cardregister = {
   assistenceFunction?: any;
@@ -11,7 +11,9 @@ type Cardregister = {
 };
 
 const Cardregister: React.FC<Cardregister> = (props) => {
-  const { assistenceFunction, setReset } = props;
+  const { assistenceFunction } = props;
+
+  const {fetchData} = useConnection();
 
   const formDataRef = useRef({
     description: "",
@@ -31,13 +33,12 @@ const Cardregister: React.FC<Cardregister> = (props) => {
   const handleSubmit = async (e: any) => {
     try {
       e.preventDefault();
-      const connection = new Connection("18", true);
-      const response: any = await connection.post(formDataRef.current, "GTPP/Task.php");
+      const response: any = await fetchData({method:"POST",params:formDataRef.current,pathFile:"GTPP/Task.php"})
       if (response.error) throw new Error(response.message);
       props.reloadtask();
       props.onClose();
     } catch (error) {
-      alert(error);
+      console.error(error);
     }
   };
 

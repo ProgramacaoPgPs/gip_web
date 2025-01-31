@@ -6,6 +6,7 @@ import CardUser from "../../../CLPP/Components/CardUser";
 import User from "../../../../Class/User";
 import { convertdate } from "../../../../Util/Util";
 import { useMyContext } from "../../../../Context/MainContext";
+import { useConnection } from "../../../../Context/ConnContext";
 
 interface HeaderModalProps {
   color: string;
@@ -28,6 +29,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   const titleTaskInput = useRef<HTMLInputElement>(null);
   const { getTask, task } = useWebSocket();
   const { setLoading } = useMyContext();
+  const {fetchData} = useConnection();
 
   React.useEffect(() => {
     setDesc(description);
@@ -35,20 +37,15 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 
   async function sendPut(newTitle: string) {
     try {
-      const connection = new Connection('18');
-      const req: any = await connection.put({ id: taskParam.id, priority: taskParam.priority, description: newTitle }, "GTPP/Task.php");
+      const req: any = await fetchData({method:"PUT",params:{ id: taskParam.id, priority: taskParam.priority, description: newTitle }, pathFile:"GTPP/Task.php"})
       if (req.error) throw new Error(req.message);
       setDesc(newTitle);
       getTask.filter(item => item.id == task.id)[0].description = newTitle;
     } catch (error: any) {
-      console.log(error)
-      if (!error.message.toUpperCase().includes("NO DATA")) {
-        alert(error.message)
-      }
+      console.error(error.message)
     }
   }
   useEffect(() => {
-    console.log(task);
     if (titleTaskInput.current) {
       if (habilitEditionOfText) {
         titleTaskInput.current.focus();

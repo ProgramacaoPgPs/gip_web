@@ -5,12 +5,14 @@ import { useWebSocket } from "../../../Context/WsContext";
 import { useMyContext } from "../../../Context/MainContext";
 import { Connection } from "../../../Connection/Connection";
 import { classToJSON } from "../../../Util/Util";
+import { useConnection } from "../../../Context/ConnContext";
 
 export default function ChatControls() {
     const [file, setFile] = useState<string>("");
     const [message, setMessage] = useState<string>("");
     const { idReceived, includesMessage, ws } = useWebSocket();
     const { userLog } = useMyContext();
+    const { fetchData } = useConnection();
 
     return (
         <div className="d-flex align-items-center rounded p-2">
@@ -34,9 +36,8 @@ export default function ChatControls() {
     }
 
     async function sendFile() {
-        const connection = new Connection("18");
         const type = changeTypeMessageForFile(file);
-        const req: any = await connection.post(classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), "CLPP/Message.php");
+        const req: any = await fetchData({ method: "POST", params: classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), pathFile: "CLPP/Message.php" });
         if (req.error) throw new Error(req.message);
         includesMessage({
             id: req.last_id,
@@ -49,8 +50,7 @@ export default function ChatControls() {
     }
 
     async function sendText() {
-        const connection = new Connection("18");
-        const req: any = await connection.post(classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), "CLPP/Message.php");
+        const req: any = await fetchData({ method: "POST", params: classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), pathFile: "CLPP/Message.php" });
         if (req.error) throw new Error(req.message);
         includesMessage({
             id: req.last_id,
@@ -71,7 +71,7 @@ export default function ChatControls() {
                 await sendText();
             };
         } catch (error: any) {
-            alert(error.message);
+            console.error(error.message);
         }
     }
 

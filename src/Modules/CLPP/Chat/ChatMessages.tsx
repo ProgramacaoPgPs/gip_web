@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { Connection } from "../../../Connection/Connection";
 import { useMyContext } from "../../../Context/MainContext";
 import { useWebSocket } from "../../../Context/WsContext";
+import { useConnection } from "../../../Context/ConnContext";
 
 export default 
 function ChatMessages() {
     const { userLog } = useMyContext();
     const { handleScroll, messagesContainerRef, listMessage } = useWebSocket();
+    const {fetchData} = useConnection();
     return (
         <section
             ref={messagesContainerRef}
@@ -59,12 +59,11 @@ function ChatMessages() {
                 </a>
                 <div className="d-flex justify-content-end my-2" onClick={async () => {
                     try {
-                        const conn = new Connection('18');
-                        const req: { error: boolean, fileName: string, fileContent: string, message?: 'string' } = await conn.get(`&file=${message.message}`, 'GIPP/LoginGipp.php') || { error: true, fileName: '', fileContent: '' };
+                        const req: { error: boolean, fileName: string, fileContent: string, message?: 'string' } = await await fetchData({method:"GET",params:null,pathFile:"GIPP/LoginGipp.php",urlComplement:`&file=${message.message}`}) || { error: true, fileName: '', fileContent: '' };
                         if (req.error) throw new Error(req.message);
                         downloadFile(req);
                     } catch (error) {
-                        alert(error)
+                        console.error(error)
                     }
                 }}>
                     <i className='text-dark fa-solid fa-download' />
