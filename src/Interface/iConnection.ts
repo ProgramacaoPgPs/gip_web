@@ -4,5 +4,5 @@ export interface ConnectionContextProps {
     setIsLogged: (isLogged: boolean) => void;
 }
 export interface iReqConn {
-    method?: "GET" | "POST" | "PUT" | "DELETE"; params: null | {}; pathFile: string; appId?: string; urlComplement?: string;port?: string
+    method?: "GET" | "POST" | "PUT" | "DELETE"; params: null | {}; pathFile: string; appId?: string; urlComplement?: string;port?: string, exception?:string[]
 }

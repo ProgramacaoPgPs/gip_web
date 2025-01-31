@@ -94,13 +94,21 @@ export async function fetchDataFull(req: iReqConn) {
     } catch (messageErr: any) {
         const translate = new Translator(messageErr.message);
         const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
-        handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+        checkedExceptionError(messageErr.message,req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
     } finally {
         return result;
     }
 };
-
-function settingUrl(middlewer: string, params?: string,port?:string) {
+function checkedExceptionError(message: string, exceptions?: string[]): boolean {
+    let result = true;
+    if (exceptions) {
+        exceptions.forEach(exception => {
+            if (exception.toLowerCase().includes(message.toLocaleLowerCase())) result = false;
+        })
+    }
+    return result;
+}
+function settingUrl(middlewer: string, params?: string, port?: string) {
     let server = `http://gigpp.com.br:${port ? port : '72'}/GLOBAL`;
     return server + middlewer + (params ? params : "");
 }

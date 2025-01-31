@@ -103,7 +103,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
                 setUserTask(undefined);
               }
             } catch (error) {
-              alert(error);
+              console.error(error);
             }finally{
               setDetailUser(e);
               setLoading(false);

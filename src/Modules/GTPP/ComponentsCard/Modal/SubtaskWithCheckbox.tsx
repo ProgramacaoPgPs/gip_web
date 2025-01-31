@@ -7,6 +7,7 @@ import AnexoImage from "../../../../Components/AttachmentFile";
 import ConfirmModal from "../../../../Components/CustomConfirm";
 import { Connection } from "../../../../Connection/Connection";
 import { useMyContext } from "../../../../Context/MainContext";
+import { useConnection } from "../../../../Context/ConnContext";
 
 interface iSubTask {
   isObservable: boolean;
@@ -20,6 +21,7 @@ interface iSubTask {
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
   const { checkedItem, changeObservedForm, task, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion,updateItemTaskFile } = useWebSocket();
   const { setLoading } = useMyContext();
+  const { fetchData } = useConnection();
   const [editTask, setEditTask] = useState<any>("");
   const [isObservation, setIsObservation] = useState<boolean>(false);
   const [positionTaskStates, setPositionTaskStates] = useState<{ [key: number]: boolean }>({});
@@ -235,7 +237,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
                       });
                     }
                   } catch (error: any) {
-                    alert(error.message);
+                    console.error(error.message);
                   } finally {
                     setLoading(false);
                   }
@@ -253,9 +255,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
   }
 
   async function deleteTaskItem(item: { id: number; task_id: number }) {
-    const connection = new Connection('18');
-    // const req: any = await connection.delete(`&id=${item.id}&task_id=${item.task_id}`, 'GTPP/TaskItem.php');
-    const req: any = await connection.delete({ id: item.id, task_id: item.task_id }, 'GTPP/TaskItem.php');
+    const req: any = await fetchData({method:"DELETE",params:{ id: item.id, task_id: item.task_id },pathFile:'GTPP/TaskItem.php'});
     return req;
   }
 

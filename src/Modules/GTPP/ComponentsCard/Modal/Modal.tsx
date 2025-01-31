@@ -13,6 +13,7 @@ import ButtonIcon from "../Button/ButtonIcon/btnicon";
 import AttachmentFile from "../../../../Components/AttachmentFile";
 import "./style.css"
 import { Connection } from "../../../../Connection/Connection";
+import { handleNotification } from "../../../../Util/Util";
 
 interface BodyDefaultProps {
   disabledForm?: boolean;
@@ -132,8 +133,8 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                     openModalQuastionTask: !prev.openModalQuastionTask,
                   }));
 
-                } catch (error) {
-                  alert(error);
+                } catch (error:any) {
+                  handleNotification("Atenção!",error.message,"danger");
                 }
               }}
             />
