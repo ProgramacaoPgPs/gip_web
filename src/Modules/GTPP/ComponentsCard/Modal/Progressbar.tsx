@@ -3,11 +3,11 @@ import React from 'react';
 interface ProgressBarProps {
   progressValue: number;
   resetValue?: boolean;
-  colorBar?:string
+  colorBar?: string
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue,colorBar }) => {
-   const clampedValue = Math.min(Math.max((progressValue) , 0), 100);
+const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue, colorBar }) => {
+  const clampedValue = Math.min(Math.max((progressValue), 0), 100);
 
   const getProgressClass = () => {
     if (clampedValue < 50) return 'bg-danger';
@@ -18,9 +18,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progressValue,colorBar }) => 
   return (
     <div className="progress mt-2 mx-2">
       <div
+        title="Barra de progresso"
         className={`progress-bar ${!colorBar && getProgressClass()}`}
         role="progressbar"
-        style={{ width: `${clampedValue}%`,backgroundColor:`${colorBar? colorBar:''}` }}
+        style={{ width: `${clampedValue}%`, backgroundColor: `${colorBar ? colorBar : ''}` }}
         aria-valuenow={clampedValue}
         aria-valuemin={0}
         aria-valuemax={100}

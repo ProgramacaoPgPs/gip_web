@@ -341,7 +341,7 @@ const ModalDefault: React.FC<TaskItem> = (props) => {
             taskParam={task}
             onClick={props.close_modal}
           />
-          <ProgressBar progressValue={taskPercent} colorBar="#00A875" />
+          <ProgressBar progressValue={taskPercent} colorBar="#006645" />
         </section>
         <section style={{ overflow: "auto", backgroundColor: 'white' }} className="d-felx body-modal-default flex-grow-1">
           <BodyDefault message={seNotificationMessage} details={props.details} taskListFiltered={task || []} />
