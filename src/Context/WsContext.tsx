@@ -149,7 +149,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     }
                 });
                 setListMessage([...listMessage]);
-                await viewedMessage(event);
             }
         } else if (event.message && !event.error) {
             await receivedMessage(event);
@@ -175,7 +174,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
     async function receivedMessage(event: any) {
         const { send_user, message, type } = event;
-        console.log(event);
         if (parseInt(send_user) === idReceived) {
             listMessage.push({
                 id: event.id,
@@ -194,18 +192,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 )
             );
         }
-    };
-
-    async function viewedMessage(event: any) {
-        const { user } = event;
-        console.log('Estou aqui')
-        await fetchData({
-            method: "PUT", params: {
-                id_user: user,
-                id_sender: userLog.id,
-                UpdateNotification: 1,
-            }, pathFile: 'CLPP/Message.php'
-        });
     };
 
     return (
