@@ -45,7 +45,7 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
         </fieldset>
       ))}
       {/* <button className='btn mt-5 my-2'>Enviar</button> */}
-      <button className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
+      <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
     </form>
   );
 }

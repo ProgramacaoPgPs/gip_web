@@ -21,9 +21,9 @@ export default function Gtpp(): JSX.Element {
   const [openMenu, setOpenMenu] = useState<any>(true);
   const [isHeader, setIsHeader] = useState<boolean>(false);
   const listButtonInputs: iPropsInputCheckButton[] = [
-    { inputId: `check_adm_${userLog.id}`, onAction: async (event: boolean) => { setLoading(true); await loadTasks(event); setLoading(false) }, labelIcon: "fa-solid fa-user-tie", highlight: true },
+    { inputId: `check_adm_${userLog.id}`, nameButton: "Elevar como administrador", onAction: async (event: boolean) => { setLoading(true); await loadTasks(event); setLoading(false) }, labelIcon: "fa-solid fa-user-tie", highlight: true },
     // { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
-    { inputId: `gttp_exp_ret`, onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
+    { inputId: `gttp_exp_ret`, nameButton: "Exibir usuários" , onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
   ];
 
   // Modified by Hygor
@@ -104,7 +104,7 @@ export default function Gtpp(): JSX.Element {
               >
                 <i className={`fa-solid fa-volume-${onSounds ? "high" : "xmark"}`}></i>
               </button>
-              <button className="btn p-0">
+              <button title="Exibir notificações" className="btn p-0">
                 <NotificationBell />
               </button>
             </div>
@@ -112,7 +112,7 @@ export default function Gtpp(): JSX.Element {
           <Col
             xs={12}
             className="d-flex flex-nowrap p-0 menu-expansivo flex-grow-1"
-            style={{ overflowX: "auto", /*height: "85%" */ flexFlow:"1"}}
+            style={{ overflowX: "auto", /*height: "85%" */ flexFlow: "1" }}
           >
             {states?.map((cardTaskStateValue: any, idxValueState: any) => {
               const filteredTasks = getTask.filter(

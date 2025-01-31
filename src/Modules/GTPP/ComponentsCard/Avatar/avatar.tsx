@@ -71,7 +71,7 @@ const UserProfile = (props: any) => {
         <div>
           <strong>Colaboradores</strong>
         </div>
-        <button className="btn btn-danger text-white" onClick={() => props.detailsmodaluser(true)}>X</button>
+        <button title="Detalhes do usuário" className="btn btn-danger text-white" onClick={() => props.detailsmodaluser(true)}>X</button>
       </div>
 
       {/* Aqui vamos carregar a lista de usuarios */}
@@ -222,7 +222,7 @@ function ModalUser(props: any) {
             {props.openDetailUser ? (
               <>
                 <div className="d-flex align-items-center justify-content-end mb-2">
-                  <button className="btn bg-danger text-white" onClick={() => props.setOpenDetailUser(false)}>X</button>
+                  <button title="Abrir detalhes do usuário" className="btn bg-danger text-white" onClick={() => props.setOpenDetailUser(false)}>X</button>
                 </div>
                 <div className="text-center">
                   <Image className="rounded img-fluid img-thumbnail w-100" src={convertImage(props.list?.photo) || ImageUser} />
@@ -240,7 +240,7 @@ function ModalUser(props: any) {
           <React.Fragment>
             <div className="d-flex align-items-center justify-content-between mb-2">
               <div><strong>Adicione Colaboradores</strong></div>
-              <div><button className="btn bg-danger text-white" onClick={() => setLoadUserTask(true)}>X</button></div>
+              <div><button title="Carregar as tarefas do usuário" className="btn bg-danger text-white" onClick={() => setLoadUserTask(true)}>X</button></div>
             </div>
             <div className="h-100 overflow-auto">
               <LoadUserCheck list={props} />

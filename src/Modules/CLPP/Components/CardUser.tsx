@@ -26,7 +26,7 @@ export default function CardUser(props: tCardUser): JSX.Element {
                     </span>
                 </div>
                 {props.isSend &&
-                    <button onClick={async () => {
+                    <button title="Abrir mensagens" onClick={async () => {
                         if (props.openMessage) {
                             props.openMessage(props);
                         }

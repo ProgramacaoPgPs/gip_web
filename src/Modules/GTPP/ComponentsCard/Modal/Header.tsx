@@ -76,7 +76,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   return (
     <div className="w-100">
       <div className="d-flex justify-content-between align-items-center pt-2 px-2">
-        <button className={`fa  p-1 me-2 btn btn-outline-${habilitEditionOfText ? "success fa-check" : "danger fa-pencil"}`} onClick={() => {
+        <button title="Habilitar ou desabilitar edição do texto" className={`fa  p-1 me-2 btn btn-outline-${habilitEditionOfText ? "success fa-check" : "danger fa-pencil"}`} onClick={() => {
           setHabilitEditionOfText(!habilitEditionOfText);
         }
         }></button>
@@ -92,7 +92,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           style={{ border: "none", fontWeight: "bold" }}
         ></input>
         <div className="d-flex gap-2">
-          <InputCheckButton inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
+          <InputCheckButton nameButton="Dados do criador da tarefa" inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
             try {
               setLoading(true);        
               if (e && !userTask) {
@@ -109,7 +109,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
               setLoading(false);
             }
           }} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
-          <InputCheckButton inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
+          <InputCheckButton nameButton="Detalhes da tarefa." inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
             setDetailTask(e);            
           }} labelIcon={"fa-solid fa-circle-info"} highlight={true}/>
 

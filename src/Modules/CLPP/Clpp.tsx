@@ -60,7 +60,7 @@ export default function Clpp(): JSX.Element {
                     </section>
                 </div>
             }
-            <button className={`btn fa-solid my-2 ${blink ? 'opacity-25' : 'opacity-100'} ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
+            <button title="Abrir chat" className={`btn fa-solid my-2 ${blink ? 'opacity-25' : 'opacity-100'} ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
                 setOpenChat(!openChat);
             }}></button>
         </div>

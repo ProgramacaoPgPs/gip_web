@@ -51,7 +51,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
           {props.description}
         </div>
         <div className="d-flex align-items-center justify-content-center h-25 ">
-          <button className="d-block btn btn-danger mt-3">Fechar</button>
+          <button title="fechar" className="d-block btn btn-danger mt-3">Fechar</button>
         </div>
       </div>
     );
@@ -82,7 +82,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
           <header className="d-flex flex-column w-100">
             <div className="d-flex align-items-center justify-content-between w-100">
               <h1>Editar item da tarefa</h1>
-              <button onClick={() => onClose()} className="btn btn-danger py-0">X</button>
+              <button title="Editar item da tarefa" onClick={() => onClose()} className="btn btn-danger py-0">X</button>
             </div>
             <div className="d-flex align-items-center">
               <input
@@ -98,7 +98,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
             </div>
           </header>
           <section className="w-100">
-            <button onClick={() => {
+            <button title="Editar tarefa" onClick={() => {
               if (editTask.description != description || editTask.note != note) {
                 setMsgConfirm({ title: "Atenção", message: "Salve os dados antes de trocar de aba" });
                 setConfirm(true);
@@ -115,7 +115,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
               placeholder={`${isObservation ? "Escreva detalhes e observações desse item" : "Edite a descrição dessa tarefa."}`}
             />
           </section>
-          <button onClick={() => {
+          <button title="Alterar obervação" onClick={() => {
             if (editTask.description != description || editTask.note != note) {
               const value = editTask.description != description ? description : note;
               changeObservedForm(editTask.task_id, editTask.id, value, isObservation);

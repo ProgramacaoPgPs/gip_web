@@ -63,10 +63,10 @@ export default function ConfirmModal({  title, message, onConfirm, onClose }: { 
                 gap: "0.5rem",
               }}
             >
-              <button className="btn btn-secondary" onClick={onClose}>
+              <button title="Cancelar ação." className="btn btn-secondary" onClick={onClose}>
                 Cancelar
               </button>
-              <button className="btn btn-primary" onClick={onConfirm}>
+              <button title="Confirmar ação" className="btn btn-primary" onClick={onConfirm}>
                 Confirmar
               </button>
             </div>

@@ -7,7 +7,7 @@ type CustomButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function CustomButton({ value, customStyle, children, ...props }: CustomButtonProps) {
     return (
-        <button className={customStyle} {...props}>
+        <button title="Botão customizado" className={customStyle} {...props}>
             {value ? value : children}
         </button>
     );
@@ -21,7 +21,7 @@ export function InputCheckButton(props: iPropsInputCheckButton) {
     }, [isChecked]);
     
     return (
-        <button type="button" className={`${props.containerClass ? props.containerClass : `btn btn-${(props.highlight && isChecked) ? 'success' : 'light'} p-0`}`}>
+        <button type="button" title={props.nameButton} className={`${props.containerClass ? props.containerClass : `btn btn-${(props.highlight && isChecked) ? 'success' : 'light'} p-0`}`}>
             <input hidden defaultChecked={isChecked} onClick={async (e: React.MouseEvent<HTMLInputElement>) => {
                 const newChecked = e.currentTarget.checked;
                 setIsChecked(newChecked); // Atualiza o estado imediatamente

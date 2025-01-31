@@ -147,7 +147,7 @@ export const PDFGenerator: React.FC<PDFGeneratorProps> = ({ data }) => {
         </div>
       </div>
       <div className="text-center">
-        <button className="btn btn-success mt-3" onClick={generatePDF}>Gerar PDF</button>
+        <button title="gerar PDF" className="btn btn-success mt-3" onClick={generatePDF}>Gerar PDF</button>
       </div>
     </React.Fragment>
   );

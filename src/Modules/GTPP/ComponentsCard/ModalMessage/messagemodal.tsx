@@ -25,10 +25,10 @@ function MessageModal(props: {
         /> }
       </div>
       <div className="d-flex justify-content-around w-100">
-        <button className="btn btn-secondary" onClick={props.onClick}>
+        <button title="Enviar mensagem" className="btn btn-secondary" onClick={props.onClick}>
           {props.isInput ? "Enviar": "Confirmar"}
         </button>
-        <button className="btn btn-danger" onClick={props.onClose}>
+        <button title="Cancelar mensagem" className="btn btn-danger" onClick={props.onClose}>
           cancelar
         </button>
       </div>

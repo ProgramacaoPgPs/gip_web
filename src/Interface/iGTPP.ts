@@ -1,5 +1,6 @@
 export interface iPropsInputCheckButton {
     containerClass?: string;
+    nameButton:string;
     onAction: (e: boolean) => void;
     inputClass?: string;
     labelClass?: string;
