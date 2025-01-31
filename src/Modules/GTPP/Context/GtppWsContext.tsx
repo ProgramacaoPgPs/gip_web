@@ -595,7 +595,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         "percent": task.percent,
         "itemUp": {
           ...newItem[0]
-        }, isItemUp: true
+        },
+        isItemUp: true
       });
     } catch (error) {
       console.error(error);

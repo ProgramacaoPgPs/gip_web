@@ -4,7 +4,7 @@ import './App.css';
 import Login from './Components/Login';
 import { MyProvider } from './Context/MainContext';
 import RenderPage from './Components/RenderPage';
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from './Components/Home';
 import PrivateRoute from './PrivateRoute';
 import Gtpp from './Modules/GTPP/Gtpp';
@@ -16,42 +16,37 @@ import { ConnectionProvider } from './Context/ConnContext';
 
 
 function App() {
+  function withProvider(component: JSX.Element) {
+    return (
+      <MyProvider>
+        <RenderPage>{component}</RenderPage>
+      </MyProvider>
+    );
+  }
+
+  function withPrivateProvider(component: JSX.Element) {
+    return (
+      <MyProvider>
+        <PrivateRoute>
+          <RenderedModules>{component}</RenderedModules>
+        </PrivateRoute>
+      </MyProvider>
+    );
+  }
+
   return (
     <ConnectionProvider>
       <HashRouter>
         <Routes>
-          <Route path="/" element={
-            <MyProvider>
-              <RenderPage>
-                <Login />
-              </RenderPage>
-            </MyProvider>
-          } />
-
-          <Route path="/home" element={
-            <MyProvider>
-              <PrivateRoute>
-                <RenderedModules>
-                  <Home />
-                </RenderedModules>
-              </PrivateRoute>
-            </MyProvider>
-          } />
-          <Route path="/home/GTPP" element={
-            <MyProvider>
-              <PrivateRoute>
-                <RenderedModules>
-                  <EppWsProvider>
-                    <Gtpp />
-                  </EppWsProvider>
-                </RenderedModules>
-              </PrivateRoute>
-            </MyProvider>
-          } />
+          <Route path="/" element={withProvider(<Login />)} />
+          <Route path="/home" element={withPrivateProvider(<Home />)} />
+          <Route path="/home/GTPP" element={withPrivateProvider(<EppWsProvider><Gtpp /></EppWsProvider>)} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>
     </ConnectionProvider>
   );
+
 }
 
 export default App;
