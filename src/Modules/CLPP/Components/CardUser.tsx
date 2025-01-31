@@ -1,12 +1,10 @@
 import React from 'react';
 import { tCardUser } from '../../../types/types';
-import { useWebSocket } from '../../../Context/WsContext';
 
 const logo = require('../../../Assets/Image/groupCLPP.png');
 
-
 export default function CardUser(props: tCardUser): JSX.Element {
-    const {ws}= useWebSocket();
+
     return (
         <div className={`cardContact border rounded my-2 overflow-hidden`}>
             <div className='d-flex align-items-center w-100 p-2'>

@@ -1,5 +1,6 @@
 import { Connection } from "../Connection/Connection";
 import { iUser } from "../Interface/iGIPP";
+import { fetchDataFull } from "../Util/Util";
 
 export default class User {
     #id: number;
@@ -16,7 +17,7 @@ export default class User {
     sub: string = '';
     CSDS: string = '';
     #connection: Connection = new Connection('18');
-
+    
     constructor(user: iUser) {
         this.#id = user.id;
         if (user.administrator) this.#administrator = user.administrator;
@@ -112,7 +113,7 @@ export default class User {
 
     async loadDetails(): Promise<void> {
         try {
-            const details: any = await this.#connection.get(`&id=${this.#id}`, 'CCPP/Employee.php');
+            const details: any = await fetchDataFull({method:"GET",params:null,pathFile:'CCPP/Employee.php',urlComplement:`&id=${this.#id}`});
             if (details.error && !details.message.includes('No data')) throw new Error(details.message);
             this.name = details.data[0]["name"];
             this.company = details.data[0]["company"];
@@ -122,7 +123,7 @@ export default class User {
             this.CSDS = details.data[0]["CSDS"];
             this.administrator = details.data[1]["administrator"];
         } catch (error) {
-            alert(error);
+            console.error(error);
         }
     }
 }

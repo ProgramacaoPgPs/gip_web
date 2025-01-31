@@ -5,6 +5,8 @@ import { Connection } from '../Connection/Connection';
 import { iSender, iUser, iWebSocketContextType } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
 import { error } from 'console';
+import { handleNotification } from '../Util/Util';
+import { useConnection } from './ConnContext';
 
 
 const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefined);
@@ -18,12 +20,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
-    function closeChat(){
+    function closeChat() {
         setIdReceived(0);
         setPageLimit(1);
         setPage(1);
         setListMessage([]);
-        if(previousScrollHeight.current) previousScrollHeight.current = 0;
+        if (previousScrollHeight.current) previousScrollHeight.current = 0;
     }
 
     //Variáveis dos contatos
@@ -34,18 +36,20 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
 
     const { setLoading, userLog } = useMyContext();
+    const { fetchData } = useConnection();
     const ws = useRef(new WebSocketCLPP(localStorage.getItem("tokenGIPP"), callbackOnMessage));
 
 
-    useEffect(() => { 
+    useEffect(() => {
         // Abre a coonexão com o websocket.
         (async () => {
             try {
-                if (userLog.session && ws.current && !ws.current.isConnected) {
+                console.error(localStorage.tokenGIPP , ws.current , !ws.current.isConnected,localStorage.tokenGIPP && ws.current && !ws.current.isConnected);
+                if (localStorage.tokenGIPP && ws.current && !ws.current.isConnected) {
                     ws.current.connectWebSocket();
                 }
-            } catch (error) {
-                alert(error);
+            } catch (error: any) {
+                handleNotification("Erro no Ws Principal", error.message, "danger");
             }
         })();
         //Carrega a sua lista de contato.
@@ -57,9 +61,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             }
         }
         )();
-        return clearChatAll(); 
+        return clearChatAll();
     }, [userLog]);
-    function clearChatAll(){
+    function clearChatAll() {
         closeChat();
         changeChat();
     }
@@ -68,7 +72,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         ws.current.callbackOnMessage = callbackOnMessage;
     }, [idReceived, listMessage]);
 
-    useEffect(() => { 
+    useEffect(() => {
         const fetchMessages = async () => {
             setMsgLoad(true);
             try {
@@ -79,7 +83,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     setListMessage(reloadList(req.data.reverse()));
                 }
             } catch (error: any) {
-                if (!error.message.includes("No data")) alert(error);
+                if (!error.message.includes("No data")) console.error(error);
             }
             setMsgLoad(false);
         };
@@ -110,8 +114,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     async function loadMessage(): Promise<{ error: boolean, message?: string, data?: any, pages: number }> {
-        const conn = new Connection('18');
-        const listMessage: { error: boolean, message?: string, data?: any, pages: number } = await conn.get(`&pages=${page}&id_user=${userLog.id}&id_send=${idReceived}`, 'CLPP/Message.php')
+        const listMessage: { error: boolean, message?: string, data?: any, pages: number } = await fetchData({ method: "GET", params: null, pathFile: "CLPP/Message.php", urlComplement: `&pages=${page}&id_user=${userLog.id}&id_send=${idReceived}` })
             || { error: true, message: 'fail', pages: 1 };
         return listMessage;
     }
@@ -139,9 +142,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     async function callbackOnMessage(event: any) {
         if (event.objectType === 'notification') {
-            if(event.notify && event.user == idReceived) {
-                listMessage.forEach((item,index)=>{
-                    if(item.notification == 1){
+            if (event.notify && event.user == idReceived) {
+                listMessage.forEach((item, index) => {
+                    if (item.notification == 1) {
                         listMessage[index].notification = 0;
                     }
                 });
@@ -171,14 +174,14 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     }
     async function receivedMessage(event: any) {
-        const { send_user, message, type } = event; 
+        const { send_user, message, type } = event;
         console.log(event);
         if (parseInt(send_user) === idReceived) {
             listMessage.push({
-                id: event.id, 
+                id: event.id,
                 "id_user": event.send_user,
                 "message": event.message,
-                "notification": 0, 
+                "notification": 0,
                 "type": event.type
             });
             setListMessage([...listMessage]);
@@ -186,35 +189,27 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         } else {
             setHasNewMessage(true);
             setContactList((prevContacts) =>
-                prevContacts.map((contact) => 
+                prevContacts.map((contact) =>
                     contact.id === send_user ? updateContact(contact) : contact
                 )
-            ); 
+            );
         }
     };
 
     async function viewedMessage(event: any) {
         const { user } = event;
-        /*
-        setContactList((prevContacts) =>
-            prevContacts.map((contact) =>
-                contact.id === parseInt(user) ? { ...contact, pendingMessage: 0 } : contact
-            )
-        );*/
-        const connection = new Connection('18');
-        await connection.put(
-            {
+        console.log('Estou aqui')
+        await fetchData({
+            method: "PUT", params: {
                 id_user: user,
                 id_sender: userLog.id,
                 UpdateNotification: 1,
-            },
-            'CLPP/Message.php'
-        );
-        //setSender((prevSender) => ({ ...prevSender, pendingMessage: 0 }));
+            }, pathFile: 'CLPP/Message.php'
+        });
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page,hasNewMessage, setHasNewMessage, closeChat,includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, hasNewMessage, setHasNewMessage, closeChat, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

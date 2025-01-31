@@ -1,5 +1,7 @@
 import { Store } from "react-notifications-component";
 import { Connection } from "../Connection/Connection";
+import { iReqConn } from "../Interface/iConnection";
+import Translator from "./Translate";
 
 const connection = new Connection("18", true);
 
@@ -77,3 +79,29 @@ export function isTokenExpired(expirationDate: string): boolean {
     }
     return result;
 };
+
+
+export async function fetchDataFull(req: iReqConn) {
+    let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
+    try {
+        const URL = settingUrl(`/Controller/${req.pathFile}?app_id=${req.appId ? req.appId : "18"}&AUTH=${localStorage.tokenGIPP ? localStorage.tokenGIPP : ''}${req.urlComplement ? req.urlComplement : ""}`);
+        let objectReq: any = { method: req.method };
+        if (req.params) objectReq.body = JSON.stringify(req.params);
+        const response = await fetch(URL, objectReq);
+        const body = await response.json();
+        console.log(body,req.params,URL);
+        result = body;
+        if (body.error) throw new Error(body.message);
+    } catch (messageErr: any) {
+        const translate = new Translator(messageErr.message);
+        const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
+        handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+    } finally {
+        return result;
+    }
+};
+
+function settingUrl(middlewer: string, params?: string,port?:string) {
+    let server = `http://gigpp.com.br:${port ? port : '72'}/GLOBAL`;
+    return server + middlewer + (params ? params : "");
+}

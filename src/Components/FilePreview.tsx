@@ -1,4 +1,5 @@
 import React from 'react';
+import { handleNotification } from '../Util/Util';
 
 interface FilePreviewProps {
   base64File: string; // Base64 completo, incluindo o prefixo
@@ -33,7 +34,7 @@ export default function FilePreview(props: FilePreviewProps) {
       // Formata o XML de forma indentada
       return formatXML(rawXML);
     } catch (error) {
-      alert(`Erro ao decodificar ou formatar o XML: ${error}`);
+      handleNotification("Atenção!",`Erro ao decodificar ou formatar o XML: ${error}`,"danger");
       return 'Erro ao carregar o XML.';
     }
   };

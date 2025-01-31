@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { formChangePassword } from "../Configs/DefaultPassword";
 import CustomForm from "./CustomForm";
 import { useMyContext } from "../Context/MainContext";
-import { Connection } from "../Connection/Connection";
+import { handleNotification } from "../Util/Util";
+import { useConnection } from "../Context/ConnContext";
 
 export default function DefaultPassword(props: {
     open: boolean,
@@ -16,18 +17,17 @@ export default function DefaultPassword(props: {
     const [confirm, setConfirm] = useState<string>("");
 
     const { setLoading } = useMyContext();
+    const { fetchData } = useConnection();
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         try {
             setLoading(true);
             event.preventDefault();
-            if (password !== confirm) throw new Error("As senhas não conferem");
-            const connection = new Connection("15", true);
-            const req: any = await connection.put({ user: props.user.login, password: props.user.password, new_password: password, confirm_password: confirm }, "CCPP/Login.php");
+            const req: any = await fetchData({method:"PUT",params:{ user: props.user.login, password: props.user.password, new_password: password, confirm_password: confirm },pathFile:"CCPP/Login.php",urlComplement:"&login="});
             if (req.error) throw new Error(req.message);
-            alert("Senha alterada com sucesso!");
+            handleNotification("Sucesso!","Senha alterada com sucesso","success");
             props.onClose();
         } catch (error: any) {
-            alert(error.message);
+            console.error(error.message);
         } finally {
             setLoading(false);
         }
