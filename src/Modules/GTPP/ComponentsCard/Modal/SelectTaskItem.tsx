@@ -95,7 +95,7 @@ const SelectTaskItem: React.FC<SelectTaskItemProps> = (props) => {
   return (
     <div className="d-flex gap-2 mt-4">
       <div>
-        <p><strong>Compania</strong></p>
+        <p><strong>Companhia</strong></p>
         <SelectFieldDefault
           label=""
           disabled={booleanDep}

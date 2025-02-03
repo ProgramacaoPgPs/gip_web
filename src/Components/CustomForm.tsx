@@ -83,7 +83,7 @@ export function SelectField(
   props: React.SelectHTMLAttributes<HTMLSelectElement> & { options: SelectOption[] }
 ) {
   return (
-    <select {...props} className={`form-control ${props.className}`}>
+    <select name={props.name} value={props.value} required={props.required} onChange={props.onChange} className={`form-select ${props.className ? props.className : ""}`} disabled={props.disabled}>
       {props.options.map((option, index) => (
         <option key={index} value={option.value}>
           {option.label}
