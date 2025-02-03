@@ -22,10 +22,14 @@ export function InputCheckButton(props: iPropsInputCheckButton) {
     
     return (
         <button type="button" title={props.nameButton} className={`${props.containerClass ? props.containerClass : `btn btn-${(props.highlight && isChecked) ? 'success' : 'light'} p-0`}`}>
-            <input hidden defaultChecked={isChecked} onClick={async (e: React.MouseEvent<HTMLInputElement>) => {
-                const newChecked = e.currentTarget.checked;
-                setIsChecked(newChecked); // Atualiza o estado imediatamente
-                await props.onAction(newChecked); // Aguarda a ação sem bloquear
+            <input hidden checked={isChecked} onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                try {
+                    const newChecked = e.currentTarget.checked;
+                    await props.onAction(newChecked); // Aguarda a ação sem bloquear
+                    setIsChecked(newChecked); // Atualiza o estado imediatamente
+                } catch (error) {
+                    console.error(error);
+                }
             }} className={`${props.inputClass ? props.inputClass : 'cursor-pointer'}`} id={props.inputId} type="checkbox" />
             <label className={`${props.labelClass ? props.labelClass : 'cursor-pointer'} ${icon} ${(props.highlight && isChecked) ? 'text-white' : 'text-dark'}  p-2`} htmlFor={props.inputId}>{props.labelText}</label>
         </button>

@@ -38,15 +38,17 @@ export default class Translator {
                 this.#messagePT = 'Somente o administrador pode fazer isso.'
                 break;
             case 'Password require minimum 8 digits':
-                this.#messagePT = "A senha deve conter no mínimo 8 dígitos";
+                this.#messagePT = "A senha deve conter no mínimo 8 dígitos.";
                 break;
             case "Passwords don't match":
-                this.#messagePT = "As senhas não conferem";
+                this.#messagePT = "As senhas não conferem.";
                 break;
             case "The final_date may not be less than the current date":
-                this.#messagePT = "A data final não pode ser menor que a data atual";
+                this.#messagePT = "A data final não pode ser menor que a data atual.";
                 break;
-
+            case "Only administrator can do this":
+                this.#messagePT = "Somente o administrador pode fazer isso.";
+                break;
             default:
                 this.#messagePT = messagePT;
                 break;

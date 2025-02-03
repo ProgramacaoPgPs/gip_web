@@ -31,8 +31,8 @@ interface MyMainContext {
 
   setModalPageElement: (value: JSX.Element) => void;
 
-  titleHead: { title: string; simpleTitle:string, icon?: string };
-  setTitleHead: (value: { title: string; simpleTitle:string; icon?: string }) => void;
+  titleHead: { title: string; simpleTitle: string, icon?: string };
+  setTitleHead: (value: { title: string; simpleTitle: string; icon?: string }) => void;
 
   userLog: User;
   setUserLog: (value: User) => void;
@@ -63,10 +63,10 @@ export function MyProvider({ children }: Props) {
     type: 1,
   });
   const [modalPageElement, setModalPageElement] = useState<JSX.Element>(<div></div>);
-  
-  const [titleHead, setTitleHead] = useState<{ title: string;simpleTitle:string; icon?: string }>({
+
+  const [titleHead, setTitleHead] = useState<{ title: string; simpleTitle: string; icon?: string }>({
     title: "Gestão Integrada Peg Pese - GIPP",
-    simpleTitle:"GIPP",
+    simpleTitle: "GIPP",
     icon: "",
   });
   const [userLog, setUserLog] = useState<User>(
@@ -92,6 +92,7 @@ export function MyProvider({ children }: Props) {
 
   useEffect(() => {
     requestNotificationPermission();
+    configUserData({ id: parseInt(localStorage.getItem('codUserGIPP') || "0") });
   }, []);
 
   useEffect(() => {
@@ -99,6 +100,17 @@ export function MyProvider({ children }: Props) {
       await loadDetailsToken();
     })();
   }, [userLog]);
+
+  async function configUserData(user: { id: number, session?: string; administrator?: number }) {
+    console.error(user);
+    const newUser = new User({
+      id: user.id,
+      session: user.session,
+      administrator: user.administrator ? user.administrator : 0
+    })
+    await newUser.loadInfo(true);
+    setUserLog(newUser);
+  }
 
   async function loadDetailsToken() {
     if (userLog.id) {

@@ -170,7 +170,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     }
     async function receivedMessage(event: any) {
-        const { send_user, message, type } = event;
+        const { send_user } = event;
         if (parseInt(send_user) === idReceived) {
             listMessage.push({
                 id: event.id,

@@ -21,17 +21,21 @@ export default function Gtpp(): JSX.Element {
   const [openMenu, setOpenMenu] = useState<any>(true);
   const [isHeader, setIsHeader] = useState<boolean>(false);
   const listButtonInputs: iPropsInputCheckButton[] = [
-    { inputId: `check_adm_${userLog.id}`, nameButton: "Elevar como administrador", onAction: async (event: boolean) => { setLoading(true); await loadTasks(event); setLoading(false) }, labelIcon: "fa-solid fa-user-tie", highlight: true },
+    {
+      inputId: `check_adm_${userLog.id}`, nameButton: "Elevar como administrador", onAction: async (event: boolean) => {
+        await reqTasks(event);
+      }, labelIcon: "fa-solid fa-user-tie", highlight: true
+    },
     // { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
-    { inputId: `gttp_exp_ret`, nameButton: "Exibir usuários" , onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
+    { inputId: `gttp_exp_ret`, nameButton: "Exibir usuários", onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
   ];
 
   // Modified by Hygor
-  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, setNotifications, notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
+  const { setTask, setTaskPercent, clearGtppWsContext, setOnSounds, updateStates, setOpenCardDefault, loadTasks, reqTasks, setNotifications, notifications, openCardDefault, taskDetails, states, onSounds, task, getTask } = useWebSocket();
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
-      simpleTitle:"Gerenciador de Tarefas",
+      simpleTitle: "Gerenciador de Tarefas",
       icon: "fa fa-home",
     });
   }, [setTitleHead]);
@@ -45,7 +49,7 @@ export default function Gtpp(): JSX.Element {
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
-  useEffect(()=> console.log(userLog),[userLog]);
+  useEffect(() => console.log(userLog), [userLog]);
 
   return (
     <div

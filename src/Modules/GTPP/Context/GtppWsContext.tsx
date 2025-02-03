@@ -47,7 +47,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     (async () => {
       setLoading(true);
       try {
-        const getNotify: any = await fetchData({ method: "GET", params: null, pathFile: '/GTPP/Notify.php', urlComplement: `&id_user=${userLog.id}`,exception:["No data"]});
+        const getNotify: any = await fetchData({ method: "GET", params: null, pathFile: '/GTPP/Notify.php', urlComplement: `&id_user=${userLog.id}`, exception: ["No data"] });
         if (getNotify.error) throw new Error(getNotify.message);
         updateNotification(getNotify.data);
       } catch (error: any) {
@@ -90,14 +90,17 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   async function loadTasks(admin?: boolean) {
-    const connection = new Connection("18", true);
     try {
-      const getTask: any = await connection.get(`${admin ? '&administrator=1' : ''}`, "GTPP/Task.php");
-      if (getTask.error) throw new Error(getTask.message);
-      setGetTask(getTask.data);
+      await reqTasks();
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }
+  }
+
+  async function reqTasks(admin?: boolean) {
+    const getTask: any = await fetchData({ method: "GET", params: null, pathFile: "GTPP/Task.php", urlComplement: `${admin ? '&administrator=1' : ''}` });
+    if (getTask.error) throw new Error(getTask.message);
+    setGetTask(getTask.data);
   }
 
   async function getStateformations() {
@@ -284,10 +287,10 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   ) {
     try {
       setLoading(true);
-      
+
       const item = yes_no ? { id: parseInt(id.toString()), task_id: idTask.toString(), yes_no: parseInt(yes_no.toString()) } : { check: checked, id: id, task_id: idTask }
-      
-      let result: { error: boolean, data?: any, message?: string } = await fetchData({method:"PUT",params:item,pathFile:"GTPP/TaskItem.php"}) || { error: false };
+
+      let result: { error: boolean, data?: any, message?: string } = await fetchData({ method: "PUT", params: item, pathFile: "GTPP/TaskItem.php" }) || { error: false };
 
       if (result.error) throw new Error(result.message);
       if (!yes_no) taskLocal.check = checked;
@@ -496,8 +499,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         task_id: taskId
       };
       item[isObservation ? 'note' : 'description'] = value;
-      
-      const response: any = await fetchData({method:"PUT",params:item,pathFile:"GTPP/TaskItem.php"});
+
+      const response: any = await fetchData({ method: "PUT", params: item, pathFile: "GTPP/TaskItem.php" });
 
       if (response.error) throw new Error(response.message);
 
@@ -530,7 +533,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function updateStateTask(taskId: number, resource: string | null, date: string | null) {
     setLoading(true);
-    const req: any = await fetchData({method:"PUT",params:{ task_id: taskId, reason: resource, days: parseInt(date ? date : "0") }, pathFile:"GTPP/TaskState.php"}) || { error: false };
+    const req: any = await fetchData({ method: "PUT", params: { task_id: taskId, reason: resource, days: parseInt(date ? date : "0") }, pathFile: "GTPP/TaskState.php" }) || { error: false };
     setLoading(false);
     const response = req.error ? {} : req.data instanceof Array ? req.data[0].id : req.data.id;
     return response;
@@ -584,7 +587,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   async function updatedForQuestion(item: { task_id: number; id: number; yes_no: number }) {
     try {
       setLoading(true);
-      const req: any = await fetchData({method:"PUT",params:item,pathFile:"GTPP/TaskItem.php"});
+      const req: any = await fetchData({ method: "PUT", params: item, pathFile: "GTPP/TaskItem.php" });
       if (req.error) throw new Error(req.message);
       const newItem = taskDetails.data?.task_item.filter((element) => element.id == item.id);
       if (!newItem) throw new Error("Falha ao recuperar a tarefa");
@@ -679,6 +682,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         getTaskInformations,
         setOpenCardDefault,
         loadTasks,
+        reqTasks,
         setGetTask,
         updateStates,
         setOnSounds,
