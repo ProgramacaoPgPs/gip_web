@@ -29,7 +29,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   const titleTaskInput = useRef<HTMLInputElement>(null);
   const { getTask, task } = useWebSocket();
   const { setLoading } = useMyContext();
-  const {fetchData} = useConnection();
+  const { fetchData } = useConnection();
 
   React.useEffect(() => {
     setDesc(description);
@@ -37,7 +37,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
 
   async function sendPut(newTitle: string) {
     try {
-      const req: any = await fetchData({method:"PUT",params:{ id: taskParam.id, priority: taskParam.priority, description: newTitle }, pathFile:"GTPP/Task.php"})
+      const req: any = await fetchData({ method: "PUT", params: { id: taskParam.id, priority: taskParam.priority, description: newTitle }, pathFile: "GTPP/Task.php" })
       if (req.error) throw new Error(req.message);
       setDesc(newTitle);
       getTask.filter(item => item.id == task.id)[0].description = newTitle;
@@ -94,7 +94,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         <div className="d-flex gap-2">
           <InputCheckButton nameButton="Dados do criador da tarefa" inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
             try {
-              setLoading(true);        
+              setLoading(true);
               if (e && !userTask) {
                 const user = new User({ id: task.user_id });
                 await user.loadInfo(true);
@@ -104,14 +104,14 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
               }
             } catch (error) {
               console.error(error);
-            }finally{
+            } finally {
               setDetailUser(e);
               setLoading(false);
             }
           }} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
           <InputCheckButton nameButton="Detalhes da tarefa." inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
-            setDetailTask(e);            
-          }} labelIcon={"fa-solid fa-circle-info"} highlight={true}/>
+            setDetailTask(e);
+          }} labelIcon={"fa-solid fa-circle-info"} highlight={true} />
 
           <button
             onClick={onClick || (() => console.warn("Valor indefinido!"))}
@@ -120,8 +120,8 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           />
         </div>
       </div>
-      { detailUser ?  <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
-      { detailTask ?  <DetailsTask /> : <React.Fragment />}
+      {detailUser ? <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
+      {detailTask ? <DetailsTask /> : <React.Fragment />}
     </div>
   );
 };

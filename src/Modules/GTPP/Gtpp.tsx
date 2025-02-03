@@ -31,6 +31,7 @@ export default function Gtpp(): JSX.Element {
   useEffect(() => {
     setTitleHead({
       title: "Gerenciador de Tarefas Peg Pese - GTPP",
+      simpleTitle:"Gerenciador de Tarefas",
       icon: "fa fa-home",
     });
   }, [setTitleHead]);
@@ -44,6 +45,7 @@ export default function Gtpp(): JSX.Element {
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
+  useEffect(()=> console.log(userLog),[userLog]);
 
   return (
     <div

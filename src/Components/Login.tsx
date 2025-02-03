@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomForm from './CustomForm';
 import { useMyContext } from '../Context/MainContext';
 import User from '../Class/User';
@@ -16,12 +16,12 @@ export default function Login() {
     }>({ login: '', password: '' });
 
     const navigate = useNavigate();
-    const { setLoading, setTitleHead, setUserLog,loadDetailsToken } = useMyContext();
-    const {setIsLogged} = useConnection();
+    const { setLoading, setTitleHead, setUserLog, loadDetailsToken, userLog } = useMyContext();
+    const { setIsLogged } = useConnection();
     const { fetchData } = useConnection();
-
+    useEffect(()=>console.log(userLog),[userLog]);
     React.useEffect(() => {
-        setTitleHead({ title: 'Gestão Integrada Peg Pese - GIPP', icon: '' });
+        setTitleHead({ title: 'Gestão Integrada Peg Pese - GIPP', simpleTitle: "GIPP", icon: '' });
         setIsLogged(false);
     }, []);
 
@@ -51,12 +51,14 @@ export default function Login() {
             }, 5000);
         }
     }
-    function configUserData(user: any) {
-        setUserLog(new User({
+    async function configUserData(user: any) {
+        const loadUser = new User({
             id: user.id,
             session: user.session,
             administrator: user.administrator
-        }));
+        });
+        loadUser.loadInfo(true);
+        setUserLog(loadUser);
         localStorage.setItem("tokenGIPP", user.session);
         localStorage.setItem("codUserGIPP", user.id);
     }
@@ -72,7 +74,7 @@ export default function Login() {
             const userLogin = buildUserLogin();
             setUser(userLogin);
             let req: any = await fetchData({ method: "POST", params: { user: userLogin.login, password: userLogin.password }, pathFile: "CCPP/Login.php", urlComplement: "&login=" });
-            
+
             if (!req) throw new Error('No response from server');
             if (req.error) throw new Error(req.message);
             configUserData(req.data);

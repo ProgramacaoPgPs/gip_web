@@ -31,8 +31,8 @@ interface MyMainContext {
 
   setModalPageElement: (value: JSX.Element) => void;
 
-  titleHead: { title: string; icon?: string };
-  setTitleHead: (value: { title: string; icon?: string }) => void;
+  titleHead: { title: string; simpleTitle:string, icon?: string };
+  setTitleHead: (value: { title: string; simpleTitle:string; icon?: string }) => void;
 
   userLog: User;
   setUserLog: (value: User) => void;
@@ -64,8 +64,9 @@ export function MyProvider({ children }: Props) {
   });
   const [modalPageElement, setModalPageElement] = useState<JSX.Element>(<div></div>);
   
-  const [titleHead, setTitleHead] = useState<{ title: string; icon?: string }>({
+  const [titleHead, setTitleHead] = useState<{ title: string;simpleTitle:string; icon?: string }>({
     title: "Gestão Integrada Peg Pese - GIPP",
+    simpleTitle:"GIPP",
     icon: "",
   });
   const [userLog, setUserLog] = useState<User>(

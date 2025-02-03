@@ -11,7 +11,6 @@ export default function RenderedModules(props: Props): JSX.Element {
         <div className='d-flex flex-row w-100 h-100'>
             {props.children}
             <Clpp />
-            <SessionTimer expirationDate={token.expiration_date} loggedAt={token.logged_at} />
         </div>
     );
 }
