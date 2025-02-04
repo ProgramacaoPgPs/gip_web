@@ -11,19 +11,8 @@ export default function CardUser(props: tCardUser): JSX.Element {
                 <header className='overflow-hidden rounded-circle object-fit-cover'>
                     <img src={props.photo ? `data:image/png;base64,${props.photo}` : logo} />
                 </header>
-                <div className='d-flex flex-column mx-2 overflow-hidden text-nowrap'>
-                    <span className=''>
-                        <strong >Nome: </strong> {props.name || 'N/P'}
-                    </span>
-                    <span>
-                        <strong>Loja: </strong> {props.shop}
-                    </span>
-                    <span>
-                        <strong>departamento: </strong> {props.departament}
-                    </span>
-                    <span>
-                        <strong>subdepartamento: </strong> {props.sub}
-                    </span>
+                <div className='d-flex flex-column align-items-start mx-2 overflow-hidden text-nowrap'>
+                    <Details />
                 </div>
                 {props.isSend &&
                     <button title="Abrir mensagens" onClick={async () => {
@@ -37,6 +26,31 @@ export default function CardUser(props: tCardUser): JSX.Element {
             </div>
         </div>
     );
+
+    function Details() {
+        const fullInfo = !(props.inName || props.inStore || props.inDepartament || props.inSubDepartament);
+        const datas = [
+            { item: { label: "Nome", value: props.name || "N/P" }, id: props.id || "0", show: (fullInfo || props.inName) },
+            { item: { label: "Loja", value: props.shop || "N/P" }, id: props.id || "0", show: (fullInfo || props.inStore) },
+            { item: { label: "Departamento", value: props.departament || "N/P" }, id: props.id || "0", show: (fullInfo || props.inDepartament) },
+            { item: { label: "Subdepartamento", value: props.sub || "N/P" }, id: props.id || "0", show: (fullInfo || props.inSubDepartament) },
+        ]
+
+        return (
+            <React.Fragment>
+                {
+                    datas.map((element) => element.show && <BuildSpan key={`info_car_user_${element.id}_${element.item.label}`} {...element.item} />)
+                }
+            </React.Fragment>
+        )
+    }
+    function BuildSpan(item: any) {
+        return (
+            <span>
+                <strong >{item.label}: </strong> {item.value}
+            </span>
+        )
+    }
 
 }
 function IconButton(value: tCardUser): JSX.Element {

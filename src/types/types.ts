@@ -21,4 +21,8 @@ export type tCardUser = {
     isSend?:boolean;
     notification?:number;
     openMessage?:(value:any)=>void;
+    inName?:boolean;
+    inStore?:boolean;
+    inDepartament?:boolean;
+    inSubDepartament?:boolean;
 }

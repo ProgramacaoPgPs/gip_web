@@ -34,7 +34,7 @@ export default function Clpp(): JSX.Element {
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
             {
                 openChat &&
-                <div className='bg-white p-2 rounded d-flex flex-column'>
+                <div className='bg-white p-2 rounded d-flex flex-column shadow'>
                     <header className='d-flex flex-column align-items-center'>
                         <div className='d-flex justify-content-between align-items-center bg-light w-100 rounded p-2'>
                             <div>
@@ -42,7 +42,7 @@ export default function Clpp(): JSX.Element {
                             </div>
                             <i onClick={() => setDetailsChat(!detailsChat)} className={`btn text-primary fa-solid fa-circle-info`}></i>
                         </div>
-                        {detailsChat && <CardUser openMessage={openMessage} {...userLog} name={userLog.name} />}
+                        {detailsChat && <CardUser openMessage={openMessage} {...userLog} name={userLog.name}/>}
 
                     </header>
 
