@@ -113,6 +113,7 @@ export interface iWebSocketContextType {
     previousScrollHeight: MutableRefObject<number>;
     messagesContainerRef: RefObject<HTMLDivElement>;
     hasNewMessage:boolean; 
+    contNotify: number;
     setHasNewMessage:(value: boolean) => void;
     closeChat: () => void;
     includesMessage:(item:{ id: number, id_user: number, message: string, notification: number, type: number })=>void;

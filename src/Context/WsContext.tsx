@@ -18,6 +18,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
+
     function closeChat() {
         setIdReceived(0);
         setPageLimit(1);
@@ -31,7 +32,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
     const [contactList, setContactList] = useState<iUser[]>([]);
     const [sender, setSender] = useState<iSender>({ id: 0 });
-
+    const [contNotify, setContNotify] = useState<number>(0);
 
     const { setLoading, userLog } = useMyContext();
     const { fetchData } = useConnection();
@@ -157,6 +158,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         newList[newList.findIndex((item: iUser) => item.id == id)].notification = 0;
         newList[newList.findIndex((item: iUser) => item.id == id)].yourContact = 1;
         setContactList([...newList]);
+        setContNotify(newList.filter(item => item.notification == 1).length);
     }
 
     async function buildContactList() {
@@ -165,6 +167,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const req: any = await contacts.loadListContacts();
             if (req.error) throw new Error(req.message);
             setContactList([...req.data]);
+            setContNotify(req.data.filter((item:any) => item.notification == 1).length);
         } catch (error) {
             console.log(error)
         }
@@ -183,16 +186,16 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             await ws.current.informPreview(send_user.toString())
         } else {
             setHasNewMessage(true);
-            setContactList((prevContacts) =>
-                prevContacts.map((contact) =>
-                    contact.id === send_user ? updateContact(contact) : contact
-                )
+            const upContact =  contactList.map((contact) =>
+                contact.id === send_user ? updateContact(contact) : contact
             );
+            setContactList(upContact);
+            setContNotify(upContact.filter((item:any) => item.notification == 1).length);
         }
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, hasNewMessage, setHasNewMessage, closeChat, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, hasNewMessage,contNotify, setHasNewMessage, closeChat, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

@@ -194,7 +194,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       // }, 5000);
     }
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
-    if (!response.error && response.send_user_id != userLog.id) {
+    
+    if (!response.error && response.send_user_id != localStorage.codUserGIPP) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
         if (response.type == 6) {

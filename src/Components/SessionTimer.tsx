@@ -17,7 +17,6 @@ const SessionTimer: React.FC<SessionTimerProps> = ({ expirationDate, loggedAt })
         }
 
         const expirationTime = new Date(expirationDate).getTime();
-        // const currentTime = Date.now();
         const currentTime = new Date(loggedAt).getTime();
         let remainingTime = expirationTime - currentTime;
 

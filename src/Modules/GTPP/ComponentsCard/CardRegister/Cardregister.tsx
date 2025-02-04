@@ -45,8 +45,7 @@ const Cardregister: React.FC<Cardregister> = (props) => {
       const response: any = await fetchData({ method: "POST", params: formDataRef.current, pathFile: "GTPP/Task.php" })
       if (response.error) throw new Error(response.message);
       const reqCSDS: any = await fetchData({ method: "POST", params: { ...formDataRef.current, task_id: response["last_id"] }, pathFile: "GTPP/TaskComShoDepSub.php" })
-
-
+      if (reqCSDS.error) throw new Error(reqCSDS.message);
       props.reloadtask();
       props.onClose();
     } catch (error) {

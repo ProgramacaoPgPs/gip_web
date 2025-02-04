@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import StructureModal, { MessageModal } from "../Components/CustomModal";
 import User from "../Class/User";
-import SessionTimer from "../Components/SessionTimer";
 import { useConnection } from "./ConnContext";
 
 const logo = require("../Assets/Image/peg_pese_loading.png");
@@ -102,20 +101,21 @@ export function MyProvider({ children }: Props) {
   }, [userLog]);
 
   async function configUserData(user: { id: number, session?: string; administrator?: number }) {
-    console.error(user);
-    const newUser = new User({
-      id: user.id,
-      session: user.session,
-      administrator: user.administrator ? user.administrator : 0
-    })
-    await newUser.loadInfo(true);
-    setUserLog(newUser);
+    if (user.id) {
+      const newUser = new User({
+        id: user.id,
+        session: user.session,
+        administrator: user.administrator ? user.administrator : 0
+      })
+      await newUser.loadInfo(true);
+      setUserLog(newUser);
+    }
   }
 
   async function loadDetailsToken() {
-    if (userLog.id) {
+    if (localStorage.codUserGIPP) {
       try {
-        const token = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Token.php', urlComplement: `&application_id=18&user_id=${userLog.id}` });
+        const token = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Token.php', urlComplement: `&application_id=18&user_id=${localStorage.codUserGIPP}` });
         if (token.error) throw new Error(token.message);
         setToken(token.data[0]);
       } catch (error) {

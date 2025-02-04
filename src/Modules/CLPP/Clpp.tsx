@@ -12,7 +12,7 @@ export default function Clpp(): JSX.Element {
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const [chat, setChat] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
-    const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage } = useWebSocket();
+    const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage,contNotify } = useWebSocket();
     const [blink, setBlink] = useState(false);
 
     useEffect(() => {
@@ -29,7 +29,7 @@ export default function Clpp(): JSX.Element {
             }, 6000); // Pisca por 3 segundos
         }
     }, [hasNewMessage]);
-    
+
     return (
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
             {
@@ -60,9 +60,20 @@ export default function Clpp(): JSX.Element {
                     </section>
                 </div>
             }
+            {
+                contNotify > 0 ?
+                    <span className='bg-danger position-absolute top-0 end-0 h6 text-white p-1 rounded-circle'>
+                        {contNotify.toString().padStart(2,'0')}
+                    </span>
+                    :
+                    <React.Fragment />
+            }
             <button title="Abrir chat" className={`btn fa-solid my-2 ${blink ? 'opacity-25' : 'opacity-100'} ${openChat ? 'fa-xmark' : 'fa-comments'}`} onClick={async () => {
                 setOpenChat(!openChat);
-            }}></button>
+                closeChat();
+                setChat(false);
+            }}>
+            </button>
         </div>
     );
 
