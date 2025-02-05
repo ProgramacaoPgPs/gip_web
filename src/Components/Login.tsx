@@ -6,6 +6,7 @@ import { fieldsetsData } from "../Configs/LoginConfigs";
 import DefaultPassword from "./DefaultPassword";
 import { ReactNotifications } from "react-notifications-component";
 import { useConnection } from "../Context/ConnContext";
+import User from "../Class/User";
 
 export default function Login() {
     const [defaultPassword, setDefaulPassword] = useState<boolean>(false);
@@ -15,7 +16,7 @@ export default function Login() {
     }>({ login: "", password: "" });
 
     const navigate = useNavigate();
-    const { setLoading, setTitleHead } = useMyContext();
+    const { setLoading, setTitleHead, configUserData } = useMyContext();
     const { setIsLogged } = useConnection();
     const { fetchData } = useConnection();
 
@@ -70,6 +71,7 @@ export default function Login() {
             if (!req) throw new Error("No response from server");
             if (req.error) throw new Error(req.message);
             configLocalStoranger(req.data);
+            await configUserData({ id: req.data["id"], session: req.data["session"] });
             setIsLogged(true);
             navigate("/home");
         } catch (error: any) {

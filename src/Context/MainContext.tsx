@@ -29,7 +29,7 @@ interface MyMainContext {
   setModalPage: (step: boolean) => void;
 
   setModalPageElement: (value: JSX.Element) => void;
-
+  configUserData:(user: { id: number, session?: string; administrator?: number }) => void;
   titleHead: { title: string; simpleTitle: string, icon?: string };
   setTitleHead: (value: { title: string; simpleTitle: string; icon?: string }) => void;
 
@@ -113,9 +113,9 @@ export function MyProvider({ children }: Props) {
   }
 
   async function loadDetailsToken() {
-    if (localStorage.codUserGIPP) {
+    if (userLog.id) {
       try {
-        const token = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Token.php', urlComplement: `&application_id=18&user_id=${localStorage.codUserGIPP}` });
+        const token = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Token.php', urlComplement: `&application_id=18&user_id=${userLog.id}` });
         if (token.error) throw new Error(token.message);
         setToken(token.data[0]);
       } catch (error) {
@@ -142,7 +142,7 @@ export function MyProvider({ children }: Props) {
 
         newProgressBar,
         setNewProgressBar,
-
+        configUserData,
         reset,
         setResetState,
         token,

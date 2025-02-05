@@ -91,7 +91,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function loadTasks(admin?: boolean) {
     try {
-      await reqTasks();
+      await reqTasks(admin);
     } catch (error) {
       console.error("Erro ao obter as informações da tarefa:", error);
     }

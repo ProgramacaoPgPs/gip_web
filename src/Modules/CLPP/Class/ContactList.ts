@@ -13,6 +13,7 @@ export default class ContactList {
     async loadListContacts(): Promise<{ error: boolean; message?: any; data?: any }> {
         try {
             let listFull: any = await fetchDataFull({method:"GET",params:null,pathFile:'CCPP/UserAccess.php',urlComplement:`&application_id=7&web`}) || { error: false, message: '' };
+            
             if (listFull && listFull.error && !listFull.message.includes('No data')) throw new Error(listFull.message);
             this.#contacts = await this.loadInfo(listFull.data);
             let list: any = await fetchDataFull({method:"GET",params:null,pathFile:'CLPP/Message.php',urlComplement:`&id=${this.#idUser}&id_user`});

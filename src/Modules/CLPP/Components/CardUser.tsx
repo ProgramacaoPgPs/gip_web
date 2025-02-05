@@ -4,7 +4,6 @@ import { tCardUser } from '../../../types/types';
 const logo = require('../../../Assets/Image/groupCLPP.png');
 
 export default function CardUser(props: tCardUser): JSX.Element {
-
     return (
         <div className={`cardContact border rounded my-2 overflow-hidden`}>
             <div className='d-flex align-items-center w-100 p-2'>

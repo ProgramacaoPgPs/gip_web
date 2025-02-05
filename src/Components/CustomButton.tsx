@@ -31,7 +31,7 @@ export function InputCheckButton(props: iPropsInputCheckButton) {
                     console.error(error);
                 }
             }} className={`${props.inputClass ? props.inputClass : 'cursor-pointer'}`} id={props.inputId} type="checkbox" />
-            <label className={`${props.labelClass ? props.labelClass : 'cursor-pointer'} ${icon} ${(props.highlight && isChecked) ? 'text-white' : 'text-dark'}  p-2`} htmlFor={props.inputId}>{props.labelText}</label>
+            <label className={`${props.labelClass ? props.labelClass : 'cursor-pointer'} ${icon} ${(props.highlight && isChecked) ? 'text-white' : props.labelColor ? props.labelColor : 'text-dark'}  p-2`} htmlFor={props.inputId}>{props.labelText}</label>
         </button>
     )
 

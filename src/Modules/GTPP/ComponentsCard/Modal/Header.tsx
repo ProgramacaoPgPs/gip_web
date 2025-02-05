@@ -112,6 +112,27 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           <InputCheckButton nameButton="Detalhes da tarefa." inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
             setDetailTask(e);
           }} labelIcon={"fa-solid fa-circle-info"} highlight={true} />
+          <InputCheckButton containerClass="btn p-0 bg-trasparent" nameButton="Cancelar a tarefa!" inputId={`task_ban_${task.user_id}`} onAction={async (e: boolean) => {
+            if (window.confirm("Deseja mesmo cancelar a tarefa?")) {
+              console.log("Aqui ficará a lógica para mudar o status da tarefa para cancelado");
+              //   {
+              //     "id": 4305,
+              //     "description": "Teste",
+              //     "percent": 100,
+              //     "state_description": "Fazendo",
+              //     "state_id": 2,
+              //     "priority": 2,
+              //     "users": 1,
+              //     "expire": 3,
+              //     "csds": [],
+              //     "user_id": 148,
+              //     "initial_date": "2024-02-01",
+              //     "final_date": "2025-02-07"
+              // }
+              // fetchData({method:"PUT",params:{id:task.id,state_id:7},pathFile:"GTPP/Task.php"})
+              console.log(task);
+            }
+          }} labelIcon={"fa-solid fa-ban"} labelColor="text-danger" />
 
           <button
             onClick={onClick || (() => console.warn("Valor indefinido!"))}

@@ -4,6 +4,7 @@ export interface iPropsInputCheckButton {
     onAction: (e: boolean) => void;
     inputClass?: string;
     labelClass?: string;
+    labelColor?: string;
     inputId: string;
     labelText?: string;
     labelIcon?: string;
