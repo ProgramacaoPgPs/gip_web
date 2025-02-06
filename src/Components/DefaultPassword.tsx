@@ -4,6 +4,7 @@ import CustomForm from "./CustomForm";
 import { useMyContext } from "../Context/MainContext";
 import { handleNotification } from "../Util/Util";
 import { useConnection } from "../Context/ConnContext";
+import { Connection } from "../Connection/Connection";
 
 export default function DefaultPassword(props: {
     open: boolean,
@@ -22,6 +23,7 @@ export default function DefaultPassword(props: {
         try {
             setLoading(true);
             event.preventDefault();
+            
             const req: any = await fetchData({method:"PUT",params:{ user: props.user.login, password: props.user.password, new_password: password, confirm_password: confirm },pathFile:"CCPP/Login.php",urlComplement:"&login="});
             if (req.error) throw new Error(req.message);
             handleNotification("Sucesso!","Senha alterada com sucesso","success");

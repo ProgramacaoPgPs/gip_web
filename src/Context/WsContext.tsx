@@ -18,7 +18,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
 
-
     function closeChat() {
         setIdReceived(0);
         setPageLimit(1);
@@ -37,7 +36,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const { setLoading, userLog } = useMyContext();
     const { fetchData } = useConnection();
     const ws = useRef(new WebSocketCLPP(localStorage.getItem("tokenGIPP"), callbackOnMessage));
-
 
     useEffect(() => {
         // Abre a coonexão com o websocket.

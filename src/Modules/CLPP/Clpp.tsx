@@ -84,4 +84,3 @@ export default function Clpp(): JSX.Element {
         setIdReceived(user.id);
     }
 }
-

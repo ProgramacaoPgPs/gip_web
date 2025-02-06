@@ -25,9 +25,11 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
   const [habilitEditionOfText, setHabilitEditionOfText] = useState<boolean>(false);
   const [detailUser, setDetailUser] = useState<boolean>(false);
   const [detailTask, setDetailTask] = useState<boolean>(false);
+  const [reasonCancellation, setReasonCancellation] = useState<string>('');
+  const [modalConfirmCancel, setModalConfirmCancel] = useState<boolean>(false);
   const [userTask, setUserTask] = useState<User>();
   const titleTaskInput = useRef<HTMLInputElement>(null);
-  const { getTask, task } = useWebSocket();
+  const { getTask, task, loadTasks } = useWebSocket();
   const { setLoading } = useMyContext();
   const { fetchData } = useConnection();
 
@@ -112,39 +114,44 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           <InputCheckButton nameButton="Detalhes da tarefa." inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
             setDetailTask(e);
           }} labelIcon={"fa-solid fa-circle-info"} highlight={true} />
-          <InputCheckButton containerClass="btn p-0 bg-trasparent" nameButton="Cancelar a tarefa!" inputId={`task_ban_${task.user_id}`} onAction={async (e: boolean) => {
-            if (window.confirm("Deseja mesmo cancelar a tarefa?")) {
-              console.log("Aqui ficará a lógica para mudar o status da tarefa para cancelado");
-              //   {
-              //     "id": 4305,
-              //     "description": "Teste",
-              //     "percent": 100,
-              //     "state_description": "Fazendo",
-              //     "state_id": 2,
-              //     "priority": 2,
-              //     "users": 1,
-              //     "expire": 3,
-              //     "csds": [],
-              //     "user_id": 148,
-              //     "initial_date": "2024-02-01",
-              //     "final_date": "2025-02-07"
-              // }
-              // fetchData({method:"PUT",params:{id:task.id,state_id:7},pathFile:"GTPP/Task.php"})
-              console.log(task);
-            }
-          }} labelIcon={"fa-solid fa-ban"} labelColor="text-danger" />
-
+          <button title="Cancelar a tarefa!" className="btn p-1 border-none" onClick={() => setModalConfirmCancel(true)}>
+            <i className="fa-solid fa-ban text-danger"></i>
+          </button>
           <button
             onClick={onClick || (() => console.warn("Valor indefinido!"))}
             className={`btn btn-${color} text-light fa fa-x`}
             aria-label="Fechar modal"
           />
         </div>
+        {modalConfirmCancel ?
+          <div style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 1, maxWidth:"300px" }} className="d-flex flex-column position-absolute p-2 rounded shadow-lg bg-dark w-75">
+            <header className="w-100 d-flex flex-column align-items-center">
+              <h1 className="text-white">Cancelar tarefa</h1>
+              <span className="text-white">Você está prestes a cancelar essa tarefa, informe o motivo?</span>
+            </header>
+            <input value={reasonCancellation} className="form-control my-2" placeholder="Informe o motivo" type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setReasonCancellation(e.currentTarget.value) }} />
+            <div className="d-flex w-100 align-items-center justify-content-around">
+              <button style={{ width: "40%" }} title="Confirmar cancelamento" className="btn btn-success my-2" onClick={() => cancelTask(reasonCancellation)}>Confirmar</button>
+              <button style={{ width: "40%" }} title="Fechar modal cancelar tarefa." className="btn btn-danger my-2" onClick={() => setModalConfirmCancel(false)}>Fechar</button>
+            </div>
+          </div>
+          : <React.Fragment />
+        }
       </div>
       {detailUser ? <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
       {detailTask ? <DetailsTask /> : <React.Fragment />}
     </div>
   );
+
+  async function cancelTask(description: string) {
+    try {
+      await fetchData({ method: "PUT", params: { id: task.id, state_id: 7, description: description }, pathFile: "GTPP/Task.php" });
+      await loadTasks();
+      if(onClick) onClick();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 export default HeaderModal;
