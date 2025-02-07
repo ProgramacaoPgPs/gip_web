@@ -656,7 +656,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   function reloadPageUpNoteItem(object: any) {
     if (taskDetails.data) taskDetails.data.task_item[0].note = object.note;
-    console.log(taskDetails.data?.task_item);
+    setTaskDetails({ ...taskDetails });
   }
 
   function itemUp(value: any) {
