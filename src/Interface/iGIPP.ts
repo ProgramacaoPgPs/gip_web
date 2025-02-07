@@ -1,6 +1,5 @@
 import { MutableRefObject, RefObject } from "react";
 import WebSocketCLPP from "../Services/Websocket";
-import { BlobOptions } from "buffer";
 
 export interface iUser {
     id: number;
@@ -46,7 +45,6 @@ export interface iGtppWsContextType {
     task: any;
     taskDetails: iTaskReq;
     taskPercent: number;
-    messageNotification: Record<string, any>;
     userTaskBind: any;
     notifications: CustomNotification[];
     states:iStates[];

@@ -216,7 +216,8 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                 icon="tasks"
                 description="Tarefas"
               />
-              {/* <ButtonIcon
+              {/*
+                <ButtonIcon
                   onClick={() => {
                     setListTask((prev) => ({
                       ...prev,
@@ -232,8 +233,9 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   icon="message"
                   description="Chat"
                   <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
-                <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
-                /> */}
+                  <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
+                /> 
+                */}
               <ButtonIcon
                 onClick={() => {
                   setListTask((prev) => ({

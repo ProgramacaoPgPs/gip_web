@@ -13,7 +13,6 @@ import InformSending from "../Class/InformSending";
 import { classToJSON, handleNotification } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
 import soundFile from "../../../Assets/Sounds/notify.mp3";
-import { useNavigate } from "react-router-dom";
 import { useConnection } from "../../../Context/ConnContext";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
@@ -24,13 +23,12 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [taskPercent, setTaskPercent] = useState<number>(0);
   const [task, setTask] = useState<any>({});
   const [taskDetails, setTaskDetails] = useState<iTaskReq>({});
-  const [messageNotification, setMessageNotification] = useState<Record<string, unknown>>({});
   const [onSounds, setOnSounds] = useState<boolean>(false);
   const [openCardDefault, setOpenCardDefault] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<CustomNotification[]>([]);
   const [getTask, setGetTask] = useState<any[]>([]);
   const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
-  const navigate = useNavigate();
+
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -179,9 +177,9 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   async function callbackOnMessage(event: any) {
+
     let response = JSON.parse(event.data);
 
-    setMessageNotification(response);
     if (
       response.error &&
       response.message.includes("This user has been connected to another place")
@@ -196,7 +194,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
 
     if (!response.error && response.send_user_id != localStorage.codUserGIPP) {
-      updateNotification([response]);
+       updateNotification([response]); //2º a ser observado
       if (response.type == -1 || response.type == 2 || response.type == 6) {
         if (response.type == 6) {
           await loadTasks();
@@ -211,8 +209,8 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             }
           }
         }
-
-      } else if (response.type == -3 || response.type == 5) {
+      }  else 
+        if (response.type == -3 || response.type == 5) {
         //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
         if (task.id == response.task_id && response.type == -3) {
           setOpenCardDefault(false);
@@ -249,6 +247,11 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     requestNotificationPermission();
   }, []);
 
+  useEffect(() => {
+    console.log("🔄 notifications mudou!", notifications);
+  }, [notifications]);
+  
+
   async function updateNotification(item: any[]) {
     try {
       setLoading(true);
@@ -258,10 +261,14 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error('Erro ao reproduzir o som:', error);
         });
       }
+
       const notify = new NotificationGTPP();
       await notify.loadNotify(item, states);
       notifications.push(...notify.list);
       setNotifications([...notifications]);
+      setNotifications((prevNotifications) => [...prevNotifications, ...notify.list]);
+
+
       handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
     } catch (error) {
       console.error(error);
@@ -680,7 +687,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
         taskDetails,
         task,
         taskPercent,
-        messageNotification,
         userTaskBind,
         notifications,
         states,
