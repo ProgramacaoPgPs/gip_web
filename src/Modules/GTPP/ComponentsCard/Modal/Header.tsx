@@ -56,6 +56,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       }
     }
   }, [habilitEditionOfText]);
+  
   function DetailsTask() {
     return (
       <div className="d-flex flex-column h-100 border p-2 my-2 rounded cardContact">

@@ -194,7 +194,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       // }, 5000);
     }
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
-    
+
     if (!response.error && response.send_user_id != localStorage.codUserGIPP) {
       updateNotification([response]);
       if (response.type == -1 || response.type == 2 || response.type == 6) {
@@ -207,7 +207,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             } else if (response.object.remove) {
               reloadPageDeleteItem(response);
             } else {
-              reloadPageAddItem(response.object);
+              reloadPageItem(response.object);
             }
           }
         }
@@ -641,10 +641,22 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     reloadPagePercent(value.object, value);
   }
 
+  function reloadPageItem(object: any) {
+    if (object.itemUp) {
+      reloadPageAddItem(object);
+    } else {
+      reloadPageUpNoteItem(object)
+    }
+  }
   function reloadPageAddItem(object: any) {
     taskDetails.data?.task_item.push(object.itemUp);
     setTaskDetails({ ...taskDetails });
     reloadPagePercent(object, object.itemUp);
+  }
+
+  function reloadPageUpNoteItem(object: any) {
+    if (taskDetails.data) taskDetails.data.task_item[0].note = object.note;
+    console.log(taskDetails.data?.task_item);
   }
 
   function itemUp(value: any) {
