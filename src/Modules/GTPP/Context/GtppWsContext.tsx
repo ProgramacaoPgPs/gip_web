@@ -14,6 +14,7 @@ import { classToJSON, handleNotification } from "../../../Util/Util";
 import NotificationGTPP from "../Class/NotificationGTPP";
 import soundFile from "../../../Assets/Sounds/notify.mp3";
 import { useConnection } from "../../../Context/ConnContext";
+import { useNavigate } from "react-router-dom";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
@@ -29,6 +30,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [getTask, setGetTask] = useState<any[]>([]);
   const [states, setStates] = useState<iStates[]>([{ color: '', description: '', id: 0 }]);
 
+  const navigate = useNavigate();
 
   // GET
   const [userTaskBind, setUserTaskBind] = useState<any[]>([]);
@@ -185,16 +187,16 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       response.message.includes("This user has been connected to another place")
     ) {
       handleNotification("Você será desconectado.", "Usuário logado em outro dispositivo!", "danger");
-      // setTimeout(() => {
-      //   navigate("/");
-      //   localStorage.removeItem("tokenGIPP");
-      //   localStorage.removeItem("codUserGIPP");
-      // }, 5000);
+      setTimeout(() => {
+        navigate("/");
+        localStorage.removeItem("tokenGIPP");
+        localStorage.removeItem("codUserGIPP");
+      }, 5000);
     }
     // Verifica se essa notificação não é de sua autoria. E se ela não deu falha!
 
     if (!response.error && response.send_user_id != localStorage.codUserGIPP) {
-       updateNotification([response]); //2º a ser observado
+      updateNotification([response]); //2º a ser observado
       if (response.type == -1 || response.type == 2 || response.type == 6) {
         if (response.type == 6) {
           await loadTasks();
@@ -209,15 +211,15 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
             }
           }
         }
-      }  else 
+      } else
         if (response.type == -3 || response.type == 5) {
-        //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
-        if (task.id == response.task_id && response.type == -3) {
-          setOpenCardDefault(false);
-        }
+          //Se você estiver com os detalhes da tarefa aberta e for removido ele deverá ser fechado!
+          if (task.id == response.task_id && response.type == -3) {
+            setOpenCardDefault(false);
+          }
 
-        await loadTasks();
-      }
+          await loadTasks();
+        }
     }
 
     if (!response.error && response.type == 3) {
@@ -250,7 +252,7 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     console.log("🔄 notifications mudou!", notifications);
   }, [notifications]);
-  
+
 
   async function updateNotification(item: any[]) {
     try {

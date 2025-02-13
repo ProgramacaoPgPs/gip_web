@@ -6,17 +6,25 @@ import User from '../../Class/User';
 import CardUser from './Components/CardUser';
 import ChatWindow from './Chat/ChatWindow';
 import Contacts from './Components/Contacts';
+import soundFile from '../../Assets/Sounds/notify_CLPP.mp3';
+// import soundFile from "../../../Assets/Sounds/notify_CLPP.mp3";
 export default function Clpp(): JSX.Element {
     const [openChat, setOpenChat] = React.useState<boolean>(false)
     const [isConverse, setIsConverse] = React.useState<boolean>(true);
     const [detailsChat, setDetailsChat] = React.useState<boolean>(false);
     const [chat, setChat] = React.useState<boolean>(false);
     const { userLog } = useMyContext();
-    const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage,contNotify } = useWebSocket();
+    const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage, contNotify } = useWebSocket();
     const [blink, setBlink] = useState(false);
 
     useEffect(() => {
         if (hasNewMessage) {
+            if (contNotify > 0 && Notification.permission === "granted") {
+                const audio = new Audio(soundFile);
+                audio.play().catch((error) => {
+                    console.error('Erro ao reproduzir o som:', error);
+                });
+            }
             setBlink(true);
             const timer = setInterval(() => {
                 setBlink((prev) => !prev);
@@ -42,7 +50,7 @@ export default function Clpp(): JSX.Element {
                             </div>
                             <i onClick={() => setDetailsChat(!detailsChat)} className={`btn text-primary fa-solid fa-circle-info`}></i>
                         </div>
-                        {detailsChat && <CardUser openMessage={openMessage} {...userLog} name={userLog.name}/>}
+                        {detailsChat && <CardUser openMessage={openMessage} {...userLog} name={userLog.name} />}
 
                     </header>
 
@@ -63,7 +71,7 @@ export default function Clpp(): JSX.Element {
             {
                 contNotify > 0 ?
                     <span className='bg-danger position-absolute top-0 end-0 h6 text-white p-1 rounded-circle'>
-                        {contNotify.toString().padStart(2,'0')}
+                        {contNotify.toString().padStart(2, '0')}
                     </span>
                     :
                     <React.Fragment />
