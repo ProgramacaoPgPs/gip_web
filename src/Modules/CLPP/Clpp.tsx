@@ -19,6 +19,7 @@ export default function Clpp(): JSX.Element {
 
     useEffect(() => {
         if (hasNewMessage) {
+            //Notificação sonora de mensagens
             if (contNotify > 0 && Notification.permission === "granted") {
                 const audio = new Audio(soundFile);
                 audio.play().catch((error) => {

@@ -78,7 +78,6 @@ export function MyProvider({ children }: Props) {
       console.warn("Notificações não são suportadas neste navegador.");
       return;
     }
-    //Notificação de mensagens
     if (Notification.permission === "granted") {
       console.log("O som Já estava liberado.");
     } else if (Notification.permission !== "denied") {
