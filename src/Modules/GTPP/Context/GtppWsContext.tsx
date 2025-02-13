@@ -270,7 +270,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setNotifications([...notifications]);
       setNotifications((prevNotifications) => [...prevNotifications, ...notify.list]);
 
-
       handleNotification(notify.list[0]["title"], notify.list[0]["message"], notify.list[0]["typeNotify"]);
     } catch (error) {
       console.error(error);
@@ -278,8 +277,6 @@ export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     }
   }
-
-
 
   function getDescription(description: any) {
     if (taskDetails.data) {

@@ -16,16 +16,24 @@ export default function Clpp(): JSX.Element {
     const { userLog } = useMyContext();
     const { ws, contactList, changeListContact, idReceived, setIdReceived, closeChat, hasNewMessage, setHasNewMessage, contNotify } = useWebSocket();
     const [blink, setBlink] = useState(false);
+    const [audio] = useState(new Audio(soundFile));
+
+    useEffect(() => {
+        // Solicitar permissão para notificações
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    console.log('Permissão para notificações concedida');
+                }
+            });
+        }
+    }, []);
 
     useEffect(() => {
         if (hasNewMessage) {
-            //Notificação sonora de mensagens
-            if (contNotify > 0 && Notification.permission === "granted") {
-                const audio = new Audio(soundFile);
-                audio.play().catch((error) => {
-                    console.error('Erro ao reproduzir o som:', error);
-                });
-            }
+            // Reproduzir o áudio
+            audio.play();
+
             setBlink(true);
             const timer = setInterval(() => {
                 setBlink((prev) => !prev);
@@ -37,7 +45,8 @@ export default function Clpp(): JSX.Element {
                 setHasNewMessage(false);
             }, 6000); // Pisca por 3 segundos
         }
-    }, [hasNewMessage]);
+    }, [hasNewMessage,audio]);
+
 
     return (
         <div id='moduleCLPP' className={`${openChat ? 'cardContactBtn' : null}`}>
