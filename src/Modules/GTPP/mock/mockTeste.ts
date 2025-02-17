@@ -128,3 +128,168 @@ export const fieldsetsRegister = (
             }
         }
     ];
+
+// Filtro de busca aonde vamos mesclar as informações para os campos ter mais facilidade.
+export const fildsetsFilters = (
+    onFilterSearch: (value: string) => void,
+    optionsFilterPriority: {value: string, label: string}[],
+    onFilterPriority: (value: string) => void,
+    onFilterDateInitial: (value: Date) => void,
+    onFilterDateInitialFinal: (value: Date) => void,
+    onFilterDateFinal: (value: Date) => void,
+    onFilterDateFinalFinal: (value: Date) => void,
+    onFilterStatus: (value: Number) => void,
+    optionsStatus: {value: string, label: string}[],
+    optionsStatusSecondary: {value: string, label: string}[]
+) => [
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por',
+            mandatory: true,
+            captureValue: {
+                type: 'text',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>{
+                    onFilterSearch((e.target.value));
+                },
+                placeholder: 'Digite a tarefa',
+                name: 'description',
+                className: 'form-control',
+                required: true,
+                id: '',
+                'area-label': 'Campo de filtro por tarefa',
+            },
+        }
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por prioridade',
+            mandatory: true,
+            captureValue: {
+                type: 'select',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterPriority(e.target.value) },
+                placeholder: '',
+                name: 'priority',
+                className: 'form-control',
+                required: true,
+                id: '',
+                options: optionsFilterPriority
+            },
+        }
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por data inicial',
+            mandatory: true,
+            captureValue: {
+                type: 'date',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(new Date(e.target.value)) },
+                name: 'initial_date',
+                className: 'form-control',
+                required: true,
+                id: ''
+            },
+        },
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por data inicial',
+            mandatory: true,
+            captureValue: {
+                type: 'date',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitialFinal(new Date(e.target.value)) },
+                name: 'initial_date',
+                className: 'form-control',
+                required: true,
+                id: ''
+            },
+        },
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por data final',
+            mandatory: true,
+            captureValue: {
+                type: 'date',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinal(new Date(e.target.value)) },
+                name: 'final_date',
+                className: 'form-control',
+                required: true,
+                id: ''
+            },
+        },
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por data final final',
+            mandatory: true,
+            captureValue: {
+                type: 'date',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinalFinal(new Date(e.target.value)) },
+                name: 'initial_final',
+                className: 'form-control',
+                required: true,
+                id: ''
+            },
+        },
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: '',
+            mandatory: false,
+            captureValue: {
+                type: 'radio',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
+                name: 'status',
+                className: 'form-control',
+                required: true,
+                id: '',
+                options: optionsStatus
+            }
+        },
+    },
+    {
+        attributes: { 
+            className: 'w-100', 
+        },
+        item: {
+            label: 'Filtrar por',
+            mandatory: true,
+            captureValue: {
+                type: 'radio',
+                placeholder: '',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
+                name: 'status',
+                className: 'form-control',
+                required: true,
+                id: '',
+                options: optionsStatus
+            }
+        },
+    }
+];

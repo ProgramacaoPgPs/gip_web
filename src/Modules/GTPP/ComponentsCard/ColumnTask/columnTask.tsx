@@ -1,5 +1,7 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useState } from 'react';
 import './columnTaskState.css';
+import ModalGenderTeste from '../Modal/ModalTeste';
+import ContentFilter from '../ContentFilter/ContentFilter';
 
 type ColumnPropsTaskState = HTMLAttributes<HTMLDivElement> & {
     title: string;
@@ -21,12 +23,24 @@ type ColumnPropsTaskStateFunction = {
 
 const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunction & ColumnPropsTaskStateBoolean> = (props) => {
     const { exportCsv, exportPdf, addTask, is_first_column, ...rest } = props;
+    const [filterHandler, setFilterHandler] = useState(false);
+
+    const handleFilterForContentBody = () => {
+        setFilterHandler(!filterHandler);
+    }
 
     return (
         <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
             <div className={`columnTaskState-title  rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
-                <h1 className="rounded p-1">{props.title}</h1>
-                {props.buttonHeader}
+                <div className='d-flex justify-content-between align-items-center w-100'>
+                    <div><h1 className="rounded p-1">{props.title}</h1></div>
+                    <div>
+                        <button onClick={handleFilterForContentBody} className="btn font-filter-button">filtro</button>
+                    </div>
+                    <ModalGenderTeste isOpen={filterHandler} onClose={handleFilterForContentBody}>
+                        <ContentFilter />
+                    </ModalGenderTeste>
+                </div>
             </div>
             <div className="columnTaskState-container">
                 <div className="columnTaskState-body">
@@ -36,7 +50,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
             <div className={`columnTaskState-title rounded-bottom d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center justify-content-around`} style={{ background: `#${props.bg_color}` }}>
                 <i className='fa save cursor-pointer text-white fa-file-csv' onClick={exportCsv} />
                 <i className='fa file cursor-pointer text-white fa-file-pdf' onClick={exportPdf} />
-                {is_first_column && <i className='fa add cursor-pointer text-white fa-file-circle-plus' onClick={addTask} />}
+                {is_first_column && <i className='fa add cursor-pointer text-white fa-circle-plus' onClick={addTask} />}
             </div>
         </div>
     );

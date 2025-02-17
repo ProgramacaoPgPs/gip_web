@@ -11,6 +11,15 @@ type Cardregister = {
   onClose: () => void;
 };
 
+export function convertDataForOptionSelect(data: any[], label: string, value: string): [{ value: string, label: string }] {
+  let result: [{ value: string, label: string }] = [{ value: "", label: "" }];
+  data.forEach((item: any) => {
+    result.push({ value: item[value], label: item[label] })
+  })
+  return result;
+}
+
+
 const Cardregister: React.FC<Cardregister> = (props) => {
   const { assistenceFunction } = props;
 
@@ -102,15 +111,7 @@ const Cardregister: React.FC<Cardregister> = (props) => {
       setLoading(false);
     }
   }
-
-  function convertDataForOptionSelect(data: any[], label: string, value: string): [{ value: string, label: string }] {
-    let result: [{ value: string, label: string }] = [{ value: "", label: "" }];
-    data.forEach((item: any) => {
-      result.push({ value: item[value], label: item[label] })
-    })
-    return result;
-  }
-
+  
   return (
     <div className="card bodyCard">
       <div className="d-flex justify-content-end align-items-center">
