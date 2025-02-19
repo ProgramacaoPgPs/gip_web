@@ -57,7 +57,9 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
             </b>
             :
           </label>
-          {renderField(fieldset.item.captureValue)}
+          <div className='d-flex align-items-center justify-content-around'>
+            {renderField(fieldset.item.captureValue)}
+          </div>
         </fieldset>
       ))}
       <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
@@ -112,6 +114,13 @@ function renderField(
         );
       case 'textarea':
         return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
+      case 'radio' :
+          return (
+            <div className='d-flex gap-2'>
+              <div><InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} /></div>
+              <div>{captureValue?.title}</div>
+            </div>
+          );
       default:
         return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
     }
