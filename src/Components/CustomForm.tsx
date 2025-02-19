@@ -44,12 +44,29 @@ interface SelectOption {
   label: string;
 }
 
+interface OptionsRadio {
+  titleRadio: string;
+  value: string;
+  checked?: boolean;
+  name: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface RadioFieldProps {
+  label?: string;
+  options: OptionsRadio[] | any;
+  selectedValue?: string | number | readonly string[] | undefined;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}
+
 function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProps }: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset, fieldsetIndex) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
+
           <label>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
@@ -57,9 +74,10 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
             </b>
             :
           </label>
-          <div className='d-flex align-items-center justify-content-around'>
+          <div className='d-flex align-items-center gap-4'>
             {renderField(fieldset.item.captureValue)}
           </div>
+
         </fieldset>
       ))}
       <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
@@ -114,13 +132,13 @@ function renderField(
         );
       case 'textarea':
         return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
-      case 'radio' :
-          return (
-            <div className='d-flex gap-2'>
-              <div><InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} /></div>
-              <div>{captureValue?.title}</div>
-            </div>
-          );
+        case 'radio':
+          if (captureValue.type === 'radio' && 'options' in captureValue) {
+            return (
+              <RadioField options={captureValue.options} label={captureValue.title} selectedValue={captureValue.value} onChange={captureValue.onChange}/>
+            );
+          }
+          break;
       default:
         return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
     }
@@ -128,6 +146,32 @@ function renderField(
 
   // Caso não seja um array e não tenha um tipo definido, assume que é um input
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
+}
+{/*
+  
+  Melhorar a lógica do RadioField e ver se faz sentindo manter ele ou utilizar o input que já existe para renderizar  
+  
+*/}
+export function RadioField({ label, options, selectedValue, onChange, className }: RadioFieldProps) {
+  return (
+    <div>
+      {/* Mapeia e renderiza as opções do radio */}
+      {options.map((option:any, index:number) => (
+        <div key={`radio_${index}`}>
+          <label className='d-flex gap-2'>
+            <input
+              type="radio"
+              name={option.name}
+              value={option.value}
+              checked={selectedValue === option.value}
+              onChange={onChange}
+            />
+            <div>{option.titleRadio}</div>
+          </label>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 
@@ -204,10 +248,12 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
       </div>
     );
   }
+
   function submitQuestionItem(event: any, response: number) {
     const value = yesNo == response ? -1 : event.value;
     props.onChange(props.id, event.checked, props.task.task_id, props.task, value);
   }
+  
   function OptionItem() {
     return (
       <div className='d-flex col-3 col-sm-2 ps-2'>

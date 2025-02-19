@@ -2,6 +2,7 @@ import React, { HTMLAttributes, useState } from 'react';
 import './columnTaskState.css';
 import ModalGenderTeste from '../Modal/ModalTeste';
 import ContentFilter from '../ContentFilter/ContentFilter';
+import MinimalFilterModel from '../MinimalFilterModel/MinimalFilterModel';
 
 type ColumnPropsTaskState = HTMLAttributes<HTMLDivElement> & {
     title: string;
@@ -37,9 +38,13 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                     <div>
                         <button onClick={handleFilterForContentBody} className="btn font-filter-button">filtro</button>
                     </div>
-                    <ModalGenderTeste isOpen={filterHandler} onClose={handleFilterForContentBody}>
-                        <ContentFilter />
-                    </ModalGenderTeste>
+                    <div style={{position: 'relative'}}>      
+                        {filterHandler && (
+                            <MinimalFilterModel>
+                                <ContentFilter />
+                            </MinimalFilterModel>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="columnTaskState-container">

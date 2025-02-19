@@ -53,14 +53,14 @@ const ContentFilter: React.FC<TaskStateFilterProps> = () => {
 
     // Campo de valores de Radio
     const optionsFilterStatus = [
-        {value: "1", label: 'Colaborador'},
-        {value: "2", label: 'Minhas tarefas'},
+        {value: "1", label: '', titleRadio: 'Colaborador'},
+        {value: "2", label: '', titleRadio: 'Minhas tarefas'},
     ];
 
     // Campo de valores de Radio
     const optionsFilterStatus2 = [
-        {value: "1", label: 'Colaborador'},
-        {value: "2", label: 'Minhas tarefas'},
+        {value: "1", label: '', titleRadio: 'Colaborador'},
+        {value: "2", label: '', titleRadio: 'Minhas tarefas'},
     ];
 
     // alocador de valores.
@@ -83,7 +83,6 @@ const ContentFilter: React.FC<TaskStateFilterProps> = () => {
                 classButton='btn btn-success'
                 onSubmit={() => console.log('teste')}
                 titleButton={"Confirmar"}
-                className='d-flex flex-column align-items-center justify-content-center h-100'
                 // @ts-ignore
                 fieldsets={fieldsetsValues}
             />
