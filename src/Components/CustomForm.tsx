@@ -5,6 +5,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
     attributes?: React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
     item: {
       label: string;
+      classLabel?:string;
       mandatory?: boolean;
       captureValue:
       | React.InputHTMLAttributes<HTMLInputElement>
@@ -20,6 +21,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   }[];
   onAction?: any;
   titleButton?: any;
+  notButton?: boolean;
   classButton?: string;
 };
 
@@ -28,13 +30,13 @@ interface SelectOption {
   label: string;
 }
 
-function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, classButton,notButton, titleButton = "Login", ...formProps }: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset, fieldsetIndex) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
-          <label>
+          <label className={fieldset.item.classLabel ? fieldset.item.classLabel : ''}>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
               {fieldset.item.mandatory ? ' *' : ''}
@@ -44,8 +46,7 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
           {renderField(fieldset.item.captureValue)}
         </fieldset>
       ))}
-      {/* <button className='btn mt-5 my-2'>Enviar</button> */}
-      <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
+      {!notButton ? <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button> : <React.Fragment/>}
     </form>
   );
 }
