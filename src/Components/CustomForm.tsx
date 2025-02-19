@@ -1,4 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+type CaptureValueArray = Array<
+  [
+    React.InputHTMLAttributes<HTMLInputElement>,
+    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] },
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>
+  ]
+>;
+
+type CaptureValueTuple = [
+  React.InputHTMLAttributes<HTMLInputElement>,
+  React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] },
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>
+];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
   fieldsets: {
@@ -9,7 +23,9 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       captureValue:
       | React.InputHTMLAttributes<HTMLInputElement>
       | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
-      | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+      | React.TextareaHTMLAttributes<HTMLTextAreaElement>
+      | CaptureValueArray
+      | CaptureValueTuple
     };
     legend?: {
       style?: string;
@@ -18,8 +34,8 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
     buttons?: [];
 
   }[];
-  onAction?: any;
-  titleButton?: any;
+  onAction?: () => void;
+  titleButton?: string;
   classButton?: string;
 };
 
@@ -44,7 +60,6 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
           {renderField(fieldset.item.captureValue)}
         </fieldset>
       ))}
-      {/* <button className='btn mt-5 my-2'>Enviar</button> */}
       <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
     </form>
   );
@@ -53,9 +68,38 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
 function renderField(
   captureValue:
     | React.InputHTMLAttributes<HTMLInputElement>
-    | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) // Certifique-se que options só existe em select
+    | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })
     | React.TextareaHTMLAttributes<HTMLTextAreaElement>
+    | CaptureValueArray
+    | CaptureValueTuple
 ) {
+  // se for uma tupla, renderiza cada elemento da tupla
+  if (Array.isArray(captureValue) && captureValue.length === 3) {
+    return (
+      <>
+        {captureValue.map((field, index) => (
+          <div key={index}>
+            {renderField(field)} {/* Fiz uma recursividade para o renderField fazer um callback nele mesmo para resolver problemas que podem ser divididos em problemas menores. */}
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  // Se for um array, renderiza cada elemento do array
+  if (Array.isArray(captureValue)) {
+    return (
+      <>
+        {captureValue.map((field, index) => (
+          <div key={index}>
+            {renderField(field)}
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  // Se não for um array, renderiza o campo individualmente
   if ('type' in captureValue) {
     switch (captureValue.type) {
       case 'select':
@@ -72,8 +116,11 @@ function renderField(
         return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
     }
   }
+
+  // Caso não seja um array e não tenha um tipo definido, assume que é um input
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
 }
+
 
 export function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} />;

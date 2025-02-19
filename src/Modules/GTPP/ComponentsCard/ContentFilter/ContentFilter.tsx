@@ -84,6 +84,7 @@ const ContentFilter: React.FC<TaskStateFilterProps> = () => {
                 onSubmit={() => console.log('teste')}
                 titleButton={"Confirmar"}
                 className='d-flex flex-column align-items-center justify-content-center h-100'
+                // @ts-ignore
                 fieldsets={fieldsetsValues}
             />
         </div>

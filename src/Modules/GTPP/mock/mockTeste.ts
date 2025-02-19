@@ -189,15 +189,26 @@ export const fildsetsFilters = (
         item: {
             label: 'Filtrar por data inicial',
             mandatory: true,
-            captureValue: {
-                type: 'date',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(new Date(e.target.value)) },
-                name: 'initial_date',
-                className: 'form-control',
-                required: true,
-                id: ''
-            },
+            captureValue: [
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(new Date(e.target.value)) },
+                    name: 'initial_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                },
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(new Date(e.target.value)) },
+                    name: 'initial_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                }
+            ],
         },
     },
     {
@@ -207,15 +218,26 @@ export const fildsetsFilters = (
         item: {
             label: 'Filtrar por data inicial',
             mandatory: true,
-            captureValue: {
-                type: 'date',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitialFinal(new Date(e.target.value)) },
-                name: 'initial_date',
-                className: 'form-control',
-                required: true,
-                id: ''
-            },
+            captureValue: [
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(new Date(e.target.value)) },
+                    name: 'initial_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                },
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitialFinal(new Date(e.target.value)) },
+                    name: 'initial_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                }
+            ],
         },
     },
     {
@@ -225,33 +247,26 @@ export const fildsetsFilters = (
         item: {
             label: 'Filtrar por data final',
             mandatory: true,
-            captureValue: {
-                type: 'date',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinal(new Date(e.target.value)) },
-                name: 'final_date',
-                className: 'form-control',
-                required: true,
-                id: ''
-            },
-        },
-    },
-    {
-        attributes: { 
-            className: 'w-100', 
-        },
-        item: {
-            label: 'Filtrar por data final final',
-            mandatory: true,
-            captureValue: {
-                type: 'date',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinalFinal(new Date(e.target.value)) },
-                name: 'initial_final',
-                className: 'form-control',
-                required: true,
-                id: ''
-            },
+            captureValue: [
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinal(new Date(e.target.value)) },
+                    name: 'final_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                },
+                {
+                    type: 'date',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinalFinal(new Date(e.target.value)) },
+                    name: 'final_date',
+                    className: 'form-control',
+                    required: true,
+                    id: ''
+                }
+            ],
         },
     },
     {
@@ -261,35 +276,28 @@ export const fildsetsFilters = (
         item: {
             label: '',
             mandatory: false,
-            captureValue: {
-                type: 'radio',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
-                name: 'status',
-                className: 'form-control',
-                required: true,
-                id: '',
-                options: optionsStatus
-            }
+            captureValue: [
+                {
+                    type: 'radio',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
+                    name: 'status',
+                    className: 'form-control',
+                    required: true,
+                    id: '',
+                    options: optionsStatus
+                },
+                {
+                    type: 'radio',
+                    placeholder: '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
+                    name: 'status',
+                    className: 'form-control',
+                    required: true,
+                    id: '',
+                    options: optionsStatus
+                }
+            ]
         },
     },
-    {
-        attributes: { 
-            className: 'w-100', 
-        },
-        item: {
-            label: 'Filtrar por',
-            mandatory: true,
-            captureValue: {
-                type: 'radio',
-                placeholder: '',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(parseInt(e.target.value)) },
-                name: 'status',
-                className: 'form-control',
-                required: true,
-                id: '',
-                options: optionsStatus
-            }
-        },
-    }
 ];
