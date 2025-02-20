@@ -8,7 +8,6 @@ const iconGTPP = require("../Assets/Image/GTTP_icon.png");
 
 export default function Home(): JSX.Element {
     const { setTitleHead } = useMyContext();
-    const [ctlSearchUser, setCtlSearchUser] = useState<boolean>(false);
 
     React.useEffect(() => {
         setTitleHead({ title: 'Home - GIPP', simpleTitle:"Home", icon: 'fa fa-home' });
@@ -26,16 +25,11 @@ export default function Home(): JSX.Element {
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='p-2 flex-grow-1'>
-                {ctlSearchUser && <SearchUser onClose={onCloseSearchUser}/>}
                 <CustomButton onClick={() => navigate('/home/GTPP')} className='btn col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
                     <img className="rounded w-100" src={iconGTPP} alt="Logo Peg Pese" />
                 </CustomButton>
-                <button type="button" className='btn btn-primary mx-2' onClick={()=>setCtlSearchUser(true)}>Open User</button>
             </section>
         </div>
     );
-    function onCloseSearchUser(value:any){
-        console.log(value);
-        setCtlSearchUser(false)
-    }
+
 }

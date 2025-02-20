@@ -29,7 +29,7 @@ interface MyMainContext {
   setModalPage: (step: boolean) => void;
 
   setModalPageElement: (value: JSX.Element) => void;
-  configUserData:(user: { id: number, session?: string; administrator?: number }) => void;
+  configUserData: (user: { id: number, session?: string; administrator?: number }) => void;
   titleHead: { title: string; simpleTitle: string, icon?: string };
   setTitleHead: (value: { title: string; simpleTitle: string; icon?: string }) => void;
 
@@ -39,6 +39,10 @@ interface MyMainContext {
   setToken: ({ }: any) => void;
   loadDetailsToken: () => void;
   contactList: User[];
+  ctlSearchUser:boolean;
+  setCtlSearchUser:(value:boolean)=>void;
+  appIdSearchUser:number | null;
+  setAppIdSearchUser:(value:number | null)=>void;
 }
 
 interface Props {
@@ -56,6 +60,9 @@ export function MyProvider({ children }: Props) {
   const [modalPage, setModalPage] = useState<boolean>(false);
   const [newProgressBar, setNewProgressBar] = useState<number | string | null>(null);
   const [token, setToken] = useState<any>({});
+  const [ctlSearchUser, setCtlSearchUser] = useState<boolean>(false);
+  const [appIdSearchUser, setAppIdSearchUser] = useState<number | null>(0);
+
 
   const [message, setMessage] = useState<{ text: string; type: 1 | 2 | 3 | 4 }>({
     text: "",
@@ -100,9 +107,9 @@ export function MyProvider({ children }: Props) {
     loadInitialDatas();
   }, [userLog]);
 
-  async function loadInitialDatas(){
-    if(localStorage.tokenGIPP){
-      const company = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Company.php'});
+  async function loadInitialDatas() {
+    if (localStorage.tokenGIPP) {
+      const company = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Company.php' });
       console.log(company);
     }
   }
@@ -155,6 +162,11 @@ export function MyProvider({ children }: Props) {
         token,
         setToken,
         loadDetailsToken,
+
+        ctlSearchUser, 
+        setCtlSearchUser,
+        appIdSearchUser, 
+        setAppIdSearchUser
       }}
     >
       {loading && (

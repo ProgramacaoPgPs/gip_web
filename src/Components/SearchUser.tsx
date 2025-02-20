@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useConnection } from "../Context/ConnContext";
-import CSDS from "./FiltersSearchUser";
+import FiltersSearchUser from "./FiltersSearchUser";
 import { useMyContext } from "../Context/MainContext";
 import CustomTable from "./CustomTable";
 import { tItemTable } from "../types/types";
 import User from "../Class/User";
 
-export default function SearchUser(props: { onClose: (value: any) => void, appId?:number }) {
+export default function SearchUser(props: { onClose?: (value: any) => void }) {
     const [page, setPage] = useState<number>(1);
     const [limitPage, setLimitPage] = useState<number>(1);
     const [params, setParams] = useState<string>('');
     const [list, setList] = useState<tItemTable[]>([]);
-    const { setLoading } = useMyContext();
+    const { setLoading, ctlSearchUser,setCtlSearchUser,appIdSearchUser } = useMyContext();
 
     const { fetchData } = useConnection();
 
@@ -19,7 +19,7 @@ export default function SearchUser(props: { onClose: (value: any) => void, appId
         (async () => {
             await recoverList(params);
         })();
-    }, [page, params]);
+    }, [page, params,appIdSearchUser]);
 
 
     async function recoverList(value?: string) {
@@ -29,8 +29,8 @@ export default function SearchUser(props: { onClose: (value: any) => void, appId
             if (value) {
                 newUrlComplement += value;
             }
-            if(props.appId){
-                newUrlComplement += `&pApplicationAccess=${props.appId}`
+            if (appIdSearchUser) {
+                newUrlComplement += `&pApplicationAccess=${appIdSearchUser}`
             }
             const req: any = await fetchData({ method: 'GET', params: null, pathFile: 'CCPP/Employee.php', urlComplement: newUrlComplement });
             if (req["error"]) throw new Error(req["message"]);
@@ -59,44 +59,49 @@ export default function SearchUser(props: { onClose: (value: any) => void, appId
     }
 
     return (
-        <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-50 position-absolute top-0 start-0 w-100 h-100 p-2">
-            <div className="d-flex flex-column justify-content-between bg-dark bg-gradient p-2 rounded w-100 h-100">
-                <header>
-                    <div>
-                        <h1 className="text-white">Colaboradores:</h1>
-                    </div>
-                    <CSDS onAction={(e: string) => {
-                        setParams(e);
-                        setPage(1);
-                    }} />
-                </header>
-                <section className="bg-white flex-grow-1 overflow-auto">
-                    {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} /> : <React.Fragment />}
-                </section>
-                <footer className="d-flex align-items-center justify-content-around text-white py-4">
-                    <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>
-                    {`( ${page.toString().padStart(2, '0')} / ${limitPage.toString().padStart(2, '0')} )`}
-                    <button onClick={() => navPage(true)} className="btn btn-light fa-solid fa-forward" type="button"></button>
-                </footer>
+        ctlSearchUser
+            ?
+            <div style={{ zIndex: "2" }} className="d-flex align-items-center justify-content-center bg-dark bg-opacity-50 position-absolute top-0 start-0 w-100 h-100">
+                <div className="d-flex flex-column justify-content-between bg-dark bg-gradient p-2 rounded w-100 h-100">
+                    <header>
+                        <div>
+                            <h1 className="text-white">Colaboradores:</h1>
+                        </div>
+                        <FiltersSearchUser onAction={(e: string) => {
+                            setParams(e);
+                            setPage(1);
+                        }} />
+                    </header>
+                    <section className="bg-white flex-grow-1 overflow-auto">
+                        {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} /> : <React.Fragment />}
+                    </section>
+                    <footer className="d-flex align-items-center justify-content-around text-white py-2">
+                        <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>
+                        {`( ${page.toString().padStart(2, '0')} / ${limitPage.toString().padStart(2, '0')} )`}
+                        <button onClick={() => navPage(true)} className="btn btn-light fa-solid fa-forward" type="button"></button>
+                    </footer>
+                </div>
             </div>
-        </div>
+            :
+            <React.Fragment />
     );
 
     function closeCustomTable(items: tItemTable[]) {
-        let listUser:User[]=[];
-        items.forEach(async(item: tItemTable) => {
+        let listUser: User[] = [];
+        items.forEach(async (item: tItemTable) => {
             const user = new User({
                 id: parseInt(item.employee_id.value),
                 name: item.employee_name.value,
                 photo: item.employee_photo.value,
                 company: item.company_name.value,
-                departament:item.departament_name.value,
-                shop:item.store_name.value,
-                sub:item.sub_dep_name.value
-            });    
+                departament: item.departament_name.value,
+                shop: item.store_name.value,
+                sub: item.sub_dep_name.value
+            });
             listUser.push(user);
         })
-        props.onClose(listUser);
+        setCtlSearchUser(false);
+        if(props.onClose) props.onClose(listUser);
     }
 
     function navPage(isNext: boolean) {
