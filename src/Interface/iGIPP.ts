@@ -1,11 +1,9 @@
 import { MutableRefObject, RefObject } from "react";
 import WebSocketCLPP from "../Services/Websocket";
+import Contact from "../Class/Contact";
 
 export interface iUser {
     id: number;
-    yourContact?: number;
-    notification?: number;
-    pendingMessage?: number;
     name?: string;
     company?: string;
     shop?: string;
@@ -15,6 +13,13 @@ export interface iUser {
     photo?: string;
     administrator?: number;
     session?: string;
+}
+
+export interface iContact{
+    id: number;
+    yourContact?: number;
+    notification?: number;
+    pendingMessage?: number;
 }
 export interface CustomNotification  {
     id: number;
@@ -120,6 +125,6 @@ export interface iWebSocketContextType {
     setPage: (value: number) => void;
     setIdReceived: (value: number) => void;
     setSender: React.Dispatch<React.SetStateAction<iSender>>;
-    setContactList: (value: iUser[]) => void;
+    setContactList: (value: Contact[]) => void;
     changeListContact: (value: number) => void;
 }

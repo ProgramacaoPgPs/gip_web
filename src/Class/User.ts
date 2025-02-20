@@ -22,9 +22,6 @@ export default class User {
         if (user.session) this.#session = user.session;
 
         // Optional properties
-        this.#yourContact = user.yourContact;
-        this.#notification = user.notification;
-        this.#pendingMessage = user.pendingMessage;
         this.#name = user.name;
         this.#company = user.company;
         if(user.photo) this.photo = user.photo;
