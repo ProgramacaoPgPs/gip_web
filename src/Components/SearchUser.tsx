@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useConnection } from "../Context/ConnContext";
-import CSDS from "./CSDS";
+import CSDS from "./FiltersSearchUser";
 import { useMyContext } from "../Context/MainContext";
 import CustomTable from "./CustomTable";
 import { tItemTable } from "../types/types";
 import User from "../Class/User";
 
-export default function SearchUser(props: { onClose: (value: any) => void }) {
+export default function SearchUser(props: { onClose: (value: any) => void, appId?:number }) {
     const [page, setPage] = useState<number>(1);
     const [limitPage, setLimitPage] = useState<number>(1);
     const [params, setParams] = useState<string>('');
@@ -28,6 +28,9 @@ export default function SearchUser(props: { onClose: (value: any) => void }) {
             let newUrlComplement = `&pPage=${page}`
             if (value) {
                 newUrlComplement += value;
+            }
+            if(props.appId){
+                newUrlComplement += `&pApplicationAccess=${props.appId}`
             }
             const req: any = await fetchData({ method: 'GET', params: null, pathFile: 'CCPP/Employee.php', urlComplement: newUrlComplement });
             if (req["error"]) throw new Error(req["message"]);
@@ -80,8 +83,8 @@ export default function SearchUser(props: { onClose: (value: any) => void }) {
     );
 
     function closeCustomTable(items: tItemTable[]) {
+        let listUser:User[]=[];
         items.forEach(async(item: tItemTable) => {
-
             const user = new User({
                 id: parseInt(item.employee_id.value),
                 name: item.employee_name.value,
@@ -90,11 +93,10 @@ export default function SearchUser(props: { onClose: (value: any) => void }) {
                 departament:item.departament_name.value,
                 shop:item.store_name.value,
                 sub:item.sub_dep_name.value
-                
-            });
-            console.log(user);
+            });    
+            listUser.push(user);
         })
-        
+        props.onClose(listUser);
     }
 
     function navPage(isNext: boolean) {

@@ -4,7 +4,7 @@ import CustomForm from "./CustomForm"
 import { useConnection } from "../Context/ConnContext";
 import { useMyContext } from "../Context/MainContext";
 
-export default function CSDS(props: { onAction: (value: string) => void }) {
+export default function FiltersSearchUser(props: { onAction: (value: string) => void }) {
     const [company, setCompany] = useState<any[]>([]);
     const [store, setStore] = useState<any[]>([]);
     const [departament, setDepartament] = useState<any[]>([]);
