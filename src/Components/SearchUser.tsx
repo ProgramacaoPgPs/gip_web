@@ -4,8 +4,9 @@ import CSDS from "./CSDS";
 import { useMyContext } from "../Context/MainContext";
 import CustomTable from "./CustomTable";
 import { tItemTable } from "../types/types";
+import User from "../Class/User";
 
-export default function SearchUser() {
+export default function SearchUser(props: { onClose: (value: any) => void }) {
     const [page, setPage] = useState<number>(1);
     const [limitPage, setLimitPage] = useState<number>(1);
     const [params, setParams] = useState<string>('');
@@ -19,10 +20,6 @@ export default function SearchUser() {
             await recoverList(params);
         })();
     }, [page, params]);
-
-    useEffect(() => {
-        console.log(list);
-    }, [list]);
 
 
     async function recoverList(value?: string) {
@@ -59,8 +56,8 @@ export default function SearchUser() {
     }
 
     return (
-        <div className="d-flex align-items-center justify-content-center bg-white position-absolute top-0 start-0 w-100 h-100 p-2">
-            <div className="d-flex flex-column justify-content-between bg-dark p-2 rounded w-100 h-75">
+        <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-50 position-absolute top-0 start-0 w-100 h-100 p-2">
+            <div className="d-flex flex-column justify-content-between bg-dark bg-gradient p-2 rounded w-100 h-100">
                 <header>
                     <div>
                         <h1 className="text-white">Colaboradores:</h1>
@@ -71,8 +68,7 @@ export default function SearchUser() {
                     }} />
                 </header>
                 <section className="bg-white flex-grow-1 overflow-auto">
-                    {/* <RenderListUser list={list} /> */}
-                    {list.length > 0 ? <CustomTable list={list} onClose={(items: tItemTable[]) => console.log(items)} /> : <React.Fragment />}
+                    {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} /> : <React.Fragment />}
                 </section>
                 <footer className="d-flex align-items-center justify-content-around text-white py-4">
                     <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>
@@ -83,7 +79,23 @@ export default function SearchUser() {
         </div>
     );
 
+    function closeCustomTable(items: tItemTable[]) {
+        items.forEach(async(item: tItemTable) => {
 
+            const user = new User({
+                id: parseInt(item.employee_id.value),
+                name: item.employee_name.value,
+                photo: item.employee_photo.value,
+                company: item.company_name.value,
+                departament:item.departament_name.value,
+                shop:item.store_name.value,
+                sub:item.sub_dep_name.value
+                
+            });
+            console.log(user);
+        })
+        
+    }
 
     function navPage(isNext: boolean) {
         // Verifica se haverá uma adição ou subtração em relação a página atual.
@@ -93,12 +105,4 @@ export default function SearchUser() {
             setPage(newPage);
         }
     }
-}
-
-function RenderListUser(props: { list: any[] }) {
-    return (
-        <div>
-            {props?.list.map((item: any) => <h1 key={`employeeData_${item.employee_id}`}>{item.employee_name}</h1>)}
-        </div>
-    )
 }

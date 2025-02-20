@@ -13,7 +13,7 @@ export type tChatWindow = {
 export type tCardUser = {
     name?: string;
     id?: number;
-    shop?: number;
+    shop?: string;
     departament?: string;
     sub?: string;
     photo?: string;

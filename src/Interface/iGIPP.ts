@@ -8,7 +8,7 @@ export interface iUser {
     pendingMessage?: number;
     name?: string;
     company?: string;
-    shop?: number;
+    shop?: string;
     departament?: string;
     sub?: string;
     CSDS?: string;

@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { tItemTable } from "../types/types";
 const defaultImage = require('../Assets/Image/groupCLPP.png');
 
-export default function TableComponent(props: { list: tItemTable[], onClose: (selected: tItemTable[]) => void }) {
+export default function TableComponent(props: { list: tItemTable[], onConfirmList: (selected: tItemTable[]) => void }) {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: string } | null>(null);
   const [filters, setFilters] = useState<{ [key: string]: string }>({});
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export default function TableComponent(props: { list: tItemTable[], onClose: (se
           </tbody>
         </table>
       </div>
-      <button className="btn btn-primary mt-3" onClick={() => props.onClose(selectedRows)}>
+      <button className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
         Confirmar Seleção
       </button>
     </div>
