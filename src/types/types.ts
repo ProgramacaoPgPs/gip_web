@@ -32,5 +32,6 @@ export type tItemTable = {
         tag: string;
         value: string;
         isImage?:boolean;
+        ocultColumn?:boolean;
     };
 };

@@ -34,7 +34,6 @@ export default function SearchUser() {
             }
             const req: any = await fetchData({ method: 'GET', params: null, pathFile: 'CCPP/Employee.php', urlComplement: newUrlComplement });
             if (req["error"]) throw new Error(req["message"]);
-            console.log(req["data"]);
             setList(convertForTable(req["data"]));
             setLimitPage(req["limitPage"]);
         } catch (error) {
@@ -45,6 +44,8 @@ export default function SearchUser() {
     }
     function convertForTable(array: any[]): tItemTable[] {
         return array.map(element => ({
+            employee_id: maskUserSeach(element["employee_id"], "", false, true),
+            employee_photo: maskUserSeach(element["employee_photo"], "#", true),
             employee_name: maskUserSeach(element["employee_name"], "Nome"),
             company_name: maskUserSeach(element["company_name"], "Companhia"),
             store_name: maskUserSeach(element["store_name"], "Loja"),
@@ -53,8 +54,8 @@ export default function SearchUser() {
         }));
     }
 
-    function maskUserSeach(value: string, tag: string): { tag: string; value: string } {
-        return { tag, value };
+    function maskUserSeach(value: string, tag: string, isImage?: boolean, ocultColumn?: boolean): { tag: string; value: string, isImage?: boolean; ocultColumn?: boolean; } {
+        return { tag, value, isImage, ocultColumn };
     }
 
     return (
@@ -66,12 +67,12 @@ export default function SearchUser() {
                     </div>
                     <CSDS onAction={(e: string) => {
                         setParams(e);
-                        setPage(1)
+                        setPage(1);
                     }} />
                 </header>
                 <section className="bg-white flex-grow-1 overflow-auto">
                     {/* <RenderListUser list={list} /> */}
-                    <CustomTable list={list} />
+                    {list.length > 0 ? <CustomTable list={list} onClose={(items: tItemTable[]) => console.log(items)} /> : <React.Fragment />}
                 </section>
                 <footer className="d-flex align-items-center justify-content-around text-white py-4">
                     <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>

@@ -201,6 +201,11 @@ nav {
   /* Animação aplicada */
 }
 
+.photoCircle{
+  width: clamp(50px, calc(0.8rem + 4vw + 4vh), 55px);
+  height: clamp(50px, calc(0.8rem + 4vw + 4vh), 55px);
+}
+
 /* Keyframes para a animação */
 @keyframes spinner-grow {
   0% {
