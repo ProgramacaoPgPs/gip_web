@@ -7,7 +7,8 @@ const connection = new Connection("18", true);
 
 export const convertdate = (date: string) => {
     return new Intl.DateTimeFormat("pt-BR", {
-        dateStyle: "short"
+        dateStyle: "short",
+        timeZone: "UTC"
     }).format(new Date(date))
 }
 

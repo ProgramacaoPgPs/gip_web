@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // import './columnTaskState.css';
 import CustomForm from '../../../../Components/CustomForm';
 import { fildsetsFilters } from '../../mock/mockTeste';
+import { fetchDataFull } from '../../../../Util/Util';
 
 type TaskStateFilterProps = {}
 
-const ContentFilter: React.FC<TaskStateFilterProps> = () => {
+const ContentFilter: React.FC<TaskStateFilterProps>= () => {
+
+    const [data, setData] = useState<JSX.Element | any>({
+        method: "GET",
+        pathFile:"GTPP/Task.php",
+        appId: "",
+        urlComplement: "",
+        params: "",
+        expection: false
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const dataAsync = await fetchDataFull(data);
+        }
+        fetchData();
+    }, [])
+
     // Campo de pesquisa
     const handleFilterSearch = (value: string) => {
         console.log(value);
@@ -53,7 +71,7 @@ const ContentFilter: React.FC<TaskStateFilterProps> = () => {
 
     // Campo de valores de Radio
     const optionsFilterStatus = [
-        {value: "1", label: '', titleRadio: 'Colaborador'},
+        {value: "1", label: '', titleRadio: 'Colaboradores'},
         {value: "2", label: '', titleRadio: 'Minhas tarefas'},
     ];
 
@@ -81,7 +99,8 @@ const ContentFilter: React.FC<TaskStateFilterProps> = () => {
         <div>
             <CustomForm
                 classButton='btn btn-success'
-                onSubmit={() => console.log('teste')}
+                onSubmit={() => {
+                }}
                 titleButton={"Confirmar"}
                 // @ts-ignore
                 fieldsets={fieldsetsValues}
