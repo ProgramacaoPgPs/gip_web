@@ -33,5 +33,6 @@ export type tItemTable = {
         value: string;
         isImage?:boolean;
         ocultColumn?:boolean;
+        minWidth?:string;
     };
 };

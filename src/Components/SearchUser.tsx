@@ -6,12 +6,12 @@ import CustomTable from "./CustomTable";
 import { tItemTable } from "../types/types";
 import User from "../Class/User";
 
-export default function SearchUser(props: { onClose?: (value: any) => void }) {
+export default function SearchUser(props: { onClose?: (value: any) => void, selectedItems?: tItemTable[], keyField?: string, maxSelection?: number }) {
     const [page, setPage] = useState<number>(1);
     const [limitPage, setLimitPage] = useState<number>(1);
     const [params, setParams] = useState<string>('');
     const [list, setList] = useState<tItemTable[]>([]);
-    const { setLoading, ctlSearchUser,setCtlSearchUser,appIdSearchUser } = useMyContext();
+    const { setLoading, ctlSearchUser, setCtlSearchUser, appIdSearchUser } = useMyContext();
 
     const { fetchData } = useConnection();
 
@@ -19,7 +19,7 @@ export default function SearchUser(props: { onClose?: (value: any) => void }) {
         (async () => {
             await recoverList(params);
         })();
-    }, [page, params,appIdSearchUser]);
+    }, [page, params, appIdSearchUser]);
 
 
     async function recoverList(value?: string) {
@@ -46,16 +46,28 @@ export default function SearchUser(props: { onClose?: (value: any) => void }) {
         return array.map(element => ({
             employee_id: maskUserSeach(element["employee_id"], "", false, true),
             employee_photo: maskUserSeach(element["employee_photo"], "#", true),
-            employee_name: maskUserSeach(element["employee_name"], "Nome"),
-            company_name: maskUserSeach(element["company_name"], "Companhia"),
-            store_name: maskUserSeach(element["store_name"], "Loja"),
-            departament_name: maskUserSeach(element["departament_name"], "Departamento"),
-            sub_dep_name: maskUserSeach(element["sub_dep_name"], "Cargo"),
+            employee_name: maskUserSeach(element["employee_name"], "Nome", false, false, "150px"),
+            company_name: maskUserSeach(element["company_name"], "Comp.", false, false, "150px"),
+            store_name: maskUserSeach(element["store_name"], "Loja", false, false, "150px"),
+            departament_name: maskUserSeach(element["departament_name"], "Depto", false, false, "150px"),
+            sub_dep_name: maskUserSeach(element["sub_dep_name"], "Cargo", false, false, "150px"),
         }));
     }
 
-    function maskUserSeach(value: string, tag: string, isImage?: boolean, ocultColumn?: boolean): { tag: string; value: string, isImage?: boolean; ocultColumn?: boolean; } {
-        return { tag, value, isImage, ocultColumn };
+    function maskUserSeach(value: string, tag: string, isImage?: boolean, ocultColumn?: boolean, minWidth?: string): {
+        tag: string;
+        value: string,
+        isImage?: boolean;
+        ocultColumn?: boolean;
+        minWidth?: string;
+    } {
+        return {
+            tag,
+            value,
+            isImage,
+            ocultColumn,
+            minWidth
+        };
     }
 
     return (
@@ -73,7 +85,7 @@ export default function SearchUser(props: { onClose?: (value: any) => void }) {
                         }} />
                     </header>
                     <section className="bg-white flex-grow-1 overflow-auto">
-                        {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} /> : <React.Fragment />}
+                        {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} selectedItems={props.selectedItems} maxSelection={props.maxSelection}/> : <React.Fragment />}
                     </section>
                     <footer className="d-flex align-items-center justify-content-around text-white py-2">
                         <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>
@@ -101,7 +113,7 @@ export default function SearchUser(props: { onClose?: (value: any) => void }) {
             listUser.push(user);
         })
         setCtlSearchUser(false);
-        if(props.onClose) props.onClose(listUser);
+        if (props.onClose) props.onClose(listUser);
     }
 
     function navPage(isNext: boolean) {

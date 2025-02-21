@@ -12,7 +12,7 @@ export const fieldsetsCSDS = (
     selectCompany: string
 ) => [
         {
-            attributes: { className: 'ps-2 col-3' },
+            attributes: { className: 'ps-2 col-8 col-sm-8 col-md-4 col-lg-4' },
             item: {
                 label: 'Nome',
                 captureValue: {
@@ -25,9 +25,9 @@ export const fieldsetsCSDS = (
                 }
             }
         }, {
-            attributes: { className: 'ps-2 col-2 overflow-hidden', },
+            attributes: { className: 'ps-2 col-4 col-lg-2 overflow-hidden', },
             item: {
-                label: 'Companhias',
+                label: 'Comp.',
                 captureValue: {
                     type: 'select',
                     value: selectCompany,
@@ -41,7 +41,7 @@ export const fieldsetsCSDS = (
                 },
             }
         }, {
-            attributes: { className: 'ps-2 col-2 overflow-hidden', },
+            attributes: { className: 'ps-2 col-4 col-lg-2 overflow-hidden', },
             item: {
                 label: 'Lojas',
                 captureValue: {
@@ -57,9 +57,9 @@ export const fieldsetsCSDS = (
             }
         }
         , {
-            attributes: { className: 'ps-2 col-2 overflow-hidden', },
+            attributes: { className: 'ps-2 col-4 col-lg-2 overflow-hidden', },
             item: {
-                label: 'Depart.',
+                label: 'Depto.',
                 captureValue: {
                     type: 'select',
                     onChange: (e: any) => { onSubDepartament(parseInt(e.target.value)) },
@@ -73,9 +73,9 @@ export const fieldsetsCSDS = (
             }
         }
         , {
-            attributes: { className: 'ps-2 col-3 overflow-hidden', },
+            attributes: { className: 'ps-2 col-4 col-lg-2 overflow-hidden', },
             item: {
-                label: 'Subdep.',
+                label: 'Cargo',
                 captureValue: {
                     type: 'select',
                     onChange: (e: any) => { selectSubDep(parseInt(e.target.value)) },

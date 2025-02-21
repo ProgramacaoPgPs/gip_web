@@ -109,8 +109,8 @@ export default function FiltersSearchUser(props: { onAction: (value: string) => 
         return response
     }
     return (
-        <div className="d-flex flex-column  col-12 p-2 bg-white">
-            <CustomForm notButton={true} className="d-flex w-100 bg-white" fieldsets={
+        <div className="d-flex flex-column col-12 p-2 bg-white">
+            <CustomForm notButton={true} className="m-0 row w-100 bg-white" fieldsets={
                 fieldsetsCSDS(
                     convertDataForOptionSelect(company, "description", "id"),
                     loadStore,

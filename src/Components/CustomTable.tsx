@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { tItemTable } from "../types/types";
 const defaultImage = require('../Assets/Image/groupCLPP.png');
 
-export default function TableComponent(props: { list: tItemTable[], onConfirmList: (selected: tItemTable[]) => void }) {
+export default function TableComponent(props: { 
+  list: tItemTable[], 
+  onConfirmList: (selected: tItemTable[]) => void, 
+  selectedItems?: tItemTable[],
+  maxSelection?: number
+}) {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: string } | null>(null);
   const [filters, setFilters] = useState<{ [key: string]: string }>({});
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [selectedRows, setSelectedRows] = useState<tItemTable[]>([]);
+  const [selectedRows, setSelectedRows] = useState<tItemTable[]>(props.selectedItems || []);
+
+  // Atualiza o estado selectedRows quando props.selectedItems mudar
+  useEffect(() => {
+    if (props.selectedItems) {
+      setSelectedRows(props.selectedItems);
+    }
+  }, [props.selectedItems]);
+  console.log(selectedRows)
 
   const columnKeys = Object.keys(props.list[0]);
   const columnHeaders = columnKeys.reduce((acc, key) => {
@@ -44,7 +57,14 @@ export default function TableComponent(props: { list: tItemTable[], onConfirmLis
 
   function toggleRowSelection(item: tItemTable) {
     setSelectedRows((prev) => {
-      return prev.includes(item) ? prev.filter((row) => row !== item) : [...prev, item];
+      if (prev.includes(item)) {
+        return prev.filter((row) => row !== item);
+      } else {
+        if (props.maxSelection && prev.length >= props.maxSelection) {
+          return prev; // Não adiciona mais itens se o limite for atingido
+        }
+        return [...prev, item];
+      }
     });
   }
 
@@ -64,7 +84,7 @@ export default function TableComponent(props: { list: tItemTable[], onConfirmLis
             <tr>
               {columnKeys.filter((key) => !props.list[0][key].ocultColumn).map((key) => (
                 <th key={key} className="position-relative">
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div style={{ minWidth: props.list[0][key].minWidth ? props.list[0][key].minWidth : "auto" }} className="d-flex justify-content-between align-items-center">
                     {activeFilter === key ? (
                       <input
                         type="text"
@@ -101,9 +121,14 @@ export default function TableComponent(props: { list: tItemTable[], onConfirmLis
           </tbody>
         </table>
       </div>
-      <button className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
-        Confirmar Seleção
-      </button>
+      <div className="w-100 d-flex justify-content-around">
+        <button title="Confirmar seleção atual" className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
+          Confirmar Seleção
+        </button>
+        <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
+          Limpar Seleção
+        </button>
+      </div>
     </div>
   );
 };
