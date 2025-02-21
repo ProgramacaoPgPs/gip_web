@@ -29,6 +29,7 @@ legend {
 
 body {
   font-size: var(--font-size-body);
+  height: 100dvh;
 }
 
 p {
@@ -98,7 +99,7 @@ nav {
 #root {
   display: flex;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -109,7 +110,7 @@ nav {
 .App {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   background-color: #f1f2f6;
 }
