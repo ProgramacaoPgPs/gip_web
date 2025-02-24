@@ -6,7 +6,7 @@ import CustomTable from "./CustomTable";
 import { tItemTable } from "../types/types";
 import User from "../Class/User";
 
-export default function SearchUser(props: { onClose?: (value: any) => void, selectedItems?: tItemTable[], keyField?: string, maxSelection?: number }) {
+export default function SearchUser(props: { onClose?: (value: any) => void, selectedItems?: tItemTable[], keyField?: string, maxSelection?: number,  selectionList?: tItemTable[],  selectionKey?: string }) {
     const [page, setPage] = useState<number>(1);
     const [limitPage, setLimitPage] = useState<number>(1);
     const [params, setParams] = useState<string>('');
@@ -85,7 +85,16 @@ export default function SearchUser(props: { onClose?: (value: any) => void, sele
                         }} />
                     </header>
                     <section className="bg-white flex-grow-1 overflow-auto">
-                        {(list.length > 0) ? <CustomTable list={list} onConfirmList={closeCustomTable} selectedItems={props.selectedItems} maxSelection={props.maxSelection}/> : <React.Fragment />}
+                        {(list.length > 0) ?
+                                            <CustomTable 
+                                                list={list} 
+                                                onConfirmList={closeCustomTable} 
+                                                selectedItems={props.selectedItems} 
+                                                maxSelection={props.maxSelection} 
+                                                selectionList={props.selectionList} 
+                                                selectionKey={props.selectionKey}
+                                            />
+                                        : <React.Fragment />}
                     </section>
                     <footer className="d-flex align-items-center justify-content-around text-white py-2">
                         <button onClick={() => navPage(false)} className="btn btn-light fa-solid fa-backward" type="button"></button>

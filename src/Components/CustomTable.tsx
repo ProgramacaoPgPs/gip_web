@@ -3,16 +3,41 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { tItemTable } from "../types/types";
 const defaultImage = require('../Assets/Image/groupCLPP.png');
 
-export default function TableComponent(props: { 
-  list: tItemTable[], 
-  onConfirmList: (selected: tItemTable[]) => void, 
-  selectedItems?: tItemTable[],
-  maxSelection?: number
-}) {
+interface TableComponentProps {
+  list: tItemTable[];
+  onConfirmList: (selected: tItemTable[]) => void;
+  selectedItems?: tItemTable[];
+  maxSelection?: number;
+  selectionList?: tItemTable[]; // Nova prop: lista de objetos para seleção
+  selectionKey?: string; // Nova prop: chave de referência para seleção
+}
+
+export default function TableComponent(props: TableComponentProps) {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: string } | null>(null);
   const [filters, setFilters] = useState<{ [key: string]: string }>({});
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<tItemTable[]>(props.selectedItems || []);
+
+  // Função para verificar se uma linha deve ser selecionada
+  const isRowSelected = (row: tItemTable): boolean => {
+    if (!props.selectionList || !props.selectionKey || !row[props.selectionKey]) return false;
+    return props.selectionList.some(item => {
+      if (!item[props.selectionKey!]) return false;
+      return item[props.selectionKey!].value === row[props.selectionKey!].value;
+    });
+  };
+
+  // Efeito para adicionar os itens da selectionList à lista de selecionados na primeira renderização
+  useEffect(() => {
+    if (props.selectionList && props.selectionKey) {
+      const itemsToSelect = props.list.filter(row => isRowSelected(row));
+      setSelectedRows((prev) => {
+        // Evita duplicação de itens
+        const newItems = itemsToSelect.filter(item => !prev.includes(item));
+        return [...prev, ...newItems];
+      });
+    }
+  }, [props.selectionList, props.selectionKey, props.list]); // Dependências do useEffect
 
   // Atualiza o estado selectedRows quando props.selectedItems mudar
   useEffect(() => {
@@ -20,7 +45,6 @@ export default function TableComponent(props: {
       setSelectedRows(props.selectedItems);
     }
   }, [props.selectedItems]);
-  console.log(selectedRows)
 
   const columnKeys = Object.keys(props.list[0]);
   const columnHeaders = columnKeys.reduce((acc, key) => {
@@ -31,50 +55,50 @@ export default function TableComponent(props: {
   const sortedItemTable = [...props.list].sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
-    const valueA = a[key].value.toLowerCase();
-    const valueB = b[key].value.toLowerCase();
+    const valueA = a[key]?.value?.toLowerCase() || ""; // Verificação de segurança
+    const valueB = b[key]?.value?.toLowerCase() || ""; // Verificação de segurança
     return direction === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
   });
 
   const filteredItemsTable = sortedItemTable.filter((item) =>
     Object.keys(filters).every((key) =>
-      item[key].value.toLowerCase().includes(filters[key].toLowerCase())
+      item[key]?.value?.toLowerCase().includes(filters[key].toLowerCase()) // Verificação de segurança
     )
   );
 
-  function handleSort(key: string) {
+  const handleSort = (key: string) => {
     setSortConfig((prev) => {
       if (prev && prev.key === key) {
         return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
       }
       return { key, direction: "asc" };
     });
-  }
+  };
 
-  function handleFilterChange(key: string, value: string) {
+  const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-  }
+  };
 
-  function toggleRowSelection(item: tItemTable) {
+  const toggleRowSelection = (item: tItemTable) => {
     setSelectedRows((prev) => {
       if (prev.includes(item)) {
-        return prev.filter((row) => row !== item);
+        return prev.filter((row) => row !== item); // Remove o item da lista
       } else {
         if (props.maxSelection && prev.length >= props.maxSelection) {
           return prev; // Não adiciona mais itens se o limite for atingido
         }
-        return [...prev, item];
+        return [...prev, item]; // Adiciona o item à lista
       }
     });
-  }
+  };
 
-  function RenderCell(props: { value: string; isImage?: boolean }) {
+  const RenderCell = (props: { value: string; isImage?: boolean }) => {
     return props.isImage ? (
       <img className="photoCircle rounded-circle" src={props.value ? `data:image/png;base64,${props.value}` : defaultImage} />
     ) : (
       <span>{props.value}</span>
     );
-  }
+  };
 
   return (
     <div className="d-flex flex-column w-100 h-100 p-3">
@@ -109,15 +133,18 @@ export default function TableComponent(props: {
             </tr>
           </thead>
           <tbody>
-            {filteredItemsTable.map((item, index) => (
-              <tr key={index} className={selectedRows.includes(item) ? "table-success" : ""} onClick={() => toggleRowSelection(item)}>
-                {columnKeys.map((key) => !item[key].ocultColumn && (
-                  <td key={key} className="py-2">
-                    <RenderCell isImage={item[key].isImage} value={item[key]?.value} />
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {filteredItemsTable.map((item, index) => {
+              const isSelected = selectedRows.includes(item);
+              return (
+                <tr key={index} className={isSelected ? "table-success" : ""} onClick={() => toggleRowSelection(item)}>
+                  {columnKeys.map((key) => !item[key].ocultColumn && (
+                    <td key={key} className="py-2">
+                      <RenderCell isImage={item[key].isImage} value={item[key]?.value || ""} />
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -131,4 +158,4 @@ export default function TableComponent(props: {
       </div>
     </div>
   );
-};
+}
