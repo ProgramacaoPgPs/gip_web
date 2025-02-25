@@ -35,17 +35,9 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       text?: string;
     };
     buttons?: [];
-<<<<<<< HEAD
   }[] | any;
   onAction?: () => void;
   titleButton?: string;
-=======
-
-  }[];
-  onAction?: any;
-  titleButton?: any;
-  notButton?: boolean;
->>>>>>> ada6adb6dcb4aeeb27a8fc670b3d2231366c7473
   classButton?: string;
 };
 
@@ -54,7 +46,6 @@ interface SelectOption {
   label: string;
 }
 
-<<<<<<< HEAD
 interface OptionsRadio {
   titleRadio: string;
   value: string;
@@ -72,20 +63,13 @@ interface RadioFieldProps {
 }
 
 function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
-=======
-function CustomForm({ fieldsets, classButton,notButton, titleButton = "Login", ...formProps }: CustomFormProps) {
->>>>>>> ada6adb6dcb4aeeb27a8fc670b3d2231366c7473
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
-<<<<<<< HEAD
 
           <label>
-=======
-          <label className={fieldset.item.classLabel ? fieldset.item.classLabel : ''}>
->>>>>>> ada6adb6dcb4aeeb27a8fc670b3d2231366c7473
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
               {fieldset.item.mandatory ? ' *' : ''}
@@ -98,7 +82,6 @@ function CustomForm({ fieldsets, classButton,notButton, titleButton = "Login", .
 
         </fieldset>
       ))}
-<<<<<<< HEAD
       {/* Mexer ainda nesse botão... */}
       {needButton && 
       <button
@@ -107,9 +90,6 @@ function CustomForm({ fieldsets, classButton,notButton, titleButton = "Login", .
         title="Execultar ação"
         className={classButton ? classButton : "btn my-2"}>
         {titleButton}</button>}
-=======
-      {!notButton ? <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button> : <React.Fragment/>}
->>>>>>> ada6adb6dcb4aeeb27a8fc670b3d2231366c7473
     </form>
   );
 }
