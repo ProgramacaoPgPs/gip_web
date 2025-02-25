@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Col } from "react-bootstrap";
-import CardTask from "./ComponentsCard/CardTask/CardTask";
 import NavBar from "../../Components/NavBar";
 import { listPath } from "./mock/mockTeste";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
@@ -49,7 +48,6 @@ export default function Gtpp(): JSX.Element {
   const handleOpenFilter = (e: any) => {
     setOpenFilter((prevOpen: any) => !prevOpen);
   };
-  
   useEffect(() => console.log(userLog), [userLog]);
 
   return (
@@ -125,32 +123,6 @@ export default function Gtpp(): JSX.Element {
               const filteredTasks = getTask.filter((task: any) => task.state_id === cardTaskStateValue.id);
               const isFirstColumnTaskState = idxValueState === 0;
 
-              const filterTasks = (tasks:any, searchTerm:any="", rangeDateInitial: string="", rangeDateFinal: string="", status: boolean = false, priority: number = 3) => {
-                return tasks
-                  .filter((task:any) => task.description.toUpperCase().includes(searchTerm.toUpperCase()))
-                  .filter((task: any) => priority === 3 ? task : task.priority === priority)
-                  .filter((task: any) => {
-                    if(status) {
-                      return userLog.id == task.user_id;
-                    } else {
-                      return task;
-                    }
-                  })
-                  .filter((task:any) => {
-                    if (!rangeDateInitial || !rangeDateFinal) return true; // Se não houver datas para pesquisar, incluir todas as tasks
-                    if (!task.initial_date || !task.final_date) return false; // Se não tiver datas, excluir a task
-                    
-                    const rangeStart = new Date(rangeDateInitial);
-                    const rangeEnd = new Date(rangeDateFinal);
-                    
-                    let menorData = new Date(task.initial_date);
-                    let maiorData = new Date(task.final_date);
-
-                    return maiorData >= rangeStart && menorData <= rangeEnd;
-                  });
-              };
-      
-
               return (
                 cardTaskStateValue.active && (
                   <div
@@ -198,32 +170,7 @@ export default function Gtpp(): JSX.Element {
                         );
                         setModalPage(true);
                       }}
-                      content_body={
-                        <div className="task-cards-container">
-                          {filterTasks(filteredTasks)?.map((task:any, idx: number) => {
-                            console.log(task);
-                            return (
-                              <CardTask
-                                key={`simple_card_task_${task.id}`}
-                                id={task.id}
-                                initial_date={task.initial_date}
-                                final_date={task.final_date}
-                                title_card={task.description}
-                                priority_card={task.priority}
-                                percent={task.percent}
-                                create_by={task.user_id}
-                                onClick={() => {
-                                  setTask(task);
-                                  setTaskPercent(task.percent);
-                                  setOpenCardDefault(true);
-                                  setNotifications(
-                                    notifications.filter((item) => item.task_id !== task.id)
-                                  );
-                                }}
-                            />)
-                          })}
-                        </div>
-                      }
+                      content_body={filteredTasks}
                     />
                   </div>
                 )

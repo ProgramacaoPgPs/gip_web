@@ -4,6 +4,7 @@ import { convertdate } from "../../../../Util/Util";
 import NotificationBell from "../../../../Components/NotificationBell";
 import ProgressBar from "../Modal/Progressbar";
 import { useMyContext } from "../../../../Context/MainContext";
+import { DateConverter } from "../../Class/DataConvert";
 
 
 type CardTaskProps = {
@@ -36,6 +37,10 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
 
     let { color, title } = colorPriorityCard(props.priority_card);
 
+    console.log(
+        props.create_by
+)
+
     return (
         <div title={`Tarefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
             <React.Fragment>
@@ -51,11 +56,11 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                     <div className="card-font-large">
                         <div className="d-flex justify-content-between flex-wrap">
                             <div><span className="fw-bold">Data Inicial:</span></div>
-                            <div><p>{convertdate(props.initial_date || "2024-09-20")}</p></div>
+                            <div><p>{`${DateConverter.formatDate(props.initial_date || "2024-09-20")}`}</p></div>
                         </div>
                         <div className="d-flex justify-content-between flex-wrap">
                             <div><span className="fw-bold">Data Final:</span></div>
-                            <div><p>{convertdate(props.final_date || "2024-09-20")}</p></div>
+                            <div><p>{`${DateConverter.formatDate(props.final_date || "2024-09-20")}`}</p></div>
                         </div>
                     </div>
                 </div>

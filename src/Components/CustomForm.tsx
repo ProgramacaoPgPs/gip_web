@@ -15,6 +15,8 @@ type CaptureValueTuple = [
 ];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
+  needButton?: boolean;
+  typeButton?: 'submit' | 'reset' | 'button' | undefined;
   fieldsets: {
     attributes?: React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
     item: {
@@ -32,8 +34,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       text?: string;
     };
     buttons?: [];
-
-  }[];
+  }[] | any;
   onAction?: () => void;
   titleButton?: string;
   classButton?: string;
@@ -60,10 +61,10 @@ interface RadioFieldProps {
   className?: string;
 }
 
-function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
-      {fieldsets.map((fieldset, fieldsetIndex) => (
+      {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
 
@@ -80,7 +81,14 @@ function CustomForm({ fieldsets, classButton, titleButton = "Login", ...formProp
 
         </fieldset>
       ))}
-      <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button>
+      {/* Mexer ainda nesse botão... */}
+      {needButton && 
+      <button
+        onClick={onAction}
+        type={typeButton}
+        title="Execultar ação"
+        className={classButton ? classButton : "btn my-2"}>
+        {titleButton}</button>}
     </form>
   );
 }
@@ -99,7 +107,7 @@ function renderField(
       <>
         {captureValue.map((field, index) => (
           <div key={index}>
-            {renderField(field)} {/* Fiz uma recursividade para o renderField fazer um callback nele mesmo para resolver problemas que podem ser divididos em problemas menores. */}
+            {renderField(field)}
           </div>
         ))}
       </>
@@ -147,18 +155,14 @@ function renderField(
   // Caso não seja um array e não tenha um tipo definido, assume que é um input
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
 }
-{/*
-  
-  Melhorar a lógica do RadioField e ver se faz sentindo manter ele ou utilizar o input que já existe para renderizar  
-  
-*/}
+{/*Melhorar a lógica do RadioField e ver se faz sentindo manter ele ou utilizar o input que já existe para renderizar  */}
 export function RadioField({ label, options, selectedValue, onChange, className }: RadioFieldProps) {
   return (
     <div>
       {/* Mapeia e renderiza as opções do radio */}
       {options.map((option:any, index:number) => (
         <div key={`radio_${index}`}>
-          <label className='d-flex gap-2'>
+          <label className='d-flex gap-2 flex-wrap'>
             <input
               type="radio"
               name={option.name}
