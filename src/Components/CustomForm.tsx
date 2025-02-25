@@ -25,7 +25,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       mandatory?: boolean;
       captureValue:
       | React.InputHTMLAttributes<HTMLInputElement>
-      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
+      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) 
       | React.TextareaHTMLAttributes<HTMLTextAreaElement>
       | CaptureValueArray
       | CaptureValueTuple

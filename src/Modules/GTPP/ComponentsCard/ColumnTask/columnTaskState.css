@@ -18,18 +18,7 @@
 .columnTaskState-title {
     text-align: center;
     width: clamp(0.9rem, 100vw, 250px);
-<<<<<<< HEAD
-    /* width: 100%; */
-    
     padding: 0.7rem 1rem;
-    
-    /* position: sticky;
-    top: 0;
-    z-index: 10;
-    border-radius: 6px 6px 0 0; */
-=======
-    padding: 0.35rem 1rem;
->>>>>>> ada6adb6dcb4aeeb27a8fc670b3d2231366c7473
 }
 
 .font-filter-button {

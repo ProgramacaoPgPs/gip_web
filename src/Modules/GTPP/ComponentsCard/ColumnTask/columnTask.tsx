@@ -56,8 +56,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
     });
     
     const handleFilterForContentBody = () => setFilterHandler(!filterHandler);
-
-    // ta faltando implementar o filtro 
+    
     const filterTasks = (
         tasks: ITask[],
         searchTerm: string = "",
@@ -105,7 +104,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
             <div className={`columnTaskState-title  rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
                 <div className='d-flex justify-content-between align-items-center w-100'>
                     <div><h1 className="rounded p-1">{props.title}</h1></div>
-                    <div>
+                    <div className='w-100 d-flex justify-content-end'>
                         <button onClick={handleFilterForContentBody} className="btn font-filter-button">filtro</button>
                     </div>
                     <div style={{position: 'relative'}}>      

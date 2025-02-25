@@ -6,6 +6,7 @@ import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import { useMyContext } from "../../../../Context/MainContext";
 import { useConnection } from "../../../../Context/ConnContext";
+import Clpp from "../../../CLPP/Clpp";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -289,11 +290,14 @@ const AvatarGroup = (props: { users: any, dataTask: any }) => {
             <Avatar />
           </div>
         ) : (
-          <Modal
-            detailsmodaluser={setOpenDetailsUserModal}
-            datatask={props?.dataTask}
-            user={props?.users}
-          />
+          <React.Fragment>
+            {/* é aqui que renderiza a lista (RENDERLISTAVATAR) */}
+            <Modal
+              detailsmodaluser={setOpenDetailsUserModal}
+              datatask={props?.dataTask}
+              user={props?.users}
+            />
+          </React.Fragment>
         )}
       </div>
     </React.Fragment>
