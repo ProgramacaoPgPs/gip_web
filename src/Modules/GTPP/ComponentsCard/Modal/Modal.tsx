@@ -179,12 +179,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
                   icon="arrow-left"
                   description="Deseja retomar a tarefa?"
                 />
-              ) : props.taskListFiltered.state_id == 7 ? (
-                <ButtonIcon
-                  color="dark"
-                  icon="arrow-left"
-                  description="Descancelar tarefa"
-                />
               ) : null}
 
             </div>

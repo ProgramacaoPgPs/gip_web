@@ -5,6 +5,7 @@ import { iSender, iUser, iWebSocketContextType } from '../Interface/iGIPP';
 import ContactList from '../Modules/CLPP/Class/ContactList';
 import { handleNotification } from '../Util/Util';
 import { useConnection } from './ConnContext';
+import Contact from '../Class/Contact';
 
 
 const WebSocketContext = createContext<iWebSocketContextType | undefined>(undefined);
@@ -29,7 +30,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     //Variáveis dos contatos
     const [msgLoad, setMsgLoad] = useState<boolean>(true);
     const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
-    const [contactList, setContactList] = useState<iUser[]>([]);
+    const [contactList, setContactList] = useState<Contact[]>([]);
     const [sender, setSender] = useState<iSender>({ id: 0 });
     const [contNotify, setContNotify] = useState<number>(0);
 
@@ -128,7 +129,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     // Função para atualizar contato com base no evento
-    function updateContact(contact: iUser) {
+    function updateContact(contact: Contact) {
         if (contact.yourContact === 0 || contact.notification === undefined) contact.yourContact = 1;
         if (contact.notification === 0 || contact.notification === undefined) {
             contact.notification = 1;

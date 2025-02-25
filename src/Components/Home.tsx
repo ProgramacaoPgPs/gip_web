@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CustomButton } from './CustomButton';
 import { useMyContext } from '../Context/MainContext';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
+import SearchUser from './SearchUser';
 const iconGTPP = require("../Assets/Image/GTTP_icon.png");
 
 export default function Home(): JSX.Element {
@@ -30,4 +31,5 @@ export default function Home(): JSX.Element {
             </section>
         </div>
     );
+
 }

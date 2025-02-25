@@ -1,4 +1,3 @@
-import { Connection } from "../Connection/Connection";
 import { iUser } from "../Interface/iGIPP";
 import { fetchDataFull } from "../Util/Util";
 
@@ -12,11 +11,10 @@ export default class User {
     #administrator: number = 0;
     #session: string = '';
     photo: string = '';
-    shop: number = 0;
+    shop: string = '';
     departament: string = '';
     sub: string = '';
     CSDS: string = '';
-    #connection: Connection = new Connection('18');
     
     constructor(user: iUser) {
         this.#id = user.id;
@@ -24,11 +22,12 @@ export default class User {
         if (user.session) this.#session = user.session;
 
         // Optional properties
-        this.#yourContact = user.yourContact;
-        this.#notification = user.notification;
-        this.#pendingMessage = user.pendingMessage;
         this.#name = user.name;
         this.#company = user.company;
+        if(user.photo) this.photo = user.photo;
+        if(user.shop) this.shop = user.shop;
+        if(user.departament) this.departament = user.departament;
+        if(user.sub) this.sub = user.sub;
     }
 
     // Getter for id
