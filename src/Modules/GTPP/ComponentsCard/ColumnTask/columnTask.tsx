@@ -143,7 +143,6 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                             filterData.statusSearch,
                             filterData.filterCollaboration
                         )?.map((task:any, _: number) => {
-                            console.log(props.content_body);
                         return (
                             <CardTask
                             key={`simple_card_task_${task.id}`}

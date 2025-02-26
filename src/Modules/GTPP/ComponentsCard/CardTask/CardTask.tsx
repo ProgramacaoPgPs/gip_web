@@ -37,10 +37,6 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
 
     let { color, title } = colorPriorityCard(props.priority_card);
 
-    console.log(
-        props.create_by
-)
-
     return (
         <div title={`Tarefa: ${props.title_card}`} {...props} className={`card-task-container modal-container modal-Xsmall cursor-pointer p-2`}>
             <React.Fragment>
