@@ -6,7 +6,6 @@ import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import { useMyContext } from "../../../../Context/MainContext";
 import { useConnection } from "../../../../Context/ConnContext";
-import Clpp from "../../../CLPP/Clpp";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
@@ -15,9 +14,17 @@ const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
 // Aqui nesse user estou puxando as informações da conexão de employee e colocando suas informações em uma lista e enviando essa lista para um objeto e mostrando ela em tela com a foto do usuario  e suas informações.
 const UserProfile = (props: any) => {
   const { userId } = props;
+
+  {/* Limitador de pagina */}
+  const [page, setPage] = useState<number>(1);
+  const [limitPage, setLimitPage] = useState<number>(1);
+  const [params, setParams] = useState<string>('');
+  
+  const { setLoading } = useMyContext();
+
   const [photos, setPhotos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const { setLoading } = useMyContext();
+
   useEffect(() => {
     setLoading(true);
     const loadPhotos = async () => {
@@ -272,7 +279,7 @@ const Modal = (props: any) => {
   return (
     <div className="modal-list d-flex align-items-center gap-3">
       <div>
-        <ModalUser data={props} list={getInfoUser} openDetailUser={openDetailUser} setOpenDetailUser={setOpenDetailUser} >
+        <ModalUser data={props} list={getInfoUser} openDetailUser={openDetailUser} setOpenDetailUser={setOpenDetailUser}>
           <UserProfile detailsmodaluser={props.detailsmodaluser} listuser={setInfoUser} setOpenDetailUser={setOpenDetailUser} userId={props.user} />
         </ModalUser>
       </div>

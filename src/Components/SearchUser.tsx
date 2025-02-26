@@ -56,7 +56,7 @@ export default function SearchUser(props: { onClose?: (value: any) => void, sele
 
     function maskUserSeach(value: string, tag: string, isImage?: boolean, ocultColumn?: boolean, minWidth?: string): {
         tag: string;
-        value: string,
+        value: string;
         isImage?: boolean;
         ocultColumn?: boolean;
         minWidth?: string;
