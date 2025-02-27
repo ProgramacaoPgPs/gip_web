@@ -1,16 +1,10 @@
 @import url('./Color.css');
+@import url('./Modules/GTPP/Root-font.css');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-:root {
-  --vPrimaryColor: #bed989;
-  --vSecondaryColor: #5f7434;
-  --vThirdColor: #d66a2b;
-  --vTitleColor: #555;
 }
 
 h1,

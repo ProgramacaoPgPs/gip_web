@@ -134,3 +134,56 @@ function settingUrl(middlewer: string, params?: string, port?: string) {
     let server = `http://gigpp.com.br:${port ? port : '72/GLOBAL'}`;
     return server + middlewer + (params ? params : "");
 }
+
+// Interface para o item da tabela
+export interface TableItem {
+    [key: string]: {
+        tag: string;
+        value: string;
+        isImage?: boolean;
+        ocultColumn?: boolean;
+        minWidth?: string;
+    };
+}
+
+// Função para mascarar valores
+export function maskUserSeach(
+    value: string,
+    tag: string,
+    isImage?: boolean,
+    ocultColumn?: boolean,
+    minWidth?: string
+): { tag: string; value: string; isImage?: boolean; ocultColumn?: boolean; minWidth?: string } {
+    return { tag, value, isImage, ocultColumn, minWidth };
+}
+
+// Função genérica para converter um array de objetos em uma estrutura de tabela
+export function convertForTable<T extends Record<string, any>>(
+    array: T[], // Array de objetos genéricos
+    options?: {
+        isImageKeys?: string[]; // Chaves que devem ser tratadas como imagens
+        ocultColumns?: string[]; // Chaves que devem ser ocultadas
+        minWidths?: Record<string, string>; // Larguras mínimas personalizadas para colunas
+        customTags?: Record<string, string>; // Mapeamento de chaves para tags personalizadas
+    }
+): TableItem[] {
+    return array.map((item) => {
+        const tableItem: TableItem = {};
+
+        // Itera sobre as chaves do objeto
+        for (const key in item) {
+            if (Object.prototype.hasOwnProperty.call(item, key)) {
+                const value = item[key]?.toString() || ""; // Converte o valor para string
+                const isImage = options?.isImageKeys?.includes(key); // Verifica se é uma imagem
+                const ocultColumn = options?.ocultColumns?.includes(key); // Verifica se a coluna deve ser oculta
+                const minWidth = options?.minWidths?.[key] || '150px'; // Largura mínima personalizada
+                const tag = options?.customTags?.[key] || key; // Usa a tag personalizada ou a chave como fallback
+
+                // Cria a coluna dinamicamente usando maskUserSeach
+                tableItem[key] = maskUserSeach(value, tag, isImage, ocultColumn, minWidth);
+            }
+        }
+
+        return tableItem;
+    });
+}

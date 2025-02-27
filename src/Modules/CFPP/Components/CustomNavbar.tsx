@@ -9,50 +9,44 @@ interface NavbarProps {
 }
 
 export default function CustomNavbar({ items }: NavbarProps) {
-  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
 
-  const toggleDropdown = (event: React.MouseEvent<HTMLAnchorElement>, index: number) => {
+  const toggleDropdown = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    setDropdownOpen(dropdownOpen === index ? null : index);
   };
 
   return (
-    <nav className="custom-navbar">
-      <div className="container-fluid">
-        <div className="custom-nav">
-          <ul className="custom-nav ms-auto">
-            {items.map((item, index) => (
-              <li className={`custom-nav-item ${item.subItems ? 'custom-dropdown' : ''}`} key={index}>
-                {item.subItems ? (
-                  <React.Fragment>
-                    <a
-                      className="custom-nav-link custom-dropdown-toggle"
-                      href="#"
-                      role="button"
-                      onClick={(event) => toggleDropdown(event, index)}
-                    >
-                      {item.label}
-                    </a>
-                    <ul className={`custom-dropdown-menu ${dropdownOpen === index ? 'show' : ''}`}>
-                      {item.subItems.map((subItem, subIndex) => (
-                        <li key={subIndex}>
-                          <Link className="custom-dropdown-item" to={subItem.path || '#'}>
-                            {subItem.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </React.Fragment>
-                ) : (
-                  <Link className="custom-nav-link" to={item.path || '#'}>
-                    {item.label}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+    <nav className="custom-navbar mx-2">
+      <ul className="custom-nav ms-auto">
+        {items.map((item, index) => (
+          <li className={`custom-nav-item ${item.subItems ? 'custom-dropdown' : ''}`} key={index}>
+            {item.subItems ? (
+              <React.Fragment>
+                <a
+                  className="custom-nav-link custom-dropdown-toggle"
+                  href="#"
+                  role="button"
+                  onClick={(event) => toggleDropdown(event)}
+                >
+                  {item.label}
+                </a>
+                <ul className={`custom-dropdown-menu`}>
+                  {item.subItems.map((subItem, subIndex) => (
+                    <li key={subIndex}>
+                      <Link className="custom-dropdown-item" to={subItem.path || '#'}>
+                        {subItem.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </React.Fragment>
+            ) : (
+              <Link className="custom-nav-link" to={item.path || '#'}>
+                {item.label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }

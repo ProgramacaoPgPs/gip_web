@@ -22,13 +22,5 @@ export interface NavItem {
           path: '/home',
         },
       ],
-    },
-    {
-      label: 'Sobre',
-      path: '/home',
-    },
-    {
-      label: 'Contato',
-      path: '/home',
-    },
+    }
   ];
