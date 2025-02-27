@@ -88,7 +88,7 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
         onClick={onAction}
         type={typeButton}
         title="Execultar ação"
-        className={classButton ? classButton : "btn my-2"}>
+        className={classButton ? classButton : "btn my-2 "}>
         {titleButton}</button>}
     </form>
   );

@@ -2,6 +2,8 @@ import { Store } from "react-notifications-component";
 import { Connection } from "../Connection/Connection";
 import { iReqConn } from "../Interface/iConnection";
 import Translator from "./Translate";
+import { DateConverter } from "../Modules/GTPP/Class/DataConvert";
+import { ITask } from "../Interface/iGIPP";
 
 const connection = new Connection("18", true);
 
@@ -17,6 +19,48 @@ export const convertdate = (date: string): string | null => {
     return parsedDate.toLocaleDateString('pt-BR');
 };
 
+export const filterTasks = (
+    tasks: ITask[],
+    searchTerm: string = "",
+    rangeDateInitial: string = "",
+    rangeDateInitialFinal: string = "",
+    rangeDateFinal: string = "",
+    rangeDateFinalFinal: string = "",
+    priority: number = 3,
+    status: boolean = false,
+    collaborate: boolean = false,
+    user_id: any,
+) => {
+    if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && !status && !collaborate) return tasks;
+
+    return tasks
+        .filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()))
+        .filter(task => priority === 3 || task.priority === priority)
+        .filter(task => !status || user_id.id === task.user_id)
+        .filter(task => !collaborate || task.user_id !== user_id.id)
+        .filter(task => {
+            if (!rangeDateInitial || !rangeDateInitialFinal) return true;
+            let rangeStart = DateConverter.formatDate(rangeDateInitial);
+            let rangeFinal = DateConverter.formatDate(rangeDateInitialFinal);
+            let taskDate = DateConverter.formatDate(task.final_date);
+            if (!rangeStart || !rangeFinal || !taskDate) {
+                console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
+                return true;
+            }
+            return taskDate >= rangeStart && taskDate <= rangeFinal;
+        })
+        .filter(task => {
+            if (!rangeDateInitial || !rangeDateInitialFinal) return true;
+            let rangeStart = DateConverter.formatDate(rangeDateFinal);
+            let rangeFinal = DateConverter.formatDate(rangeDateFinalFinal);
+            let taskDate = DateConverter.formatDate(task.final_date);
+            if (!rangeStart || !rangeFinal || !taskDate) {
+                console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
+                return true;
+            }
+            return taskDate >= rangeStart && taskDate <= rangeFinal;
+        })
+};
 
 export const httpGet = async (url: string, params: any = {}) => {
     return connection.get(url, params);

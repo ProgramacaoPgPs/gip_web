@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./AvatarGroup.css";
 import ImageUser from "../../../../Assets/Image/user.png";
 import { convertImage } from "../../../../Util/Util";
@@ -6,81 +6,12 @@ import { Connection } from "../../../../Connection/Connection";
 import { useWebSocket } from "../../Context/GtppWsContext";
 import { useMyContext } from "../../../../Context/MainContext";
 import { useConnection } from "../../../../Context/ConnContext";
-import { tItemTable } from "../../../../types/types";
 
 const Image = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <img {...props} />;
 };
 
-// Aqui nesse user estou puxando as informações da conexão de employee e colocando suas informações em uma lista e enviando essa lista para um objeto e mostrando ela em tela com a foto do usuario  e suas informações.
 const UserProfile = (props: any) => {
-  const { userId } = props;
-
-  const { setLoading, ctlSearchUser, setCtlSearchUser, appIdSearchUser } =
-    useMyContext();
-
-  const [photos, setPhotos] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    const loadPhotos = async () => {
-      try {
-        const conn = new Connection("18");
-        const userList: any = [];
-
-        // Temos que fazer um filtro para pesquisar um usuario a pedido do marcio
-
-        // Verifica se userId é um array e mapeia sobre ele
-
-        if (Array.isArray(userId)) {
-          for (let user of userId) {
-            const responsePhotos: any = await conn.get(
-              `&id=${user.user_id}`,
-              "CCPP/EmployeePhoto.php"
-            );
-            const responseDetails: any = await conn.get(
-              `&id=${user.user_id}`,
-              "CCPP/Employee.php"
-            );
-
-            // Aqui estou rendenrizando antes um JSON com as informações do usuario + suas photos em um mesmo JSON para não ter necessidade de tratar isso separadamente.
-            if (
-              responseDetails &&
-              !responseDetails.error &&
-              responsePhotos &&
-              !responsePhotos.error
-            ) {
-              const details = responseDetails.data[0];
-              userList.push({
-                name: details.name,
-                company: details.company,
-                shop: details.shop,
-                department: details.departament,
-                sub: details.sub,
-                administrator: responseDetails.data[1]?.administrator,
-                photo: responsePhotos.photo,
-              });
-            }
-          }
-
-          setPhotos(userList);
-        } else {
-          setPhotos([]);
-        }
-      } catch (error: any) {
-        setError(error.message);
-      }
-      setLoading(false);
-    };
-
-    loadPhotos();
-  }, [userId]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <div className="">
       {/* Aqui vamos fazer o botão para fechar a lista de usuários */}
@@ -98,16 +29,15 @@ const UserProfile = (props: any) => {
       </div>
 
       {/* Aqui vamos carregar a lista de usuarios */}
-      {photos
-        .filter((itemList) => itemList)
-        .map((photo: any, index) => (
+      {props.photos
+        // .filter((itemList:any) => console.log(itemList))
+        .map((photo: any, index:any) => (
           <div
             key={`photo_user_task_${index}`}
             className="d-flex gap-4 align-items-center mb-2"
           >
             <div
               onClick={() => {
-                // Aqui quero fazer um modal aonde que eu clicar quero pegar os dados do usuário e exibir esses dados para mostrar as informações dele.
                 props.setOpenDetailUser(true);
                 props.listuser(photo);
                 console.log(photo.name);
@@ -131,8 +61,7 @@ const UserProfile = (props: any) => {
   );
 };
 
-const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
-  console.log(item);
+const ListUserTask = ({ item, taskid, loadUserTaskLis, dataPhotosUsers, userId, check=false }: any) => {
   const [isChecked, setIsChecked] = useState(item.check);
   const { addUserTask, getTaskInformations } = useWebSocket();
   const { fetchData } = useConnection();
@@ -161,7 +90,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
   return (
     <div
       className={`d-flex gap-4 rounded w-100 align-items-center p-1 mb-2 ${
-        isChecked ? "bg-secondary" : "bg-normal"
+        check ? "bg-secondary" : "bg-normal"
       }`}
       onClick={async () => {
         setIsChecked(!isChecked);
@@ -176,7 +105,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
         hidden
       />
       <div className="avatar">
-        <Image src={convertImage(item.employee_photo) || ImageUser} />
+      <Image src={item?.employee_photo ? convertImage(item.employee_photo) || undefined : ImageUser}/>
       </div>
       <div>
         <strong>{item.employee_name}</strong>
@@ -188,8 +117,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis }: any) => {
 const LoadUserCheck = (props: any) => {
   const [userTaskBind, setUserTaskBind] = useState([]);
   const { setLoading, loading } = useMyContext();
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Estado para armazenar o termo de pesquisa
-  
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [limitPage, setLimitPage] = useState<number>(1);
   const [list, setList] = useState([]);
@@ -200,7 +128,7 @@ const LoadUserCheck = (props: any) => {
     (async () => {
       await recoverList();
     })();
-  }, [page]);
+  }, [page, searchTerm]);
 
   async function recoverList(value?: string, title?: string) {
     try {
@@ -209,7 +137,7 @@ const LoadUserCheck = (props: any) => {
         method: "GET",
         params: null,
         pathFile: "CCPP/Employee.php",
-        urlComplement: `&pApplicationAccess=${3}&pPage=${page}&searchName=${title}`,
+        urlComplement: `&pApplicationAccess=${3}&pPage=${page}&searchName=${title}&pEmployeeName=${searchTerm}`,
       });
       if (req["error"]) throw new Error(req["message"]);
       setList(req.data);
@@ -226,19 +154,8 @@ const LoadUserCheck = (props: any) => {
     setLoading(true);
     try {
       const userList: any = [];
-      const responseUserTaskList: any = await connection.get(
-        `&task_id=${props.list.data.datatask.id}&list_user=1&offset=1&limit=0`,
-        "GTPP/Task_User.php"
-      );
-      for (let user of responseUserTaskList.data) {
-        userList.push({
-          photo: null,
-          check: user.check,
-          name: user.name,
-          user: user.user_id,
-        });
-      }
-
+      const responseUserTaskList: any = await connection.get(`&task_id=${props.list.data.datatask.id}&list_user=1`,"GTPP/Task_User.php");
+      for (let user of responseUserTaskList.data) return userList.push({ photo: null, check: user.check, name: user.name, user: user.user_id }); 
       setUserTaskBind(userList);
     } catch (err) {
       console.log(err);
@@ -247,44 +164,58 @@ const LoadUserCheck = (props: any) => {
     }
   }
 
-  const filteredUserList = userTaskBind.filter((user: any) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const handleSearchChange = (e: string) => {
+    setSearchTerm(e);
   };
 
   return (
-    <div className="overflow-hidden d-flex flex-column justify-content-between gap-2">
+    <div className="overflow-hidden d-flex flex-column justify-content-between h-100 gap-2">
       <div>
-        <input
+          <input
           placeholder="Nome do colaborador..."
           type="text"
           className="form-control mb-3"
-          value={searchTerm}
-          onChange={handleSearchChange}
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              handleSearchChange(e.currentTarget.value);
+              setPage(1);
+            }
+          }}
         />
       </div>
       <div className="overflow-auto h-100">
       {list.map((item: any) => {
-        return <ListUserTask
-          item={item}
-          taskid={props.list.data.datatask.id}
-          key={item.employee_id}
-          loadUserTaskLis={loadUserTaskLis}
-        />
-      })}
+        // Usando 'some' para verificar se existe algum item em 'dataPhotosUsers'
+        // cujo 'id' seja igual ao 'employee_id' do item
+        const filterCheckList = props.dataPhotosUsers.some((items: any) => {
+          return Number(item.employee_id) === Number(items.id); // Verifique se o 'employee_id' é igual ao 'id'
+      });
+
+  return (
+    <>
+      <ListUserTask
+        dataPhotosUsers={props.dataPhotosUsers}
+        check={filterCheckList} 
+        item={item}
+        taskid={props.list.data.datatask.id}
+        userId={item.employee_id}
+        key={item.employee_id}
+        loadUserTaskLis={loadUserTaskLis}
+      />
+    </>
+  );
+})}
+
       </div>
       <div className="d-flex justify-content-between align-items-center">
         <button className="btn btn-danger" onClick={()=>{
           const newPage = page > 1 ? page -1 : 1;
-          setPage(newPage)
+          setPage(Number(newPage))
           }} type="button"> {"<"} </button>
-          <strong>{page.toString().padStart(2,'0')} / {limitPage}</strong>
+          <strong>{page.toString().padStart(2,'0')} / {limitPage.toString().padStart(2, '0')}</strong>
         <button className="btn btn-success" onClick={()=>{
           const newPage = page < limitPage ? page + 1 : limitPage;
-          setPage(newPage)
+          setPage(Number(newPage))
           }} type="button">{">"}</button>
       </div>
     </div>
@@ -302,13 +233,7 @@ function ModalUser(props: any) {
             {props.openDetailUser ? (
               <>
                 <div className="d-flex align-items-center justify-content-end mb-2">
-                  <button
-                    title="Abrir detalhes do usuário"
-                    className="btn bg-danger text-white"
-                    onClick={() => props.setOpenDetailUser(false)}
-                  >
-                    X
-                  </button>
+                  <button title="Abrir detalhes do usuário" className="btn bg-danger text-white" onClick={() => props.setOpenDetailUser(false)}>X</button>
                 </div>
                 <div className="text-center">
                   <Image
@@ -349,7 +274,7 @@ function ModalUser(props: any) {
                 </button>
               </div>
             </div>
-            <LoadUserCheck list={props} />
+            <LoadUserCheck dataPhotosUsers={props.dataPhotosUsers} list={props} />
           </React.Fragment>
         )}
         <div className="d-flex justify-content-end">
@@ -377,17 +302,80 @@ const Avatar = () => {
 const Modal = (props: any) => {
   const [getInfoUser, setInfoUser] = useState();
   const [openDetailUser, setOpenDetailUser] = useState();
+  
+  const { setLoading, ctlSearchUser, setCtlSearchUser, appIdSearchUser } = useMyContext();
+
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    const loadPhotos = async () => {
+      try {
+        const conn = new Connection("18");
+        const userList: any = [];
+
+        if (Array.isArray(props.user)) {
+          for (let user of props.user) {
+            const responsePhotos: any = await conn.get(
+              `&id=${user.user_id}`,
+              "CCPP/EmployeePhoto.php"
+            );
+            const responseDetails: any = await conn.get(
+              `&id=${user.user_id}`,
+              "CCPP/Employee.php"
+            );
+            if (
+              responseDetails &&
+              !responseDetails.error &&
+              responsePhotos &&
+              !responsePhotos.error
+            ) {
+              const details = responseDetails.data[0];
+              userList.push({
+                id: user.user_id,
+                name: details.name,
+                company: details.company,
+                shop: details.shop,
+                department: details.departament,
+                sub: details.sub,
+                administrator: responseDetails.data[1]?.administrator,
+                photo: responsePhotos.photo,
+              });
+            }
+          }
+
+          setPhotos(userList);
+        } else {
+          setPhotos([]);
+        }
+      } catch (error: any) {
+        setError(error.message);
+      }
+      setLoading(false);
+    };
+
+    loadPhotos();
+  }, [props.user]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // console.log(photos);
 
   return (
     <div className="modal-list d-flex align-items-center gap-3">
       <div>
         <ModalUser
+          dataPhotosUsers={photos}
           data={props}
           list={getInfoUser}
           openDetailUser={openDetailUser}
           setOpenDetailUser={setOpenDetailUser}
         >
           <UserProfile
+            photos={photos}
             detailsmodaluser={props.detailsmodaluser}
             listuser={setInfoUser}
             setOpenDetailUser={setOpenDetailUser}

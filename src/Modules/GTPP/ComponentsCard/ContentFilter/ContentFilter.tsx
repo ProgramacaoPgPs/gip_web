@@ -5,9 +5,10 @@ import { fildsetsFilters } from '../../mock/mockTeste';
 type TaskStateFilterProps = {
     filter: Function[] | any;
     onAction?:() => void;
+    ref?: any;
 }
 
-const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction }) => {
+const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction, ref }) => {
     const [
         handleFilterSearch,
         handleFilterDateInitial,
@@ -47,11 +48,11 @@ const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction }) => {
     );
 
     return (
-        <div>
+        <div ref={ref}>
             <CustomForm
                 onAction={onAction}
-                classButton='btn btn-danger'
-                titleButton='Re-carregar'
+                classButton='btn btn-danger fa fa-refresh fs-3 my-2'
+                titleButton=''
                 typeButton='submit'
                 needButton={true}
                 fieldsets={fieldsetsValues}

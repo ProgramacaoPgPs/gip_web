@@ -1,13 +1,11 @@
-import React, { HTMLAttributes, useState } from 'react';
+import React, { HTMLAttributes, useEffect, useRef, useState } from 'react';
 import './columnTaskState.css';
 import ContentFilter from '../ContentFilter/ContentFilter';
 import MinimalFilterModel from '../MinimalFilterModel/MinimalFilterModel';
 import CardTask from '../CardTask/CardTask';
 import { useWebSocket } from '../../Context/GtppWsContext';
-import { ITask } from '../../../../Interface/iGIPP';
 import { useMyContext } from '../../../../Context/MainContext';
-// import { convertdate } from '../../../../Util/Util';
-import { DateConverter } from '../../Class/DataConvert';
+import { filterTasks } from '../../../../Util/Util';
 
 type ColumnPropsTaskState = HTMLAttributes<HTMLDivElement> & {
     title: string;
@@ -43,6 +41,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
     const { exportCsv, exportPdf, addTask, is_first_column, ...rest } = props;
     const [filterHandler, setFilterHandler] = useState(false);
     const { setTask, setTaskPercent, setOpenCardDefault, setNotifications, notifications } = useWebSocket();
+    const componenteRef = useRef<HTMLDivElement | null>(null);
 
     const [filterData, setFilterData] = useState<TaskFilter>({
         search: "",
@@ -55,73 +54,58 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
         statusSearch: false,
     });
     
-    const handleFilterForContentBody = () => setFilterHandler(!filterHandler);
-    
-    const filterTasks = (
-        tasks: ITask[],
-        searchTerm: string = "",
-        rangeDateInitial: string = "",
-        rangeDateInitialFinal: string = "",
-        rangeDateFinal: string = "",
-        rangeDateFinalFinal: string = "",
-        priority: number = 3,
-        status: boolean = false,
-        collaborate: boolean = false
-    ) => {
-        if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && !status && !collaborate) return tasks;
-
-        return tasks
-            .filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()))
-            .filter(task => priority === 3 || task.priority === priority)
-            .filter(task => !status || userLog.id === task.user_id)
-            .filter(task => !collaborate || task.user_id !== userLog.id)
-            .filter(task => {
-                if (!rangeDateInitial || !rangeDateInitialFinal) return true;
-                let rangeStart = DateConverter.formatDate(rangeDateInitial);
-                let rangeFinal = DateConverter.formatDate(rangeDateInitialFinal);
-                let taskDate = DateConverter.formatDate(task.final_date);
-                if (!rangeStart || !rangeFinal || !taskDate) {
-                    console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
-                    return true;
-                }
-                return taskDate >= rangeStart && taskDate <= rangeFinal;
-            })
-            .filter(task => {
-                if (!rangeDateInitial || !rangeDateInitialFinal) return true;
-                let rangeStart = DateConverter.formatDate(rangeDateFinal);
-                let rangeFinal = DateConverter.formatDate(rangeDateFinalFinal);
-                let taskDate = DateConverter.formatDate(task.final_date);
-                if (!rangeStart || !rangeFinal || !taskDate) {
-                    console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
-                    return true;
-                }
-                return taskDate >= rangeStart && taskDate <= rangeFinal;
-            })
+    // Função que alterna a visibilidade do modal
+    const handleFilterForContentBody = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setFilterHandler(prevState => !prevState);
     };
+
+    const handleClickOut = (event: MouseEvent) => {
+        if (componenteRef.current && !componenteRef.current.contains(event.target as Node)) {
+            setFilterHandler(false);
+        }
+    };
+
+    useEffect(() => {
+        const handleClickOutWrapper = (event: MouseEvent) => {
+            if (componenteRef.current) {
+                handleClickOut(event);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutWrapper);
+
+        // Limpeza do event listener ao desmontar o componente
+        return () => {
+            document.removeEventListener('click', handleClickOutWrapper);
+        };
+    }, []);
 
     return (
         <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
-            <div className={`columnTaskState-title  rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
+            <div className={`columnTaskState-title rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
                 <div className='d-flex justify-content-between align-items-center w-100'>
                     <div><h1 className="rounded p-1">{props.title}</h1></div>
                     <div className='w-100 d-flex justify-content-end'>
                         <button onClick={handleFilterForContentBody} className="btn font-filter-button">filtro</button>
                     </div>
-                    <div style={{position: 'relative'}}>      
+                    <div style={{ position: 'relative' }}>
                         {filterHandler && (
                             <MinimalFilterModel>
-                            <ContentFilter 
-                                filter={[
-                                    (value: string) => setFilterData(x => ({ ...x, search: value })),
-                                    (value: string) => setFilterData(x => ({ ...x, dateInitialSearch: value })),
-                                    (value: string) => setFilterData(x => ({ ...x, dateInitialFinalSearch: value })),
-                                    (value: number) => setFilterData(x => ({ ...x, prioritySearch: value })),
-                                    (value: string) => setFilterData(x => ({ ...x, dateFinalSearch: value })),
-                                    (value: string) => setFilterData(x => ({ ...x, dateFinalFinalSearch: value })),
-                                    (value: boolean) => setFilterData(x => ({ ...x, filterCollaboration: value })),
-                                    (value: boolean) => setFilterData(x => ({ ...x, statusSearch: !value })),
-                                ]}
-                            />
+                                <div ref={componenteRef}>  {/* Ref associada ao modal */}
+                                    <ContentFilter
+                                        filter={[
+                                            (value: string) => setFilterData(x => ({ ...x, search: value })),
+                                            (value: string) => setFilterData(x => ({ ...x, dateInitialSearch: value })),
+                                            (value: string) => setFilterData(x => ({ ...x, dateInitialFinalSearch: value })),
+                                            (value: number) => setFilterData(x => ({ ...x, prioritySearch: value })),
+                                            (value: string) => setFilterData(x => ({ ...x, dateFinalSearch: value })),
+                                            (value: string) => setFilterData(x => ({ ...x, dateFinalFinalSearch: value })),
+                                            (value: boolean) => setFilterData(x => ({ ...x, filterCollaboration: value })),
+                                            (value: boolean) => setFilterData(x => ({ ...x, statusSearch: !value })),
+                                        ]}
+                                    />
+                                </div>
                             </MinimalFilterModel>
                         )}
                     </div>
@@ -141,7 +125,8 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                             filterData.dateFinalFinalSearch,
                             filterData.prioritySearch,
                             filterData.statusSearch,
-                            filterData.filterCollaboration
+                            filterData.filterCollaboration,
+                            userLog
                         )?.map((task:any, _: number) => {
                         return (
                             <CardTask
