@@ -11,6 +11,7 @@ export default function Cfpp() {
     const { setTitleHead } = useMyContext();
     const [tokenCFPP, setTokenCFPP] = useState<string>('');
     const [recordType, setRecordType] = useState<[{ id_record_type: number; description: string; status: number }]>([{ id_record_type: 0, description: '', status: 0 }]);
+    const [employees, setEmployees] = useState<any[]>([]);
 
     useEffect(() => {
         (
@@ -35,15 +36,11 @@ export default function Cfpp() {
         (
             async () => {
                 await loadRecordType();
+                await loadEmployees();
             }
         )();
     }, [tokenCFPP]);
-
-    useEffect(() => {
-        if (recordType[0].id_record_type) {
-            console.log(convertForTable(recordType, { ocultColumns: ["id_record_type"] }));
-        }
-    }, [recordType]);
+    useEffect(()=>console.log(employees),[employees])
 
     async function loadTokenCFPP() {
         if (!sessionStorage.tokenCFPP) {
@@ -74,21 +71,38 @@ export default function Cfpp() {
             console.error(error);
         }
     }
+    async function loadEmployees() {
+        try {
+            if (tokenCFPP) {
+                const reqEmployee: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
+                    method: 'GET',
+                    params: null,
+                    pathFile: `/api/GIPP/GET/Employees/employees`,
+                    port: "5000",
+                }, { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenCFPP}` });
+                if ('message' in reqEmployee && reqEmployee.error) throw new Error(reqEmployee.message);
+                reqEmployee.data && setEmployees(reqEmployee.data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='d-flex flex-column overflow-auto flex-grow-1'>
                 <CustomNavbar items={navItems} />
-                <div>
-                    <TableComponent
-                        maxSelection={1}
-                        list={convertForTable(recordType, {
-                            ocultColumns: ["id_record_type"],
-                            customTags: { description: "Descrição", status: "Status" }
-                        })}
-                        onConfirmList={(item) => console.log(item)}
-                    />
+                <div className='h-50'>
+                    {employees.length > 0 &&
+                        <TableComponent
+                            maxSelection={1}
+                            list={convertForTable(employees, {
+                                ocultColumns: ["EmployeeAdmiss","EmployeeDemiss"],
+                                customTags: { description: "Descrição", status: "Status" }
+                            })}
+                            onConfirmList={(item) => console.log(item)}
+                        />}
                 </div>
             </section>
         </div>
