@@ -9,10 +9,11 @@ import Home from './Components/Home';
 import PrivateRoute from './PrivateRoute';
 import Gtpp from './Modules/GTPP/Gtpp';
 import RenderedModules from './Components/RenderedModules';
-import { EppWsProvider } from './Modules/GTPP/Context/GtppWsContext';
+import { GtppWsProvider } from './Modules/GTPP/Context/GtppWsContext';
 import 'react-notifications-component/dist/theme.css'; // Tema básico
 import 'animate.css/animate.min.css'; // Animações opcionais
 import { ConnectionProvider } from './Context/ConnContext';
+import Cfpp from './Modules/CFPP/Cfpp';
 
 
 function App() {
@@ -40,7 +41,8 @@ function App() {
         <Routes>
           <Route path="/" element={withProvider(<Login />)} />
           <Route path="/home" element={withPrivateProvider(<Home />)} />
-          <Route path="/home/GTPP" element={withPrivateProvider(<EppWsProvider><Gtpp /></EppWsProvider>)} />
+          <Route path="/home/GTPP" element={withPrivateProvider(<GtppWsProvider><Gtpp /></GtppWsProvider>)} />
+          <Route path="/home/CFPP" element={withPrivateProvider(<Cfpp />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>

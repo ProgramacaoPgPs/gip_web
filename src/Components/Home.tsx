@@ -25,8 +25,11 @@ export default function Home(): JSX.Element {
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='p-2 flex-grow-1'>
-                <CustomButton onClick={() => navigate('/home/GTPP')} className='btn col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
+                <CustomButton onClick={() => navigate('/home/GTPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
                     <img className="rounded w-100" src={iconGTPP} alt="Logo Peg Pese" />
+                </CustomButton>
+                <CustomButton onClick={() => navigate('/home/CFPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
+                    <h1>CFPP</h1>
                 </CustomButton>
             </section>
         </div>

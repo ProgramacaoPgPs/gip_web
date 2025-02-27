@@ -80,6 +80,28 @@ export function isTokenExpired(expirationDate: string): boolean {
     return result;
 };
 
+export async function fetchNodeDataFull(req: iReqConn, headers?: Record<string, string>) {
+    let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
+    try {
+        const URL =`http://sgpp.pegpese.com:${req.port}${req.pathFile}${req.urlComplement ? req.urlComplement : ""}` ;
+        // console.log(URL,headers);
+        let objectReq: any = { method: req.method };
+        if (headers) {
+            objectReq.headers = headers;
+        }
+        if (req.params) objectReq.body = JSON.stringify(req.params);
+        const response = await fetch(URL, objectReq);
+        const body = await response.json();
+        result = body;
+        if (body.error) throw new Error(body.message);
+    } catch (messageErr: any) {
+        const translate = new Translator(messageErr.message);
+        const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
+        checkedExceptionError(messageErr.message, req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+    } finally {
+        return result;
+    }
+};
 
 export async function fetchDataFull(req: iReqConn) {
     let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
@@ -109,6 +131,6 @@ function checkedExceptionError(message: string, exceptions?: string[]): boolean 
     return result;
 }
 function settingUrl(middlewer: string, params?: string, port?: string) {
-    let server = `http://gigpp.com.br:${port ? port : '72'}/GLOBAL`;
+    let server = `http://gigpp.com.br:${port ? port : '72/GLOBAL'}`;
     return server + middlewer + (params ? params : "");
 }

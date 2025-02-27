@@ -1,0 +1,81 @@
+:root {
+    --vPrimaryColor: #bed989; /* Mantém o verde claro como cor principal */
+    --vSecondaryColor: #5f7434; /* Mantém o verde escuro como secundário */
+    --vThirdColor: #d66a2b;
+    --vTitleColor: #555;
+  }
+  
+  .custom-navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .custom-navbar .custom-nav {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .custom-navbar .custom-nav-item {
+    position: relative;
+  }
+  
+  .custom-navbar .custom-nav-link {
+    color: var(--vSecondaryColor);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    display: inline-block;
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  }
+  
+  .custom-navbar .custom-nav-link:hover {
+    background-color: var(--vSecondaryColor);
+    color: var(--vPrimaryColor);
+  }
+  
+  .custom-navbar .custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--vPrimaryColor);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    padding: 0;
+    margin-top: 0.5rem;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    border: none;
+    list-style: none;
+  }
+  
+  .custom-navbar .custom-dropdown:hover .custom-dropdown-menu,
+  .custom-navbar .custom-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    margin-top:0px;
+  }
+  .custom-navbar .custom-dropdown-menu li {
+    list-style: none; /* Garante que os itens não tenham estilo de lista */
+}
+
+.custom-navbar .custom-dropdown-item {
+    color: var(--vSecondaryColor);
+    padding: 0.8rem 1rem;
+    display: block;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    border: none;
+  }
+  
+  .custom-navbar .custom-dropdown-item:hover {
+    background-color: var(--vSecondaryColor);
+    color: var(--vPrimaryColor);
+  }
+  
