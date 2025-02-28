@@ -26,18 +26,18 @@ export const filterTasks = (
     rangeDateInitialFinal: string = "",
     rangeDateFinal: string = "",
     rangeDateFinalFinal: string = "",
-    priority: number = 3,
-    status: boolean = false,
-    collaborate: boolean = false,
+    priority: Number,
+    IdentityDataUser: Number,
     user_id: any,
 ) => {
-    if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && !status && !collaborate) return tasks;
+    if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && IdentityDataUser === 3 ) return tasks; // && !IdentityDataUser
+
+    console.log(IdentityDataUser);
 
     return tasks
         .filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()))
         .filter(task => priority === 3 || task.priority === priority)
-        .filter(task => !status || user_id.id === task.user_id)
-        .filter(task => !collaborate || task.user_id !== user_id.id)
+        .filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id)
         .filter(task => {
             if (!rangeDateInitial || !rangeDateInitialFinal) return true;
             let rangeStart = DateConverter.formatDate(rangeDateInitial);

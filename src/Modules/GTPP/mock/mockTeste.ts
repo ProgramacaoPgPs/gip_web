@@ -132,14 +132,21 @@ export const fieldsetsRegister = (
 // Filtro de busca aonde vamos mesclar as informações para os campos ter mais facilidade.
 export const fildsetsFilters = (
     onFilterSearch: (value: string) => void,
-    optionsFilterPriority: {value: string, label: string}[],
+    
+    // SELECT priority
     onFilterPriority: (value: number) => void,
+    optionsFilterPriority: {value: string, label: string}[],
+    // final SELECT priority
+
     onFilterDateInitial: (value: string) => void,
     onFilterDateInitialFinal: (value: string) => void,
     onFilterDateFinal: (value: string) => void,
     onFilterDateFinalFinal: (value: string) => void,
-    onFilterStatus: (value: boolean) => void,
+
+    // Select dos colaboradores e tarefas favoritas
+    onFilterHandlerItemUser: (value: number) => void,
     optionsStatus: {value: string, label: string}[]
+    // Select dos colaboradores e tarefas favoritas
 ) => [
     {
         attributes: { 
@@ -244,11 +251,11 @@ export const fildsetsFilters = (
             className: 'w-100', 
         },
         item: {
-            label: 'Filtrar por Status',
+            label: 'Filtrar por',
             mandatory: false,
             captureValue: {
                 type: 'select',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterStatus(Boolean(e.target.value)) },
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterHandlerItemUser(parseInt(e.target.value)) },
                 placeholder: '',
                 name: 'priority',
                 className: 'form-control',

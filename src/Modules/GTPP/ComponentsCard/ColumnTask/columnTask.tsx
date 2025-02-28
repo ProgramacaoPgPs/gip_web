@@ -32,8 +32,7 @@ type TaskFilter = {
     dateInitialFinalSearch: string;
     dateFinalSearch: string;
     dateFinalFinalSearch: string;
-    filterCollaboration: boolean;
-    statusSearch: boolean;
+    filterHandlerDataUser: number;
 }
 
 const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunction & ColumnPropsTaskStateBoolean> = (props) => {
@@ -50,8 +49,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
         dateInitialFinalSearch: "",
         dateFinalSearch: "",
         dateFinalFinalSearch: "",
-        filterCollaboration: false,
-        statusSearch: false,
+        filterHandlerDataUser: 3
     });
     
     // Função que alterna a visibilidade do modal
@@ -81,13 +79,18 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
         };
     }, []);
 
+    console.log(filterData.filterHandlerDataUser);
+
     return (
         <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
             <div className={`columnTaskState-title rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
                 <div className='d-flex justify-content-between align-items-center w-100'>
                     <div><h1 className="rounded p-1">{props.title}</h1></div>
                     <div className='w-100 d-flex justify-content-end'>
-                        <button onClick={handleFilterForContentBody} className="btn font-filter-button">filtro</button>
+                        <div><button className='btn fa fa-refresh text-white' onClick={() => {
+                            setFilterData(prev => ({...prev, search: "", dateFinalFinalSearch: "", dateFinalSearch: "", dateInitialFinalSearch: "", dateInitialSearch: "", statusSearch: 0, prioritySearch: 3, filterHandlerDataUser: 3}))
+                        } }></button></div>    
+                        <div><button onClick={handleFilterForContentBody} className="btn fas fa-filter text-white"></button></div>
                     </div>
                     <div style={{ position: 'relative' }}>
                         {filterHandler && (
@@ -101,14 +104,14 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                                             (value: number) => setFilterData(x => ({ ...x, prioritySearch: value })),
                                             (value: string) => setFilterData(x => ({ ...x, dateFinalSearch: value })),
                                             (value: string) => setFilterData(x => ({ ...x, dateFinalFinalSearch: value })),
-                                            (value: boolean) => setFilterData(x => ({ ...x, filterCollaboration: value })),
-                                            (value: boolean) => setFilterData(x => ({ ...x, statusSearch: !value })),
+                                            (value: number) => setFilterData(x => ({ ...x, filterHandlerDataUser: value })),
                                         ]}
                                     />
                                 </div>
                             </MinimalFilterModel>
                         )}
                     </div>
+                    
                 </div>
             </div>
             <div className="columnTaskState-container">
@@ -124,8 +127,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                             filterData.dateFinalSearch,
                             filterData.dateFinalFinalSearch,
                             filterData.prioritySearch,
-                            filterData.statusSearch,
-                            filterData.filterCollaboration,
+                            filterData.filterHandlerDataUser,
                             userLog
                         )?.map((task:any, _: number) => {
                         return (

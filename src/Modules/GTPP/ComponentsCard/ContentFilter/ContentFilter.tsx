@@ -11,12 +11,14 @@ type TaskStateFilterProps = {
 const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction, ref }) => {
     const [
         handleFilterSearch,
+
         handleFilterDateInitial,
         handleFilterDateInitialFinal,
         handleFilterPriority,
         handleFilterDateFinal,
         handleFilterDateFinalFinal,
-        handleFilterStatus,
+
+        filterHandlerDataUser,
     ] = filter;
 
     // Campo de valores de prioridades
@@ -28,33 +30,40 @@ const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction, ref })
     ];
 
     // Campo de valores de Radio
-    const optionsFilterStatus = [
-        {value: '3', label: 'Todos status'},
-        {value: '2', label: 'Colaboradores'},
+    const optionsFavoriteAndColaboratios = [
+        {value: '3', label: 'Todos'},
+        {value: '2', label: 'Colaborações'},
         {value: '1', label: 'Minhas Tarefas'},
     ];
 
     // alocador de valores.
     const fieldsetsValues = fildsetsFilters(
         handleFilterSearch,
-        optionsFilterPriority,
+
+        // select
         handleFilterPriority,
+        optionsFilterPriority,
+        // final select
+
+        // Inputs de datas
         handleFilterDateInitial,
         handleFilterDateInitialFinal,
         handleFilterDateFinal,
         handleFilterDateFinalFinal,
-        handleFilterStatus,
-        optionsFilterStatus
+
+        // Select colaboradores
+        filterHandlerDataUser,
+        optionsFavoriteAndColaboratios,
     );
 
     return (
         <div ref={ref}>
             <CustomForm
                 onAction={onAction}
-                classButton='btn btn-danger fa fa-refresh fs-3 my-2'
+                classButton='btn btn-danger fa fa-refresh fs-5 my-2'
                 titleButton=''
                 typeButton='submit'
-                needButton={true}
+                needButton={false}
                 fieldsets={fieldsetsValues}
             />
         </div>

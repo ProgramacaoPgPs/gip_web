@@ -46,22 +46,6 @@ interface SelectOption {
   label: string;
 }
 
-interface OptionsRadio {
-  titleRadio: string;
-  value: string;
-  checked?: boolean;
-  name: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface RadioFieldProps {
-  label?: string;
-  options: OptionsRadio[] | any;
-  selectedValue?: string | number | readonly string[] | undefined;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-}
-
 function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
@@ -133,21 +117,14 @@ function renderField(
     switch (captureValue.type) {
       case 'select':
         return (
-          <SelectField
-            {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
+          <SelectField {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
             // @ts-ignore
             options={captureValue?.options || []}
           />
         );
       case 'textarea':
         return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
-        case 'radio':
-          if (captureValue.type === 'radio' && 'options' in captureValue) {
-            return (
-              <RadioField options={captureValue.options} label={captureValue.title} selectedValue={captureValue.value} onChange={captureValue.onChange}/>
-            );
-          }
-          break;
+
       default:
         return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
     }
@@ -155,28 +132,6 @@ function renderField(
 
   // Caso não seja um array e não tenha um tipo definido, assume que é um input
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
-}
-{/*Melhorar a lógica do RadioField e ver se faz sentindo manter ele ou utilizar o input que já existe para renderizar  */}
-export function RadioField({ label, options, selectedValue, onChange, className }: RadioFieldProps) {
-  return (
-    <div>
-      {/* Mapeia e renderiza as opções do radio */}
-      {options.map((option:any, index:number) => (
-        <div key={`radio_${index}`}>
-          <label className='d-flex gap-2 flex-wrap'>
-            <input
-              type="radio"
-              name={option.name}
-              value={option.value}
-              checked={selectedValue === option.value}
-              onChange={onChange}
-            />
-            <div>{option.titleRadio}</div>
-          </label>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 
