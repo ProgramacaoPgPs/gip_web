@@ -32,34 +32,31 @@ export const filterTasks = (
 ) => {
     if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && IdentityDataUser === 3 ) return tasks; // && !IdentityDataUser
 
-    console.log(IdentityDataUser);
-
-    return tasks
+    const filter = tasks
         .filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()))
         .filter(task => priority === 3 || task.priority === priority)
         .filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id)
         .filter(task => {
-            if (!rangeDateInitial || !rangeDateInitialFinal) return true;
-            let rangeStart = DateConverter.formatDate(rangeDateInitial);
-            let rangeFinal = DateConverter.formatDate(rangeDateInitialFinal);
-            let taskDate = DateConverter.formatDate(task.final_date);
-            if (!rangeStart || !rangeFinal || !taskDate) {
-                console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
-                return true;
-            }
-            return taskDate >= rangeStart && taskDate <= rangeFinal;
+            if(rangeDateInitialFinal && rangeDateInitial){
+                if(rangeDateFinal && rangeDateFinalFinal) {
+                    return task.initial_date  >= rangeDateFinal && task.final_date <= rangeDateFinalFinal;
+                } 
+                return task.initial_date >= rangeDateInitial && task.final_date <=rangeDateInitialFinal;
+            }else {
+                return task;
+            }            
         })
         .filter(task => {
-            if (!rangeDateInitial || !rangeDateInitialFinal) return true;
-            let rangeStart = DateConverter.formatDate(rangeDateFinal);
-            let rangeFinal = DateConverter.formatDate(rangeDateFinalFinal);
-            let taskDate = DateConverter.formatDate(task.final_date);
-            if (!rangeStart || !rangeFinal || !taskDate) {
-                console.warn("Erro ao converter datas:", { rangeStart, rangeFinal, taskDate });
-                return true;
+            if(rangeDateFinal && rangeDateFinalFinal) {
+                if(rangeDateInitial && rangeDateInitialFinal) {
+                    return task.initial_date >= rangeDateInitial && task.initial_date <=rangeDateInitialFinal;
+                }
+                return task.final_date >= rangeDateFinal && task.final_date <= rangeDateFinalFinal;
+            } else {
+                return task;
             }
-            return taskDate >= rangeStart && taskDate <= rangeFinal;
         })
+        return filter;
 };
 
 export const httpGet = async (url: string, params: any = {}) => {
