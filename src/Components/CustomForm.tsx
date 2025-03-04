@@ -15,7 +15,7 @@ type CaptureValueTuple = [
 ];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
-  needButton?: boolean;
+  notButton?: boolean;
   typeButton?: 'submit' | 'reset' | 'button' | undefined;
   fieldsets: {
     attributes?: React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
@@ -46,12 +46,13 @@ interface SelectOption {
   label: string;
 }
 
-function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
+function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
+
           <label>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
@@ -65,7 +66,8 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
 
         </fieldset>
       ))}
-      {needButton && 
+      {/* Mexer ainda nesse botão... */}
+      {notButton && 
       <button
         onClick={onAction}
         type={typeButton}
@@ -75,6 +77,42 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
     </form>
   );
 }
+
+// essa função verifica se os inputs que estão vindo pra ele são do mesmo tipo ou são de tipos diferentes
+// porque se for de tipos diferentes é uma tupla se não é um array porque são tudo do mesmo tipo
+export function renderArrayOrTuple(
+  captureValue: CaptureValueArray | CaptureValueTuple, 
+  renderField: (field: any) => JSX.Element)
+{
+  // Tupla
+  if (Array.isArray(captureValue) && captureValue.length === 3) {
+    return (
+      <React.Fragment>
+        {captureValue.map((field, index) => (
+          <div key={index}>
+            {renderField(field)}
+          </div>
+        ))}
+      </React.Fragment>
+    );
+  }
+
+  // Array
+  if (Array.isArray(captureValue)) {
+    return (
+      <React.Fragment>
+        {captureValue.map((field, index) => (
+          <div key={index}>
+            {renderField(field)}
+          </div>
+        ))}
+      </React.Fragment>
+    );
+  }
+
+  return null;
+}
+
 function renderField(
   captureValue:
     | React.InputHTMLAttributes<HTMLInputElement>
@@ -83,30 +121,9 @@ function renderField(
     | CaptureValueArray
     | CaptureValueTuple
 ) {
-  // se for uma tupla, renderiza cada elemento da tupla
-  if (Array.isArray(captureValue) && captureValue.length === 3) {
-    return (
-      <>
-        {captureValue.map((field, index) => (
-          <div key={index}>
-            {renderField(field)}
-          </div>
-        ))}
-      </>
-    );
-  }
-
-  // Se for um array, renderiza cada elemento do array
+  // Se for um array ou tupla, usa a função de utilitário para renderizar
   if (Array.isArray(captureValue)) {
-    return (
-      <>
-        {captureValue.map((field, index) => (
-          <div key={index}>
-            {renderField(field)}
-          </div>
-        ))}
-      </>
-    );
+    return renderArrayOrTuple(captureValue, renderField);
   }
 
   // Se não for um array, renderiza o campo individualmente
@@ -131,8 +148,8 @@ function renderField(
   return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
 }
 
-
-export function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
+export function InputField(props: React.InputHTMLAttributes<HTMLInputElement> | any) {
+  
   return <input {...props} />;
 }
 

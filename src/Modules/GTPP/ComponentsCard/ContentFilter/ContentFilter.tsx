@@ -63,7 +63,7 @@ const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction, ref })
                 classButton='btn btn-danger fa fa-refresh fs-5 my-2'
                 titleButton=''
                 typeButton='submit'
-                needButton={false}
+                notButton={false}
                 fieldsets={fieldsetsValues}
             />
         </div>
