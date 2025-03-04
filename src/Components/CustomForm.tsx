@@ -52,7 +52,6 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
-
           <label>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
@@ -66,7 +65,6 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
 
         </fieldset>
       ))}
-      {/* Mexer ainda nesse botão... */}
       {needButton && 
       <button
         onClick={onAction}
@@ -77,7 +75,6 @@ function CustomForm({ fieldsets, onAction, classButton, needButton=true, typeBut
     </form>
   );
 }
-
 function renderField(
   captureValue:
     | React.InputHTMLAttributes<HTMLInputElement>
