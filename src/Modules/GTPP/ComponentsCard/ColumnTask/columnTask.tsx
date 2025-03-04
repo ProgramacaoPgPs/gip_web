@@ -5,7 +5,7 @@ import MinimalFilterModel from '../MinimalFilterModel/MinimalFilterModel';
 import CardTask from '../CardTask/CardTask';
 import { useWebSocket } from '../../Context/GtppWsContext';
 import { useMyContext } from '../../../../Context/MainContext';
-import { ClassTaskFilter } from './filtercardTask';
+import { filterTasks } from './filtercardTask';
 
 type ColumnPropsTaskState = HTMLAttributes<HTMLDivElement> & {
     title: string;
@@ -51,20 +51,6 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
         dateFinalFinalSearch: "",
         filterHandlerDataUser: 3
     });
-
-    const taskFilterController = new ClassTaskFilter(
-        props.content_body, 
-        filterData.search, 
-        filterData.dateInitialSearch, 
-        filterData.dateInitialFinalSearch, 
-        filterData.dateFinalSearch,
-        filterData.dateFinalFinalSearch,
-        filterData.prioritySearch,
-        filterData.filterHandlerDataUser,
-        userLog
-    )
-
-    const filteredTasks = taskFilterController.filterTasks();
     
     // Função que alterna a visibilidade do modal
     const handleFilterForContentBody = (event: React.MouseEvent) => {
@@ -133,7 +119,17 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                     {/* {props.content_body} */}
                       <div className="task-cards-container">
                         {/* O filtro é que vai filtrar fato.  */}
-                        {filteredTasks?.map((task:any, _: number) => {
+                        {filterTasks(
+                            props.content_body, 
+                            filterData.search, 
+                            filterData.dateInitialSearch, 
+                            filterData.dateInitialFinalSearch, 
+                            filterData.dateFinalSearch,
+                            filterData.dateFinalFinalSearch,
+                            filterData.prioritySearch,
+                            filterData.filterHandlerDataUser,
+                            userLog
+                        )?.map((task:any, _: number) => {
                         return (
                             <CardTask
                             key={`simple_card_task_${task.id}`}
