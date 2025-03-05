@@ -44,7 +44,9 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
 interface SelectOption {
   value: string | number;
   label: string;
-}
+};
+
+
 
 function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
@@ -78,26 +80,7 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
   );
 }
 
-// essa função verifica se os inputs que estão vindo pra ele são do mesmo tipo ou são de tipos diferentes
-// porque se for de tipos diferentes é uma tupla se não é um array porque são tudo do mesmo tipo
-export function renderArrayOrTuple(
-  captureValue: CaptureValueArray | CaptureValueTuple, 
-  renderField: (field: any) => JSX.Element)
-{
-  // Tupla
-  if (Array.isArray(captureValue) && captureValue.length === 3) {
-    return (
-      <React.Fragment>
-        {captureValue.map((field, index) => (
-          <div key={index}>
-            {renderField(field)}
-          </div>
-        ))}
-      </React.Fragment>
-    );
-  }
-
-  // Array
+export function renderCallback(captureValue: CaptureValueArray | CaptureValueTuple, renderField: (field: any) => JSX.Element) {
   if (Array.isArray(captureValue)) {
     return (
       <React.Fragment>
@@ -109,47 +92,42 @@ export function renderArrayOrTuple(
       </React.Fragment>
     );
   }
-
   return null;
 }
 
-function renderField(
-  captureValue:
-    | React.InputHTMLAttributes<HTMLInputElement>
-    | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })
-    | React.TextareaHTMLAttributes<HTMLTextAreaElement>
-    | CaptureValueArray
-    | CaptureValueTuple
-) {
-  // Se for um array ou tupla, usa a função de utilitário para renderizar
-  if (Array.isArray(captureValue)) {
-    return renderArrayOrTuple(captureValue, renderField);
+function renderField(captureValue: CaptureValueArray){
+  if(Array.isArray(captureValue)){
+    return renderCallback(captureValue, renderField);
   }
 
-  // Se não for um array, renderiza o campo individualmente
-  if ('type' in captureValue) {
+  if('type' in captureValue){
+    // @ts-ignore
     switch (captureValue.type) {
       case 'select':
-        return (
-          <SelectField {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
-            // @ts-ignore
-            options={captureValue?.options || []}
-          />
-        );
+        return renderSelect(captureValue);
       case 'textarea':
-        return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
-
+        return renderTextarea(captureValue);
       default:
-        return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
+        return renderInput(captureValue);
     }
   }
 
-  // Caso não seja um array e não tenha um tipo definido, assume que é um input
-  return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
+  return renderInput(captureValue as React.InputHTMLAttributes<HTMLInputElement>);
+}
+
+function renderInput(captureValue: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <InputField {...captureValue} />;
+}
+
+function renderSelect(captureValue: React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) {
+  return <SelectField {...captureValue} options={captureValue?.options || []} />;
+}
+
+function renderTextarea(captureValue: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <TextareaField {...captureValue} />;
 }
 
 export function InputField(props: React.InputHTMLAttributes<HTMLInputElement> | any) {
-  
   return <input {...props} />;
 }
 
@@ -187,7 +165,6 @@ export function SelectFieldDefault(props: {
     </label>
   )
 }
-
 
 export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number, onPosition: () => void }) {
   const { yesNo, onPosition } = props;
@@ -240,7 +217,6 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
     );
   }
 }
-
 
 export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} />;

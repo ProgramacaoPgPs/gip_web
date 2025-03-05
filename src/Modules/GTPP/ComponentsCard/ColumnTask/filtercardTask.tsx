@@ -1,14 +1,18 @@
 import { ITask } from "../../../../Interface/iGIPP";
 
 export const filterTasks = ( tasks: ITask[], searchTerm: String = "", rangeDateInitial: String = "", rangeDateInitialFinal: String = "", rangeDateFinal: String = "", rangeDateFinalFinal: String = "", priority: Number, IdentityDataUser: Number, user_id: any) => {
-    if (!searchTerm && !rangeDateInitial && !rangeDateFinal && priority === 3 && IdentityDataUser === 3 ) return tasks;
-    const filter = tasks
+    try {
+        const filter = tasks
         .filter(task => searchTask(task, searchTerm))
         .filter(task => priorityTask(task, priority))
         .filter(task => userIndentity(task, IdentityDataUser, user_id))
         .filter(task => dateInitial(task, rangeDateInitial, rangeDateInitialFinal, rangeDateFinal, rangeDateFinalFinal))
         .filter(task => dateFinal(task, rangeDateFinal, rangeDateFinalFinal, rangeDateInitial, rangeDateInitialFinal))
         return filter;
+    } catch (error: any) {
+        console.log(error.message);
+        return tasks;
+    }
 };
 
 // data inicial
