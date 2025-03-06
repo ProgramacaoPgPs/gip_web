@@ -6,9 +6,11 @@ import Translator from "./Translate";
 const connection = new Connection("18", true);
 
 export const convertdate = (date: string) => {
+    const localDate = new Date(`${date}T00:00:00`);
+    
     return new Intl.DateTimeFormat("pt-BR", {
         dateStyle: "short"
-    }).format(new Date(date))
+    }).format(localDate);
 }
 
 export const httpGet = async (url: string, params: any = {}) => {
@@ -83,7 +85,7 @@ export function isTokenExpired(expirationDate: string): boolean {
 export async function fetchNodeDataFull(req: iReqConn, headers?: Record<string, string>) {
     let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
     try {
-        const URL =`http://sgpp.pegpese.com:${req.port}${req.pathFile}${req.urlComplement ? req.urlComplement : ""}` ;
+        const URL = `http://sgpp.pegpese.com:${req.port}${req.pathFile}${req.urlComplement ? req.urlComplement : ""}`;
         // console.log(URL,headers);
         let objectReq: any = { method: req.method };
         if (headers) {
@@ -116,7 +118,7 @@ export async function fetchDataFull(req: iReqConn) {
     } catch (messageErr: any) {
         const translate = new Translator(messageErr.message);
         const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
-        checkedExceptionError(messageErr.message,req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+        checkedExceptionError(messageErr.message, req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
     } finally {
         return result;
     }
@@ -186,4 +188,44 @@ export function convertForTable<T extends Record<string, any>>(
 
         return tableItem;
     });
+}
+
+/**
+ * Essa função recebe um objeto e converte ele para uma string no seguinte formato "@key=value ".
+ * Onde o @ é o prefixo e o espaço em branco o separador.
+ * @param {Record<string, any>} objectItem - O objeto a ser convertido.
+ * @param {string} [prefix="@"] - O prefixo a ser adicionado antes de cada chave (opcional, padrão é "@").
+ * @param {string} [separator=" "] - O separador entre os pares chave-valor (opcional, padrão é um espaço em branco).
+ * @returns {string} - A string formatada.
+ * @author Hygor Bueno
+ */
+export function objectForString(
+    objectItem: Record<string, any>,
+    separator: string = ""
+): string {
+    const result: string[] = [];
+    Object.keys(objectItem).forEach((item) => {
+        if (objectItem[item]) {
+            result.push(`${item}=${objectItem[item]}`);
+        }
+    });
+    return result.join(separator);
+}
+
+export function getFormattedDate(daysToSubtract?: number): string {
+    // Cria uma nova data com o valor atual
+    const currentDate = new Date();
+
+    // Se o parâmetro daysToSubtract for passado, subtrai a quantidade de dias
+    if (daysToSubtract !== undefined) {
+        currentDate.setDate(currentDate.getDate() - daysToSubtract);
+    }
+
+    // Formata a data no formato 'yyyy-MM-dd'
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Mês é base 0, então adicionamos 1
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    // Retorna a data formatada como string
+    return `${year}-${month}-${day}`;
 }

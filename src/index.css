@@ -8,11 +8,14 @@ body {
 }
 
 
-code {
+code/*,
+* */{
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 @media (max-width: 579px) {
+
   /* Para telas menores que 580px */
   #moduleGTPP .GIPP-section {
     display: flex !important;
@@ -30,6 +33,7 @@ code {
 }
 
 @media (min-width: 580px) and (max-width: 1024px) {
+
   /* Para telas entre 580px e 1024px */
   #moduleGTPP .GIPP-section {
     display: flex !important;
