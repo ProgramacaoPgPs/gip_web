@@ -18,6 +18,12 @@ function filterDate(task: ITask[], rangeDateInitial:String, rangeDateInitialFina
     return  task.filter((task:any) =>  task[dataRef]  >= rangeDateInitial && task[dataRef] <=rangeDateInitialFinal );
 }
 
-const userIndentity = (task:ITask[], IdentityDataUser: Number, user_id: {id: Number}) => task.filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id);
-const priorityTask = (task: ITask[], priority:Number) => task.filter(task => priority === 3 || task.priority === priority); 
-const searchTask = (task: ITask[], searchTerm: String) => task.filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()));
+function userIndentity (task:ITask[], IdentityDataUser: Number, user_id: {id: Number}) {
+    return task.filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id);
+}
+function priorityTask (task: ITask[], priority:Number) {
+    return task.filter(task => priority === 3 || task.priority === priority); 
+}
+function searchTask (task: ITask[], searchTerm: String) {
+    return task.filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()));
+}
