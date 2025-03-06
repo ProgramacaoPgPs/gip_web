@@ -2,51 +2,22 @@ import { ITask } from "../../../../Interface/iGIPP";
 
 export const filterTasks = ( tasks: ITask[], searchTerm: String = "", rangeDateInitial: String = "", rangeDateInitialFinal: String = "", rangeDateFinal: String = "", rangeDateFinalFinal: String = "", priority: Number, IdentityDataUser: Number, user_id: any) => {
     try {
-        const filter = tasks
-        .filter(task => searchTask(task, searchTerm))
-        .filter(task => priorityTask(task, priority))
-        .filter(task => userIndentity(task, IdentityDataUser, user_id))
-        .filter(task => dateInitial(task, rangeDateInitial, rangeDateInitialFinal, rangeDateFinal, rangeDateFinalFinal))
-        .filter(task => dateFinal(task, rangeDateFinal, rangeDateFinalFinal, rangeDateInitial, rangeDateInitialFinal))
-        return filter;
+        let filtred: any = tasks;
+        if(searchTerm !== "") filtred = searchTask(filtred, searchTerm);
+        if(priority) filtred = priorityTask(filtred, priority);
+        if(IdentityDataUser) filtred = userIndentity(filtred, IdentityDataUser, user_id);
+        if(rangeDateInitial !== "" && rangeDateInitialFinal !== "") filtred = filterDate(filtred, rangeDateInitial, rangeDateInitialFinal,"initial_date");
+        if(rangeDateFinal !== "" && rangeDateFinalFinal !== "") filtred = filterDate(filtred, rangeDateFinal, rangeDateFinalFinal,"final_date");
+        return filtred;
     } catch (error: any) {
         console.log(error.message);
         return tasks;
     }
 };
-
-// data inicial
-function dateInitial(task: ITask, rangeDateInitial:String, rangeDateInitialFinal:String, rangeDateFinal:String, rangeDateFinalFinal:String) {
-    return (rangeDateInitialFinal && rangeDateInitial) ?
-                (rangeDateFinal && rangeDateFinalFinal) ? 
-                    task.initial_date  >= rangeDateFinal && task.final_date <= rangeDateFinalFinal :
-                    task.initial_date >= rangeDateInitial && task.final_date <=rangeDateInitialFinal : 
-                    task;
+function filterDate(task: ITask[], rangeDateInitial:String, rangeDateInitialFinal:String,dataRef:string){
+    return  task.filter((task:any) =>  task[dataRef]  >= rangeDateInitial && task[dataRef] <=rangeDateInitialFinal );
 }
 
-// Data final
-function dateFinal(task: ITask, rangeDateFinal:String, rangeDateFinalFinal:String, rangeDateInitial:String, rangeDateInitialFinal:String) {
-    return (rangeDateFinal && rangeDateFinalFinal) ?
-                (rangeDateInitial && rangeDateInitialFinal) ? 
-                    task.initial_date >= rangeDateInitial && task.initial_date <=rangeDateInitialFinal :
-                    task.final_date >= rangeDateFinal && task.final_date <= rangeDateFinalFinal : 
-                    task;
-}
-
-
-// Identificando as tarefas de colaboração e se é de usuário.
-function userIndentity(task:ITask, IdentityDataUser: Number, user_id: {id: Number}) {
-    return IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id;
-}
-
-// priopridade da tarefa
-function priorityTask(task: ITask, priority:Number) {
-    return priority === 3 || task.priority === priority;
-}
-
-
-// pesquisando a tarefa!
-function searchTask(task: ITask, searchTerm: String) {
-    return !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase())
-}
-
+const userIndentity = (task:ITask[], IdentityDataUser: Number, user_id: {id: Number}) => task.filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id);
+const priorityTask = (task: ITask[], priority:Number) => task.filter(task => priority === 3 || task.priority === priority); 
+const searchTask = (task: ITask[], searchTerm: String) => task.filter(task => !searchTerm || task.description.toUpperCase().includes(searchTerm.toUpperCase()));

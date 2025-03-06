@@ -3,14 +3,14 @@ import React from 'react';
 type CaptureValueArray = Array<
   [
     React.InputHTMLAttributes<HTMLInputElement>,
-    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] },
+    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string },
     React.TextareaHTMLAttributes<HTMLTextAreaElement>
   ]
 >;
 
 type CaptureValueTuple = [
   React.InputHTMLAttributes<HTMLInputElement>,
-  React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] },
+  React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string },
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
 ];
 
@@ -25,7 +25,7 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       mandatory?: boolean;
       captureValue:
       | React.InputHTMLAttributes<HTMLInputElement>
-      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) 
+      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string }) 
       | React.TextareaHTMLAttributes<HTMLTextAreaElement>
       | CaptureValueArray
       | CaptureValueTuple
@@ -45,8 +45,6 @@ interface SelectOption {
   value: string | number;
   label: string;
 };
-
-
 
 function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
@@ -80,6 +78,7 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
   );
 }
 
+
 export function renderCallback(captureValue: CaptureValueArray | CaptureValueTuple, renderField: (field: any) => JSX.Element) {
   if (Array.isArray(captureValue)) {
     return (
@@ -95,12 +94,14 @@ export function renderCallback(captureValue: CaptureValueArray | CaptureValueTup
   return null;
 }
 
-function renderField(captureValue: CaptureValueArray){
-  if(Array.isArray(captureValue)){
-    return renderCallback(captureValue, renderField);
-  }
+function isFieldWithType(captureValue: any): captureValue is { type: String } {
+  return captureValue && typeof captureValue.type === 'string';
+}
 
-  if('type' in captureValue){
+function renderField(captureValue: CaptureValueArray){
+  if(Array.isArray(captureValue)) return renderCallback(captureValue, renderField);
+
+  if(isFieldWithType(captureValue)){
     // @ts-ignore
     switch (captureValue.type) {
       case 'select':
