@@ -132,21 +132,14 @@ export const fieldsetsRegister = (
 // Filtro de busca aonde vamos mesclar as informações para os campos ter mais facilidade.
 export const fildsetsFilters = (
     onFilterSearch: (value: string) => void,
-    
-    // SELECT priority
     onFilterPriority: (value: number) => void,
     optionsFilterPriority: {value: string, label: string}[],
-    // final SELECT priority
-
     onFilterDateInitial: (value: string) => void,
     onFilterDateInitialFinal: (value: string) => void,
     onFilterDateFinal: (value: string) => void,
     onFilterDateFinalFinal: (value: string) => void,
-
-    // Select dos colaboradores e tarefas favoritas
     onFilterHandlerItemUser: (value: number) => void,
     optionsStatus: {value: string, label: string}[]
-    // Select dos colaboradores e tarefas favoritas
 ) => [
     {
         attributes: { 
@@ -199,7 +192,7 @@ export const fildsetsFilters = (
                 {
                     type: 'date',
                     placeholder: '',
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitial(e.target.value) },
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onFilterDateInitial(e.target.value),
                     name: 'initial_date',
                     className: 'form-control',
                     required: false,
@@ -208,7 +201,7 @@ export const fildsetsFilters = (
                 {
                     type: 'date',
                     placeholder: '',
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateInitialFinal(e.target.value) },
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onFilterDateInitialFinal(e.target.value),
                     name: 'initial_date',
                     className: 'form-control',
                     required: false,
@@ -228,7 +221,7 @@ export const fildsetsFilters = (
                 {
                     type: 'date',
                     placeholder: '',
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinal(e.target.value) },
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onFilterDateFinal(e.target.value),
                     name: 'final_date',
                     className: 'form-control',
                     required: false,
@@ -237,7 +230,7 @@ export const fildsetsFilters = (
                 {
                     type: 'date',
                     placeholder: '',
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterDateFinalFinal(e.target.value) },
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onFilterDateFinalFinal(e.target.value),
                     name: 'final_date',
                     className: 'form-control',
                     required: false,
@@ -255,7 +248,7 @@ export const fildsetsFilters = (
             mandatory: false,
             captureValue: {
                 type: 'select',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterHandlerItemUser(parseInt(e.target.value)) },
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => onFilterHandlerItemUser(parseInt(e.target.value)),
                 placeholder: '',
                 name: 'priority',
                 className: 'form-control',

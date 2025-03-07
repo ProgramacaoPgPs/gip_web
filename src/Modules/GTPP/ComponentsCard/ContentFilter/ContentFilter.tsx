@@ -1,7 +1,7 @@
 import React from 'react';
 // import './columnTaskState.css';
 import CustomForm from '../../../../Components/CustomForm';
-import { fildsetsFilters } from '../../mock/mockTeste';
+import { fildsetsFilters } from '../../mock/configurationfile';
 type TaskStateFilterProps = {
     filter: Function[] | any;
     onAction?:() => void;
@@ -11,14 +11,12 @@ type TaskStateFilterProps = {
 const ContentFilter: React.FC<TaskStateFilterProps>= ({ filter, onAction, ref }) => {
     const [
         handleFilterSearch,
-
         handleFilterDateInitial,
         handleFilterDateInitialFinal,
         handleFilterPriority,
         handleFilterDateFinal,
         handleFilterDateFinalFinal,
-
-        filterHandlerDataUser,
+        filterHandlerDataUser
     ] = filter;
 
     // Campo de valores de prioridades

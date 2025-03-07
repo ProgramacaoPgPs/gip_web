@@ -15,9 +15,8 @@ export const filterTasks = ( tasks: ITask[], searchTerm: String = "", rangeDateI
     }
 };
 function filterDate(task: ITask[], rangeDateInitial:String, rangeDateInitialFinal:String,dataRef:string){
-    return  task.filter((task:any) =>  task[dataRef]  >= rangeDateInitial && task[dataRef] <=rangeDateInitialFinal );
+    return task.filter((task:any) => task[dataRef]  >= rangeDateInitial && task[dataRef] <=rangeDateInitialFinal);
 }
-
 function userIndentity (task:ITask[], IdentityDataUser: Number, user_id: {id: Number}) {
     return task.filter(task => IdentityDataUser === 3 ? task : IdentityDataUser === 2 ? task.user_id !== user_id.id : task.user_id === user_id.id);
 }

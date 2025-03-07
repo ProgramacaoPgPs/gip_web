@@ -3,7 +3,7 @@ import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Col } from "react-bootstrap";
 import NavBar from "../../Components/NavBar";
-import { listPath } from "./mock/mockTeste";
+import { listPath } from "./mock/configurationfile";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";

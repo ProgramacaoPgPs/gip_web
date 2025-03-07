@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CustomForm from "../../../../Components/CustomForm";
-import { fieldsetsRegister } from "../../mock/mockTeste";
+import { fieldsetsRegister } from "../../mock/configurationfile";
 import { useConnection } from "../../../../Context/ConnContext";
 import { useMyContext } from "../../../../Context/MainContext";
 

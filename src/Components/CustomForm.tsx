@@ -52,7 +52,6 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
-
           <label>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
@@ -60,13 +59,9 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
             </b>
             :
           </label>
-          <div className='d-flex align-items-center gap-4'>
-            {renderField(fieldset.item.captureValue)}
-          </div>
-
+          <div className='d-flex align-items-center gap-4'>{renderField(fieldset.item.captureValue)}</div>
         </fieldset>
       ))}
-      {/* Mexer ainda nesse botão... */}
       {notButton && 
       <button
         onClick={onAction}

@@ -73,13 +73,10 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
 
         document.addEventListener('click', handleClickOutWrapper);
 
-        // Limpeza do event listener ao desmontar o componente
         return () => {
             document.removeEventListener('click', handleClickOutWrapper);
         };
     }, []);
-
-    console.log(filterData.filterHandlerDataUser);
 
     return (
         <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
@@ -95,7 +92,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                     <div style={{ position: 'relative' }}>
                         {filterHandler && (
                             <MinimalFilterModel>
-                                <div ref={componenteRef}>  {/* Ref associada ao modal */}
+                                <div ref={componenteRef}>
                                     <ContentFilter
                                         filter={[
                                             (value: string) => setFilterData(x => ({ ...x, search: value })),
@@ -116,9 +113,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
             </div>
             <div className="columnTaskState-container">
                 <div className="columnTaskState-body">
-                    {/* {props.content_body} */}
-                      <div className="task-cards-container">
-                        {/* O filtro é que vai filtrar fato.  */}
+                      <div className="task-cards-container">                        
                         {filterTasks(
                             props.content_body, 
                             filterData.search, 
