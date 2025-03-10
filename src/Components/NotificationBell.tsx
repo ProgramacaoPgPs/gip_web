@@ -33,7 +33,7 @@ export default function NotificationBell(props: { idTask?: number }): JSX.Elemen
             <i
                 className={`fa-solid fa-bell`}
                 style={{
-                    fontSize: "calc(0.2rem + 1vw)", // Responsivo: aumenta conforme o tamanho da tela
+                    // fontSize: "calc(0.2rem + 1vw)", // Responsivo: aumenta conforme o tamanho da tela
                     color: notifications.length > 0 ? "red" : "gray",
                     transition: "color 0.3s"
                 }}

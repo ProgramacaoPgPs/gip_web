@@ -121,7 +121,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
                             filterData.dateInitialFinalSearch, 
                             filterData.dateFinalSearch,
                             filterData.dateFinalFinalSearch,
-                            filterData.prioritySearch,
+                            filterData.prioritySearch.toString(),
                             filterData.filterHandlerDataUser,
                             userLog
                         )?.map((task:any, _: number) => {

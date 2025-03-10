@@ -3,7 +3,7 @@ import React from 'react';
 type CaptureValueArray = Array<
   [
     React.InputHTMLAttributes<HTMLInputElement>,
-    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string },
+    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string},
     React.TextareaHTMLAttributes<HTMLTextAreaElement>
   ]
 >;
@@ -89,37 +89,29 @@ export function renderCallback(captureValue: CaptureValueArray | CaptureValueTup
   return null;
 }
 
-function isFieldWithType(captureValue: any): captureValue is { type: String } {
-  return captureValue && typeof captureValue.type === 'string';
-}
-
-function renderField(captureValue: CaptureValueArray){
-  if(Array.isArray(captureValue)) return renderCallback(captureValue, renderField);
-
-  if(isFieldWithType(captureValue)){
-    // @ts-ignore
-    switch (captureValue.type) {
-      case 'select':
-        return renderSelect(captureValue);
-      case 'textarea':
-        return renderTextarea(captureValue);
-      default:
-        return renderInput(captureValue);
-    }
+function renderField(captureValue: CaptureValueArray | any){
+  switch (captureValue.type) {
+    case 'select':
+      return renderSelect(captureValue);
+    case 'textarea':
+      return renderTextarea(captureValue);
+    default:
+      return renderInput(captureValue);
   }
-
-  return renderInput(captureValue as React.InputHTMLAttributes<HTMLInputElement>);
 }
 
-function renderInput(captureValue: React.InputHTMLAttributes<HTMLInputElement>) {
+function renderInput(captureValue: any) {
+  if(Array.isArray(captureValue)) return renderCallback(captureValue, renderField);
   return <InputField {...captureValue} />;
 }
 
-function renderSelect(captureValue: React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) {
+function renderSelect(captureValue: any ) {
+  if(Array.isArray(captureValue)) return renderCallback(captureValue, renderField);
   return <SelectField {...captureValue} options={captureValue?.options || []} />;
 }
 
-function renderTextarea(captureValue: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+function renderTextarea(captureValue: any) {
+  if(Array.isArray(captureValue)) return renderCallback(captureValue, renderField);
   return <TextareaField {...captureValue} />;
 }
 
@@ -127,7 +119,7 @@ export function InputField(props: React.InputHTMLAttributes<HTMLInputElement> | 
   return <input {...props} />;
 }
 
-export function SelectField(
+export function SelectField (
   props: React.SelectHTMLAttributes<HTMLSelectElement> & { options: SelectOption[] }
 ) {
   return (

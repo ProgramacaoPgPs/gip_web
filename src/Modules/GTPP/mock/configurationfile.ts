@@ -132,7 +132,7 @@ export const fieldsetsRegister = (
 // Filtro de busca aonde vamos mesclar as informações para os campos ter mais facilidade.
 export const fildsetsFilters = (
     onFilterSearch: (value: string) => void,
-    onFilterPriority: (value: number) => void,
+    onFilterPriority: (value: string) => void,
     optionsFilterPriority: {value: string, label: string}[],
     onFilterDateInitial: (value: string) => void,
     onFilterDateInitialFinal: (value: string) => void,
@@ -171,7 +171,7 @@ export const fildsetsFilters = (
             mandatory: false,
             captureValue: {
                 type: 'select',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterPriority(parseInt(e.target.value)) },
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onFilterPriority(e.target.value) },
                 placeholder: '',
                 name: 'priority',
                 className: 'form-control',
