@@ -51,7 +51,7 @@ export default function Cfpp() {
         })();
     }, [tokenCFPP]);
 
-    useEffect(() => { console.log(listRegister) }, [listRegister]);
+    // useEffect(() => { console.log(listRegister) }, [listRegister]);
 
     async function loadRecordType() {
         try {
@@ -143,13 +143,14 @@ export default function Cfpp() {
     }
 
     async function insertRegister(typeRecord: string, times: string) {
+        let data;
         try {
             const params = {
                 employee_id: employee.EmployeeID,
                 id_record_type_fk: typeRecord,
                 times: times
             }
-            const data = await fetchNodeDataFull({
+            data = await fetchNodeDataFull({
                 method: 'POST',
                 params: params,
                 pathFile: '/api/GIPP/POST/Employees',
@@ -158,14 +159,16 @@ export default function Cfpp() {
             if (data.error) throw new Error(data.message);
         } catch (error) {
             console.error(error);
+        } finally {
+            return data
         }
     }
 
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
-            <section className='d-flex flex-column overflow-auto h-100 w-100'>
-                <div style={{ height: "40%" }}>
+            <section className='d-flex flex-column overflow-hidden h-100 w-100'>
+                <div >
                     <CustomNavbar items={navItems} />
                     {
                         openSelectEmployee &&
@@ -217,13 +220,15 @@ export default function Cfpp() {
                                     setLoading(true);
                                     const list = listRegister.length > 0 ? listRegister : [{ id_record_type_fk: typeRecord, times: `${date} ${hour}` }];
                                     for await (const element of list) {
-                                        await insertRegister(element.id_record_type_fk, element.times);
+                                        const data = await insertRegister(element.id_record_type_fk, element.times);
+                                        if (data?.error) throw new Error(data.message);
                                     }
                                     await loadTimeRecords();
                                     cleanAll();
-                                    setLoading(false);
                                 } catch (error) {
-                                    console.log(error);
+                                    console.error(error);
+                                } finally {
+                                    setLoading(false);
                                 }
                             }
                             }>Registrar</button>
@@ -257,8 +262,8 @@ export default function Cfpp() {
                         </div>
                     </div>
                 </div>
-                <div style={{ height: "60%" }} className='w-100'>
-                    {timeRecords.length > 0 && <TableComponent list={convertForTable(timeRecords, {
+                <div className='w-100 overflow-auto'>
+                    {timeRecords.length > 0 && <TableComponent hiddenButton={true} list={convertForTable(timeRecords, {
                         ocultColumns: ['status_records', 'branch_time_record', 'times', 'id_time_records', 'created_at', 'updated_at', 'id_global'],
                         customTags: { employee_id: 'Matrícula', id_status_fk: 'Cód. Status', id_record_type_fk: 'Cód. Marcação', cod_work_schedule: 'Cód. Jornada', employee_name: 'Nome', date: 'Data', hour: 'Horário', cost_center_description: 'C.C', branch_name: 'Filial' },
                         minWidths: { time: "75px", date: '85px', employee_id: '100px', id_status_fk: '110px', id_record_type_fk: '145px', cod_work_schedule: '100px' }

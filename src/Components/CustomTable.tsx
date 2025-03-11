@@ -8,8 +8,9 @@ interface TableComponentProps {
   onConfirmList: (selected: tItemTable[]) => void;
   selectedItems?: tItemTable[];
   maxSelection?: number;
-  selectionList?: tItemTable[]; // Nova prop: lista de objetos para seleção
-  selectionKey?: string; // Nova prop: chave de referência para seleção
+  selectionList?: tItemTable[];
+  selectionKey?: string;
+  hiddenButton?: boolean;
 }
 
 export default function TableComponent(props: TableComponentProps) {
@@ -148,14 +149,17 @@ export default function TableComponent(props: TableComponentProps) {
           </tbody>
         </table>
       </div>
-      <div className="w-100 d-flex justify-content-around">
-        <button title="Confirmar seleção atual" className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
-          Confirmar Seleção
-        </button>
-        <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
-          Limpar Seleção
-        </button>
-      </div>
+      {!props.hiddenButton && (
+        <div className="w-100 d-flex justify-content-around">
+          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
+            {selectedRows.length > 0 ? 'Confirmar Seleção' : 'Voltar'}
+          </button>
+          <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
+            Limpar Seleção
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
