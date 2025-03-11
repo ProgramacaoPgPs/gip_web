@@ -42,7 +42,7 @@ function App() {
           <Route path="/" element={withProvider(<Login />)} />
           <Route path="/home" element={withPrivateProvider(<Home />)} />
           <Route path="/home/GTPP" element={withPrivateProvider(<GtppWsProvider><Gtpp /></GtppWsProvider>)} />
-          <Route path="/home/CFPP" element={withPrivateProvider(<Cfpp />)} />
+          {/* <Route path="/home/CFPP" element={withPrivateProvider(<Cfpp />)} /> */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>
