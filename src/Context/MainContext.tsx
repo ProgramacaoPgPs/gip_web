@@ -86,7 +86,6 @@ export function MyProvider({ children }: Props) {
       return;
     }
     if (Notification.permission === "granted") {
-      console.log("O som Já estava liberado.");
     } else if (Notification.permission !== "denied") {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
@@ -104,15 +103,15 @@ export function MyProvider({ children }: Props) {
     (async () => {
       await loadDetailsToken();
     })();
-    loadInitialDatas();
+    // loadInitialDatas();
   }, [userLog]);
 
-  async function loadInitialDatas() {
-    if (localStorage.tokenGIPP) {
-      const company = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Company.php' });
-      console.log(company);
-    }
-  }
+  // async function loadInitialDatas() {
+  //   if (localStorage.tokenGIPP) {
+  //     const company = await fetchData({ method: "GET", params: null, pathFile: 'CCPP/Company.php' });
+  //     console.log(company);
+  //   }
+  // }
 
   async function configUserData(user: { id: number, session?: string; administrator?: number }) {
     if (user.id) {

@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 const GtppWsContext = createContext<iGtppWsContextType | undefined>(undefined);
 
-export const EppWsProvider: React.FC<{ children: React.ReactNode }> = ({
+export const GtppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [taskPercent, setTaskPercent] = useState<number>(0);

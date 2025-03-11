@@ -86,6 +86,28 @@ export function isTokenExpired(expirationDate: string): boolean {
     return result;
 };
 
+export async function fetchNodeDataFull(req: iReqConn, headers?: Record<string, string>) {
+    let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
+    try {
+        const URL = `http://sgpp.pegpese.com:${req.port}${req.pathFile}${req.urlComplement ? req.urlComplement : ""}`;
+        // console.log(URL,headers);
+        let objectReq: any = { method: req.method };
+        if (headers) {
+            objectReq.headers = headers;
+        }
+        if (req.params) objectReq.body = JSON.stringify(req.params);
+        const response = await fetch(URL, objectReq);
+        const body = await response.json();
+        result = body;
+        if (body.error) throw new Error(body.message);
+    } catch (messageErr: any) {
+        const translate = new Translator(messageErr.message);
+        const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
+        checkedExceptionError(messageErr.message, req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+    } finally {
+        return result;
+    }
+};
 
 export async function fetchDataFull(req: iReqConn) {
     let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
@@ -100,7 +122,7 @@ export async function fetchDataFull(req: iReqConn) {
     } catch (messageErr: any) {
         const translate = new Translator(messageErr.message);
         const passDefault = messageErr.message.toLowerCase().includes('default password is not permited');
-        checkedExceptionError(messageErr.message,req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
+        checkedExceptionError(messageErr.message, req.exception) && handleNotification(passDefault ? "Atenção!" : "Erro!", translate.getMessagePT(), passDefault ? "info" : "danger");
     } finally {
         return result;
     }
@@ -115,6 +137,99 @@ function checkedExceptionError(message: string, exceptions?: string[]): boolean 
     return result;
 }
 function settingUrl(middlewer: string, params?: string, port?: string) {
-    let server = `http://gigpp.com.br:${port ? port : '72'}/GLOBAL`;
+    let server = `http://gigpp.com.br:${port ? port : '72/GLOBAL'}`;
     return server + middlewer + (params ? params : "");
+}
+
+// Interface para o item da tabela
+export interface TableItem {
+    [key: string]: {
+        tag: string;
+        value: string;
+        isImage?: boolean;
+        ocultColumn?: boolean;
+        minWidth?: string;
+    };
+}
+
+// Função para mascarar valores
+export function maskUserSeach(
+    value: string,
+    tag: string,
+    isImage?: boolean,
+    ocultColumn?: boolean,
+    minWidth?: string
+): { tag: string; value: string; isImage?: boolean; ocultColumn?: boolean; minWidth?: string } {
+    return { tag, value, isImage, ocultColumn, minWidth };
+}
+
+// Função genérica para converter um array de objetos em uma estrutura de tabela
+export function convertForTable<T extends Record<string, any>>(
+    array: T[], // Array de objetos genéricos
+    options?: {
+        isImageKeys?: string[]; // Chaves que devem ser tratadas como imagens
+        ocultColumns?: string[]; // Chaves que devem ser ocultadas
+        minWidths?: Record<string, string>; // Larguras mínimas personalizadas para colunas
+        customTags?: Record<string, string>; // Mapeamento de chaves para tags personalizadas
+    }
+): TableItem[] {
+    return array.map((item) => {
+        const tableItem: TableItem = {};
+
+        // Itera sobre as chaves do objeto
+        for (const key in item) {
+            if (Object.prototype.hasOwnProperty.call(item, key)) {
+                const value = item[key]?.toString() || ""; // Converte o valor para string
+                const isImage = options?.isImageKeys?.includes(key); // Verifica se é uma imagem
+                const ocultColumn = options?.ocultColumns?.includes(key); // Verifica se a coluna deve ser oculta
+                const minWidth = options?.minWidths?.[key] || '150px'; // Largura mínima personalizada
+                const tag = options?.customTags?.[key] || key; // Usa a tag personalizada ou a chave como fallback
+
+                // Cria a coluna dinamicamente usando maskUserSeach
+                tableItem[key] = maskUserSeach(value, tag, isImage, ocultColumn, minWidth);
+            }
+        }
+
+        return tableItem;
+    });
+}
+
+/**
+ * Essa função recebe um objeto e converte ele para uma string no seguinte formato "@key=value ".
+ * Onde o @ é o prefixo e o espaço em branco o separador.
+ * @param {Record<string, any>} objectItem - O objeto a ser convertido.
+ * @param {string} [prefix="@"] - O prefixo a ser adicionado antes de cada chave (opcional, padrão é "@").
+ * @param {string} [separator=" "] - O separador entre os pares chave-valor (opcional, padrão é um espaço em branco).
+ * @returns {string} - A string formatada.
+ * @author Hygor Bueno
+ */
+export function objectForString(
+    objectItem: Record<string, any>,
+    separator: string = ""
+): string {
+    const result: string[] = [];
+    Object.keys(objectItem).forEach((item) => {
+        if (objectItem[item]) {
+            result.push(`${item}=${objectItem[item]}`);
+        }
+    });
+    return result.join(separator);
+}
+
+export function getFormattedDate(daysToSubtract?: number): string {
+    // Cria uma nova data com o valor atual
+    const currentDate = new Date();
+
+    // Se o parâmetro daysToSubtract for passado, subtrai a quantidade de dias
+    if (daysToSubtract !== undefined) {
+        currentDate.setDate(currentDate.getDate() - daysToSubtract);
+    }
+
+    // Formata a data no formato 'yyyy-MM-dd'
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Mês é base 0, então adicionamos 1
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    // Retorna a data formatada como string
+    return `${year}-${month}-${day}`;
 }

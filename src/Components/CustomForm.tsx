@@ -124,6 +124,7 @@ export function SelectField (
 ) {
   return (
     <select name={props.name} value={props.value} required={props.required} onChange={props.onChange} className={`form-select ${props.className ? props.className : ""}`} disabled={props.disabled}>
+      <option value="" hidden></option>
       {props.options.map((option, index) => (
         <option key={index} value={option.value}>
           {option.label}
