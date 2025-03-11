@@ -30,7 +30,6 @@ const UserProfile = (props: any) => {
 
       {/* Aqui vamos carregar a lista de usuarios */}
       {props.photos
-        // .filter((itemList:any) => console.log(itemList))
         .map((photo: any, index:any) => (
           <div
             key={`photo_user_task_${index}`}
@@ -185,26 +184,24 @@ const LoadUserCheck = (props: any) => {
       </div>
       <div className="overflow-auto h-100">
       {list.map((item: any) => {
-        // Usando 'some' para verificar se existe algum item em 'dataPhotosUsers'
-        // cujo 'id' seja igual ao 'employee_id' do item
         const filterCheckList = props.dataPhotosUsers.some((items: any) => {
-          return Number(item.employee_id) === Number(items.id); // Verifique se o 'employee_id' é igual ao 'id'
-      });
+          return Number(item.employee_id) === Number(items.id);
+        });
 
-  return (
-    <>
-      <ListUserTask
-        dataPhotosUsers={props.dataPhotosUsers}
-        check={filterCheckList} 
-        item={item}
-        taskid={props.list.data.datatask.id}
-        userId={item.employee_id}
-        key={item.employee_id}
-        loadUserTaskLis={loadUserTaskLis}
-      />
-    </>
-  );
-})}
+        return (
+          <React.Fragment key={Number(item.employee_id)}>
+            <ListUserTask
+              dataPhotosUsers={props.dataPhotosUsers || ImageUser}
+              check={filterCheckList} 
+              item={item}
+              taskid={props.list.data.datatask.id}
+              userId={item.employee_id}
+              key={item.employee_id}
+              loadUserTaskLis={loadUserTaskLis}
+            />
+          </React.Fragment>
+        );
+      })}
 
       </div>
       <div className="d-flex justify-content-between align-items-center">
