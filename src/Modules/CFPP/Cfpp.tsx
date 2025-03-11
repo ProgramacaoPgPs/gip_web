@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { listPath } from '../GTPP/mock/mockTeste';
 import NavBar from '../../Components/NavBar';
-import { convertForTable, fetchNodeDataFull, getFormattedDate } from '../../Util/Util';
+import { convertForTable, convertTime, fetchNodeDataFull, getFormattedDate, handleNotification } from '../../Util/Util';
 import CustomNavbar from './Components/CustomNavbar';
 import { navItems } from './Data/configs';
 import { useMyContext } from '../../Context/MainContext';
 import SearchUserCFPP from './Components/SearchUserCFPP';
 import TableComponent from '../../Components/CustomTable';
 import { InputCheckButton } from '../../Components/CustomButton';
+import RegisterValidator from './Class/RegisterValidator';
 
 export default function Cfpp() {
     const { setTitleHead } = useMyContext();
     const [tokenCFPP, setTokenCFPP] = useState<string>('');
-    const [listRegister, setListRegister] = useState<{}[]>([]);
+    const [listRegister, setListRegister] = useState<{ id_record_type_fk: string; times: string }[]>([]);
     const [date, setDate] = useState<string>('');
     const [hour, setHour] = useState<string>('');
     const [typeRecord, setTypeRecord] = useState<string>('');
@@ -20,6 +21,7 @@ export default function Cfpp() {
     const [recordType, setRecordType] = useState<any[]>([]);
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
     const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '' });
+    const { setLoading } = useMyContext();
 
     useEffect(() => {
         (
@@ -49,7 +51,7 @@ export default function Cfpp() {
         })();
     }, [tokenCFPP]);
 
-    useEffect(()=>{console.log(listRegister)},[listRegister]);
+    useEffect(() => { console.log(listRegister) }, [listRegister]);
 
     async function loadRecordType() {
         try {
@@ -63,7 +65,11 @@ export default function Cfpp() {
                 if ('message' in reqRecordType && reqRecordType.error) throw new Error(reqRecordType.message);
                 reqRecordType.data && setRecordType(reqRecordType.data);
             }
-        } catch (error) {
+        } catch (error: any) {
+            if (error.message.includes('Invalid or expired token')) {
+                sessionStorage.removeItem('tokenCFPP');
+                await loadTokenCFPP();
+            }
             console.error(error);
         }
     }
@@ -114,11 +120,52 @@ export default function Cfpp() {
         })
     }
 
+    function handleAddItem() {
+        try {
+            const item = {
+                id_record_type_fk: typeRecord,
+                times: `${date} ${hour}`
+            }
+            if (!typeRecord || !date || !hour) throw new Error('O campo data, hora e lançameto precisam ser preenchidos!');
+            RegisterValidator.isValidToAdd(listRegister, item);
+            setListRegister(prevList => [...prevList, item]);
+        } catch (error: any) {
+            handleNotification("Atenção!", error.message, "danger");
+        }
+    }
+
+    function cleanAll() {
+        setListRegister([]);
+        setDate('');
+        setHour('');
+        setTypeRecord('');
+        setEmployee({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '' });
+    }
+
+    async function insertRegister(typeRecord: string, times: string) {
+        try {
+            const params = {
+                employee_id: employee.EmployeeID,
+                id_record_type_fk: typeRecord,
+                times: times
+            }
+            const data = await fetchNodeDataFull({
+                method: 'POST',
+                params: params,
+                pathFile: '/api/GIPP/POST/Employees',
+                port: "5000",
+            }, { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenCFPP}` });
+            if (data.error) throw new Error(data.message);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='d-flex flex-column overflow-auto h-100 w-100'>
-                <div style={{ height: "35%" }}>
+                <div style={{ height: "40%" }}>
                     <CustomNavbar items={navItems} />
                     {
                         openSelectEmployee &&
@@ -160,40 +207,59 @@ export default function Cfpp() {
                             </select>
                         </div>
                         <div className='d-flex col-1 align-items-end'>
-                            <button type='button' className='btn btn-primary me-2' onClick={async () => { 
-                                let newList = listRegister;
-                                newList.push({
-                                    id_record_type_fk: typeRecord,
-                                    times: `${date} ${hour}`
-                                });
-                                setListRegister([...newList]);
-                             }}>+</button>
+                            <button type='button' className='btn btn-primary me-2' onClick={async () => {
+                                handleAddItem();
+                            }}>+</button>
                         </div>
-                        <div className='d-flex col-2 align-items-end'>
+                        <div className='d-flex col-2 align-items-end gap-2'>
                             <button type='button' className='btn btn-success' onClick={async () => {
-                                const params = {
-                                    employee_id: employee.EmployeeID,
-                                    id_record_type_fk: typeRecord,
-                                    times: `${date} ${hour}`
+                                try {
+                                    setLoading(true);
+                                    const list = listRegister.length > 0 ? listRegister : [{ id_record_type_fk: typeRecord, times: `${date} ${hour}` }];
+                                    for await (const element of list) {
+                                        await insertRegister(element.id_record_type_fk, element.times);
+                                    }
+                                    await loadTimeRecords();
+                                    cleanAll();
+                                    setLoading(false);
+                                } catch (error) {
+                                    console.log(error);
                                 }
-
-                                // Seleciona o elemento <select> pelo ID <i class="fa-solid fa-plus"></i>
-
-                                const data = await fetchNodeDataFull({
-                                    method: 'POST',
-                                    params: params,
-                                    pathFile: '/api/GIPP/POST/Employees',
-                                    port: "5000",
-                                }, { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenCFPP}` });
-                                console.log(data);
                             }
                             }>Registrar</button>
+                            <button type='button' className='btn btn-danger' onClick={() => { cleanAll() }}>Limpar</button>
+                        </div>
+                    </div>
+                    <div className='container-fluid my-2'>
+                        <div className='row g-2'>
+                            {
+                                listRegister.length > 0 &&
+                                listRegister.map((item, index) =>
+                                    <div key={`Option_register_${item.id_record_type_fk}_${index}`} className={`col-6 col-sm-4 col-md-3 col-lg-2`} >
+                                        <div className={`d-flex align-items-center justify-content-between form-control border-0 bg-${item.id_record_type_fk == '1' ? 'success' : item.id_record_type_fk == '4' ? 'danger' : 'warning'} bg-opacity-25 rounded`}>
+                                            <span>{convertTime(item.times)}</span>
+                                            <button
+                                                type='button'
+                                                onClick={() => {
+                                                    const position = listRegister.findIndex(elemet => elemet.times == item.times);
+                                                    if (position != -1) {
+                                                        let newList = listRegister;
+                                                        newList.splice(position, 1);
+                                                        setListRegister([...newList]);
+                                                    }
+                                                }}
+                                                className="btn fa-solid fa-xmark"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                )
+                            }
                         </div>
                     </div>
                 </div>
-                <div style={{ height: "65%" }} className='w-100'>
+                <div style={{ height: "60%" }} className='w-100'>
                     {timeRecords.length > 0 && <TableComponent list={convertForTable(timeRecords, {
-                        ocultColumns: ['times', 'id_time_records', 'created_at', 'updated_at', 'id_global'],
+                        ocultColumns: ['status_records', 'branch_time_record', 'times', 'id_time_records', 'created_at', 'updated_at', 'id_global'],
                         customTags: { employee_id: 'Matrícula', id_status_fk: 'Cód. Status', id_record_type_fk: 'Cód. Marcação', cod_work_schedule: 'Cód. Jornada', employee_name: 'Nome', date: 'Data', hour: 'Horário', cost_center_description: 'C.C', branch_name: 'Filial' },
                         minWidths: { time: "75px", date: '85px', employee_id: '100px', id_status_fk: '110px', id_record_type_fk: '145px', cod_work_schedule: '100px' }
                     })} onConfirmList={(item) => { console.log(item); }} />}

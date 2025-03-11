@@ -13,6 +13,16 @@ export const convertdate = (date: string) => {
     }).format(localDate);
 }
 
+export function convertTime(date: string){
+    const localDate = new Date(`${date}`);
+    
+    return new Intl.DateTimeFormat("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
+        hourCycle: "h23" // Use "h23" para formato de 24 horas ou "h12" para formato de 12 horas
+    }).format(localDate);
+}
+
 export const httpGet = async (url: string, params: any = {}) => {
     return connection.get(url, params);
 };
