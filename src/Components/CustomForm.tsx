@@ -74,19 +74,16 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
 }
 
 export function renderField(captureValue: CaptureValueArray | CaptureValueTuple) {
-  if(Array.isArray(captureValue)) {
-    return (
-      <React.Fragment>
-        {captureValue.map((field: object, index) => (
-          <React.Fragment key={`field_${index}`}>
-            {renderFieldSingle(field)}
-          </React.Fragment>
-        ))}
-      </React.Fragment>
-    )
-  }
-
-  return renderFieldSingle(captureValue);
+  const convertValueArray = Array.isArray(captureValue) ? captureValue : [captureValue];
+  return (
+    <React.Fragment>
+      {convertValueArray.map((field: object, index) => (
+        <React.Fragment key={`field_${index}`}>
+          {renderFieldSingle(field)}
+        </React.Fragment>
+      ))}
+    </React.Fragment>
+  )
 }
 
 function renderFieldSingle(captureValue: CaptureValueArray | any){
