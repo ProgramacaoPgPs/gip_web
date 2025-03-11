@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listPath } from '../GTPP/mock/mockTeste';
+import { listPath } from '../GTPP/mock/configurationfile';
 import NavBar from '../../Components/NavBar';
 import { convertForTable, convertTime, fetchNodeDataFull, getFormattedDate, handleNotification } from '../../Util/Util';
 import CustomNavbar from './Components/CustomNavbar';

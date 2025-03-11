@@ -128,3 +128,14 @@ export interface iWebSocketContextType {
     setContactList: (value: Contact[]) => void;
     changeListContact: (value: number) => void;
 }
+
+export interface ITask {
+    id: number;
+    description: string;
+    priority: number;
+    user_id: number;
+    initial_date: string;
+    final_date: string;
+}
+
+

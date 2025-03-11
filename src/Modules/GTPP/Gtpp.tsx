@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useMyContext } from "../../Context/MainContext";
 import "./Gtpp.css";
 import { Col } from "react-bootstrap";
-import CardTask from "./ComponentsCard/CardTask/CardTask";
 import NavBar from "../../Components/NavBar";
-import { listPath } from "./mock/mockTeste";
+import { listPath } from "./mock/configurationfile";
 import ColumnTaskState from "./ComponentsCard/ColumnTask/columnTask";
 import { PDFGenerator, generateAndDownloadCSV } from "../../Class/FileGenerator";
 import Cardregister from "./ComponentsCard/CardRegister/Cardregister";
@@ -121,10 +120,7 @@ export default function Gtpp(): JSX.Element {
             style={{ overflowX: "auto", /*height: "85%" */ flexFlow: "1" }}
           >
             {states?.map((cardTaskStateValue: any, idxValueState: any) => {
-              const filteredTasks = getTask.filter(
-                (task: any) => task.state_id === cardTaskStateValue.id
-              );
-              // console.log(filteredTasks);
+              const filteredTasks = getTask.filter((task: any) => task.state_id === cardTaskStateValue.id);
               const isFirstColumnTaskState = idxValueState === 0;
 
               return (
@@ -174,34 +170,7 @@ export default function Gtpp(): JSX.Element {
                         );
                         setModalPage(true);
                       }}
-                      content_body={
-                        <div className="task-cards-container">
-                          {filteredTasks?.map((task: any, idx: number) => {
-                            return (
-                              <CardTask
-                                key={`simple_card_task_${task.id}`}
-                                id={task.id}
-                                initial_date={task.initial_date}
-                                final_date={task.final_date}
-                                title_card={task.description}
-                                priority_card={task.priority}
-                                percent={task.percent}
-                                create_by={task.user_id}
-                                onClick={() => {
-                                  setTask(task);
-                                  setTaskPercent(task.percent);
-                                  setOpenCardDefault(true);
-                                  setNotifications(
-                                    notifications.filter(
-                                      (item) => item.task_id != task.id
-                                    )
-                                  );
-                                }}
-                              />
-                            );
-                          })}
-                        </div>
-                      }
+                      content_body={filteredTasks}
                     />
                   </div>
                 )

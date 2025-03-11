@@ -1,6 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+type CaptureValueArray = Array<
+  [
+    React.InputHTMLAttributes<HTMLInputElement>,
+    React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string[] } | any,
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>
+  ]
+>;
+
+type CaptureValueTuple = [
+  React.InputHTMLAttributes<HTMLInputElement>,
+  React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string[] },
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>
+];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
+  notButton?: boolean;
+  typeButton?: 'submit' | 'reset' | 'button' | undefined;
   fieldsets: {
     attributes?: React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
     item: {
@@ -9,78 +25,101 @@ type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
       mandatory?: boolean;
       captureValue:
       | React.InputHTMLAttributes<HTMLInputElement>
-      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })  // Aqui adicionamos options somente para select
-      | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+      | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string }) 
+      | React.TextareaHTMLAttributes<HTMLTextAreaElement>
+      | CaptureValueArray
+      | CaptureValueTuple
     };
     legend?: {
       style?: string;
       text?: string;
     };
     buttons?: [];
-
-  }[];
-  onAction?: any;
-  titleButton?: any;
-  notButton?: boolean;
+  }[] | any;
+  onAction?: () => void;
+  titleButton?: string;
   classButton?: string;
 };
 
 interface SelectOption {
   value: string | number;
   label: string;
-}
+};
 
-function CustomForm({ fieldsets, classButton,notButton, titleButton = "Login", ...formProps }: CustomFormProps) {
+function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
-      {fieldsets.map((fieldset, fieldsetIndex) => (
+      {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
         <fieldset key={fieldsetIndex} {...fieldset.attributes}>
           <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>
-          <label className={fieldset.item.classLabel ? fieldset.item.classLabel : ''}>
+          <label>
             {fieldset.item.label}
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
               {fieldset.item.mandatory ? ' *' : ''}
             </b>
             :
           </label>
-          {renderField(fieldset.item.captureValue)}
+          <div className='d-flex align-items-center gap-4'>{renderField(fieldset.item.captureValue)}</div>
         </fieldset>
       ))}
-      {!notButton ? <button title="Execultar ação" className={classButton ? classButton : "btn my-2"}>{titleButton}</button> : <React.Fragment/>}
+      {notButton && 
+      <button
+        onClick={onAction}
+        type={typeButton}
+        title="Execultar ação"
+        className={classButton ? classButton : "btn my-2 "}>
+        {titleButton}</button>}
     </form>
   );
 }
 
-function renderField(
-  captureValue:
-    | React.InputHTMLAttributes<HTMLInputElement>
-    | (React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] }) // Certifique-se que options só existe em select
-    | React.TextareaHTMLAttributes<HTMLTextAreaElement>
-) {
-  if ('type' in captureValue) {
-    switch (captureValue.type) {
+export function renderField(captureValue: CaptureValueArray | CaptureValueTuple) {
+  const convertValueArray = Array.isArray(captureValue) ? captureValue : [captureValue];
+  return (
+    <React.Fragment>
+      {convertValueArray.map((field: object, index) => (
+        <React.Fragment key={`field_${index}`}>
+          {renderFieldSingle(field)}
+        </React.Fragment>
+      ))}
+    </React.Fragment>
+  )
+}
+
+function renderFieldSingle(captureValue: CaptureValueArray | any){
+  if(isFieldWithType(captureValue)) {
+    switch (captureValue?.type) {
       case 'select':
-        return (
-          <SelectField
-            {...(captureValue as React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] })}
-            // @ts-ignore
-            options={captureValue?.options || []}
-          />
-        );
+        return renderSelect(captureValue);
       case 'textarea':
-        return <TextareaField {...(captureValue as React.TextareaHTMLAttributes<HTMLTextAreaElement>)} />;
+        return renderTextarea(captureValue);
       default:
-        return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
+        return renderInput(captureValue);
     }
   }
-  return <InputField {...(captureValue as React.InputHTMLAttributes<HTMLInputElement>)} />;
+}
+
+function renderInput(captureValue: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <InputField {...captureValue} />;
+}
+
+function renderSelect(captureValue: React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[] } | any) {
+  return <SelectField {...captureValue} options={captureValue?.options || []} />;
+}
+
+function renderTextarea(captureValue: React.TextareaHTMLAttributes<HTMLTextAreaElement> | object) {
+  return <TextareaField {...captureValue} />;
 }
 
 export function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} />;
 }
 
-export function SelectField(
+function isFieldWithType(captureValue: any): captureValue is { type: string } {
+  return captureValue && typeof captureValue.type === 'string';
+}
+
+export function SelectField (
   props: React.SelectHTMLAttributes<HTMLSelectElement> & { options: SelectOption[] }
 ) {
   return (
@@ -116,7 +155,6 @@ export function SelectFieldDefault(props: {
   )
 }
 
-
 export function InputCheckbox(props: { label?: string, checked?: boolean, onChange: any, textColor?: string, task: any, yesNo: number, id: string, order: number, onPosition: () => void }) {
   const { yesNo, onPosition } = props;
 
@@ -150,10 +188,12 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
       </div>
     );
   }
+
   function submitQuestionItem(event: any, response: number) {
     const value = yesNo == response ? -1 : event.value;
     props.onChange(props.id, event.checked, props.task.task_id, props.task, value);
   }
+  
   function OptionItem() {
     return (
       <div className='d-flex col-3 col-sm-2 ps-2'>
@@ -166,7 +206,6 @@ export function InputCheckbox(props: { label?: string, checked?: boolean, onChan
     );
   }
 }
-
 
 export function TextareaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} />;

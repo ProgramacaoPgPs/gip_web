@@ -1,9 +1,9 @@
 import React from "react";
 import "./CardTask.css"; // Importando o estilo
-import { convertdate } from "../../../../Util/Util";
 import NotificationBell from "../../../../Components/NotificationBell";
 import ProgressBar from "../Modal/Progressbar";
 import { useMyContext } from "../../../../Context/MainContext";
+import { DateConverter } from "../../Class/DataConvert";
 
 
 type CardTaskProps = {
@@ -51,11 +51,11 @@ const CardTask: React.FC<CardTaskProps & CardTaskAllPropsHTML> = (props) => {
                     <div className="card-font-large">
                         <div className="d-flex justify-content-between flex-wrap">
                             <div><span className="fw-bold">Data Inicial:</span></div>
-                            <div><p>{convertdate(props.initial_date || "2024-09-20")}</p></div>
+                            <div><p>{`${DateConverter.formatDate(props.initial_date || "2024-09-20")}`}</p></div>
                         </div>
                         <div className="d-flex justify-content-between flex-wrap">
                             <div><span className="fw-bold">Data Final:</span></div>
-                            <div><p>{convertdate(props.final_date || "2024-09-20")}</p></div>
+                            <div><p>{`${DateConverter.formatDate(props.final_date || "2024-09-20")}`}</p></div>
                         </div>
                     </div>
                 </div>

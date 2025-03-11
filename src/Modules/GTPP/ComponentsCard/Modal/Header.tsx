@@ -7,6 +7,7 @@ import User from "../../../../Class/User";
 import { convertdate } from "../../../../Util/Util";
 import { useMyContext } from "../../../../Context/MainContext";
 import { useConnection } from "../../../../Context/ConnContext";
+import { DateConverter } from "../../Class/DataConvert";
 
 interface HeaderModalProps {
   color: string;
@@ -62,11 +63,11 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
       <div className="d-flex flex-column h-100 border p-2 my-2 rounded cardContact">
         <span className="d-flex justify-content-between">
           <strong>Data inicial:</strong>
-          <div>{convertdate(task.initial_date)}</div>
+          <div>{`${DateConverter.formatDate(task.initial_date)}`}</div>
         </span>
         <span className="d-flex justify-content-between">
           <strong>Data Final:</strong>
-          <div>{convertdate(task.final_date)}</div>
+          <div>{`${DateConverter.formatDate(task.final_date)}`}</div>
         </span>
         <span className="d-flex justify-content-between">
           <strong>Status:</strong>

@@ -5,13 +5,17 @@ import Translator from "./Translate";
 
 const connection = new Connection("18", true);
 
-export const convertdate = (date: string) => {
-    const localDate = new Date(`${date}T00:00:00`);
-    
-    return new Intl.DateTimeFormat("pt-BR", {
-        dateStyle: "short"
-    }).format(localDate);
-}
+export const convertdate = (date: string): string | null => {
+    if (!date) return null;
+
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+        console.error(`Data inválida: ${date}`);
+        return null;
+    }
+
+    return parsedDate.toLocaleDateString('pt-BR');
+};
 
 export function convertTime(date: string){
     const localDate = new Date(`${date}`);
