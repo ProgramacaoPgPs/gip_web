@@ -16,7 +16,7 @@
 
 /* Título fixo da coluna */
 .columnTaskState-title {
-    text-align: center;
+    /* text-align: center; */
     width: clamp(0.9rem, 100vw, 250px);
     padding: 0.7rem 1rem;
 }
