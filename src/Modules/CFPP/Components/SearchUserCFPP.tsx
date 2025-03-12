@@ -53,7 +53,6 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
     }
     async function loadRecordType() {
         try {
-            console.log(tokenCFPP)
             if (tokenCFPP) {
                 const reqRecordType: { error: boolean; message?: string; data?: [{ id_record_type: number; description: string; status: number }] } = await fetchNodeDataFull({
                     method: 'GET',

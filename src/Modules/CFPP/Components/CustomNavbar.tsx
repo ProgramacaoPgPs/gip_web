@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavItem } from '../Data/configs';
-import { Link } from 'react-router-dom';
 import './StyleNavBar.css';
 
 
@@ -9,10 +8,6 @@ interface NavbarProps {
 }
 
 export default function CustomNavbar({ items }: NavbarProps) {
-
-  const toggleDropdown = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-  };
 
   return (
     <nav className="custom-navbar mx-2">
@@ -25,24 +20,38 @@ export default function CustomNavbar({ items }: NavbarProps) {
                   className="custom-nav-link custom-dropdown-toggle"
                   href="#"
                   role="button"
-                  onClick={(event) => toggleDropdown(event)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (item.onAction) {
+                      item.onAction(event);
+                    }
+                  }}
                 >
                   {item.label}
                 </a>
                 <ul className={`custom-dropdown-menu`}>
                   {item.subItems.map((subItem, subIndex) => (
-                    <li key={subIndex}>
-                      <Link className="custom-dropdown-item" to={subItem.path || '#'}>
+                    <li
+                      key={subIndex}>
+                      <div onClick={(event) => {
+                        if (subItem.onAction) {
+                          subItem.onAction(event);
+                        }
+                      }} className="custom-dropdown-item">
                         {subItem.label}
-                      </Link>
+                      </div>
                     </li>
                   ))}
                 </ul>
               </React.Fragment>
             ) : (
-              <Link className="custom-nav-link" to={item.path || '#'}>
+              <div onClick={(event: any) => {
+                if (item.onAction) {
+                  item.onAction(event);
+                }
+              }} className="custom-nav-link">
                 {item.label}
-              </Link>
+              </div>
             )}
           </li>
         ))}

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { listPath } from '../GTPP/mock/configurationfile';
+import { listPath } from '../GTPP/mock/configurationFile';
 import NavBar from '../../Components/NavBar';
 import { fetchNodeDataFull } from '../../Util/Util';
 import CustomNavbar from './Components/CustomNavbar';
 import { navItems } from './Data/configs';
 import { useMyContext } from '../../Context/MainContext';
 import TimeRecords from './Components/TimeRecords';
+import Calculation from './Components/Calculation';
 
 
 export default function Cfpp() {
     const { setTitleHead } = useMyContext();
     const [tokenCFPP, setTokenCFPP] = useState<string>('');
+    const [onTimeRecords, setOnTimeRecords] = useState(true);
+    const [onCalculation, setOnCalculation] = useState(false);
 
     useEffect(() => {
         (
@@ -31,6 +34,15 @@ export default function Cfpp() {
         });
     }, []);
 
+    function handlerTimeRecords() {
+        setOnTimeRecords(true);
+        setOnCalculation(false);
+    }
+    function handlerCalculation() {
+        setOnCalculation(true);
+        setOnTimeRecords(false);
+    }
+
     async function loadTokenCFPP() {
         if (!sessionStorage.tokenCFPP) {
             const data = await fetchNodeDataFull({
@@ -46,9 +58,10 @@ export default function Cfpp() {
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
-            <section className='d-flex flex-column overflow-hidden h-100 w-100'>
-                <CustomNavbar items={navItems} />
-                <TimeRecords tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP}/>
+            <section className='d-flex flex-column overflow-hidden h-100 w-100 p-2'>
+                <CustomNavbar items={navItems(handlerTimeRecords, handlerCalculation)} />
+                {onTimeRecords && <TimeRecords tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
+                {onCalculation && <Calculation tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP}/>}
             </section>
         </div>
     );

@@ -102,7 +102,7 @@ export default function TableComponent(props: TableComponentProps) {
   };
 
   return (
-    <div className="d-flex flex-column w-100 h-100 p-3">
+    <div className="d-flex flex-column w-100 h-100">
       <div className="overflow-auto">
         <table className="table table-bordered table-striped">
           <thead className="table-light">
@@ -159,7 +159,6 @@ export default function TableComponent(props: TableComponentProps) {
           </button>
         </div>
       )}
-
     </div>
   );
 }

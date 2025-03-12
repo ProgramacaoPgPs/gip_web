@@ -17,9 +17,9 @@ export const convertdate = (date: string): string | null => {
     return parsedDate.toLocaleDateString('pt-BR');
 };
 
-export function convertTime(date: string){
+export function convertTime(date: string) {
     const localDate = new Date(`${date}`);
-    
+
     return new Intl.DateTimeFormat("pt-BR", {
         dateStyle: "short",
         timeStyle: "short",
@@ -242,4 +242,26 @@ export function getFormattedDate(daysToSubtract?: number): string {
 
     // Retorna a data formatada como string
     return `${year}-${month}-${day}`;
+}
+
+
+export function formatarMoedaPTBR(valor: string): string {
+    // Remove todos os caracteres que não são dígitos ou ponto
+    const valorNumerico = valor.replace(/[^0-9.]/g, '');
+
+    // Converte a string para número
+    const numero = parseFloat(valorNumerico);
+
+    // Verifica se o número é válido
+    if (isNaN(numero)) {
+        throw new Error('Valor monetário inválido');
+    }
+
+    // Formata o número para o padrão PT-BR com duas casas decimais
+    return numero.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 }
