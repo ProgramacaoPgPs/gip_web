@@ -78,7 +78,8 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction }) => {
     handleFieldZipCode, 
     handleFieldComplement, 
     handleFieldFavorite,
-    states
+    states,
+    data
   );
 
   return (

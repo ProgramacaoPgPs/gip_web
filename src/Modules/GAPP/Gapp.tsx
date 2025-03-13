@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CardInfo from './Component/CardInfo/CardInfo';
 import Form from './Component/Form/Form';
 
@@ -29,23 +29,64 @@ const Gapp: React.FC = () => {
         isFavorite: false
     });
 
+    const [erro, setErro] = useState<string | null>(null);
+    const consultingCEP = async (cep: string) => {
+        if (cep.length !== 8) {
+            setErro('O CEP deve conter 8 dígitos.');
+            return;
+        }
+        setErro(null);
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                setErro('CEP não encontrado');
+            } else {
+                setData(prevData => ({
+                    ...prevData,
+                    street: data.logradouro || '',
+                    district: data.bairro || '',
+                    city: data.localidade || '',
+                    state: data.uf || ''
+                }));
+            }
+        } catch (error) {
+            setErro('Erro ao consultar o CEP.');
+        }
+    };
+
+    useEffect(() => {
+        if (data.zipCode.length === 8) {
+            consultingCEP(data.zipCode);
+        }
+    }, [data.zipCode]);
+
     return (
         <div>
-            <Form handleFunction={[
-                (value: string) => setData(x => ({...x, cnpj: value})),
-                (value: string) => setData(x => ({...x, name: value})),
-                (value: string) => setData(x => ({...x, street: value})),
-                (value: string) => setData(x => ({...x, district: value})),
-                (value: string) => setData(x => ({...x, city: value})),
-                (value: string) => setData(x => ({...x, state: value})),
-                (value: string) => setData(x => ({...x, numberEstabelicity: value})),
-                (value: string) => setData(x => ({...x, zipCode: value})),
-                (value: string) => setData(x => ({...x, complement: value})),
-                (value: boolean) => setData(x => ({...x, isFavorite: value})),
-            ]} data={data} />
-            <CardInfo onDelete={() => console.log('deletando')} onEdit={() => console.log('Editando')} data={data} />
+            <Form 
+                handleFunction={[
+                    (value: string) => setData(x => ({ ...x, cnpj: value })),
+                    (value: string) => setData(x => ({ ...x, name: value })),
+                    (value: string) => setData(x => ({ ...x, street: value })),
+                    (value: string) => setData(x => ({ ...x, district: value })),
+                    (value: string) => setData(x => ({ ...x, city: value })),
+                    (value: string) => setData(x => ({ ...x, state: value })),
+                    (value: string) => setData(x => ({ ...x, numberEstabelicity: value })),
+                    (value: string) => setData(x => ({ ...x, zipCode: value })),
+                    (value: string) => setData(x => ({ ...x, complement: value })),
+                    (value: boolean) => setData(x => ({ ...x, isFavorite: value })),
+                ]}
+                data={data}
+            />
+            {erro && <p style={{ color: 'red' }}>{erro}</p>}
+            <CardInfo 
+                onDelete={() => console.log('deletando')} 
+                onEdit={() => console.log('Editando')} 
+                data={data} 
+            />
         </div>
     );
-}
+};
 
 export default Gapp;

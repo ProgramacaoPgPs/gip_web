@@ -113,7 +113,7 @@ function renderTextLabel(captureValue: any) {
   return (
     <label style={captureValue.captureValueStyle}>
       {captureValue.captureValueInputText}
-      <InputField {...captureValue} />
+      <InputField {...captureValue} value={captureValue.value} />
     </label>
   );
 }
@@ -122,7 +122,7 @@ function renderSelectWithLabel(captureValue: any) {
   return (
     <label style={captureValue.captureValueStyle}>
       {captureValue.captureValueInputText}
-      <SelectField {...captureValue} options={captureValue?.options || []} />
+      <SelectField {...captureValue} options={captureValue?.options || []} defaultValue={captureValue.defaultValue} />
     </label>
   );
 }

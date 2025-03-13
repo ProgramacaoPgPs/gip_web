@@ -11,7 +11,8 @@ export const fildsetsFormsBusiness = (
     captureValueZipCode: (value: string) => void,
     captureValueComplement: (value: string) => void,
     captureValueStateFavorite: (value: boolean) => void,
-    valueOptionsState: Array<string>
+    valueOptionsState: Array<string>,
+    data: any,
 ) => [{
     attributes: { 
         className: 'w-100', 
@@ -46,6 +47,7 @@ export const fildsetsFormsBusiness = (
             {
                 type: 'textLabel',
                 captureValueInputText: 'Rua:',
+                value: data.street,
                 placeholder: 'Ex: R. medeiros de..',
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueStreet(e.target.value),
                 name: 'street',
@@ -56,6 +58,7 @@ export const fildsetsFormsBusiness = (
             {
                 type: 'textLabel',
                 captureValueInputText: 'Distrito:',
+                value: data.district,
                 placeholder: 'Digite..',
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueDistrict(e.target.value),
                 name: 'district',
@@ -67,6 +70,7 @@ export const fildsetsFormsBusiness = (
                 type: 'textLabel',
                 captureValueInputText: 'Cidade:',
                 placeholder: 'Ex: São Paulo',
+                value: data.city,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCity(e.target.value),
                 name: 'city',
                 className: 'form-control',
@@ -76,6 +80,7 @@ export const fildsetsFormsBusiness = (
             {
                 type: 'selectWithLabel',
                 captureValueInputText: 'Estado:',
+                value: data.state,
                 placeholder: 'Selecione o estado',
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueState(e.target.value),
                 name: 'state',
@@ -98,7 +103,7 @@ export const fildsetsFormsBusiness = (
                 type: 'textLabel',
                 captureValueInputText: 'CEP:',
                 placeholder: '00000-000',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueZipCode(e.target.value),
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueZipCode(e.target.value.replace("-", "")),
                 name: 'zipcode',
                 className: 'form-control',
                 required: false,
