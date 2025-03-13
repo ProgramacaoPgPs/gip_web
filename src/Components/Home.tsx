@@ -31,6 +31,9 @@ export default function Home(): JSX.Element {
                 <CustomButton onClick={() => navigate('/home/CFPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
                     <h1>CFPP</h1>
                 </CustomButton>
+                <CustomButton onClick={() => navigate('/home/GAPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
+                    <h1>GAPP</h1>
+                </CustomButton>
             </section>
         </div>
     );

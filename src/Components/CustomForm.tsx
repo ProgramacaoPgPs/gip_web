@@ -6,7 +6,9 @@ type CaptureValueArray = Array<
     React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string[] } | any,
     React.TextareaHTMLAttributes<HTMLTextAreaElement>
   ]
->;
+> | {
+  labelText: string;
+};
 
 type CaptureValueTuple = [
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -15,6 +17,7 @@ type CaptureValueTuple = [
 ];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
+  classRender?: string;
   notButton?: boolean;
   typeButton?: 'submit' | 'reset' | 'button' | undefined;
   fieldsets: {
@@ -46,7 +49,7 @@ interface SelectOption {
   label: string;
 };
 
-function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
+function CustomForm({ fieldsets, onAction, classRender, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
@@ -57,9 +60,8 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
               {fieldset.item.mandatory ? ' *' : ''}
             </b>
-            :
           </label>
-          <div className='d-flex align-items-center gap-4'>{renderField(fieldset.item.captureValue)}</div>
+          <div className={`d-flex align-items-center gap-4 ${classRender}`}>{renderField(fieldset.item.captureValue)}</div>
         </fieldset>
       ))}
       {notButton && 
@@ -79,7 +81,11 @@ export function renderField(captureValue: CaptureValueArray | CaptureValueTuple)
     <React.Fragment>
       {convertValueArray.map((field: object, index) => (
         <React.Fragment key={`field_${index}`}>
-          {renderFieldSingle(field)}
+          <div>
+            {/* @ts-ignore */} {/* preciso mexer aqui para colocar um label novo */}
+            {field.labelText || ""}
+            {renderFieldSingle(field)}
+          </div>
         </React.Fragment>
       ))}
     </React.Fragment>
@@ -93,10 +99,32 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
         return renderSelect(captureValue);
       case 'textarea':
         return renderTextarea(captureValue);
+      case 'textLabel': 
+        return renderTextLabel(captureValue);
+      case 'selectWithLabel': 
+        return renderSelectWithLabel(captureValue);
       default:
         return renderInput(captureValue);
     }
   }
+}
+
+function renderTextLabel(captureValue: any) {
+  return (
+    <label style={captureValue.captureValueStyle}>
+      {captureValue.captureValueInputText}
+      <InputField {...captureValue} />
+    </label>
+  );
+}
+
+function renderSelectWithLabel(captureValue: any) {
+  return (
+    <label style={captureValue.captureValueStyle}>
+      {captureValue.captureValueInputText}
+      <SelectField {...captureValue} options={captureValue?.options || []} />
+    </label>
+  );
 }
 
 function renderInput(captureValue: React.InputHTMLAttributes<HTMLInputElement>) {
