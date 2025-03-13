@@ -4,6 +4,7 @@ import { convertForTable, convertTime, fetchNodeDataFull, handleNotification } f
 import RegisterValidator from '../Class/RegisterValidator';
 import SearchUserCFPP from './SearchUserCFPP';
 import TableComponent from '../../../Components/CustomTable';
+import ListRegister from './ListRegister';
 
 export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,loadTokenCFPP:()=>Promise<void>}) {
     const [listRegister, setListRegister] = useState<{ id_record_type_fk: string; times: string }[]>([]);
@@ -198,36 +199,6 @@ function ItemSeachCFPP(props: { cols: string, textLabel: string, textValue: stri
                     props.onAction(e);
                 }
             }} value={props.textValue} disabled={props.disabled} type={props.typeInput} className='form-control' />
-        </div>
-    )
-}
-
-function ListRegister(props: { listRegister: { id_record_type_fk: string; times: string }[], setListRegister: (value: { id_record_type_fk: string; times: string }[]) => void }) {
-    function handlerList(item: { id_record_type_fk: string; times: string }) {
-        const position = props.listRegister.findIndex(elemet => elemet.times == item.times);
-        if (position != -1) {
-            let newList = props.listRegister;
-            newList.splice(position, 1);
-            props.setListRegister([...newList]);
-        }
-    }
-    return (
-        <div className='row g-2'>
-            {
-                props.listRegister.length > 0 &&
-                props.listRegister.map((item, index) =>
-                    <div key={`Option_register_${item.id_record_type_fk}_${index}`} className={`col-6 col-sm-4 col-md-3 col-lg-2`} >
-                        <div className={`d-flex align-items-center justify-content-between form-control border-0 bg-${item.id_record_type_fk == '1' ? 'success' : item.id_record_type_fk == '4' ? 'danger' : 'warning'} bg-opacity-25 rounded`}>
-                            <span>{convertTime(item.times)}</span>
-                            <button
-                                type='button'
-                                onClick={() => handlerList(item)}
-                                className="btn fa-solid fa-xmark"
-                            ></button>
-                        </div>
-                    </div>
-                )
-            }
         </div>
     )
 }
