@@ -16,13 +16,13 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
     const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '' });
     const { setLoading } = useMyContext();
-    const list: { cols: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }[] = [
-        { cols: 'col-2', textLabel: 'Matrícula', textValue: employee.EmployeeID, disabled: true, typeInput: 'text' },
-        { cols: 'col-3', textLabel: 'Nome', textValue: employee.EmployeeName, disabled: true, typeInput: 'text' },
-        { cols: 'col-2', textLabel: 'C.C.', textValue: employee.CostCenterDescription, disabled: true, typeInput: 'text' },
-        { cols: 'col-3', textLabel: 'Filial', textValue: employee.BranchName, disabled: true, typeInput: 'text' },
-        { cols: 'col-2', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
-        { cols: 'col-2', textLabel: 'Hora', textValue: hour, disabled: false, typeInput: 'time', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setHour(element.target.value) },
+    const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }[] = [
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Matrícula', textValue: employee.EmployeeID, disabled: true, typeInput: 'text' },
+        { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Nome', textValue: employee.EmployeeName, disabled: true, typeInput: 'text' },
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'C.C.', textValue: employee.CostCenterDescription, disabled: true, typeInput: 'text' },
+        { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Filial', textValue: employee.BranchName, disabled: true, typeInput: 'text' },
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Hora', textValue: hour, disabled: false, typeInput: 'time', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setHour(element.target.value) },
     ];
     useEffect(() => {
         (async () => {
@@ -190,9 +190,9 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
     )
 }
 
-function ItemSeachCFPP(props: { cols: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }) {
+function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }) {
     return (
-        <div className={props.cols}>
+        <div className={props.classItem}>
             <label className='form-check-label'>{props.textLabel}:</label>
             <input onChange={(e: any) => {
                 if (props.onAction) {

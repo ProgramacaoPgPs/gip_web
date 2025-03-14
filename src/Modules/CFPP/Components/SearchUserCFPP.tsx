@@ -137,7 +137,7 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
 
     return (
         <React.Fragment>
-            <div className='mx-2'>
+            <div className='m-2'>
                 <CustomForm
                     className='d-flex align-items-end gap-2 mx-2'
                     classButton='btn btn-success'

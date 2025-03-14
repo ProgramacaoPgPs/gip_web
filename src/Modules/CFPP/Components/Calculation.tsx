@@ -16,6 +16,14 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
         })();
     }, [tokenCFPP]);
 
+    useEffect(() => {
+        (async () => {
+            if (!journeyCode) {
+                await loadRecordType();
+            }
+        })();
+    }, [journeyCode]);
+
     useEffect(() => console.log(payments), [payments]);
 
     async function loadRecordType() {
@@ -48,7 +56,12 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                     <TableComponent
                         maxSelection={1}
                         list={convertForTable(payments)}
-                        onConfirmList={(items: any) => { setJourneyCode(items[0]["Cód. Jornada"]["value"]); setOnDetailsTimeRecords(true) }}
+                        onConfirmList={(items: any) => {
+                            if (items.length > 0) {
+                                setJourneyCode(items[0]["Cód. Jornada"]["value"]);
+                                setOnDetailsTimeRecords(true);
+                            }
+                        }}
                     />
                 }
             </div>
@@ -59,6 +72,7 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
 function DetailsTimeRecords(props: { onClose: () => void; journeyCode: string }) {
     const [timeRecords, setTimeRecords] = useState<any[]>([]);
     const [user, setUser] = useState<any>({});
+    const [record, setRecord] = useState<any>({});
     const { setLoading } = useMyContext();
 
     useEffect(() => {
@@ -68,8 +82,8 @@ function DetailsTimeRecords(props: { onClose: () => void; journeyCode: string })
     }, []);
 
     useEffect(() => {
-        console.log(timeRecords);
-    }, [timeRecords]);
+        console.log(record);
+    }, [record]);
 
     async function loadTimeRecords() {
         try {
@@ -95,6 +109,30 @@ function DetailsTimeRecords(props: { onClose: () => void; journeyCode: string })
         }
     }
 
+    async function cancelTimeRecords() {
+        try {
+            setLoading(true);
+            if (localStorage.tokenGIPP) {
+                const reqTimeRecords: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
+                    method: 'PUT',
+                    params: { cod_work_schedule: props.journeyCode },
+                    pathFile: `/api/GIPP/PUT/Employees/timeRecords`,
+                    port: "5000"
+                }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${sessionStorage.tokenCFPP}` });
+                if ('message' in reqTimeRecords && reqTimeRecords.error) throw new Error(reqTimeRecords.message);
+                if (reqTimeRecords.data) {
+                    setTimeRecords(reqTimeRecords.data);
+                    setUser(reqTimeRecords.data[0]);
+                }
+                props.onClose();
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-25 position-absolute z-1 start-0 top-0 h-100 col-12">
             <div className="bg-white m-2 p-2 rounded col-6 col-sm-4 col-md-3 col-lg-8">
@@ -112,9 +150,11 @@ function DetailsTimeRecords(props: { onClose: () => void; journeyCode: string })
                         <span>{user.employee_name}</span>
                     </div>
                 </section>
-                <ListRegister onAction={(element) => console.log(element)} noDelete={true} listRegister={timeRecords} setListRegister={setTimeRecords} />
+                <ListRegister onAction={(element) => setRecord(element)} noDelete={true} listRegister={timeRecords} setListRegister={setTimeRecords} />
                 <div className="d-flex align-items-center justify-content-center mt-4">
-                    <button title="Desconsiderar registro" className="btn btn-danger" type="button">Desconsiderar</button>
+                    <button onClick={async () => {
+                        await cancelTimeRecords();
+                    }} title="Desconsiderar registro" className="btn btn-danger" type="button">Desconsiderar</button>
                 </div>
             </div>
         </div>

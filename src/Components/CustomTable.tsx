@@ -151,7 +151,7 @@ export default function TableComponent(props: TableComponentProps) {
       </div>
       {!props.hiddenButton && (
         <div className="w-100 d-flex justify-content-around">
-          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3" onClick={() => {props.onConfirmList(selectedRows);setSelectedRows([])}}>
+          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3" onClick={() => {props.onConfirmList(selectedRows);setSelectedRows([]);}}>
             {selectedRows.length > 0 ? 'Confirmar Seleção' : 'Voltar'}
           </button>
           <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>

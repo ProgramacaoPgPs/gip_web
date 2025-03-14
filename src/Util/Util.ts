@@ -18,13 +18,14 @@ export const convertdate = (date: string): string | null => {
 };
 
 export function convertTime(date: string) {
-    const localDate = new Date(`${date}`);
-
-    return new Intl.DateTimeFormat("pt-BR", {
+    let formatTime:Intl.DateTimeFormatOptions = {
         dateStyle: "short",
         timeStyle: "short",
-        hourCycle: "h23" // Use "h23" para formato de 24 horas ou "h12" para formato de 12 horas
-    }).format(localDate);
+        hourCycle: "h23"
+    };
+    if (date.includes("T") && date.endsWith("Z")) formatTime.timeZone  = 'UTC'
+    const localDate = new Date(`${date}`);        
+    return new Intl.DateTimeFormat("pt-BR", formatTime).format(localDate);
 }
 
 export const httpGet = async (url: string, params: any = {}) => {
@@ -60,7 +61,6 @@ export function isJSON(obj: string): boolean {
 
 export function classToJSON(instance: object): Record<string, unknown> {
     const json: Record<string, unknown> = {};
-
     // Itera sobre os próprios getters da classe
     Object.entries(Object.getOwnPropertyDescriptors(instance.constructor.prototype))
         .filter(([_, descriptor]) => typeof descriptor.get === "function") // Apenas getters
