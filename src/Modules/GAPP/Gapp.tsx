@@ -66,21 +66,20 @@ const Gapp: React.FC = () => {
         <div className='container'>
            <div className='d-flex justify-content-between gap-5'>
                 <div className='d-flex flex-none col-4'>
-                    <Form    
-                        handleFunction={[
-                            (value: string) => setData(x => ({ ...x, cnpj: value })),
-                            (value: string) => setData(x => ({ ...x, name: value })),
-                            (value: string) => setData(x => ({ ...x, street: value })),
-                            (value: string) => setData(x => ({ ...x, district: value })),
-                            (value: string) => setData(x => ({ ...x, city: value })),
-                            (value: string) => setData(x => ({ ...x, state: value })),
-                            (value: string) => setData(x => ({ ...x, numberEstabelicity: value })),
-                            (value: string) => setData(x => ({ ...x, zipCode: value })),
-                            (value: string) => setData(x => ({ ...x, complement: value })),
-                            (value: boolean) => setData(x => ({ ...x, isFavorite: value })),
-                        ]}
-                        data={data}
-                    />
+                <Form
+                    handleFunction={[
+                        (value: string) => setData(x => ({ ...x, cnpj: value })),
+                        (value: string) => setData(x => ({ ...x, name: value })),
+                        (value: string) => setData(x => ({ ...x, street: value })),
+                        (value: string) => setData(x => ({ ...x, district: value })),
+                        (value: string) => setData(x => ({ ...x, city: value })),
+                        (value: string) => setData(x => ({ ...x, state: value })),
+                        (value: string) => setData(x => ({ ...x, numberEstabelicity: value })),
+                        (value: string) => setData(x => ({ ...x, zipCode: value })),
+                        (value: string) => setData(x => ({ ...x, complement: value })),
+                        (value: boolean) => setData(x => ({ ...x, isFavorite: value })),
+                    ]}
+                    data={data} />
                 </div>
                 {erro && <p style={{ color: 'red' }}>{erro}</p>}
                 <CardInfo 

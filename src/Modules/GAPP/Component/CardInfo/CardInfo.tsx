@@ -27,7 +27,7 @@ const CardInfo: React.FC<ICardInfoProps> = ({ data, onEdit, onDelete }) => {
       <div className='row'>
         <div className='col-12'>
         <div className='d-flex justify-content-start flex-wrap overflow-auto' style={{ maxHeight: '90vh', height: '100%' }}>
-          {["", "", "", "", "", "", "", "", "", "","", "", "", "", "", "", "", "","", "", "", "", "", "", "", "", "", "","", "", "", "", "", "", "", "",""].map((item, index) => (
+          {["","","","",""].map((item, index) => (
             <div key={`list_${index}`} className='col-12 col-sm-6 col-md-4 col-lg-3 rounded p-3 cardTest form-control bg-white bg-opacity-75 shadow m-2'>
               <div className='position-relative'>
                 {data.isFavorite && (
@@ -52,10 +52,10 @@ const CardInfo: React.FC<ICardInfoProps> = ({ data, onEdit, onDelete }) => {
               <div className='d-flex justify-content-between'>
                 <div className='d-flex gap-2 mt-2'>
                   <button className='btn colorSystem' onClick={onDelete} aria-label="Excluir">
-                    <i className='fa fa-trash text-dark' />
+                    <i className='fa fa-trash text-primaryColor' />
                   </button>
                   <button className='btn colorSystem' onClick={onEdit} aria-label="Editar">
-                    <i className='fa fa-pen text-dark' />
+                    <i className='fa fa-pen' />
                   </button>
                 </div>
                 <div>

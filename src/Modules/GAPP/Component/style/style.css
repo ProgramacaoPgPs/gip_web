@@ -9,7 +9,12 @@
 }
 
 .colorSystem:hover {
-    background-color: #000;
+    background-color: #555555;
+    transition: all ease .9s;
+    i {
+        color: var(--vPrimaryColor) !important;
+        transition: all ease .5s;
+    }
 }
 
 .colorSystemLightGray {
