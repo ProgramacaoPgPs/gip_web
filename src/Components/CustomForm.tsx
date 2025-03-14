@@ -100,6 +100,7 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
       case 'textarea':
         return renderTextarea(captureValue);
       case 'textLabel': 
+        // @ts-ignore
         return renderTextLabel(captureValue);
       case 'selectWithLabel': 
         return renderSelectWithLabel(captureValue);
@@ -109,7 +110,11 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
   }
 }
 
-function renderTextLabel(captureValue: any) {
+function renderTextLabel(captureValue: {
+  captureValueStyle: React.CSSProperties,
+  captureValueInputText: string,
+  value: string;
+}) {
   return (
     <label style={captureValue.captureValueStyle}>
       {captureValue.captureValueInputText}

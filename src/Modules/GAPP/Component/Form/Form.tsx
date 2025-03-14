@@ -83,17 +83,27 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction }) => {
   );
 
   return (
-    <div className=''>
-      <CustomForm
-        classRender='flex-wrap'
-        classButton='btn btn-success'
-        onSubmit={handleSubmit}
-        titleButton=""
-        className='p-3'
-        notButton={false}
-        fieldsets={filter}
-      />
-    </div>
+    <React.Fragment>
+      <div className=''>
+        <CustomForm
+          classRender='flex-wrap'
+          classButton='btn btn-success'
+          onSubmit={handleSubmit}
+          titleButton=""
+          className='p-3'
+          notButton={false}
+          fieldsets={filter}
+        />
+        <div className='row'>
+          <div className="d-flex justify-content-center p-2">
+            <button className={`btn ${true ? 'btn-success' : 'btn-warning'}`} onClick={() => console.log(true ? 'Salvar informações' : 'Atualizar informações')}>
+              <i className={`fa-sharp fa-solid ${true ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </React.Fragment>
   );
 };
 

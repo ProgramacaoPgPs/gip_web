@@ -1,6 +1,23 @@
-/* style={{maxWidth:'300px', width: '100%', background: "var(--vPrimaryColor)"}} */
 .cardTest {
-    max-width: 300px;
+    max-width: 250px;
     width: 100%;
-    background: var(--vPrimaryColor);
+    /* border: solid 2px #5353536e; */
+}
+
+.colorSystem {
+    background-color: var(--vPrimaryColor);
+}
+
+.colorSystem:hover {
+    background-color: #000;
+}
+
+.colorSystemLightGray {
+    background-color: #e1e3e2;
+}
+
+.container {
+    max-width: 100vw;
+    width: 100%;
+    margin: 0 auto;
 }
