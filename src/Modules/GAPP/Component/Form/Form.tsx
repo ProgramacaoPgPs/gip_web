@@ -1,6 +1,7 @@
 import React from 'react';
 import CustomForm from '../../../../Components/CustomForm';
 import { fildsetsFormsBusiness } from '../../mock/configuration';
+import { handleNotification } from '../../../../Util/Util';
 
 interface IFormProps {
     data: any;
@@ -16,10 +17,11 @@ interface IFormProps {
       (value: string) => void, // handleFieldComplement
       (value: boolean) => void, // handleFieldFavorite
     ];
+    errorCep: any;
 }
   
 
-const Form: React.FC<IFormProps> = ({ data, handleFunction }) => {
+const Form: React.FC<IFormProps> = ({ data, handleFunction, errorCep }) => {
   const handleSubmit = () => {
     console.log('Form submitted', data);
   };
@@ -79,7 +81,9 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction }) => {
     handleFieldComplement, 
     handleFieldFavorite,
     states,
-    data
+    data,
+    errorCep,
+    handleNotification,
   );
 
   return (
@@ -96,13 +100,12 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction }) => {
         />
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
-            <button className={`btn ${true ? 'btn-success' : 'btn-warning'}`} onClick={() => console.log(true ? 'Salvar informações' : 'Atualizar informações')}>
+            <button className={`btn ${true ? 'btn-success' : 'btn-warning'}`} onClick={() => console.log('teste')}>
               <i className={`fa-sharp fa-solid ${true ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
             </button>
           </div>
         </div>
       </div>
-      
     </React.Fragment>
   );
 };

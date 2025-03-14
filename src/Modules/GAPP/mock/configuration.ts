@@ -13,6 +13,8 @@ export const fildsetsFormsBusiness = (
     captureValueStateFavorite: (value: boolean) => void,
     valueOptionsState: Array<string>,
     data: any,
+    errorCep: any,
+    handleNotification: any
 ) => [{
     attributes: { 
         className: 'w-100', 
@@ -35,7 +37,15 @@ export const fildsetsFormsBusiness = (
                 type: 'textLabel',
                 captureValueInputText: 'CEP:',
                 placeholder: '00000-000',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueZipCode(e.target.value.replace("-", "")),
+                onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                        if (errorCep) {
+                            handleNotification("Erro", errorCep, "danger");
+                        }
+                        handleNotification("Pesquisa feita com Sucesso!",``, "success");
+                        captureValueZipCode(e.currentTarget.value.replace("-", ""));
+                    }
+                },
                 name: 'zipcode',
                 className: 'form-control',
                 required: false,
