@@ -25,6 +25,7 @@ export default function Cfpp() {
                 } finally {
                     setTokenCFPP(sessionStorage.tokenCFPP);
                 }
+
             }
         )();
         setTitleHead({
@@ -58,10 +59,15 @@ export default function Cfpp() {
     return (
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
-            <section className='d-flex flex-column overflow-hidden h-100 w-100 p-2'>
+
+            <section className='d-none d-sm-flex flex-column overflow-hidden h-100 w-100 p-2'>
                 <CustomNavbar items={navItems(handlerTimeRecords, handlerCalculation)} />
                 {onTimeRecords && <TimeRecords tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
-                {onCalculation && <Calculation tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP}/>}
+                {onCalculation && <Calculation tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
+            </section>
+
+            <section className='d-flex d-sm-none align-items-center justify-content-center'>
+                <h1 className='w-75'>Ops! Não é possível acesso via mobile</h1>
             </section>
         </div>
     );

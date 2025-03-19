@@ -24,7 +24,7 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
         })();
     }, [journeyCode]);
 
-    useEffect(() => console.log(payments), [payments]);
+    // useEffect(() => console.log(payments), [payments]);
 
     async function loadRecordType() {
         try {
@@ -135,7 +135,7 @@ function DetailsTimeRecords(props: { onClose: () => void; journeyCode: string })
 
     return (
         <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-25 position-absolute z-1 start-0 top-0 h-100 col-12">
-            <div className="bg-white m-2 p-2 rounded col-6 col-sm-4 col-md-3 col-lg-8">
+            <div className="bg-white m-2 p-2 rounded col-6 col-sm-4 col-md-3 col-lg-8 col-xl-5">
                 <header className="d-flex align-items-center justify-content-between">
                     <h1>Detalhes do registro dos horários</h1>
                     <button onClick={props.onClose} className="btn btn-danger" type="button" title="Fechar detalhes do registro">X</button>

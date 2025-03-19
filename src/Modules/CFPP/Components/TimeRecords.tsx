@@ -6,7 +6,7 @@ import SearchUserCFPP from './SearchUserCFPP';
 import TableComponent from '../../../Components/CustomTable';
 import ListRegister from './ListRegister';
 
-export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,loadTokenCFPP:()=>Promise<void>}) {
+export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadTokenCFPP: () => Promise<void> }) {
     const [listRegister, setListRegister] = useState<{ id_record_type_fk: string; times: string }[]>([]);
     const [date, setDate] = useState<string>('');
     const [hour, setHour] = useState<string>('');
@@ -14,7 +14,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
     const [timeRecords, setTimeRecords] = useState<any[]>([]);
     const [recordType, setRecordType] = useState<any[]>([]);
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
-    const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '' });
+    const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string, BranchCode: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     const { setLoading } = useMyContext();
     const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }[] = [
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Matrícula', textValue: employee.EmployeeID, disabled: true, typeInput: 'text' },
@@ -39,7 +39,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
                     params: null,
                     pathFile: `/api/GIPP/GET/Employees/recordType`,
                     port: "5000",
-                }, { 'Content-Type': 'application/json','Accept-Encoding': 'gzip, compress, br' , 'Authorization': `Bearer ${tokenCFPP}` });
+                }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
                 if ('message' in reqRecordType && reqRecordType.error) throw new Error(reqRecordType.message);
                 reqRecordType.data && setRecordType(reqRecordType.data);
             }
@@ -60,7 +60,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
                     params: null,
                     pathFile: `/api/GIPP/GET/Employees/timeRecords`,
                     port: "5000",
-                }, { 'Content-Type': 'application/json','Accept-Encoding': 'gzip, compress, br' , 'Authorization': `Bearer ${tokenCFPP}` });
+                }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
                 if ('message' in reqTimeRecords && reqTimeRecords.error) throw new Error(reqTimeRecords.message);
                 reqTimeRecords.data && setTimeRecords(reqTimeRecords.data);
             }
@@ -75,6 +75,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
             const params = {
                 employee_id: employee.EmployeeID,
                 id_record_type_fk: typeRecord,
+                branch_time_record: employee.BranchCode,
                 times: times
             }
             data = await fetchNodeDataFull({
@@ -82,7 +83,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
                 params: params,
                 pathFile: '/api/GIPP/POST/Employees',
                 port: "5000",
-            }, { 'Content-Type': 'application/json','Accept-Encoding': 'gzip, compress, br' , 'Authorization': `Bearer ${tokenCFPP}` });
+            }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
             if (data.error) throw new Error(data.message);
         } catch (error) {
             console.error(error);
@@ -94,14 +95,15 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
         value && handlerEmployee(value);
         setOpenSelectEmployee(!openSelectEmployee);
     }
-    
+
     function handlerEmployee(objects: any[]) {
         objects.forEach(object => {
             setEmployee({
                 EmployeeID: object.EmployeeID.value,
                 EmployeeName: object.EmployeeName.value,
                 CostCenterDescription: object.CostCenterDescription.value,
-                BranchName: object.BranchName.value
+                BranchName: object.BranchName.value,
+                BranchCode: object.BranchCode.value
             });
         })
     }
@@ -142,7 +144,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
         setDate('');
         setHour('');
         setTypeRecord('');
-        setEmployee({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '' });
+        setEmployee({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     }
     return (
         <React.Fragment>
@@ -156,7 +158,7 @@ export default function TimeRecords({tokenCFPP,loadTokenCFPP}:{tokenCFPP:string,
                 <button type='button' title='Selecionar Colaborador' onClick={() => handlerSelectEmployee()} className='btn btn-light fa-solid fa-square-plus mx-2' />
                 <div className='row ps-2 w-100'>
                     {
-                        list.map((item,index) => <ItemSeachCFPP key={`ItemSeachCFPP_${index}`} {...item} />)
+                        list.map((item, index) => <ItemSeachCFPP key={`ItemSeachCFPP_${index}`} {...item} />)
                     }
                     <div className='col-3'>
                         <label className='form-check-label'>Tipo de lançamento:</label>

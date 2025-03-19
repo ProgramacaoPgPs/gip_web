@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import SearchUser from "../../../Components/SearchUser";
 import { useMyContext } from "../../../Context/MainContext";
 import CardUser from "./CardUser";
-import { tItemTable } from "../../../types/types";
-import User from "../../../Class/User";
+
 
 export default function Contacts(props: { setIsConverse: () => void, isConverse: boolean, contactList: any[], openMessage: (value: any) => void }) {
     const { setCtlSearchUser, setAppIdSearchUser } = useMyContext();
