@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import CardInfo from './Component/CardInfo/CardInfo';
 import Form from './Component/Form/Form';
-import CustomNavbar from '../CFPP/Components/CustomNavbar';
-import { navItems } from '../CFPP/Data/configs';
 import NavBar from '../../Components/NavBar';
 import { listPath } from '../GTPP/mock/configurationfile';
+import { Connection } from '../../Connection/Connection';
+import { handleNotification } from '../../Util/Util';
 
 interface IFormGender {
     cnpj: string;
@@ -13,10 +13,10 @@ interface IFormGender {
     district: string;
     city: string;
     state: string;
-    numberEstabelicity: string;
-    zipCode: string;
+    number: string;
+    zip_code: string;
     complement: string;
-    isFavorite: boolean;
+    store_visible: number;
 }
 
 const Gapp: React.FC = () => {
@@ -27,13 +27,14 @@ const Gapp: React.FC = () => {
         district: "",
         city: "",
         state: "",
-        numberEstabelicity: "",
-        zipCode: "",
+        number: "",
+        zip_code: "",
         complement: "",
-        isFavorite: false
-    });
-
+        store_visible: 1,
+    } as IFormGender);
     const [erro, setErro] = useState<string | null>(null);
+    const [dataStore, setDataStore] = useState<[]>([]);
+
     const consultingCEP = async (cep: string) => {
         if (cep.length !== 8) {
             setErro('O CEP deve conter 8 dígitos.');
@@ -43,9 +44,11 @@ const Gapp: React.FC = () => {
         try {
             const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
             const data = await response.json();
+
             if (data.erro) {
-                setErro('CEP não encontrado');
+                handleNotification("Atenção!", "Cep não encontrado", "danger");
             } else {
+                handleNotification("Sucesso!", "Cep econtrado com sucesso!", "success");
                 setData(prevData => ({
                     ...prevData,
                     street: data.logradouro || '',
@@ -60,17 +63,30 @@ const Gapp: React.FC = () => {
     };
 
     useEffect(() => {
-        if (data.zipCode.length === 8) {
-            consultingCEP(data.zipCode);
+        if (data.zip_code.length === 8) {
+            consultingCEP(data.zip_code);
         }
-    }, [data.zipCode]);
+    }, [data.zip_code]);
+
+    const connectionBusiness = async () => {
+      const response = await new Connection("18");
+      let data: any = await response.get('&all=true', 'GAPP/Store.php');
+      setDataStore(data.data);
+    }
+  
+    useEffect(() => {
+      connectionBusiness();
+    }, [])
 
     return (
         <React.Fragment>
             <NavBar list={listPath} />
             <div className='container'>
+            <div className='form-control bg-white bg-opacity-75 shadow m-2 w-100' style={{height:40 }}>
+
+            </div>
             <div className='d-flex justify-content-between gap-5'>
-                    <div className='d-flex flex-none col-4'>
+                    <div className='d-flex flex-none col-3'>
                     <Form
                         errorCep={erro}
                         handleFunction={[
@@ -80,18 +96,20 @@ const Gapp: React.FC = () => {
                             (value: string) => setData(x => ({ ...x, district: value })),
                             (value: string) => setData(x => ({ ...x, city: value })),
                             (value: string) => setData(x => ({ ...x, state: value })),
-                            (value: string) => setData(x => ({ ...x, numberEstabelicity: value })),
-                            (value: string) => setData(x => ({ ...x, zipCode: value })),
+                            (value: string) => setData(x => ({ ...x, number: value })),
+                            (value: string) => setData(x => ({ ...x, zip_code: value })),
                             (value: string) => setData(x => ({ ...x, complement: value })),
-                            (value: boolean) => setData(x => ({ ...x, isFavorite: value })),
+                            (value: number) => setData(x => ({ ...x, store_visible: value })),
                         ]}
                         data={data} />
                     </div>
+                    
                     <CardInfo 
-                        onDelete={() => console.log('deletando')} 
-                        onEdit={() => console.log('Editando')} 
-                        data={data} 
-                    />
+                            onDelete={() => console.log('deletar vai ser uma atualização da visibilidade amanhã estamos terminando essa parte!')} 
+                            data={data}
+                            dataStore={dataStore}
+                            setData={setData}
+                        />
             </div>
             </div>
         </React.Fragment>

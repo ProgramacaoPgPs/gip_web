@@ -2,6 +2,8 @@ import React from 'react';
 import CustomForm from '../../../../Components/CustomForm';
 import { fildsetsFormsBusiness } from '../../mock/configuration';
 import { handleNotification } from '../../../../Util/Util';
+import { Connection } from '../../../../Connection/Connection';
+import MinimalFilterModel from '../../../GTPP/ComponentsCard/MinimalFilterModel/MinimalFilterModel';
 
 interface IFormProps {
     data: any;
@@ -15,16 +17,13 @@ interface IFormProps {
       (value: string) => void, // handleFieldNumber
       (value: string) => void, // handleFieldZipCode
       (value: string) => void, // handleFieldComplement
-      (value: boolean) => void, // handleFieldFavorite
+      (value: number) => void, // handleFieldStoreVisible
     ];
     errorCep: any;
 }
   
 
 const Form: React.FC<IFormProps> = ({ data, handleFunction, errorCep }) => {
-  const handleSubmit = () => {
-    console.log('Form submitted', data);
-  };
 
   const states: Array<any> = [
     { value: 'AC', label:'AC' },
@@ -66,7 +65,6 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, errorCep }) => {
     handleFieldNumber,
     handleFieldZipCode,
     handleFieldComplement,
-    handleFieldFavorite,
   ] = handleFunction;
 
   const filter = fildsetsFormsBusiness(
@@ -78,31 +76,78 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, errorCep }) => {
     handleFieldState, 
     handleFieldNumber, 
     handleFieldZipCode, 
-    handleFieldComplement, 
-    handleFieldFavorite,
+    handleFieldComplement,
     states,
     data,
     errorCep,
     handleNotification,
   );
 
+  const postStore = async () => {
+    let connection = new Connection("15")
+    await connection.post({
+      "cnpj": data.cnpj,
+      "name": data.name,
+      "street": data.street,
+      "district": data.district,
+      "city": data.city,
+      "state": data.state,
+      "number": data.number,
+      "zip_code": data.zip_code,
+      "complement": data.complement,
+      "store_visible": data.store_visible
+    }, "GAPP/Store.php");
+  }
+
+  const putStore = async () => { 
+      let connection = new Connection("15")
+      await connection.put({
+        "id": data.id,
+        "cnpj": data.cnpj.replace(/[^a-z0-9]/gi, ""),
+        "name": data.name,
+        "street": data.street,
+        "district": data.district,
+        "city": data.city,
+        "state": data.state,
+        "number": data.number,
+        "zip_code": data.zip_code,
+        "complement": data.complement,
+        "store_visible": data.store_visible
+      }, "GAPP/Store.php");
+  }
+
   return (
     <React.Fragment>
-      <div className=''>
-        <CustomForm
-          classRender='flex-wrap'
-          classButton='btn btn-success'
-          onSubmit={handleSubmit}
-          titleButton=""
-          className='p-3'
-          notButton={false}
-          fieldsets={filter}
-        />
+      <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between'>
+      <CustomForm
+        classRender='flex-wrap'
+        classButton='btn btn-success'
+        className='p-3'
+        notButton={false}
+        fieldsets={filter}
+      />
+        
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
-            <button className={`btn ${true ? 'btn-success' : 'btn-warning'}`} onClick={() => console.log('teste')}>
-              <i className={`fa-sharp fa-solid ${true ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
-            </button>
+              {[data].length > 0 ? (
+                <React.Fragment>
+                  <button className={`btn ${true ? 'btn-success' : 'btn-warning'} w-100`} onClick={() =>{ 
+                    handleNotification("Dado salvo com sucesso!", "", "success");
+                    postStore();
+                  }}>
+                    <i className={`fa-sharp fa-solid ${true ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
+                  </button>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <button className={`btn ${true ? 'btn-warning' : 'btn-warning'} w-100`} onClick={() => {
+                      handleNotification("Dado atualizado com sucesso!", "", "warning");
+                      putStore();
+                    }}>
+                    <i className="fa-solid fa-arrows-rotate text-white"></i>
+                  </button>
+                </React.Fragment>
+              )}
           </div>
         </div>
       </div>

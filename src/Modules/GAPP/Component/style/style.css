@@ -2,6 +2,7 @@
     max-width: 250px;
     width: 100%;
     /* border: solid 2px #5353536e; */
+    height: fit-content;
 }
 
 .colorSystem {
@@ -11,10 +12,11 @@
 .colorSystem:hover {
     background-color: #555555;
     transition: all ease .9s;
-    i {
-        color: var(--vPrimaryColor) !important;
-        transition: all ease .5s;
-    }
+}
+
+.colorSystem:hover i {
+    color: var(--vPrimaryColor) !important;
+    transition: all ease .5s;
 }
 
 .colorSystemLightGray {
