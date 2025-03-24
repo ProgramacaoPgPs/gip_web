@@ -82,6 +82,7 @@ export class Connection{
         if (err) this.#err = err;
     }
     async settingUrl(middlewer: string, params?: string) {
+        // let server = "http://gigpp.com.br:72/GLOBAL"; novo servidor
         let server = "http://192.168.0.99:71/GLOBAL";
         let token = localStorage.getItem("tokenGIPP");
         this.#URL = server + middlewer + token + (params ? params : "");

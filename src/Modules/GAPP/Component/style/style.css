@@ -28,3 +28,7 @@
     width: 100%;
     margin: 0 auto;
 }
+
+label, h1 {
+    font-size: inherit;
+}

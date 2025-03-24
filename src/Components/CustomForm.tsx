@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Modules/GAPP/Component/style/style.css';
 
 type CaptureValueArray = Array<
   [
@@ -82,7 +83,7 @@ export function renderField(captureValue: CaptureValueArray | CaptureValueTuple)
       {convertValueArray.map((field: object, index) => (
         <React.Fragment key={`field_${index}`}>
           <div>
-            {/* @ts-ignore */} {/* preciso mexer aqui para colocar um label novo */}
+            {/* @ts-ignore */}
             {field.labelText || ""}
             {renderFieldSingle(field)}
           </div>

@@ -39,15 +39,6 @@ export const fildsetsFormsBusiness = (
                 placeholder: '00000-000',
                 value: data.zip_code,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueZipCode(e.target.value),
-                onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter') {
-                        if (errorCep) {
-                            handleNotification("Erro", errorCep, "danger");
-                        }
-                        handleNotification("Pesquisa feita com Sucesso!",``, "success");
-                        captureValueZipCode(e.currentTarget.value.replace("-", ""));
-                    }
-                },
                 name: 'zipcode',
                 className: 'form-control',
                 required: false,
@@ -57,9 +48,6 @@ export const fildsetsFormsBusiness = (
                 type: 'textLabel',
                 captureValueInputText: 'CNPJ:',
                 value: data.cnpj,
-                captureValueStyle: {
-                    fontSize: '10px',
-                },
                 placeholder: '00.000.000/0001-00',
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCnpj(e.target.value),
                 name: 'cnpj',
