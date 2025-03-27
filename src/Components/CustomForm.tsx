@@ -80,10 +80,9 @@ export function renderField(captureValue: CaptureValueArray | CaptureValueTuple)
   const convertValueArray = Array.isArray(captureValue) ? captureValue : [captureValue];
   return (
     <React.Fragment>
-      {convertValueArray.map((field: object, index) => (
+      {convertValueArray.map((field: any, index) => (
         <React.Fragment key={`field_${index}`}>
           <div>
-            {/* @ts-ignore */}
             {field.labelText || ""}
             {renderFieldSingle(field)}
           </div>
@@ -113,12 +112,13 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
 
 function renderTextLabel(captureValue: {
   captureValueStyle: React.CSSProperties,
-  captureValueInputText: string,
+  text_value: string,
   value: string;
+  required: boolean;
 }) {
   return (
     <label style={captureValue.captureValueStyle}>
-      {captureValue.captureValueInputText}
+      {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
       <InputField {...captureValue} value={captureValue.value} />
     </label>
   );
@@ -127,7 +127,7 @@ function renderTextLabel(captureValue: {
 function renderSelectWithLabel(captureValue: any) {
   return (
     <label style={captureValue.captureValueStyle}>
-      {captureValue.captureValueInputText}
+      {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
       <SelectField {...captureValue} options={captureValue?.options || []} defaultValue={captureValue.defaultValue} />
     </label>
   );

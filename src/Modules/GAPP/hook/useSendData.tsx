@@ -7,7 +7,7 @@ type SendDataResponse = {
   error: string | null;
 };
 
-export const useSendData = (handleNotification: (message: string, details: string, type: string) => void) => {
+export const useSendData = (notification: any) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<SendDataResponse | null>(null);
@@ -40,7 +40,7 @@ export const useSendData = (handleNotification: (message: string, details: strin
         const res = await connection[methodAction](body, url);
         if (resetData && (method === 'POST' || method === 'PUT')) resetData();
         setResponse({ data: res, error: null });
-        handleNotification(
+        notification(
           `Dado ${method === 'POST' ? 'salvo' : method === 'PUT' ? 'atualizado' : 'recuperado'} com sucesso!`,
            "",
            method === 'POST' ? "success" : method === 'PUT' ? "warning" : "info"
@@ -48,12 +48,12 @@ export const useSendData = (handleNotification: (message: string, details: strin
       } catch (err: any) {
         setError(err.message || 'Erro desconhecido');
         setResponse({ data: null, error: err.message || 'Erro desconhecido' });
-        handleNotification("Erro ao enviar dados!", err.message, "error");
+        notification("Erro ao enviar dados!", err.message, "error");
       } finally {
         setLoading(false);
       }
     },
-    [handleNotification]
+    [notification]
   );
 
   return {

@@ -3,7 +3,6 @@ import CardInfo from './Component/CardInfo/CardInfo';
 import Form from './Component/Form/Form';
 import NavBar from '../../Components/NavBar';
 import { listPath } from '../GTPP/mock/configurationfile';
-import { Connection } from '../../Connection/Connection';
 import useWindowSize from './hook/useWindowSize';
 
 interface IFormGender {
@@ -33,12 +32,12 @@ const Gapp: React.FC = () => {
         store_visible: 1,
     });
     const [erro, setErro] = useState<string | null>(null);
-    const [dataStore, setDataStore] = useState<[]>([]);
+    
     const [hiddenNav, setHiddeNav] = useState(false);
     const [hiddenForm, setHiddeForm] = useState(true);
     const [visibilityTrash, setVisibilityTrash] = useState(true);
     const [visibilityList, setVisibilityList] = useState(false);
-    const { width, isTablet, isMobile, isDesktop } = useWindowSize();
+    const { isTablet, isMobile, isDesktop } = useWindowSize();
 
     const consultingCEP = async (cep: string) => {
         if (cep.length !== 8) {
@@ -71,20 +70,7 @@ const Gapp: React.FC = () => {
         }
     }, [data.zip_code]);
 
-    const connectionBusiness = async () => {
-        const response = await new Connection("18");
-        let data: any = await response.get('&all=true', 'GAPP/Store.php');
-        setDataStore(data.data);
-    };
-
-    useEffect(() => {
-        connectionBusiness();
-    }, []);
-
-    const resetDataStore = () => {
-        setDataStore([]);
-        connectionBusiness();
-    };
+    
 
     const resetForm = () => {
         setData({
@@ -104,23 +90,68 @@ const Gapp: React.FC = () => {
     const FormComponent = () => (
         <div className="d-flex col-12 col-sm-12 col-lg-2">
             <Form
-            errorCep={erro}
-            handleFunction={[
-                (value: string) => setData(x => ({ ...x, cnpj: value })),
-                (value: string) => setData(x => ({ ...x, name: value })),
-                (value: string) => setData(x => ({ ...x, street: value })),
-                (value: string) => setData(x => ({ ...x, district: value })),
-                (value: string) => setData(x => ({ ...x, city: value })),
-                (value: string) => setData(x => ({ ...x, state: value })),
-                (value: string) => setData(x => ({ ...x, number: value })),
-                (value: string) => setData(x => ({ ...x, zip_code: value })),
-                (value: string) => setData(x => ({ ...x, complement: value })),
-                (value: number) => setData(x => ({ ...x, store_visible: value })),
-            ]}
-            resetDataStore={resetDataStore}
-            data={data} />
+                errorCep={erro}
+                handleFunction={[
+                    (value: string) => setData(x => ({ ...x, cnpj: value })),
+                    (value: string) => setData(x => ({ ...x, name: value })),
+                    (value: string) => setData(x => ({ ...x, street: value })),
+                    (value: string) => setData(x => ({ ...x, district: value })),
+                    (value: string) => setData(x => ({ ...x, city: value })),
+                    (value: string) => setData(x => ({ ...x, state: value })),
+                    (value: string) => setData(x => ({ ...x, number: value })),
+                    (value: string) => setData(x => ({ ...x, zip_code: value })),
+                    (value: string) => setData(x => ({ ...x, complement: value })),
+                    (value: number) => setData(x => ({ ...x, store_visible: value })),
+                ]}
+                // resetDataStore={resetDataStore}
+                resetForm={resetForm}
+                data={data} 
+            />
         </div>
     );
+
+    /* filtro de botão */
+    function menuButtonFilter() {
+        return (
+            <React.Fragment>
+                {(isMobile || isTablet) && (
+                    <button className='btn' onClick={() => setHiddeNav((prev) => !prev)}>
+                        <i className={`fa-regular ${hiddenNav ? 'fa-eye' : 'fa-eye-slash'} `}></i>
+                    </button>
+                )}
+                {(isMobile || isTablet) && (
+                    <button className='btn' onClick={() => setHiddeForm((prev) => !prev)}>
+                        <i className={`fa-solid ${hiddenForm ? 'fa-caret-up fa-rotate-180' : 'fa-caret-up'}`}></i>
+                    </button>
+                )}
+                <button className='btn' onClick={resetForm}>
+                    <i className="fa-solid fa-eraser"></i>
+                </button>
+                <button className='btn' onClick={() => setVisibilityTrash((prev) => !prev)}>
+                    <i className={`fa-solid fa-trash ${!visibilityTrash ? 'text-danger' : ''}`}></i>
+                </button>
+            </React.Fragment>
+        )
+    }
+
+
+    function visibilityInterleave() {
+        function CardInfoSimplify() {
+            return <CardInfo visibilityTrash={visibilityTrash} setData={setData} setHiddenForm={setHiddeForm} />
+        }
+        return isMobile || isTablet ? (
+            <React.Fragment>
+                {hiddenForm && FormComponent()}
+                {!hiddenForm && CardInfoSimplify()}
+            </React.Fragment>
+        ) : (
+            <React.Fragment>
+                {FormComponent()}
+                {CardInfoSimplify()}
+            </React.Fragment>
+        )
+    }
+
 
     return (
         <React.Fragment>
@@ -148,58 +179,11 @@ const Gapp: React.FC = () => {
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>
                             <i className="fa-solid fa-square-poll-horizontal"></i>
                         </button>
-                        {visibilityList && (
-                            <>
-                                {(isMobile || isTablet) && (
-                                    <button className='btn' onClick={() => setHiddeNav((prev) => !prev)}>
-                                        <i className={`fa-regular ${hiddenNav ? 'fa-eye' : 'fa-eye-slash'} `}></i>
-                                    </button>
-                                )}
-                                {(isMobile || isTablet) && (
-                                    <button className='btn' onClick={() => setHiddeForm((prev) => !prev)}>
-                                        <i className={`fa-solid ${hiddenForm ? 'fa-caret-up fa-rotate-180' : 'fa-caret-up'}`}></i>
-                                    </button>
-                                )}
-                                <button className='btn' onClick={resetForm}>
-                                    <i className="fa-solid fa-eraser"></i>
-                                </button>
-                                <button className='btn' onClick={() => setVisibilityTrash((prev) => !prev)}>
-                                    <i className={`fa-solid fa-trash ${!visibilityTrash ? 'text-danger' : ''}`}></i>
-                                </button>
-                            </>
-                        )}
+                        {visibilityList && menuButtonFilter()}
                     </div>
                 </div>
                 <div className={`d-flex justify-content-between gap-5 ${isMobile ? 'h-100' : ''}`}>
-                    {isMobile || isTablet ? (
-                        <React.Fragment>
-                            {hiddenForm && FormComponent()}
-                            {!hiddenForm && (
-                                <CardInfo
-                                    onDelete={() => console.log('Deletar será implementado em breve!')}
-                                    data={data}
-                                    dataStore={dataStore}
-                                    visibilityTrash={visibilityTrash}
-                                    setData={setData}
-                                    resetDataStore={resetDataStore}
-                                    setHiddenForm={setHiddeForm}
-                                />
-                            )}
-                        </React.Fragment>
-                    ) : (
-                        <React.Fragment>
-                            {FormComponent()}
-                            <CardInfo
-                                onDelete={() => console.log('Deletar será implementado em breve!')}
-                                data={data}
-                                dataStore={dataStore}
-                                visibilityTrash={visibilityTrash}
-                                resetDataStore={resetDataStore}
-                                setData={setData}
-                                setHiddenForm={setHiddeForm}
-                            />
-                        </React.Fragment>
-                    )}
+                    {visibilityInterleave()}
                 </div>
             </div>
         </React.Fragment>

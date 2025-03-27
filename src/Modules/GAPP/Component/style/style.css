@@ -1,7 +1,6 @@
 .cardTest {
-    max-width: 250px;
+    max-width: 255px;
     width: 100%;
-    /* border: solid 2px #5353536e; */
     height: fit-content;
 }
 
