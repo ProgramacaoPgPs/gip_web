@@ -88,13 +88,19 @@
     cursor: pointer;
 }
 
-#divChatWindow .notifyMessage{
+#divChatWindow .notifyMessage {
     font-size: clamp(2px, calc(0.15rem + 1vw + 1vh), 12px) !important;
 }
+
 #divChatWindow>section>.messageReceived>div {
     background: #f1f0f0;
     word-wrap: break-word;
     max-width: 70%;
+}
+
+#divChatWindow> section > div > strong{
+    font-size: 14px;
+    color:#919295;
 }
 
 #divChatWindow>section>.messageSent>div {
@@ -104,13 +110,14 @@
     max-width: 70%;
 }
 
-#divChatWindow>section>div>div>a>img{
+#divChatWindow>section>div>div>a>img {
     width: 100%;
 }
+
 #divChatWindow>header>i {
     font-size: clamp(2px, calc(0.15rem + 1vw + 1vh), 10px) !important;
 }
 
-#divMessageFile > a > i{
+#divMessageFile>a>i {
     font-size: clamp(25px, calc(1.5rem + 3vw + 3vh), 75px) !important;
 }

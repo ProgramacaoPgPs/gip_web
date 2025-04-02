@@ -43,7 +43,8 @@ export default function ChatControls() {
             id_user: userLog.id,
             message: `${idReceived}_${userLog.id}_${req.last_id}.${getBase64FileExtension(file)}`,
             notification: 1,
-            type: type
+            type: type,
+            date: req.date ?? ""
         });
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }
@@ -56,7 +57,8 @@ export default function ChatControls() {
             id_user: userLog.id,
             message: message,
             notification: 1,
-            type: 1
+            type: 1,
+            date: req.date ?? ""
         });
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }

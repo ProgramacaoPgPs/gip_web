@@ -159,7 +159,7 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
                     <TableComponent
                         maxSelection={1}
                         list={convertForTable(employees, {
-                            ocultColumns: ["EmployeeAdmiss", "EmployeeDemiss", "TotalPages", "CurrentPage"],
+                            ocultColumns: ["EmployeeAdmiss", "EmployeeDemiss", "TotalPages", "CurrentPage","CompanyCNPJ"],
                             customTags: {
                                 EmployeeID: "Matrícula",
                                 EmployeeName: "Nome",
