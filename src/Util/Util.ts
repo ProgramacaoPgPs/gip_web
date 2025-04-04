@@ -18,27 +18,30 @@ export const convertdate = (date: string): string | null => {
 };
 
 export function convertTime(date: string) {
-    let formatTime:Intl.DateTimeFormatOptions = {
-        dateStyle: "short",
-        timeStyle: "short",
-        hourCycle: "h23"
-    };
-    if (date.includes("T") && date.endsWith("Z")) formatTime.timeZone  = 'UTC'
-    const localDate = new Date(`${date}`);        
-    return new Intl.DateTimeFormat("pt-BR", formatTime).format(localDate);
+    if (date && date != undefined) {
+        let formatTime: Intl.DateTimeFormatOptions = {
+            dateStyle: "short",
+            timeStyle: "short",
+            hourCycle: "h23"
+        };
+        if (date.includes("T") && date.endsWith("Z")) formatTime.timeZone = 'UTC';
+        const localDate = new Date(`${date}`);
+        return new Intl.DateTimeFormat("pt-BR", formatTime).format(localDate);
+    }
 }
 
-export const httpGet = async (url: string, params: any = {}) => {
-    return connection.get(url, params);
-};
+export function captureTime(): string {
+    const date = new Date();
 
-export const httpPost = async (url: string, data: any) => {
-    return connection.post(data, url);
-};
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês é 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
 
-export const httpPut = async (url: string, data: any) => {
-    return connection.put(data, url);
-};
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 
 export function convertImage(src: any) {
     if (src != null) {

@@ -18,7 +18,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const previousScrollHeight = useRef<number>(0);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number, date: string }[]>([]);
-
+    useEffect(()=>console.log(listMessage),[listMessage]);
     function closeChat() {
         setIdReceived(0);
         setPageLimit(1);
@@ -148,6 +148,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 setListMessage([...listMessage]);
             }
         } else if (event.message && !event.error) {
+            console.log(event);
             await receivedMessage(event);
         }
     }

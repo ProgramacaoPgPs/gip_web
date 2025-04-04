@@ -137,5 +137,3 @@ export interface ITask {
     initial_date: string;
     final_date: string;
 }
-
-

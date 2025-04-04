@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FormTextAreaDefaultProps } from "./Types";
-import { httpPut } from "../../../../Util/Util";
 import { useWebSocket } from "../../Context/GtppWsContext";
 
 const FormTextAreaDefault: React.FC<FormTextAreaDefaultProps> = ({

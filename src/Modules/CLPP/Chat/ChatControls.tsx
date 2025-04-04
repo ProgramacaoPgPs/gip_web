@@ -3,7 +3,7 @@ import AttachmentFile from "../../../Components/AttachmentFile";
 import SendMessage from "../Class/SendMessage";
 import { useWebSocket } from "../../../Context/WsContext";
 import { useMyContext } from "../../../Context/MainContext";
-import { classToJSON } from "../../../Util/Util";
+import { captureTime, classToJSON } from "../../../Util/Util";
 import { useConnection } from "../../../Context/ConnContext";
 
 export default function ChatControls() {
@@ -44,7 +44,7 @@ export default function ChatControls() {
             message: `${idReceived}_${userLog.id}_${req.last_id}.${getBase64FileExtension(file)}`,
             notification: 1,
             type: type,
-            date: req.date ?? ""
+            date: captureTime()
         });
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }
@@ -58,7 +58,7 @@ export default function ChatControls() {
             message: message,
             notification: 1,
             type: 1,
-            date: req.date ?? ""
+            date: captureTime()
         });
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }
