@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listPath } from '../GTPP/mock/configurationFile';
+import { listPath } from '../GTPP/mock/configurationfile';
 import NavBar from '../../Components/NavBar';
 import { fetchNodeDataFull } from '../../Util/Util';
 import CustomNavbar from './Components/CustomNavbar';

@@ -1,7 +1,7 @@
 import React from 'react';
 // import './columnTaskState.css';
 import CustomForm from '../../../../Components/CustomForm';
-import { fildsetsFilters } from '../../mock/configurationFile';
+import { fildsetsFilters } from '../../mock/configurationfile';
 type TaskStateFilterProps = {
     filter: Function[] | any;
     onAction?:() => void;
