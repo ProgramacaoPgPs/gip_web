@@ -4,19 +4,8 @@ import Form from './Component/Form/Form';
 import NavBar from '../../Components/NavBar';
 import { listPath } from '../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
-
-interface IFormGender {
-    cnpj: string;
-    name: string;
-    street: string;
-    district: string;
-    city: string;
-    state: string;
-    number: string;
-    zip_code: string;
-    complement: string;
-    store_visible: number;
-}
+import { Connection } from '../../Connection/Connection';
+import { IFormData, IFormGender } from './Interfaces/IFormGender';
 
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
@@ -38,6 +27,9 @@ const Gapp: React.FC = () => {
     const [visibilityTrash, setVisibilityTrash] = useState(true);
     const [visibilityList, setVisibilityList] = useState(false);
     const { isTablet, isMobile, isDesktop } = useWindowSize();
+
+    const [dataStore, setDataStore] = useState<IFormData | []>([]);
+    const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
 
     const consultingCEP = async (cep: string) => {
         if (cep.length !== 8) {
@@ -70,7 +62,39 @@ const Gapp: React.FC = () => {
         }
     }, [data.zip_code]);
 
+
+    const connectionBusiness = async () => {
+        try {
+            const response = await new Connection("18");
+            let data:any = await response.get('&status_store=1', 'GAPP/Store.php');
+            if (data && data.data) {
+                setDataStore(data.data);
+            } else {
+                console.error("No valid data returned from the server.");
+            }
+        } catch (error) {
+            console.error("An error occurred while fetching the data:", error);
+        }
+    };
+      
+    const connectionBusinessTrash = async () => {
+        const response = await new Connection("18");
+        let data: any = await response.get('&status_store=0', 'GAPP/Store.php');
+        setDataStoreTrash(data.data);
+    };
     
+      useEffect(() => {
+        connectionBusiness();
+        connectionBusinessTrash();
+      }, []);
+
+    function resetStore() {
+        setDataStore([]);
+        connectionBusiness();
+
+        setDataStoreTrash([]);
+        connectionBusinessTrash();
+    }
 
     const resetForm = () => {
         setData({
@@ -90,7 +114,6 @@ const Gapp: React.FC = () => {
     const FormComponent = () => (
         <div className="d-flex col-12 col-sm-12 col-lg-2">
             <Form
-                errorCep={erro}
                 handleFunction={[
                     (value: string) => setData(x => ({ ...x, cnpj: value })),
                     (value: string) => setData(x => ({ ...x, name: value })),
@@ -103,7 +126,7 @@ const Gapp: React.FC = () => {
                     (value: string) => setData(x => ({ ...x, complement: value })),
                     (value: number) => setData(x => ({ ...x, store_visible: value })),
                 ]}
-                // resetDataStore={resetDataStore}
+                resetDataStore={resetStore}
                 resetForm={resetForm}
                 data={data} 
             />
@@ -137,7 +160,7 @@ const Gapp: React.FC = () => {
 
     function visibilityInterleave() {
         function CardInfoSimplify() {
-            return <CardInfo visibilityTrash={visibilityTrash} setData={setData} setHiddenForm={setHiddeForm} />
+            return <CardInfo resetDataStore={resetStore} visibilityTrash={visibilityTrash} dataStore={dataStore} dataStoreTrash={dataStoreTrash} setData={setData} setHiddenForm={setHiddeForm} />
         }
         return isMobile || isTablet ? (
             <React.Fragment>
@@ -165,17 +188,10 @@ const Gapp: React.FC = () => {
                 <div className='justify-content-between align-items-center px-2 position-relative'>
                     {!isMobile && (
                         <div className='w-100'>
-                            <h1 style={{ fontSize: 25, fontWeight: 600 }}>Cadastro de empresas</h1>
+                            <h1 className='title_business'>Cadastro de empresas</h1>
                         </div>
                     )}
-                    <div
-                        className='form-control bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'
-                        style={{
-                            width: isMobile ? '10.5%' : isTablet ? '5%' : '2.5%',
-                            right: '-16px',
-                            top: '-20%',
-                        }}
-                    >
+                    <div className='form-control button_filter bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'>
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>
                             <i className="fa-solid fa-square-poll-horizontal"></i>
                         </button>

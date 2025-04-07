@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Connection } from '../../../Connection/Connection';
+import { useMyContext } from '../../../Context/MainContext';
 
 type SendDataMethod = 'GET' | 'POST' | 'PUT';
 type SendDataResponse = {
@@ -8,9 +9,10 @@ type SendDataResponse = {
 };
 
 export const useSendData = (notification: any) => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<SendDataResponse | null>(null);
+  const {setLoading,loading} = useMyContext();
+  
   const sendData = useCallback(
     async (
       method: SendDataMethod,
@@ -24,32 +26,21 @@ export const useSendData = (notification: any) => {
 
       try {
         const connection = new Connection("15");
-        let body: Record<string, any> | undefined = undefined;
         let url = endpoint;
         if (method === 'GET' && bodyData) {
           const queryParams = new URLSearchParams(bodyData as any).toString();
           url = `${endpoint}?${queryParams}`;
-        } else if (method === 'POST' || method === 'PUT') {
-          body = {
-            ...bodyData,
-            ...(method === 'PUT' && { id: bodyData?.id }),
-          };
         }
         const methodAction = method.toLowerCase();
         // @ts-ignore
-        const res = await connection[methodAction](body, url);
+        const res = await connection[methodAction](bodyData, url);
         if (resetData && (method === 'POST' || method === 'PUT')) resetData();
         setResponse({ data: res, error: null });
-        notification(
-          `Dado ${method === 'POST' ? 'salvo' : method === 'PUT' ? 'atualizado' : 'recuperado'} com sucesso!`,
-           "",
-           method === 'POST' ? "success" : method === 'PUT' ? "warning" : "info"
-        );
       } catch (err: any) {
         setError(err.message || 'Erro desconhecido');
         setResponse({ data: null, error: err.message || 'Erro desconhecido' });
-        notification("Erro ao enviar dados!", err.message, "error");
       } finally {
+        notification("Erro ao enviar dados!", "", "error");
         setLoading(false);
       }
     },

@@ -49,7 +49,7 @@ export const fildsetsFormsBusiness = (
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCnpj(e.target.value),
                 name: 'cnpj',
                 className: 'form-control',
-                required: true,
+                required: false,
                 id: ''
             },
             {

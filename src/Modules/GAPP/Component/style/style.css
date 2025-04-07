@@ -28,6 +28,64 @@
     margin: 0 auto;
 }
 
+
+
 label, h1 {
     font-size: inherit;
+}
+
+.title_business {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.button_filter {
+    width: 2.5%;
+    right: -16px;
+    top: -20%;
+}
+
+.border_gray {
+    border: 1px solid #e1e3e2;
+}
+
+.heightlite_screen {
+    max-height: 90vh;
+    flex: auto;
+}
+
+.border_none {
+    border: none;
+}
+
+.background_whiteGray {
+    background-color: #f8f9fa;
+}
+
+.font_size {
+    font-size: 1.3rem;
+}
+
+/* LAPTOP */
+@media screen and (max-width: 920px) {
+       
+}
+
+/* TABLET */
+@media screen and (max-width: 720px) {
+    .button_filter {
+        width: 10.5%;
+    }
+}
+
+/* MOBILE */
+@media screen and (max-width: 420px) {
+    .button_filter {
+        width: 10.5%;
+    }
+
+    .heightlite_screen {
+        max-height: 82vh;
+    }
+    
 }
