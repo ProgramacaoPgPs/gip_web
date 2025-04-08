@@ -3,10 +3,10 @@ import { CustomButton } from './CustomButton';
 import { useMyContext } from '../Context/MainContext';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
-import SearchUser from './SearchUser';
 import { useConnection } from '../Context/ConnContext';
 const iconGTPP = require("../Assets/Image/GTTP_icon.png");
 const iconCFPP = require("../Assets/Image/CFPP_icon.png");
+const iconGAPP = require("../Assets/Image/GAPP_icon.jpg");
 
 export default function Home(): JSX.Element {
     const { setTitleHead, setLoading, userLog } = useMyContext();
@@ -42,21 +42,9 @@ export default function Home(): JSX.Element {
         <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
             <NavBar list={listPath} />
             <section className='p-2 flex-grow-1'>
-<<<<<<< HEAD
-                <CustomButton onClick={() => navigate('/home/GTPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
-                    <img className="rounded w-100" src={iconGTPP} alt="Logo Peg Pese" />
-                </CustomButton>
-                <CustomButton onClick={() => navigate('/home/CFPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
-                    <h1>CFPP</h1>
-                </CustomButton>
-                <CustomButton onClick={() => navigate('/home/GAPP')} className='btn mx-2 col-4 col-sm-3 col-md-2 col-lg-1 p-0 m-0 shadow-lg'>
-                    <h1>GAPP</h1>
-                </CustomButton>
-=======
                 {accessList.length > 0 && accessList.map((item: any) => (
                     <RenderModule key={item.application_id} cod={item.application_id} />
                 ))}
->>>>>>> dccb98a01ca24db18de3bd0f946bd03663a94204
             </section>
         </div>
     );
@@ -77,6 +65,10 @@ function RenderModule({ cod }: { cod: string }) {
             case '19':
                 value.icon = iconCFPP;
                 value.path = '/home/CFPP';
+                break;
+            case '15':
+                value.icon = iconGAPP;
+                value.path = '/home/GAPP';
                 break;
             default:
                 break;
