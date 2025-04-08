@@ -56,8 +56,9 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         titleTaskInput.current.blur();
       }
     }
+    (async()=>loadNameUserTask())();
   }, [habilitEditionOfText]);
-  
+
   function DetailsTask() {
     return (
       <div className="d-flex flex-column h-100 border p-2 my-2 rounded cardContact">
@@ -75,6 +76,19 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
         </span>
       </div>
     );
+  }
+
+  async function loadNameUserTask() {
+    try {
+      setLoading(true);
+      const user = new User({ id: task.user_id });
+      await user.loadInfo(true);
+      setUserTask(user);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -96,23 +110,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           style={{ border: "none", fontWeight: "bold" }}
         ></input>
         <div className="d-flex gap-2">
-          <InputCheckButton nameButton="Dados do criador da tarefa" inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {
-            try {
-              setLoading(true);
-              if (e && !userTask) {
-                const user = new User({ id: task.user_id });
-                await user.loadInfo(true);
-                setUserTask(user);
-              } else {
-                setUserTask(undefined);
-              }
-            } catch (error) {
-              console.error(error);
-            } finally {
-              setDetailUser(e);
-              setLoading(false);
-            }
-          }} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
+          <InputCheckButton nameButton="Dados do criador da tarefa" inputId={`task_details_user_${task.user_id}`} onAction={async (e: boolean) => {setDetailUser(e);}} labelIconConditional={["fa-solid fa-chevron-down", "fa-solid fa-chevron-up"]} />
           <InputCheckButton nameButton="Detalhes da tarefa." inputId={`task_details_${task.user_id}`} onAction={async (e: boolean) => {
             setDetailTask(e);
           }} labelIcon={"fa-solid fa-circle-info"} highlight={true} />
@@ -126,7 +124,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           />
         </div>
         {modalConfirmCancel ?
-          <div style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 1, maxWidth:"300px" }} className="d-flex flex-column position-absolute p-2 rounded shadow-lg bg-dark w-75">
+          <div style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 1, maxWidth: "300px" }} className="d-flex flex-column position-absolute p-2 rounded shadow-lg bg-dark w-75">
             <header className="w-100 d-flex flex-column align-items-center">
               <h1 className="text-white">Cancelar tarefa</h1>
               <span className="text-white">Você está prestes a cancelar essa tarefa, informe o motivo?</span>
@@ -140,6 +138,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           : <React.Fragment />
         }
       </div>
+      {!detailUser && <strong className="mx-2 text-muted">Por: {userTask?.name}</strong>}
       {detailUser ? <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
       {detailTask ? <DetailsTask /> : <React.Fragment />}
     </div>
@@ -149,7 +148,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
     try {
       await fetchData({ method: "PUT", params: { id: task.id, state_id: 7, description: description }, pathFile: "GTPP/Task.php" });
       await loadTasks();
-      if(onClick) onClick();
+      if (onClick) onClick();
     } catch (error) {
       console.error(error);
     }
