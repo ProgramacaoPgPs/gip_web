@@ -138,7 +138,7 @@ const HeaderModal: React.FC<HeaderModalProps> = ({
           : <React.Fragment />
         }
       </div>
-      {!detailUser && <strong className="mx-2 text-muted">Por: {userTask?.name}</strong>}
+      {!detailUser && <h6 className="mx-2 text-muted">Por: {userTask?.name}</h6>}
       {detailUser ? <CardUser {...userTask} name={userTask?.name} /> : <React.Fragment />}
       {detailTask ? <DetailsTask /> : <React.Fragment />}
     </div>
