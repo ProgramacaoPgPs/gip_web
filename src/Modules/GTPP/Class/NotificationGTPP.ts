@@ -6,9 +6,12 @@ export default class NotificationGTPP {
 
     async loadNotify(array: any[], states?: iStates[]) {
         for await (let element of array){
-            const user = new User({ id: element.send_user_id });
-            await user.loadInfo();
-            this.list.push(this.filterTypeNotify(element,user.name  || '', states));
+            //Ignora disparo do alerta quando um usuário faz login ou logout
+            if(element.type != -1){
+                const user = new User({ id: element.send_user_id });
+                await user.loadInfo();
+                this.list.push(this.filterTypeNotify(element,user.name  || '', states));
+            }
         };
     }
 
