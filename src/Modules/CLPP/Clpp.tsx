@@ -45,7 +45,7 @@ export default function Clpp(): JSX.Element {
                 setHasNewMessage(false);
             }, 6000); // Pisca por 3 segundos
         }
-    }, [hasNewMessage,audio]);
+    }, [hasNewMessage, audio]);
 
 
     return (
