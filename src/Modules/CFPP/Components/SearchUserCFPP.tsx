@@ -53,7 +53,6 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
     }
     async function loadRecordType() {
         try {
-            console.log(tokenCFPP)
             if (tokenCFPP) {
                 const reqRecordType: { error: boolean; message?: string; data?: [{ id_record_type: number; description: string; status: number }] } = await fetchNodeDataFull({
                     method: 'GET',
@@ -138,7 +137,7 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
 
     return (
         <React.Fragment>
-            <div className='mx-2'>
+            <div className='m-2'>
                 <CustomForm
                     className='d-flex align-items-end gap-2 mx-2'
                     classButton='btn btn-success'
@@ -160,7 +159,7 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
                     <TableComponent
                         maxSelection={1}
                         list={convertForTable(employees, {
-                            ocultColumns: ["EmployeeAdmiss", "EmployeeDemiss", "TotalPages", "CurrentPage"],
+                            ocultColumns: ["EmployeeAdmiss", "EmployeeDemiss", "TotalPages", "CurrentPage","CompanyCNPJ"],
                             customTags: {
                                 EmployeeID: "Matrícula",
                                 EmployeeName: "Nome",

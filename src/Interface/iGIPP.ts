@@ -15,15 +15,15 @@ export interface iUser {
     session?: string;
 }
 
-export interface iContact{
+export interface iContact {
     id: number;
     yourContact?: number;
     notification?: number;
     pendingMessage?: number;
 }
-export interface CustomNotification  {
+export interface CustomNotification {
     id: number;
-    task_id:number,
+    task_id: number,
     title: string;
     message: string;
     typeNotify: 'success' | 'danger' | 'info' | 'default' | 'warning';
@@ -52,38 +52,38 @@ export interface iGtppWsContextType {
     taskPercent: number;
     userTaskBind: any;
     notifications: CustomNotification[];
-    states:iStates[];
-    onSounds:boolean; 
-    getTask:any[];
-    openCardDefault:boolean;
-    updateItemTaskFile:(file: string, item_id: number) => Promise<void>;
-    updatedForQuestion:(item:{task_id:number;id:number;yes_no:number})=>void;
-    reloadPagePercent: (value:any,task:any)=>void;
-    deleteItemTaskWS: (object:any)=>void;
-    addUserTask:(value:any,num:number)=>void;
-    getTaskInformations:()=>void;
-    setOpenCardDefault:(value:boolean)=>void;
-    loadTasks:(admin?:boolean)=>void;
-    reqTasks:(admin?:boolean)=>void;
-    setGetTask:(array:any[])=>void;
-    updateStates:(array:any[])=>void;
-    setOnSounds:(value:boolean)=>void
+    states: iStates[];
+    onSounds: boolean;
+    getTask: any[];
+    openCardDefault: boolean;
+    updateItemTaskFile: (file: string, item_id: number) => Promise<void>;
+    updatedForQuestion: (item: { task_id: number; id: number; yes_no: number }) => void;
+    reloadPagePercent: (value: any, task: any) => void;
+    deleteItemTaskWS: (object: any) => void;
+    addUserTask: (value: any, num: number) => void;
+    getTaskInformations: () => void;
+    setOpenCardDefault: (value: boolean) => void;
+    loadTasks: (admin?: boolean) => void;
+    reqTasks: (admin?: boolean) => void;
+    setGetTask: (array: any[]) => void;
+    updateStates: (array: any[]) => void;
+    setOnSounds: (value: boolean) => void
     setNotifications: (value: CustomNotification[]) => void;
     setTaskPercent: (value: number) => void;
     setTask: (value: any) => void;
     setTaskDetails: (value: any) => void;
-    handleAddTask: (description: string, task_id: string, yes_no:number, file?:string) => void;
+    handleAddTask: (description: string, task_id: string, yes_no: number, file?: string) => void;
     clearGtppWsContext: () => void;
-    checkedItem: (id: number, checked: boolean, idTask: any, task: any, yes_no:number) => void;
+    checkedItem: (id: number, checked: boolean, idTask: any, task: any, yes_no: number) => void;
     checkTaskComShoDepSub: (task_id: number, company_id: number, shop_id: number, depart_id: number, taskLocal: any) => void;
     changeDescription: (description: string, id: number, descLocal: string) => void;
     stopAndToBackTask: (taskId: number, resource: string | null, date: string | null, taskList: any) => void;
     changeObservedForm: (taskId: number, subId: number, value: string, isObservetion: boolean) => void;
 }
-export interface iStates { 
-    color: string, 
-    description: string, 
-    id: number 
+export interface iStates {
+    color: string,
+    description: string,
+    id: number
 };
 export interface iTaskReq {
     error?: boolean,
@@ -109,17 +109,17 @@ export interface iWebSocketContextType {
     sender: iSender;
     ws: MutableRefObject<WebSocketCLPP>;
     idReceived: number;
-    listMessage: { id: number, id_user: number, message: string, notification: number, type: number }[];
+    listMessage: { id: number, id_user: number, message: string, notification: number, type: number, date: string }[];
     page: number;
     pageLimit: number;
     msgLoad: boolean;
     previousScrollHeight: MutableRefObject<number>;
     messagesContainerRef: RefObject<HTMLDivElement>;
-    hasNewMessage:boolean; 
+    hasNewMessage: boolean;
     contNotify: number;
-    setHasNewMessage:(value: boolean) => void;
+    setHasNewMessage: (value: boolean) => void;
     closeChat: () => void;
-    includesMessage:(item:{ id: number, id_user: number, message: string, notification: number, type: number })=>void;
+    includesMessage: (item: { id: number, id_user: number, message: string, notification: number, type: number, date:string }) => void;
     changeChat: () => void;
     handleScroll: () => void;
     setPage: (value: number) => void;
@@ -137,5 +137,3 @@ export interface ITask {
     initial_date: string;
     final_date: string;
 }
-
-

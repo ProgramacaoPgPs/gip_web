@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { tItemTable } from "../types/types";
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable'; // Importe o autoTable diretamente
+
 const defaultImage = require('../Assets/Image/groupCLPP.png');
 
 interface TableComponentProps {
@@ -8,8 +11,9 @@ interface TableComponentProps {
   onConfirmList: (selected: tItemTable[]) => void;
   selectedItems?: tItemTable[];
   maxSelection?: number;
-  selectionList?: tItemTable[]; // Nova prop: lista de objetos para seleção
-  selectionKey?: string; // Nova prop: chave de referência para seleção
+  selectionList?: tItemTable[];
+  selectionKey?: string;
+  hiddenButton?: boolean;
 }
 
 export default function TableComponent(props: TableComponentProps) {
@@ -25,6 +29,55 @@ export default function TableComponent(props: TableComponentProps) {
       if (!item[props.selectionKey!]) return false;
       return item[props.selectionKey!].value === row[props.selectionKey!].value;
     });
+  };
+
+
+  // Referência para a tabela
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  // Função para gerar o PDF
+  function handleDownloadPDF(){
+    if (tableRef.current) {
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [297, 210], // Largura x Altura (em milímetros)
+      });
+
+      // Extrai os dados da tabela
+      const headers: string[] = [];
+      const rows: string[][] = [];
+
+      // Extrai os cabeçalhos (th)
+      const headerCells = tableRef.current.querySelectorAll('thead th');
+      headerCells.forEach((cell) => {
+        headers.push(cell.textContent || '');
+      });
+
+      // Extrai as linhas (tr) e células (td)
+      const tableRows = tableRef.current.querySelectorAll('tbody tr');
+      tableRows.forEach((row) => {
+        const rowData: string[] = [];
+        row.querySelectorAll('td').forEach((cell) => {
+          rowData.push(cell.textContent || '');
+        });
+        rows.push(rowData);
+      });
+
+      // Adiciona a tabela ao PDF usando autoTable
+      autoTable(doc, {
+        head: [headers], // Cabeçalhos
+        body: rows, // Linhas
+        margin: { top: 10, left: 5, right: 5, bottom: 10 }, // Margens reduzidas
+        styles: {
+          fontSize: 10, // Tamanho da fonte
+          cellPadding: 3, // Espaçamento interno das células
+        },
+      });
+
+      // Salva o PDF
+      doc.save('tabela.pdf');
+    }
   };
 
   // Efeito para adicionar os itens da selectionList à lista de selecionados na primeira renderização
@@ -101,9 +154,9 @@ export default function TableComponent(props: TableComponentProps) {
   };
 
   return (
-    <div className="d-flex flex-column w-100 h-100 p-3">
-      <div className="overflow-auto">
-        <table className="table table-bordered table-striped">
+    <div className="d-flex flex-column w-100 h-100">
+      <div className="overflow-auto h-100">
+        <table ref={tableRef} className="table table-bordered table-striped">
           <thead className="table-light">
             <tr>
               {columnKeys.filter((key) => !props.list[0][key].ocultColumn).map((key) => (
@@ -148,14 +201,17 @@ export default function TableComponent(props: TableComponentProps) {
           </tbody>
         </table>
       </div>
-      <div className="w-100 d-flex justify-content-around">
-        <button title="Confirmar seleção atual" className="btn btn-primary mt-3" onClick={() => props.onConfirmList(selectedRows)}>
-          Confirmar Seleção
-        </button>
-        <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
-          Limpar Seleção
-        </button>
-      </div>
+      {!props.hiddenButton && (
+        <div className="w-100 d-flex justify-content-around">
+          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3" onClick={() => { props.onConfirmList(selectedRows); setSelectedRows([]); }}>
+            {selectedRows.length > 0 ? 'Confirmar Seleção' : 'Voltar'}
+          </button>
+          <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
+            Limpar Seleção
+          </button>
+          <button className="btn btn-success mt-3" type="button" onClick={handleDownloadPDF} title='Baixar'>Download</button>
+        </div>
+      )}
     </div>
   );
 }

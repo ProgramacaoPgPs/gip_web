@@ -7,12 +7,14 @@ export default function ModalEditTask(props: any) {
   const [note, setNote] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [confirm, setConfirm] = useState<boolean>(false);
-  const [isQuest, setIsQuest] = useState<boolean>(editTask.yes_no == 0 ? false : true);
+  const [isQuest, setIsQuest] = useState<boolean>(false);
+
   const [msgConfirm, setMsgConfirm] = useState<{ title: string, message: string }>({ title: '', message: '' });
   useEffect(()=>{
     setDescription(editTask.description);
     setNote(editTask.note);
-  },[editTask])
+    setIsQuest(editTask.yes_no == 0 ? false : true);    
+  },[editTask]);
 
   const { updatedForQuestion, changeObservedForm } = useWebSocket();
   return onEditTask && (
@@ -38,8 +40,8 @@ export default function ModalEditTask(props: any) {
           </div>
           <div className="d-flex align-items-center">
             <input
-              defaultChecked={isQuest}
-              onClick={
+              checked={isQuest}
+              onChange={
                 async (event: any) => {
                   await updatedForQuestion({ id: editTask.id, task_id: editTask.task_id, yes_no: event.target.checked ? -1 : 0 });
                   setIsQuest(event.target.checked);

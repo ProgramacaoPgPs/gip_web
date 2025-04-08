@@ -17,8 +17,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [page, setPage] = useState<number>(1);
     const previousScrollHeight = useRef<number>(0);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
-    const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number }[]>([]);
-
+    const [listMessage, setListMessage] = useState<{ id: number, id_user: number, message: string, notification: number, type: number, date: string }[]>([]);
+    useEffect(()=>console.log(listMessage),[listMessage]);
     function closeChat() {
         setIdReceived(0);
         setPageLimit(1);
@@ -88,7 +88,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMessages();
     }, [page, idReceived]);
 
-    function includesMessage(message: { id: number, id_user: number, message: string, notification: number, type: number }) {
+    function includesMessage(message: { id: number, id_user: number, message: string, notification: number, type: number, date: string }) {
         listMessage.push(message);
         setListMessage([...listMessage]);
         if (messagesContainerRef.current) {
@@ -148,6 +148,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 setListMessage([...listMessage]);
             }
         } else if (event.message && !event.error) {
+            console.log(event);
             await receivedMessage(event);
         }
     }
@@ -166,7 +167,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const req: any = await contacts.loadListContacts();
             if (req.error) throw new Error(req.message);
             setContactList([...req.data]);
-            setContNotify(req.data.filter((item:any) => item.notification == 1).length);
+            setContNotify(req.data.filter((item: any) => item.notification == 1).length);
         } catch (error) {
             console.log(error)
         }
@@ -179,22 +180,23 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 "id_user": event.send_user,
                 "message": event.message,
                 "notification": 0,
-                "type": event.type
+                "type": event.type,
+                "date": event.date
             });
             setListMessage([...listMessage]);
             await ws.current.informPreview(send_user.toString())
         } else {
             setHasNewMessage(true);
-            const upContact =  contactList.map((contact) =>
+            const upContact = contactList.map((contact) =>
                 contact.id === send_user ? updateContact(contact) : contact
             );
             setContactList(upContact);
-            setContNotify(upContact.filter((item:any) => item.notification == 1).length);
+            setContNotify(upContact.filter((item: any) => item.notification == 1).length);
         }
     };
 
     return (
-        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, hasNewMessage,contNotify, setHasNewMessage, closeChat, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
+        <WebSocketContext.Provider value={{ previousScrollHeight, messagesContainerRef, listMessage, pageLimit, msgLoad, contactList, sender, ws, idReceived, page, hasNewMessage, contNotify, setHasNewMessage, closeChat, includesMessage, setPage, setIdReceived, setSender, setContactList, changeListContact, changeChat, handleScroll }}>
             {children}
         </WebSocketContext.Provider>
     );

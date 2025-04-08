@@ -79,7 +79,7 @@ const ColumnTaskState: React.FC<ColumnPropsTaskState & ColumnPropsTaskStateFunct
     }, []);
 
     return (
-        <div style={{ display:"flex",flexDirection:"column",height: '100%', marginLeft: '1rem' }} {...rest}>
+        <div style={{ display:"flex",flexDirection:"column",height: '100%' }} {...rest}>
             <div className={`columnTaskState-title rounded-top d-flex ${props.buttonHeader ? 'justify-content-between' : 'justify-content-center'} align-items-center`} style={{ background: `#${props.bg_color}` }}>
                 <div className='d-flex justify-content-between align-items-center w-100'>
                     <div><h1 className="rounded p-1">{props.title}</h1></div>

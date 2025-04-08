@@ -17,17 +17,31 @@ export const convertdate = (date: string): string | null => {
     return parsedDate.toLocaleDateString('pt-BR');
 };
 
-export const httpGet = async (url: string, params: any = {}) => {
-    return connection.get(url, params);
-};
+export function convertTime(date: string) {
+    if (date && date != undefined) {
+        let formatTime: Intl.DateTimeFormatOptions = {
+            dateStyle: "short",
+            timeStyle: "short",
+            hourCycle: "h23"
+        };
+        if (date.includes("T") && date.endsWith("Z")) formatTime.timeZone = 'UTC';
+        const localDate = new Date(`${date}`);
+        return new Intl.DateTimeFormat("pt-BR", formatTime).format(localDate);
+    }
+}
 
-export const httpPost = async (url: string, data: any) => {
-    return connection.post(data, url);
-};
+export function captureTime(): string {
+    const date = new Date();
 
-export const httpPut = async (url: string, data: any) => {
-    return connection.put(data, url);
-};
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês é 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 
 export function convertImage(src: any) {
     if (src != null) {
@@ -50,7 +64,6 @@ export function isJSON(obj: string): boolean {
 
 export function classToJSON(instance: object): Record<string, unknown> {
     const json: Record<string, unknown> = {};
-
     // Itera sobre os próprios getters da classe
     Object.entries(Object.getOwnPropertyDescriptors(instance.constructor.prototype))
         .filter(([_, descriptor]) => typeof descriptor.get === "function") // Apenas getters
@@ -232,4 +245,26 @@ export function getFormattedDate(daysToSubtract?: number): string {
 
     // Retorna a data formatada como string
     return `${year}-${month}-${day}`;
+}
+
+
+export function formatarMoedaPTBR(valor: string): string {
+    // Remove todos os caracteres que não são dígitos ou ponto
+    const valorNumerico = valor.replace(/[^0-9.]/g, '');
+
+    // Converte a string para número
+    const numero = parseFloat(valorNumerico);
+
+    // Verifica se o número é válido
+    if (isNaN(numero)) {
+        throw new Error('Valor monetário inválido');
+    }
+
+    // Formata o número para o padrão PT-BR com duas casas decimais
+    return numero.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 }

@@ -80,7 +80,7 @@ export const GtppWsProvider: React.FC<{ children: React.ReactNode }> = ({
     )();
   }, [task]);
 
-  // Carrega lista de tarefas que você criou ou vc foi vínculado.
+  // Carrega lista de tarefas que você criou ou você foi vínculado.
   useEffect(() => {
     (
       async () => {
@@ -248,10 +248,6 @@ export const GtppWsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     requestNotificationPermission();
   }, []);
-
-  useEffect(() => {
-    console.log("🔄 notifications mudou!", notifications);
-  }, [notifications]);
 
 
   async function updateNotification(item: any[]) {

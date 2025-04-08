@@ -61,7 +61,7 @@ const UserProfile = (props: any) => {
 };
 
 const ListUserTask = ({ item, taskid, loadUserTaskLis, dataPhotosUsers, userId, check=false }: any) => {
-  const [isChecked, setIsChecked] = useState(item.check);
+  const [isChecked, setIsChecked] = useState(item.check || false);
   const { addUserTask, getTaskInformations } = useWebSocket();
   const { fetchData } = useConnection();
 
@@ -78,6 +78,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis, dataPhotosUsers, userId, 
         params: user,
         pathFile: "GTPP/Task_User.php",
       });
+      console.log(checkUser,checkUser ? 5 : -3);
       addUserTask(user, checkUser ? 5 : -3);
       if (response.error) throw new Error(response.message);
       loadUserTaskLis();
@@ -109,6 +110,7 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis, dataPhotosUsers, userId, 
       <div>
         <strong>{item.employee_name}</strong>
       </div>
+      
     </div>
   );
 };

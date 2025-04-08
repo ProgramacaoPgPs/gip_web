@@ -1,25 +1,21 @@
 export interface NavItem {
     label: string;
-    path?: string;
     subItems?: NavItem[];
+    onAction?: (value:any)=>void;
   }
   
-  export const navItems: NavItem[] = [
+  export const navItems = (setRegister:()=>void, setCalculation:()=>void): NavItem[] => [
     {
-      label: 'Home',
-      path: '/home',
+      label: 'Registrar',
+      onAction:(value:any)=>setRegister()
     },
     {
+      // onAction:(value:any)=>console.log(value),
       label: 'Funcionários',
-      path:'/home',
       subItems: [
         {
-          label: 'Cadastrar',
-          path: '/home',
-        },
-        {
+          onAction:(value:any)=>{setCalculation()},
           label: 'Relatórios',
-          path: '/home',
         },
       ],
     }
