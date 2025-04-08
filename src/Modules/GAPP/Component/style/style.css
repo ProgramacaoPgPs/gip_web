@@ -60,7 +60,7 @@ label, h1 {
     font-size: 1.3rem;
 }
 
-@media screen and (min-width: 920px ){
+@media screen and (min-width: 1025px ){
     .text-card {
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -68,7 +68,22 @@ label, h1 {
     }
 
     .cardTest {
-        max-width: 32%;
+        max-width: 31%;
+        width: 100%;
+        height: fit-content;
+    }
+    
+}
+
+@media screen and (max-width: 1024px ){
+    .text-card {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .cardTest {
+        max-width: 92%;
         width: 100%;
         height: fit-content;
     }

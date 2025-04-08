@@ -112,7 +112,7 @@ const Gapp: React.FC = () => {
     };
 
     const FormComponent = () => (
-        <div className="d-flex col-12 col-sm-12 col-lg-2">
+        <div className={`d-flex col-12 col-sm-12 col-lg-${isTablet ? '3' : '2'}`}>
             <Form
                 handleFunction={[
                     (value: string) => setData(x => ({ ...x, cnpj: value })),
@@ -162,7 +162,7 @@ const Gapp: React.FC = () => {
         function CardInfoSimplify() {
             return <CardInfo resetDataStore={resetStore} visibilityTrash={visibilityTrash} dataStore={dataStore} dataStoreTrash={dataStoreTrash} setData={setData} setHiddenForm={setHiddeForm} />
         }
-        return isMobile || isTablet ? (
+        return isMobile ? (
             <React.Fragment>
                 {hiddenForm && FormComponent()}
                 {!hiddenForm && CardInfoSimplify()}
