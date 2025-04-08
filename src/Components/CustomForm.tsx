@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Modules/GAPP/Component/style/style.css';
 
 type CaptureValueArray = Array<
   [
@@ -6,7 +7,9 @@ type CaptureValueArray = Array<
     React.SelectHTMLAttributes<HTMLSelectElement> & { options?: SelectOption[], type: string[] } | any,
     React.TextareaHTMLAttributes<HTMLTextAreaElement>
   ]
->;
+> | {
+  labelText: string;
+};
 
 type CaptureValueTuple = [
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -15,6 +18,7 @@ type CaptureValueTuple = [
 ];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
+  classRender?: string;
   notButton?: boolean;
   typeButton?: 'submit' | 'reset' | 'button' | undefined;
   fieldsets: {
@@ -46,7 +50,7 @@ interface SelectOption {
   label: string;
 };
 
-function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
+function CustomForm({ fieldsets, onAction, classRender, classButton, notButton=true, typeButton='submit', titleButton = "Login", ...formProps}: CustomFormProps) {
   return (
     <form {...formProps}>
       {fieldsets.map((fieldset: any, fieldsetIndex:any) => (
@@ -57,9 +61,8 @@ function CustomForm({ fieldsets, onAction, classButton, notButton=true, typeButt
             <b className={fieldset.item.mandatory ? 'text-danger' : ''}>
               {fieldset.item.mandatory ? ' *' : ''}
             </b>
-            :
           </label>
-          <div className='d-flex align-items-center gap-4'>{renderField(fieldset.item.captureValue)}</div>
+          <div className={`d-flex align-items-center gap-4 ${classRender}`}>{renderField(fieldset.item.captureValue)}</div>
         </fieldset>
       ))}
       {notButton && 
@@ -77,9 +80,12 @@ export function renderField(captureValue: CaptureValueArray | CaptureValueTuple)
   const convertValueArray = Array.isArray(captureValue) ? captureValue : [captureValue];
   return (
     <React.Fragment>
-      {convertValueArray.map((field: object, index) => (
+      {convertValueArray.map((field: any, index) => (
         <React.Fragment key={`field_${index}`}>
-          {renderFieldSingle(field)}
+          <div>
+            {field.labelText || ""}
+            {renderFieldSingle(field)}
+          </div>
         </React.Fragment>
       ))}
     </React.Fragment>
@@ -93,10 +99,38 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
         return renderSelect(captureValue);
       case 'textarea':
         return renderTextarea(captureValue);
+      case 'textLabel': 
+        // @ts-ignore
+        return renderTextLabel(captureValue);
+      case 'selectWithLabel': 
+        return renderSelectWithLabel(captureValue);
       default:
         return renderInput(captureValue);
     }
   }
+}
+
+function renderTextLabel(captureValue: {
+  captureValueStyle: React.CSSProperties,
+  text_value: string,
+  value: string;
+  required: boolean;
+}) {
+  return (
+    <label style={captureValue.captureValueStyle}>
+      {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
+      <InputField {...captureValue} value={captureValue.value} />
+    </label>
+  );
+}
+
+function renderSelectWithLabel(captureValue: any) {
+  return (
+    <label style={captureValue.captureValueStyle}>
+      {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
+      <SelectField {...captureValue} options={captureValue?.options || []} defaultValue={captureValue.defaultValue} />
+    </label>
+  );
 }
 
 function renderInput(captureValue: React.InputHTMLAttributes<HTMLInputElement>) {

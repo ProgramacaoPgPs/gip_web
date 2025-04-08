@@ -3,10 +3,10 @@ import { CustomButton } from './CustomButton';
 import { useMyContext } from '../Context/MainContext';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
-import SearchUser from './SearchUser';
 import { useConnection } from '../Context/ConnContext';
 const iconGTPP = require("../Assets/Image/GTTP_icon.png");
 const iconCFPP = require("../Assets/Image/CFPP_icon.png");
+const iconGAPP = require("../Assets/Image/GAPP_icon.jpg");
 
 export default function Home(): JSX.Element {
     const { setTitleHead, setLoading, userLog } = useMyContext();
@@ -65,6 +65,10 @@ function RenderModule({ cod }: { cod: string }) {
             case '19':
                 value.icon = iconCFPP;
                 value.path = '/home/CFPP';
+                break;
+            case '15':
+                value.icon = iconGAPP;
+                value.path = '/home/GAPP';
                 break;
             default:
                 break;
