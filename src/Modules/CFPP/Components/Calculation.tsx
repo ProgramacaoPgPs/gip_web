@@ -24,8 +24,6 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
         })();
     }, [journeyCode]);
 
-    // useEffect(() => console.log(payments), [payments]);
-
     async function loadRecordType() {
         try {
             if (tokenCFPP) {

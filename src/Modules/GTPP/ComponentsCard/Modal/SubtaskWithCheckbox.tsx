@@ -87,7 +87,6 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
       // Insere o item na nova posição
       items.splice(newIndex, 0, movedItem);
 
-      console.log("Updated array:", items);
       setTaskDetails({ ...taskDetails });
     }
   }

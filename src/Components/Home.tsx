@@ -26,8 +26,6 @@ export default function Home(): JSX.Element {
         })();
     }, [userLog]);
 
-    useEffect(() => console.log(accessList), [accessList]);
-
     const listPath = [
         { page: '/home', children: 'Home', icon: 'fa fa-home' },
         {

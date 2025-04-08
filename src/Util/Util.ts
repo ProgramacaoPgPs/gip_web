@@ -103,7 +103,6 @@ export async function fetchNodeDataFull(req: iReqConn, headers?: Record<string, 
     let result: { error: boolean, message?: string, data?: any } = { error: true, message: "Generic Error!" };
     try {
         const URL = `http://sgpp.pegpese.com:${req.port}${req.pathFile}${req.urlComplement ? req.urlComplement : ""}`;
-        // console.log(URL,headers);
         let objectReq: any = { method: req.method };
         if (headers) {
             objectReq.headers = headers;

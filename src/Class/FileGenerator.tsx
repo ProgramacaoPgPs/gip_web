@@ -35,7 +35,7 @@ export const generateAndDownloadCSV = (getTasks: any, configId: string, fileName
       const csvData = convertToCSV(jsonData);
       downloadCSV(csvData, fileName);
     } else {
-      console.log("Nenhum dado encontrado para criar o CSV.");
+      throw new Error("Nenhum dado encontrado para criar o CSV.");
     }
   } catch (error) {
     console.error("Erro ao gerar o CSV:", error);

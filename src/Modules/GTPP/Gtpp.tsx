@@ -25,7 +25,6 @@ export default function Gtpp(): JSX.Element {
         await reqTasks(event);
       }, labelIcon: "fa-solid fa-user-tie", highlight: true
     },
-    // { inputId: `gttp_filter`, onAction: () => console.log("Eta Porra!"), labelIcon: "fa-solid fa-filter" },
     { inputId: `gttp_exp_ret`, nameButton: "Exibir usuários", onAction: () => setIsHeader(!isHeader), labelIconConditional: ["fa-solid fa-chevron-up", "fa-solid fa-chevron-down"] }
   ];
 

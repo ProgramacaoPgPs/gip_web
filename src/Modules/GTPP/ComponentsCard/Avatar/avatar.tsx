@@ -39,7 +39,6 @@ const UserProfile = (props: any) => {
               onClick={() => {
                 props.setOpenDetailUser(true);
                 props.listuser(photo);
-                console.log(photo.name);
               }}
               className={`avatar`}
             >
@@ -78,7 +77,6 @@ const ListUserTask = ({ item, taskid, loadUserTaskLis, dataPhotosUsers, userId, 
         params: user,
         pathFile: "GTPP/Task_User.php",
       });
-      console.log(checkUser,checkUser ? 5 : -3);
       addUserTask(user, checkUser ? 5 : -3);
       if (response.error) throw new Error(response.message);
       loadUserTaskLis();
