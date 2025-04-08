@@ -3,8 +3,8 @@ import { Connection } from '../Connection/Connection';
 import FilePreview from './FilePreview';
 
 function AttachmentFile(props:
-  | { item_id: number; file: number; onClose?: (file: string) => void; reset?: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean } // item_id é obrigatório, onClose opcional
-  | { item_id?: number; file: number; onClose: (file: string) => void; reset: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean } // onClose é obrigatório, item_id opcional
+  | { item_id: number; file: number; onClose?: (file: string) => void; reset?: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean,base64?:string } // item_id é obrigatório, onClose opcional
+  | { item_id?: number; file: number; onClose: (file: string) => void; reset: boolean, updateAttachmentFile?: (file: string, item_id: number) => Promise<void>, fullFiles?: boolean,base64?:string } // onClose é obrigatório, item_id opcional
 ) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [base64File, setBase64File] = useState<string>('');
@@ -27,6 +27,11 @@ function AttachmentFile(props:
       } catch (error: any) {
         console.error(error.message);
       }
+    })();
+  }, [props]);
+  useEffect(() => {
+    (async () => {
+      props.base64 &&  setBase64File(props.base64);
     })();
   }, [props]);
 

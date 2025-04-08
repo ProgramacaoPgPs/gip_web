@@ -15,19 +15,56 @@ export default function ChatControls() {
 
     return (
         <div className="d-flex align-items-center rounded p-2">
-            <button onClick={() => {
-                sendAllMessage();
-                clearChatControls();
-            }} className="btn btn-success fa-solid fa-paper-plane col-2" title="Enviar mensagem"></button>
-            <textarea value={message} onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                if (e.key.includes("Enter")) {
+            <button
+                onClick={() => {
                     sendAllMessage();
                     clearChatControls();
-                }
-            }} onChange={(element: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(element.target.value)} id="chatControlsTextarea" rows={2} style={{ resize: "none" }} className="mx-2 col-8 border rounded" />
-            <AttachmentFile reset={file ? false : true} file={0} onClose={(value) => callBackAttachmentFile(value)} fullFiles={true} />
+                }}
+                className="btn btn-success fa-solid fa-paper-plane col-2"
+                title="Enviar mensagem"
+            ></button>
+
+            <input
+                type="text"
+                value={message}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Enter") {
+                        sendAllMessage();
+                        clearChatControls();
+                    }
+                }}
+                onPaste={(e) => handlePaste(e)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+                id="chatControlsInput"
+                className="mx-2 col-8 border rounded"
+            />
+
+            <AttachmentFile reset={file ? false : true} file={0} onClose={(value) => callBackAttachmentFile(value)} fullFiles={true} base64={file}/>
         </div>
     );
+
+    function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type.indexOf("image") !== -1) {
+                const file = item.getAsFile();
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const base64 = event.target?.result as string;
+                        if (base64) {
+                            setFile(base64);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    }
+
     function callBackAttachmentFile(fileBase64: string) {
         if (fileBase64) {
             setFile(fileBase64);
@@ -36,8 +73,13 @@ export default function ChatControls() {
 
     async function sendFile() {
         const type = changeTypeMessageForFile(file);
-        const req: any = await fetchData({ method: "POST", params: classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)), pathFile: "CLPP/Message.php" });
+        const req: any = await fetchData({
+            method: "POST",
+            params: classToJSON(new SendMessage(file.split('base64,')[1], idReceived, userLog.id, type)),
+            pathFile: "CLPP/Message.php"
+        });
         if (req.error) throw new Error(req.message);
+
         includesMessage({
             id: req.last_id,
             id_user: userLog.id,
@@ -46,12 +88,18 @@ export default function ChatControls() {
             type: type,
             date: captureTime()
         });
+
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }
 
     async function sendText() {
-        const req: any = await fetchData({ method: "POST", params: classToJSON(new SendMessage(message, idReceived, userLog.id, 1)), pathFile: "CLPP/Message.php" });
+        const req: any = await fetchData({
+            method: "POST",
+            params: classToJSON(new SendMessage(message, idReceived, userLog.id, 1)),
+            pathFile: "CLPP/Message.php"
+        });
         if (req.error) throw new Error(req.message);
+
         includesMessage({
             id: req.last_id,
             id_user: userLog.id,
@@ -60,17 +108,18 @@ export default function ChatControls() {
             type: 1,
             date: captureTime()
         });
+
         ws.current.informSending(2, idReceived.toString(), req.last_id);
     }
 
     async function sendAllMessage() {
         try {
-            if (file.trim() != '') {
+            if (file.trim() !== '') {
                 await sendFile();
             }
-            if (message.trim() != '') {
+            if (message.trim() !== '') {
                 await sendText();
-            };
+            }
         } catch (error: any) {
             console.error(error.message);
         }
@@ -104,16 +153,14 @@ export default function ChatControls() {
         }
         return result;
     }
+
     function getBase64FileExtension(base64: string) {
-        // Verifica se o base64 possui a estrutura correta com "data:mime/type;base64,"
         const match = base64.match(/^data:(.+);base64,/);
         if (!match) {
             throw new Error("Formato Base64 inválido");
         }
 
-        const mimeType = match[1]; // Obtém o tipo MIME, exemplo: "image/png"
-        const extension = mimeType.split("/")[1]; // Pega a extensão após a barra "/"
-
-        return extension; // Retorna, por exemplo: "png"
-    };
+        const mimeType = match[1];
+        return mimeType.split("/")[1];
+    }
 }
