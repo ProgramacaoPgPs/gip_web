@@ -8,7 +8,7 @@ export interface IFormGender {
     number: string;
     zip_code: string;
     complement: string;
-    store_visible: number;
+    status_store: number;
 }
 
 export interface IDataDB {
@@ -22,7 +22,7 @@ export interface IDataDB {
         number: string;
         zip_code: string;
         complement: string;
-        store_visible: number;
+        status_store: number;
     };
 }
 
@@ -38,7 +38,7 @@ export interface IFormData {
   number: string;
   zip_code: string;
   complement: string;
-  store_visible: number;
+  status_store: number;
 }
 
 export interface IFormProps {

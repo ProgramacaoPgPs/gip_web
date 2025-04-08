@@ -1,9 +1,3 @@
-.cardTest {
-    max-width: 255px;
-    width: 100%;
-    height: fit-content;
-}
-
 .colorSystem {
     background-color: var(--vPrimaryColor);
 }
@@ -66,9 +60,35 @@ label, h1 {
     font-size: 1.3rem;
 }
 
+@media screen and (min-width: 920px ){
+    .text-card {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .cardTest {
+        max-width: 32%;
+        width: 100%;
+        height: fit-content;
+    }
+}
+
 /* LAPTOP */
 @media screen and (max-width: 920px) {
-       
+    .cardTest {
+        max-width: 95%;
+        width: 100%;
+        height: fit-content;
+    }
+
+    .button_filter {
+        width: 5.5%;
+    }
+
+    .heightlite_screen {
+        max-height: 80vh;
+    }
 }
 
 /* TABLET */
@@ -85,7 +105,14 @@ label, h1 {
     }
 
     .heightlite_screen {
-        max-height: 82vh;
+        max-height: 92vh;
     }
+
+    .cardTest {
+        max-width: 255px;
+        width: 100%;
+        height: fit-content;
+    }
+    
     
 }

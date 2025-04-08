@@ -67,7 +67,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
       number: data?.number,
       zip_code: data?.zip_code,
       complement: data?.complement,
-      status_store: data?.store_visible,
+      status_store: data?.status_store,
       ...(isNewStore ? {} : { id: data.id }),
     }
     const resp: any = isNewStore ? await conn.post(obj,'GAPP/Store.php') : await conn.put(obj,'GAPP/Store.php');

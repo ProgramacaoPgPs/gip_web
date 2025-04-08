@@ -18,7 +18,7 @@ const Gapp: React.FC = () => {
         number: "",
         zip_code: "",
         complement: "",
-        store_visible: 1,
+        status_store: 1,
     });
     const [erro, setErro] = useState<string | null>(null);
     
@@ -107,7 +107,7 @@ const Gapp: React.FC = () => {
             number: "",
             zip_code: "",
             complement: "",
-            store_visible: 1,
+            status_store: 1,
         });
     };
 
