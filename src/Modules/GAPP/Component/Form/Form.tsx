@@ -86,7 +86,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
 
   return (
     <React.Fragment>
-      <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between'>
+      <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between form-style-modal'>
         <CustomForm
           classRender='col-4 w-100 flex-wrap'
           classButton='btn btn-success'

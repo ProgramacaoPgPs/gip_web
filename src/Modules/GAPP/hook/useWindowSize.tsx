@@ -10,7 +10,7 @@ const useWindowSize = () => {
         const newWidth = window.innerWidth;
         setWidth(newWidth);
         setIsMobile(newWidth <= 768);
-        setIsTablet(newWidth > 768 && newWidth <= 1024);
+        setIsTablet(newWidth > 768 && newWidth <= 988);
         setIsDesktop(newWidth > 1024);
     };
 

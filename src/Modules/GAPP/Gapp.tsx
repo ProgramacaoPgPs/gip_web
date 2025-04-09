@@ -162,7 +162,7 @@ const Gapp: React.FC = () => {
         function CardInfoSimplify() {
             return <CardInfo resetDataStore={resetStore} visibilityTrash={visibilityTrash} dataStore={dataStore} dataStoreTrash={dataStoreTrash} setData={setData} setHiddenForm={setHiddeForm} />
         }
-        return isMobile ? (
+        return isMobile || isTablet ? (
             <React.Fragment>
                 {hiddenForm && FormComponent()}
                 {!hiddenForm && CardInfoSimplify()}
@@ -186,11 +186,9 @@ const Gapp: React.FC = () => {
 
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
-                    {!isMobile && (
-                        <div className='w-100'>
-                            <h1 className='title_business'>Cadastro de empresas</h1>
-                        </div>
-                    )}
+                    <div className='w-100'>
+                        <h1 className='title_business'>Cadastro de empresas</h1>
+                    </div>
                     <div className='form-control button_filter bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'>
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>
                             <i className="fa-solid fa-square-poll-horizontal"></i>
