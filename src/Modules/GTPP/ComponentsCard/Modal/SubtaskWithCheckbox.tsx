@@ -20,7 +20,7 @@ interface iSubTask {
 }
 
 const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
-  const { checkedItem, changeObservedForm, task, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion,updateItemTaskFile } = useWebSocket();
+  const { checkedItem, changeObservedForm, task, taskDetails, setTaskDetails, reloadPagePercent, deleteItemTaskWS, updatedForQuestion, updateItemTaskFile } = useWebSocket();
   const { setLoading } = useMyContext();
   const { fetchData } = useConnection();
   const [editTask, setEditTask] = useState<any>("");
@@ -47,13 +47,17 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
 
   const ModalInformation = (props: any) => {
     return (
-      <div onClick={() => props.onClose(props.task)} className="cloud-balloon w-50 rounded p-2">
-        <div className="cloud-content overflow-auto h-75">
-          {props.description}
+      <div className="cloud-balloon rounded p-2">
+        <div>
+          {
+            props.description.split("\r").map((linha: any, idx: any) => (
+              <p key={idx} className="mb-1">{linha}</p>
+            ))
+          }
         </div>
-        <div className="d-flex align-items-center justify-content-center h-25 ">
-          <button title="fechar" className="d-block btn btn-danger mt-3">Fechar</button>
-        </div>
+        <footer className="d-flex align-items-center justify-content-center h-25 ">
+          <button onClick={() => props.onClose(props.task)} title="fechar" className="d-block btn btn-danger mt-3">Fechar</button>
+        </footer>
       </div>
     );
   };
@@ -101,7 +105,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
     <div ref={containerTaskItemsRef} className="overflow-auto rounded flex-grow-1">
       <div>
         <ModalEditTask onEditTask={onEditTask} onClose={() => setOnEditTask(false)} isObservation={isObservation} setIsObservation={setIsObservation} editTask={editTask} setEditTask={setEditTask} />
-        
+
         {(taskDetails.data?.task_item || []).map((task, index: number) => (
           <div
             key={task.id}
@@ -184,7 +188,7 @@ const SubTasksWithCheckbox: React.FC<SubTasksWithCheckboxProps> = () => {
   }
 
   async function deleteTaskItem(item: { id: number; task_id: number }) {
-    const req: any = await fetchData({method:"DELETE",params:{ id: item.id, task_id: item.task_id },pathFile:'GTPP/TaskItem.php'});
+    const req: any = await fetchData({ method: "DELETE", params: { id: item.id, task_id: item.task_id }, pathFile: 'GTPP/TaskItem.php' });
     return req;
   }
 

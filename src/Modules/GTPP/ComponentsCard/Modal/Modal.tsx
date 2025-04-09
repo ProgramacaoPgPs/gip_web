@@ -56,7 +56,6 @@ const BodyDefault: React.FC<BodyDefaultProps> = (props) => {
     isQuastion: false,
     isAttachment: false,
   });
-useEffect(()=>console.log(task,taskDetails),[task,taskDetails])
   return (
     <div className="d-flex flex-column h-100 p-2">
       <div style={{ height: "10%" }} className="d-flex justify-content-between align-items-center">
