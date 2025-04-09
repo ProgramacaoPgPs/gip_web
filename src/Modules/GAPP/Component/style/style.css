@@ -20,7 +20,6 @@
     max-width: 100vw;
     width: 100%;
     margin: 0 auto;
-    height: 90vh;
 }
 
 .form-style-modal {
@@ -91,6 +90,10 @@ label, h1 {
         max-width: 92%;
         width: 100%;
         height: fit-content;
+    }
+
+    .container {
+        height: 90vh;
     }
 }
 
