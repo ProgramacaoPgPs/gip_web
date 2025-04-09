@@ -39,7 +39,7 @@ export default function ChatControls() {
                 className="mx-2 col-8 border rounded"
             />
 
-            <AttachmentFile reset={file ? false : true} file={0} onClose={(value) => callBackAttachmentFile(value)} fullFiles={true} base64={file}/>
+            <AttachmentFile reset={file ? false : true} file={0} onClose={(value) => callBackAttachmentFile(value)} fullFiles={true} base64={file} />
         </div>
     );
 
@@ -90,6 +90,8 @@ export default function ChatControls() {
         });
 
         ws.current.informSending(2, idReceived.toString(), req.last_id);
+        
+        
     }
 
     async function sendText() {
@@ -134,33 +136,57 @@ export default function ChatControls() {
         const upperType = type.toUpperCase();
         let result = 0;
         switch (true) {
-            case upperType.includes('IMAGE'):
+            case upperType.includes('IMAGE') && !upperType.toUpperCase().includes('OFFICEDOCUMENT'):
                 result = 2;
                 break;
-            case upperType.includes('PDF'):
+            case upperType.includes('PDF') && !upperType.toUpperCase().includes('OFFICEDOCUMENT'):
                 result = 3;
                 break;
-            case upperType.includes('XML'):
+            case upperType.includes('XML') && !upperType.toUpperCase().includes('OFFICEDOCUMENT'):
                 result = 4;
                 break;
-            case upperType.includes('CSV'):
+            case upperType.includes('CSV') && !upperType.toUpperCase().includes('OFFICEDOCUMENT'):
                 result = 5;
+                break;
+            case type.toUpperCase().includes('WORDPROCESSINGML'):
+                result = 6;
+                break;
+            case type.toUpperCase().includes('SPREADSHEETML'):
+                result = 7;
+                break;
+            case type.toUpperCase().includes('PRESENTATIONML'):
+                result = 8;
                 break;
             default:
                 console.log(type);
-                result = 6;
+                result = 9;
                 break;
         }
         return result;
     }
 
     function getBase64FileExtension(base64: string) {
+        const isOffice = base64.includes('openxmlformats-officedocument');
+        isOffice && typeFileOffice(base64);
         const match = base64.match(/^data:(.+);base64,/);
         if (!match) {
             throw new Error("Formato Base64 inválido");
         }
 
         const mimeType = match[1];
-        return mimeType.split("/")[1];
+        return isOffice ? typeFileOffice(base64) : mimeType.split("/")[1];
+    }
+
+    function typeFileOffice(base64: string): string {
+        let result = '';
+        if (base64.includes('wordprocessingml')) {
+            result = 'docx';
+        } else if (base64.includes('spreadsheetml')) {
+            result = 'xlsx';
+        } else if (base64.includes('presentationml')) {
+            result = 'pptx';
+        }
+        console.log(result);
+        return result;
     }
 }

@@ -22,6 +22,7 @@ function AttachmentFile(props:
           const connection = new Connection("18");
           const req: any = await connection.get(`&id=${props.item_id}`, "GTPP/TaskItem.php");
           if (req.error) throw new Error(req.message);
+  
           setBase64File(req.data[0]);
         }
       } catch (error: any) {

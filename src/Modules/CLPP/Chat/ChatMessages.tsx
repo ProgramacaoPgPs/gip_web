@@ -4,12 +4,12 @@ import { useConnection } from "../../../Context/ConnContext";
 import { useEffect } from "react";
 import { convertTime } from "../../../Util/Util";
 
-export default 
-function ChatMessages() {
+export default
+    function ChatMessages() {
     const { userLog } = useMyContext();
     const { handleScroll, messagesContainerRef, listMessage } = useWebSocket();
-    const {fetchData} = useConnection();
-    
+    const { fetchData } = useConnection();
+
     return (
         <section
             ref={messagesContainerRef}
@@ -51,6 +51,16 @@ function ChatMessages() {
         } else if (parseInt(message.type) === 4) {
             style = "text-success";
             icon = "fa-solid fa-file-code"
+        } else if (parseInt(message.type) === 6) {
+            style = "text-primary";
+            icon = "fa-solid fa-file-word"
+        } else if (parseInt(message.type) === 7) {
+            style = "text-success";
+            icon = "fa-solid fa-file-excel"
+        }
+        else if (parseInt(message.type) === 8) {
+            style = "text-warning";
+            icon = "fa-solid fa-file-powerpoint"
         }
         return componentFile(message, style, icon);
     }
@@ -63,7 +73,7 @@ function ChatMessages() {
                 </a>
                 <div className="d-flex justify-content-end my-2" onClick={async () => {
                     try {
-                        const req: { error: boolean, fileName: string, fileContent: string, message?: 'string' } = await await fetchData({method:"GET",params:null,pathFile:"GIPP/LoginGipp.php",urlComplement:`&file=${message.message}`}) || { error: true, fileName: '', fileContent: '' };
+                        const req: { error: boolean, fileName: string, fileContent: string, message?: 'string' } = await await fetchData({ method: "GET", params: null, pathFile: "GIPP/LoginGipp.php", urlComplement: `&file=${message.message}` }) || { error: true, fileName: '', fileContent: '' };
                         if (req.error) throw new Error(req.message);
                         downloadFile(req);
                     } catch (error) {
