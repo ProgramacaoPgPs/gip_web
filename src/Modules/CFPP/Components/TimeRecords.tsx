@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMyContext } from '../../../Context/MainContext';
-import { convertForTable, convertTime, fetchNodeDataFull, handleNotification } from '../../../Util/Util';
+import { convertForTable, convertTime, fetchNodeDataFull, getCurrentDate, handleNotification } from '../../../Util/Util';
 import RegisterValidator from '../Class/RegisterValidator';
 import SearchUserCFPP from './SearchUserCFPP';
 import TableComponent from '../../../Components/CustomTable';
@@ -16,12 +16,12 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
     const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string, BranchCode: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     const { setLoading } = useMyContext();
-    const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }[] = [
+    const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void,max?: string }[] = [
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Matrícula', textValue: employee.EmployeeID, disabled: true, typeInput: 'text' },
         { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Nome', textValue: employee.EmployeeName, disabled: true, typeInput: 'text' },
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'C.C.', textValue: employee.CostCenterDescription, disabled: true, typeInput: 'text' },
         { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Filial', textValue: employee.BranchName, disabled: true, typeInput: 'text' },
-        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', max:getCurrentDate(), onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Hora', textValue: hour, disabled: false, typeInput: 'time', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setHour(element.target.value) },
     ];
     useEffect(() => {
@@ -146,6 +146,7 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
         setTypeRecord('');
         setEmployee({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     }
+
     return (
         <React.Fragment>
             <div>
@@ -160,6 +161,7 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                     {
                         list.map((item, index) => <ItemSeachCFPP key={`ItemSeachCFPP_${index}`} {...item} />)
                     }
+                 
                     <div className='col-3'>
                         <label className='form-check-label'>Tipo de lançamento:</label>
                         <select value={typeRecord} onChange={(element: React.ChangeEvent<HTMLSelectElement>) => setTypeRecord(element.target.value)} id='id_record_type_fk' className='form-control'>
@@ -192,7 +194,7 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     )
 }
 
-function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void }) {
+function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void,max?:string }) {
     return (
         <div className={props.classItem}>
             <label className='form-check-label'>{props.textLabel}:</label>
@@ -200,7 +202,7 @@ function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue:
                 if (props.onAction) {
                     props.onAction(e);
                 }
-            }} value={props.textValue} disabled={props.disabled} type={props.typeInput} className='form-control' />
+            }} value={props.textValue} max={props.max} disabled={props.disabled} type={props.typeInput} className='form-control' />
         </div>
     )
 }
