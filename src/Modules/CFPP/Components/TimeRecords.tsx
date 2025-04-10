@@ -5,6 +5,7 @@ import RegisterValidator from '../Class/RegisterValidator';
 import SearchUserCFPP from './SearchUserCFPP';
 import TableComponent from '../../../Components/CustomTable';
 import ListRegister from './ListRegister';
+import DetailsTimeRecords from './DetailsTimesRecords';
 
 export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadTokenCFPP: () => Promise<void> }) {
     const [listRegister, setListRegister] = useState<{ id_record_type_fk: string; times: string }[]>([]);
@@ -14,14 +15,15 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     const [timeRecords, setTimeRecords] = useState<any[]>([]);
     const [recordType, setRecordType] = useState<any[]>([]);
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
+    const [onDetailsTimesRecords, setOnDetailsTimesRecords] = useState<string>('');
     const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string, BranchCode: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     const { setLoading } = useMyContext();
-    const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void,max?: string }[] = [
+    const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void, max?: string }[] = [
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Matrícula', textValue: employee.EmployeeID, disabled: true, typeInput: 'text' },
         { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Nome', textValue: employee.EmployeeName, disabled: true, typeInput: 'text' },
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'C.C.', textValue: employee.CostCenterDescription, disabled: true, typeInput: 'text' },
         { classItem: 'col-3 d-flex flex-column justify-content-end', textLabel: 'Filial', textValue: employee.BranchName, disabled: true, typeInput: 'text' },
-        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', max:getCurrentDate(), onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
+        { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Data', textValue: date, disabled: false, typeInput: 'date', max: getCurrentDate(), onAction: (element: React.ChangeEvent<HTMLInputElement>) => setDate(element.target.value) },
         { classItem: 'col-2 d-flex flex-column justify-content-end', textLabel: 'Hora', textValue: hour, disabled: false, typeInput: 'time', onAction: (element: React.ChangeEvent<HTMLInputElement>) => setHour(element.target.value) },
     ];
     useEffect(() => {
@@ -161,7 +163,10 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                     {
                         list.map((item, index) => <ItemSeachCFPP key={`ItemSeachCFPP_${index}`} {...item} />)
                     }
-                 
+                    {
+                        onDetailsTimesRecords != '' && <DetailsTimeRecords journeyCode={onDetailsTimesRecords} onClose={() => setOnDetailsTimesRecords('')} />
+                    }
+
                     <div className='col-3'>
                         <label className='form-check-label'>Tipo de lançamento:</label>
                         <select value={typeRecord} onChange={(element: React.ChangeEvent<HTMLSelectElement>) => setTypeRecord(element.target.value)} id='id_record_type_fk' className='form-control'>
@@ -184,17 +189,20 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                 </div>
             </div>
             <div className='w-100 overflow-auto'>
-                {timeRecords.length > 0 && <TableComponent hiddenButton={true} list={convertForTable(timeRecords, {
-                    ocultColumns: ['status_records', 'branch_time_record', 'times', 'id_time_records', 'created_at', 'updated_at', 'id_global'],
-                    customTags: { employee_id: 'Matrícula', id_status_fk: 'Cód. Status', id_record_type_fk: 'Cód. Marcação', cod_work_schedule: 'Cód. Jornada', employee_name: 'Nome', date: 'Data', hour: 'Horário', cost_center_description: 'C.C', branch_name: 'Filial' },
-                    minWidths: { time: "75px", date: '85px', employee_id: '100px', id_status_fk: '110px', id_record_type_fk: '145px', cod_work_schedule: '100px' }
-                })} onConfirmList={(item) => { console.log(item); }} />}
+                {
+                    timeRecords.length > 0 &&
+                    <TableComponent
+                        maxSelection={1}
+                        list={convertForTable(timeRecords)}
+                        onConfirmList={(item) => { setOnDetailsTimesRecords(item[0]['Jornada']['value']); }}
+                    />
+                }
             </div>
         </React.Fragment>
     )
 }
 
-function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void,max?:string }) {
+function ItemSeachCFPP(props: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void, max?: string }) {
     return (
         <div className={props.classItem}>
             <label className='form-check-label'>{props.textLabel}:</label>
