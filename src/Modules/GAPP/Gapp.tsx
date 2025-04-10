@@ -6,7 +6,6 @@ import { listPath } from '../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
 import { Connection } from '../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
-
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",
@@ -20,23 +19,19 @@ const Gapp: React.FC = () => {
         complement: "",
         status_store: 1,
     });
-    const [erro, setErro] = useState<string | null>(null);
-    
     const [hiddenNav, setHiddeNav] = useState(false);
     const [hiddenForm, setHiddeForm] = useState(true);
     const [visibilityTrash, setVisibilityTrash] = useState(true);
     const [visibilityList, setVisibilityList] = useState(false);
     const { isTablet, isMobile, isDesktop } = useWindowSize();
-
     const [dataStore, setDataStore] = useState<IFormData | []>([]);
     const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
-
     const consultingCEP = async (cep: string) => {
         if (cep.length !== 8) {
-            setErro('O CEP deve conter 8 dígitos.');
+            console.log('O CEP deve conter 8 dígitos.');
             return;
         }
-        setErro(null);
+        console.log(null);
         try {
             const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
             const data = await response.json();
@@ -52,17 +47,14 @@ const Gapp: React.FC = () => {
                 }));
             }
         } catch (error) {
-            setErro('Erro ao consultar o CEP.');
+            console.log('Erro ao consultar o CEP.');
         }
     };
-
     useEffect(() => {
         if (data.zip_code.length === 8) {
             consultingCEP(data.zip_code);
         }
     }, [data.zip_code]);
-
-
     const connectionBusiness = async () => {
         try {
             const response = await new Connection("18");
@@ -76,18 +68,15 @@ const Gapp: React.FC = () => {
             console.error("An error occurred while fetching the data:", error);
         }
     };
-      
     const connectionBusinessTrash = async () => {
         const response = await new Connection("18");
         let data: any = await response.get('&status_store=0', 'GAPP/Store.php');
         setDataStoreTrash(data.data);
     };
-    
       useEffect(() => {
         connectionBusiness();
         connectionBusinessTrash();
       }, []);
-
     function resetStore() {
         setDataStore([]);
         connectionBusiness();
@@ -95,7 +84,6 @@ const Gapp: React.FC = () => {
         setDataStoreTrash([]);
         connectionBusinessTrash();
     }
-
     const resetForm = () => {
         setData({
             cnpj: "",
@@ -110,7 +98,6 @@ const Gapp: React.FC = () => {
             status_store: 1,
         });
     };
-
     const FormComponent = () => (
         <div className={`d-flex col-12 col-sm-12 col-lg-${isTablet ? '3' : '2'}`}>
             <Form
@@ -132,8 +119,6 @@ const Gapp: React.FC = () => {
             />
         </div>
     );
-
-    /* filtro de botão */
     function menuButtonFilter() {
         return (
             <React.Fragment>
@@ -156,8 +141,6 @@ const Gapp: React.FC = () => {
             </React.Fragment>
         )
     }
-
-
     function visibilityInterleave() {
         function CardInfoSimplify() {
             return <CardInfo resetDataStore={resetStore} visibilityTrash={visibilityTrash} dataStore={dataStore} dataStoreTrash={dataStoreTrash} setData={setData} setHiddenForm={setHiddeForm} />
@@ -174,8 +157,6 @@ const Gapp: React.FC = () => {
             </React.Fragment>
         )
     }
-
-
     return (
         <React.Fragment>
             {(isMobile || isTablet) && hiddenNav ? (
@@ -183,7 +164,6 @@ const Gapp: React.FC = () => {
             ) : isDesktop ? (
                 <NavBar list={listPath} />
             ) : null}
-
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
                     <div className='w-100'>
@@ -203,5 +183,4 @@ const Gapp: React.FC = () => {
         </React.Fragment>
     );
 };
-
 export default Gapp;
