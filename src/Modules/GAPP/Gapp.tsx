@@ -167,7 +167,7 @@ const Gapp: React.FC = () => {
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
                     <div className='w-100'>
-                        <h1 className='title_business'>Cadastro de empresas</h1>
+                        <h1 className='title_business'>Cadastro de empresassss</h1>
                     </div>
                     <div className='form-control button_filter bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'>
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>
