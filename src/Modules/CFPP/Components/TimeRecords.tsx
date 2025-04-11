@@ -127,15 +127,24 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     async function register() {
         try {
             setLoading(true);
-            const list = listRegister.length > 0 ? listRegister : [{ id_record_type_fk: typeRecord, times: `${date} ${hour}` }];
+            let list: {
+                id_record_type_fk: string;
+                times: string;
+            }[] = [];
+            if (listRegister.length > 0) {
+                list = listRegister;
+            } else {
+                if (!typeRecord || !date || !hour) throw new Error('O campo data, hora e lançameto precisam ser preenchidos!');
+                list = [{ id_record_type_fk: typeRecord, times: `${date} ${hour}` }];
+            }
             for await (const element of list) {
                 const data = await insertRegister(element.id_record_type_fk, element.times);
                 if (data?.error) throw new Error(data.message);
             }
             await loadTimeRecords();
             cleanAll();
-        } catch (error) {
-            console.error(error);
+        } catch (error:any) {
+            handleNotification('Falha!',error.message.toString(),'danger');
         } finally {
             setLoading(false);
         }
@@ -164,9 +173,8 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                         list.map((item, index) => <ItemSeachCFPP key={`ItemSeachCFPP_${index}`} {...item} />)
                     }
                     {
-                        onDetailsTimesRecords != '' && <DetailsTimeRecords journeyCode={onDetailsTimesRecords} onClose={() => setOnDetailsTimesRecords('')} />
+                        onDetailsTimesRecords != '' && <DetailsTimeRecords journeyCode={onDetailsTimesRecords} onClose={async () => {setOnDetailsTimesRecords(''); await loadTimeRecords()}} />
                     }
-
                     <div className='col-3'>
                         <label className='form-check-label'>Tipo de lançamento:</label>
                         <select value={typeRecord} onChange={(element: React.ChangeEvent<HTMLSelectElement>) => setTypeRecord(element.target.value)} id='id_record_type_fk' className='form-control'>
