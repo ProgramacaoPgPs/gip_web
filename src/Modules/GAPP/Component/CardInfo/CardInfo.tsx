@@ -11,40 +11,38 @@ const CardInfo: React.FC<ICardInfoProps> = ({ setData, setHiddenForm, visibility
   const [confirm, setConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>();
   const [itemToRicycle, setItemToRicycle] = useState<any>();
-  const handleUpdateStatusStore = async (item: []) => {
+
+  const handleUpdateStoreStatus = async (item: [], status: number) => {
     try {
       const connection = new Connection("15");
-      await connection.put({ ...item, status_store: 0 }, "GAPP/Store.php");
+      await connection.put({ ...item, status_store: status }, "GAPP/Store.php");
       setConfirm(false);
       resetDataStore?.();
     } catch (error) {
-      handleNotification("Erro", 'Erro no Serviço!'+error, "danger");
+      handleNotification("Erro", 'Erro no Serviço! ' + error, "danger");
     }
   };
-  const handleRecycle = async (item: []) => {
-    try {
-      const connection = new Connection("15");
-      await connection.put({ ...item, status_store: 1 }, "GAPP/Store.php");
-      setConfirm(false);
-      resetDataStore?.();
-    } catch (error) {
-      handleNotification("Erro", 'Erro no Serviço!'+error, "danger");
-    }
-  };
-  function dataModalItem(item: IFormData, index: number) {
+
+  function DataModalItem(item: IFormData, index: number) {
+    const infoFields = [
+      { label: "Nome", value: item?.name },
+      { label: "CEP", value: item?.zip_code },
+      { label: "CNPJ", value: item?.cnpj },
+      { label: "Estado", value: item?.state },
+      { label: "Cidade", value: item?.city },
+      { label: "Distrito", value: item?.district },
+      { label: "Número", value: item?.number },
+      { label: "Rua", value: item?.street },
+      { label: "Complemento", value: item?.complement },
+    ];
+    
     return (
       <div key={`list_${index}`} className={`col-12 col-sm-6 col-md-4 col-lg-3 rounded p-3 cardTest form-control bg-white bg-opacity-75 shadow m-2`}>
-        <div className='text-dark text-card'>
-          <div><strong title={item?.name}>Nome:</strong> {item?.name}</div>
-          <div><strong title={item.zip_code}>CEP:</strong> {item.zip_code}</div>
-          <div><strong title={item.cnpj}>CNPJ:</strong> {item.cnpj}</div>
-          <div><strong title={item.state}>Estado:</strong> {item.state}</div>
-          <div><strong title={item.city}>Cidade:</strong> {item.city}</div>
-          <div><strong title={item.district}>Distrito:</strong> {item.district}</div>
-          <div><strong title={item.number}>Numero:</strong> {item.number}</div>
-          <div><strong title={item.street}>Rua:</strong> {item.street}</div>
-          <div><strong title={item.complement}>Complement:</strong> {item.complement}</div>
-        </div>
+        {infoFields.map((field, index) => (
+          <div className='text-dark text-card' key={index}>
+            <strong title={field.value}>{field.label}:</strong> {field.value}
+          </div>
+        ))}
         <div className='d-flex justify-content-between'>
           <div className='d-flex gap-2 mt-2'>
             {item.status_store == 0 && (
@@ -85,17 +83,17 @@ const CardInfo: React.FC<ICardInfoProps> = ({ setData, setHiddenForm, visibility
           cancel={() => setConfirm(false)}
           confirm={() => {
             if (itemToDelete) {
-              handleUpdateStatusStore(itemToDelete);
+              handleUpdateStoreStatus(itemToDelete, 0);
             }
             if (itemToRicycle) {
-              handleRecycle(itemToRicycle);
+              handleUpdateStoreStatus(itemToRicycle, 1);
             }
           }}/>}
       <div className={`row h-25`}>
         <div className='col-12'>
           <div className='d-flex justify-content-start flex-wrap overflow-auto h-100 heightlite_screen'>
             {(visibilityTrash ? dataStore : dataStoreTrash)?.length > 0
-              ? (visibilityTrash ? dataStore : dataStoreTrash)?.map((item: any, index: number) => dataModalItem(item, index))
+              ? (visibilityTrash ? dataStore : dataStoreTrash)?.map((item: any, index: number) => DataModalItem(item, index))
               : <div 
               className="p-3 m-auto shadow-sm border_none background_whiteGray"
               role="alert"

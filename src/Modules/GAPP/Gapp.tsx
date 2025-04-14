@@ -64,7 +64,7 @@ const Gapp: React.FC = () => {
         });
     };
     const FormComponent = () => (
-        <div className={`d-flex col-12 col-sm-12 col-lg-${isTablet ? '3' : '3'}`}>
+        <div className={`d-flex col-12 col-sm-12 col-lg-${isTablet ? '3' : '4'}`}>
             <Form
                 handleFunction={[
                     (value: string) => setData(x => ({ ...x, cnpj: value })),

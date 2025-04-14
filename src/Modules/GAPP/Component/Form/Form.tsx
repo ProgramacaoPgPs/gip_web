@@ -50,11 +50,6 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     searchCEP,
   );
 
-  function validateData(data: IFormData | undefined) {
-    return data?.name && data?.street && data?.district &&
-         data?.city && data?.state && data?.number && data?.zip_code;
-  }
-
   function searchCEP () {
     return consultingCEP(data?.zip_code, setData)
   }
@@ -77,10 +72,8 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     }
   }
 
-  const handleSubmit2 = async () => {
-    if(!validateData(data)) return handleNotification("Error", "Prencha os campos antes de enviar", "danger");
-
-    let obj = {
+  function formatStoreData (data: any) {
+    return {
       cnpj: data?.cnpj.replace(/[^a-z0-9]/gi, ""),
       name: data?.name,
       street: data?.street,
@@ -92,16 +85,16 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
       complement: data?.complement,
       status_store: data?.status_store,
       ...(isNewStore ? {} : { id: data.id }),
-    }
+    };
+  };
 
-    isNewStore ?  await postStore(obj) : await putStore(obj);
-  
-    if(resetDataStore) {
-      resetDataStore();
-    }
-    
-    if(resetForm){
-      resetForm();
+  const editorSendData = async () => {
+    try {
+      isNewStore ?  await postStore(formatStoreData(data)) : await putStore(formatStoreData(data));
+      if(resetDataStore) resetDataStore();
+      if(resetForm) resetForm();
+    } catch (error) {
+      handleNotification("Error", String(error).toLowerCase(), "danger");
     }
   };
 
@@ -109,17 +102,15 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     <React.Fragment>
       <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between form-style-modal'>
         <CustomForm
-          classRender='col-5 w-100 flex-wrap'
+          classRender='w-100 flex-wrap'
           classButton='btn btn-success'
           className='p-3'
           notButton={false}
           fieldsets={filter}
-          searchCEP={searchCEP}
-        />
-        {/* <button onClick={searchCEP}>Teste</button> */}
+          searchCEP={searchCEP} />
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
-            <button className={`btn btn-success w-100`} onClick={handleSubmit2}>
+            <button className={`btn btn-success w-100`} onClick={editorSendData}>
               <i className={`fa-sharp fa-solid ${isNewStore ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
             </button>
           </div>
