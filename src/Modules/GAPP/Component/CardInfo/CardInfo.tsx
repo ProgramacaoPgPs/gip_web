@@ -3,6 +3,7 @@ import { Connection } from '../../../../Connection/Connection';
 import ModalConfirm from '../../../../Components/ModalConfirm';
 import { ICardInfoProps, IFormData } from '../../Interfaces/IFormGender';
 import '../style/style.css';
+import { handleNotification } from '../../../../Util/Util';
 /**
  * @description O card é o ponto principal para trabalhar com a edição e o desativamento de um endereço cadastrado e também pode fazer a reciclagem desse endereço cadastrado ou seja ele pode recupear essa informação para que ela não seja deletada
  */
@@ -17,7 +18,7 @@ const CardInfo: React.FC<ICardInfoProps> = ({ setData, setHiddenForm, visibility
       setConfirm(false);
       resetDataStore?.();
     } catch (error) {
-      alert('Erro no Serviço!'+error);
+      handleNotification("Erro", 'Erro no Serviço!'+error, "danger");
     }
   };
   const handleRecycle = async (item: []) => {
@@ -27,7 +28,7 @@ const CardInfo: React.FC<ICardInfoProps> = ({ setData, setHiddenForm, visibility
       setConfirm(false);
       resetDataStore?.();
     } catch (error) {
-      alert('Erro no Serviço!'+error);
+      handleNotification("Erro", 'Erro no Serviço!'+error, "danger");
     }
   };
   function dataModalItem(item: IFormData, index: number) {

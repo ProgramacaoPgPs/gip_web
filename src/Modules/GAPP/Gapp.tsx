@@ -6,7 +6,7 @@ import { listPath } from '../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
 import { Connection } from '../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
-import { consultingCEP } from '../../Util/Util';
+import { consultingCEP, handleNotification } from '../../Util/Util';
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",
@@ -27,39 +27,27 @@ const Gapp: React.FC = () => {
     const { isTablet, isMobile, isDesktop } = useWindowSize();
     const [dataStore, setDataStore] = useState<IFormData | []>([]);
     const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
-    useEffect(() => {
-        if (data.zip_code.length === 8) {
-            consultingCEP(data.zip_code, setData);
-        }
-    }, [data.zip_code]);
-    const connectionBusiness = async () => {
-        try {
-            const response = await new Connection("18");
-            let data:any = await response.get('&status_store=1', 'GAPP/Store.php');
-            if (data && data.data) {
-                setDataStore(data.data);
-            } else {
-                console.error("No valid data returned from the server.");
-            }
-        } catch (error) {
-            console.error("An error occurred while fetching the data:", error);
-        }
-    };
-    const connectionBusinessTrash = async () => {
+
+    const connectionBusinessGeneric = async (
+        status: "0" | "1", 
+        setData: (data: any) => void
+      ) => {
         const response = await new Connection("18");
-        let data: any = await response.get('&status_store=0', 'GAPP/Store.php');
-        setDataStoreTrash(data.data);
-    };
+        const data: any = await response.get(`&status_store=${status}`, 'GAPP/Store.php');
+        setData(data.data);
+      };
+      
       useEffect(() => {
-        connectionBusiness();
-        connectionBusinessTrash();
+        connectionBusinessGeneric("1", setDataStore);
+        connectionBusinessGeneric("0", setDataStoreTrash);
       }, []);
+
     function resetStore() {
         setDataStore([]);
-        connectionBusiness();
+        connectionBusinessGeneric("1", setDataStore);
 
         setDataStoreTrash([]);
-        connectionBusinessTrash();
+        connectionBusinessGeneric("0", setDataStoreTrash);
     }
     const resetForm = () => {
         setData({
@@ -92,7 +80,8 @@ const Gapp: React.FC = () => {
                 ]}
                 resetDataStore={resetStore}
                 resetForm={resetForm}
-                data={data} 
+                data={data}
+                setData={setData}
             />
         </div>
     );
@@ -144,7 +133,7 @@ const Gapp: React.FC = () => {
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
                     <div className='w-100'>
-                        <h1 className='title_business'>Cadastro de empresassss</h1>
+                        <h1 className='title_business'>Cadastro de empresas</h1>
                     </div>
                     <div className='form-control button_filter bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'>
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>

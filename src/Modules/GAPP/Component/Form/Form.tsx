@@ -1,7 +1,7 @@
 import React from 'react';
 import CustomForm from '../../../../Components/CustomForm';
 import { fildsetsFormsBusiness } from '../../mock/configuration';
-import { handleNotification } from '../../../../Util/Util';
+import { consultingCEP, handleNotification } from '../../../../Util/Util';
 import { Connection } from '../../../../Connection/Connection';
 import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
 
@@ -18,7 +18,7 @@ import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
  * 
  * e com isso voce tem que configurar o arquivo por aqui seguindo as referencias do projeto.
  */
-const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm }) => {
+const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm, setData }) => {
 
   const defaultFunction = (value: string) => {};
 
@@ -47,6 +47,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     handleFieldZipCode, 
     handleFieldComplement,
     data,
+    searchCEP,
   );
 
   function validateData(data: IFormData | undefined) {
@@ -54,9 +55,31 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
          data?.city && data?.state && data?.number && data?.zip_code;
   }
 
+  function searchCEP () {
+    return consultingCEP(data?.zip_code, setData)
+  }
+
+  async function postStore(obj: any, conn:any = new Connection('18')) {
+    try {
+      const {success} = await conn.post(obj, 'GAPP/Store.php');
+      success ? handleNotification("Sucesso", "Loja salva com sucesso!", "success") : handleNotification("Erro", "Loja não foi salva!", "danger");
+    } catch (error) {
+      handleNotification("Erro", `${error}`, "danger");
+    }
+  }
+
+  async function putStore(obj:any, conn: any = new Connection('18')) {
+    try {
+      const {success} = await conn.put(obj, 'GAPP/Store.php');
+      success ?  handleNotification("Sucesso", "Loja atualizada com sucesso!", "success") : handleNotification("Erro", "Loja não foi atualizada!", "danger");
+    } catch (error) {
+      handleNotification("Erro", `${error}`, "danger");
+    }
+  }
+
   const handleSubmit2 = async () => {
     if(!validateData(data)) return handleNotification("Error", "Prencha os campos antes de enviar", "danger");
-    const conn = new Connection('18');
+
     let obj = {
       cnpj: data?.cnpj.replace(/[^a-z0-9]/gi, ""),
       name: data?.name,
@@ -70,10 +93,8 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
       status_store: data?.status_store,
       ...(isNewStore ? {} : { id: data.id }),
     }
-    const resp: any = isNewStore ? await conn.post(obj,'GAPP/Store.php') : await conn.put(obj,'GAPP/Store.php');
-    if(resp) {
-      console.log(resp.message);
-    }
+
+    isNewStore ?  await postStore(obj) : await putStore(obj);
   
     if(resetDataStore) {
       resetDataStore();
@@ -93,7 +114,9 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
           className='p-3'
           notButton={false}
           fieldsets={filter}
+          searchCEP={searchCEP}
         />
+        {/* <button onClick={searchCEP}>Teste</button> */}
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
             <button className={`btn btn-success w-100`} onClick={handleSubmit2}>

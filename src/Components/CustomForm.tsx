@@ -18,6 +18,7 @@ type CaptureValueTuple = [
 ];
 
 type CustomFormProps = React.FormHTMLAttributes<HTMLFormElement> & {
+  searchCEP?: any;
   classRender?: string;
   notButton?: boolean;
   typeButton?: 'submit' | 'reset' | 'button' | undefined;

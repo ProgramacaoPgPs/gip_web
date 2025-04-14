@@ -1,10 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
 import { Store } from "react-notifications-component";
-import { Connection } from "../Connection/Connection";
 import { iReqConn } from "../Interface/iConnection";
 import Translator from "./Translate";
-
-const connection = new Connection("18", true);
 
 export const convertdate = (date: string): string | null => {
     if (!date) return null;
@@ -17,28 +13,39 @@ export const convertdate = (date: string): string | null => {
     return parsedDate.toLocaleDateString('pt-BR');
 };
 
-export const consultingCEP = async (cep: string, setData: any) => {
+export const fetchCEPData = async (cep: string) => {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    if (!response.ok) {
+        const responseStatus = new Error(`CEP encontrado!`);
+        handleNotification("Sucesso", responseStatus.message, "success");
+    } 
+    
+    const data = await response.json();
+    if (data.erro) {
+        const responseStatus = new Error("CEP não encontrado.");
+        handleNotification("Erro", responseStatus.message, "danger");
+    }
+    return data;
+};
+
+export const consultingCEP = async (cep: any, setData: any) => {
     if (cep.length !== 8) {
-        console.log('O CEP deve conter 8 dígitos.');
+        console.warn("CEP inválido. Deve conter 8 dígitos.");
         return;
     }
-    console.log(null);
+
     try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const data = await response.json();
-        if (data.erro) {
-            console.log('Erro no CEP');
-        } else {
-            setData((prevData:any) => ({
-                ...prevData,
-                street: data.logradouro || '',
-                district: data.bairro || '',
-                city: data.localidade || '',
-                state: data.uf || ''
-            }));
-        }
-    } catch (error) {
-        console.log('Erro ao consultar o CEP.');
+        const data = await fetchCEPData(cep);
+
+        setData((prevData: any) => ({
+        ...prevData,
+        street: data.logradouro || '',
+        district: data.bairro || '',
+        city: data.localidade || '',
+        state: data.uf || '',
+        }));
+    } catch (error: any) {
+        console.error("Erro ao consultar o CEP:", error.message || error);
     }
 };
 

@@ -10,7 +10,8 @@ export const fildsetsFormsBusiness = (
     captureValueNumber: (value: string) => void,
     captureValueZipCode: (value: string) => void,
     captureValueComplement: (value: string) => void,
-    data: any
+    data: any,
+    searchCEP: any
 ) => [{
     attributes: { 
         className: 'w-100', 
@@ -32,24 +33,54 @@ export const fildsetsFormsBusiness = (
             },
             {
                 type: 'textLabel',
+                text_value: 'CNPJ:',
+                value: data.cnpj,
+                placeholder: '00.000.000/0001-00',
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const onlyDotsAndDashes = e.target.value.replace(/[^0-9./-]/g, "");
+                    captureValueCnpj(onlyDotsAndDashes);
+                },
+                name: 'cnpj',
+                className: 'form-control',
+                required: false,
+                id: ''
+            },
+            {
+                type: 'textLabel',
                 text_value: 'CEP:',
                 placeholder: '00000-000',
-                value: data.zip_code,
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueZipCode(e.target.value),
+                value:data.zip_code,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const onlyDashes = e.target.value.replace(/[^0-9/-]/g, "");
+                    captureValueZipCode(onlyDashes)
+                },
                 name: 'zipcode',
                 className: 'form-control',
                 required: true,
                 id: ''
             },
             {
+                type: 'button',
+                text_value: 'CEP:',
+                placeholder: '00000-000',
+                onClick: (e: React.ChangeEvent<HTMLInputElement>) => searchCEP(),
+                name: 'zipcode',
+                value: 'Pesquisar CEP',
+                className: 'btn btn-success mt-4',
+                required: true,
+                id: ''
+            },
+            
+            {
                 type: 'textLabel',
-                text_value: 'CNPJ:',
-                value: data.cnpj,
-                placeholder: '00.000.000/0001-00',
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCnpj(e.target.value),
-                name: 'cnpj',
+                text_value: 'Cidade:',
+                placeholder: 'Ex: São Paulo',
+                value: data.city,
+                disabled: false,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCity(e.target.value),
+                name: 'city',
                 className: 'form-control',
-                required: false,
+                required: true,
                 id: ''
             },
             {
@@ -61,7 +92,7 @@ export const fildsetsFormsBusiness = (
                 name: 'state',
                 className: 'form-control',
                 required: true,
-                disabled: true,
+                disabled: false,
                 id: '',
                 options: [
                       { value: 'AC', label: 'AC' },
@@ -95,22 +126,10 @@ export const fildsetsFormsBusiness = (
             },
             {
                 type: 'textLabel',
-                text_value: 'Cidade:',
-                placeholder: 'Ex: São Paulo',
-                value: data.city,
-                disabled: true,
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueCity(e.target.value),
-                name: 'city',
-                className: 'form-control',
-                required: true,
-                id: ''
-            },
-            {
-                type: 'textLabel',
                 text_value: 'Distrito:',
                 value: data.district,
                 placeholder: 'Digite..',
-                disabled: true,
+                disabled: false,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueDistrict(e.target.value),
                 name: 'district',
                 className: 'form-control',
@@ -132,7 +151,7 @@ export const fildsetsFormsBusiness = (
                 type: 'textLabel',
                 text_value: 'Rua:',
                 value: data.street,
-                disabled: true,
+                disabled: false,
                 placeholder: 'Ex: R. medeiros de..',
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => captureValueStreet(e.target.value),
                 name: 'street',
@@ -150,7 +169,7 @@ export const fildsetsFormsBusiness = (
                 className: 'form-control',
                 required: false,
                 id: ''
-            }
+            },
         ],
     },
 }];
