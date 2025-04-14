@@ -6,6 +6,7 @@ import { listPath } from '../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
 import { Connection } from '../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
+import { consultingCEP } from '../../Util/Util';
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",
@@ -26,33 +27,9 @@ const Gapp: React.FC = () => {
     const { isTablet, isMobile, isDesktop } = useWindowSize();
     const [dataStore, setDataStore] = useState<IFormData | []>([]);
     const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
-    const consultingCEP = async (cep: string) => {
-        if (cep.length !== 8) {
-            console.log('O CEP deve conter 8 dígitos.');
-            return;
-        }
-        console.log(null);
-        try {
-            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const data = await response.json();
-            if (data.erro) {
-                console.log('Erro no CEP');
-            } else {
-                setData(prevData => ({
-                    ...prevData,
-                    street: data.logradouro || '',
-                    district: data.bairro || '',
-                    city: data.localidade || '',
-                    state: data.uf || ''
-                }));
-            }
-        } catch (error) {
-            console.log('Erro ao consultar o CEP.');
-        }
-    };
     useEffect(() => {
         if (data.zip_code.length === 8) {
-            consultingCEP(data.zip_code);
+            consultingCEP(data.zip_code, setData);
         }
     }, [data.zip_code]);
     const connectionBusiness = async () => {
