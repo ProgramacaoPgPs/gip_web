@@ -91,10 +91,6 @@ label, h1 {
         width: 100%;
         height: fit-content;
     }
-
-    .container {
-        height: 90vh;
-    }
 }
 
 /* LAPTOP */

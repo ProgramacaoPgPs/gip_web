@@ -4,22 +4,30 @@ import ModalConfirm from '../../../../Components/ModalConfirm';
 import { ICardInfoProps, IFormData } from '../../Interfaces/IFormGender';
 import '../style/style.css';
 import { handleNotification } from '../../../../Util/Util';
+import { useMyContext } from '../../../../Context/MainContext';
 /**
- * @description O card é o ponto principal para trabalhar com a edição e o desativamento de um endereço cadastrado e também pode fazer a reciclagem desse endereço cadastrado ou seja ele pode recupear essa informação para que ela não seja deletada
+ * @description O card é o ponto principal para trabalhar com a edição e o desativamento de um 
+ * endereço cadastrado e também pode fazer a reciclagem desse endereço cadastrado ou seja ele pode 
+ * recupear essa informação para que ela não seja deletada
  */
 const CardInfo: React.FC<ICardInfoProps> = ({ setData, setHiddenForm, visibilityTrash, dataStore, dataStoreTrash, resetDataStore }) => {
   const [confirm, setConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>();
   const [itemToRicycle, setItemToRicycle] = useState<any>();
 
+  const { setLoading } = useMyContext();
+
   const handleUpdateStoreStatus = async (item: [], status: number) => {
     try {
+      setLoading(true);
       const connection = new Connection("15");
       await connection.put({ ...item, status_store: status }, "GAPP/Store.php");
       setConfirm(false);
       resetDataStore?.();
     } catch (error) {
       handleNotification("Erro", 'Erro no Serviço! ' + error, "danger");
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -7,6 +7,7 @@ import useWindowSize from './hook/useWindowSize';
 import { Connection } from '../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
 import { consultingCEP, handleNotification } from '../../Util/Util';
+import { useMyContext } from '../../Context/MainContext';
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",
@@ -28,13 +29,17 @@ const Gapp: React.FC = () => {
     const [dataStore, setDataStore] = useState<IFormData | []>([]);
     const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
 
+    const { setLoading } = useMyContext();
+
     const connectionBusinessGeneric = async (
         status: "0" | "1", 
         setData: (data: any) => void
       ) => {
+        setLoading(true);
         const response = await new Connection("18");
         const data: any = await response.get(`&status_store=${status}`, 'GAPP/Store.php');
         setData(data.data);
+        setLoading(false);
       };
       
       useEffect(() => {
@@ -128,13 +133,17 @@ const Gapp: React.FC = () => {
             {(isMobile || isTablet) && hiddenNav ? (
                 <NavBar list={listPath} />
             ) : isDesktop ? (
-                <NavBar list={listPath} />
+                <React.Fragment>
+                    <NavBar list={listPath} />
+                </React.Fragment>
             ) : null}
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
-                    <div className='w-100'>
-                        <h1 className='title_business'>Cadastro de empresas</h1>
-                    </div>
+                    {!isMobile && (
+                        <div className='w-100'>
+                            <h1 className='title_business'>Cadastro de empresas</h1>
+                        </div>
+                    )}
                     <div className='form-control button_filter bg-white bg-opacity-75 shadow m-2 d-flex flex-column align-items-center position-absolute'>
                         <button className='btn' onClick={() => setVisibilityList((prev) => !prev)}>
                             <i className="fa-solid fa-square-poll-horizontal"></i>

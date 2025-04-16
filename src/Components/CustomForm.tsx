@@ -63,7 +63,7 @@ function CustomForm({ fieldsets, onAction, classRender, classButton, notButton=t
               {fieldset.item.mandatory ? ' *' : ''}
             </b>
           </label>
-          <div className={`d-flex align-items-center gap-4 ${classRender}`}>{renderField(fieldset.item.captureValue)}</div>
+          <div className={`col-12 ${classRender}`}>{renderField(fieldset.item.captureValue)}</div>
         </fieldset>
       ))}
       {notButton && 
@@ -80,16 +80,14 @@ function CustomForm({ fieldsets, onAction, classRender, classButton, notButton=t
 export function renderField(captureValue: CaptureValueArray | CaptureValueTuple) {
   const convertValueArray = Array.isArray(captureValue) ? captureValue : [captureValue];
   return (
-    <React.Fragment>
+    <div className='row'>
       {convertValueArray.map((field: any, index) => (
-        <React.Fragment key={`field_${index}`}>
-          <div>
+        <React.Fragment key={`field_${index}`}>           
             {field.labelText || ""}
             {renderFieldSingle(field)}
-          </div>
         </React.Fragment>
       ))}
-    </React.Fragment>
+    </div>
   )
 }
 
@@ -113,12 +111,13 @@ function renderFieldSingle(captureValue: CaptureValueArray | any){
 
 function renderTextLabel(captureValue: {
   captureValueStyle: React.CSSProperties,
+  classInputValue: string,
   text_value: string,
   value: string;
   required: boolean;
 }) {
   return (
-    <label style={captureValue.captureValueStyle}>
+    <label className={`${captureValue.classInputValue}`}  style={captureValue.captureValueStyle}>
       {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
       <InputField {...captureValue} value={captureValue.value} />
     </label>
@@ -127,7 +126,7 @@ function renderTextLabel(captureValue: {
 
 function renderSelectWithLabel(captureValue: any) {
   return (
-    <label style={captureValue.captureValueStyle}>
+    <label className={captureValue.classlabel} style={captureValue.captureValueStyle}>
       {captureValue.text_value}{captureValue.required ? (<span className='text-danger'>*</span>) : ''}
       <SelectField {...captureValue} options={captureValue?.options || []} defaultValue={captureValue.defaultValue} />
     </label>

@@ -11,7 +11,7 @@ const useWindowSize = () => {
         setWidth(newWidth);
         setIsMobile(newWidth <= 768);
         setIsTablet(newWidth > 768 && newWidth <= 988);
-        setIsDesktop(newWidth > 1024);
+        setIsDesktop(newWidth >= 1024);
     };
 
     useEffect(() => {

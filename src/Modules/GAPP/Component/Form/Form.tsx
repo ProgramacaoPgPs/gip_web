@@ -4,6 +4,7 @@ import { fildsetsFormsBusiness } from '../../mock/configuration';
 import { consultingCEP, handleNotification } from '../../../../Util/Util';
 import { Connection } from '../../../../Connection/Connection';
 import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
+import { useMyContext } from '../../../../Context/MainContext';
 
 
 /**
@@ -21,6 +22,7 @@ import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
 const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm, setData }) => {
 
   const defaultFunction = (value: string) => {};
+  const { setLoading } = useMyContext();
 
   const [
     handleFildCNPJ = defaultFunction,
@@ -51,24 +53,37 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
   );
 
   function searchCEP () {
-    return consultingCEP(data?.zip_code, setData)
+    return consultingCEP(data?.zip_code, setData, setLoading)
   }
 
   async function postStore(obj: any, conn:any = new Connection('18')) {
     try {
+      setLoading(true);
       const {success} = await conn.post(obj, 'GAPP/Store.php');
-      success ? handleNotification("Sucesso", "Loja salva com sucesso!", "success") : handleNotification("Erro", "Loja não foi salva!", "danger");
+      success ? 
+        handleNotification("Sucesso", "Loja salva com sucesso!", "success") : 
+        handleNotification("Erro", "Loja não foi salva!", "danger");
+      
+      return success;
     } catch (error) {
       handleNotification("Erro", `${error}`, "danger");
+    } finally {
+      setLoading(false);
     }
   }
 
   async function putStore(obj:any, conn: any = new Connection('18')) {
     try {
+      setLoading(true);
       const {success} = await conn.put(obj, 'GAPP/Store.php');
-      success ?  handleNotification("Sucesso", "Loja atualizada com sucesso!", "success") : handleNotification("Erro", "Loja não foi atualizada!", "danger");
+      success ? 
+        handleNotification("Sucesso", "Loja atualizada com sucesso!", "success") : 
+        handleNotification("Erro", "Loja não foi atualizada!", "danger");
+      return success;
     } catch (error) {
       handleNotification("Erro", `${error}`, "danger");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -90,9 +105,16 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
 
   const editorSendData = async () => {
     try {
-      isNewStore ?  await postStore(formatStoreData(data)) : await putStore(formatStoreData(data));
-      if(resetDataStore) resetDataStore();
-      if(resetForm) resetForm();
+      let result;
+      if(isNewStore) {
+        result = await postStore(formatStoreData(data));
+      } else {
+        result = await putStore(formatStoreData(data));
+      }
+      if(result) {
+        if(resetDataStore) resetDataStore();
+        if(resetForm) resetForm();
+      }
     } catch (error) {
       handleNotification("Error", String(error).toLowerCase(), "danger");
     }
@@ -102,7 +124,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     <React.Fragment>
       <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between form-style-modal'>
         <CustomForm
-          classRender='w-100 flex-wrap'
+          classRender='w-100'
           classButton='btn btn-success'
           className='p-3'
           notButton={false}
