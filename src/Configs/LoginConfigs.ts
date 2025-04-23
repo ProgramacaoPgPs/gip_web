@@ -10,7 +10,7 @@ export const fieldsetsData = [
                 placeholder: 'Usuário',
                 name: 'login',
                 className: 'form-control',
-                required: true,
+                required: false,
                 id: 'loginUserInput'
             },
         },
@@ -32,7 +32,7 @@ export const fieldsetsData = [
                 placeholder: '******',
                 name: 'senha',
                 className: 'form-control',
-                required: true,
+                required: false,
                 id: 'passwordUserInput'
             },
         },

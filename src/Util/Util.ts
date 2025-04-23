@@ -1,5 +1,5 @@
 import { Store } from "react-notifications-component";
-import { iReqConn } from "../Interface/iConnection";
+import { iReqConn } from "../Interface/iConnection"
 import Translator from "./Translate";
 
 export const convertdate = (date: string): string | null => {

@@ -1,24 +1,12 @@
 import React from 'react';
 import CustomForm from '../../../../Components/CustomForm';
-import { fildsetsFormsBusiness } from '../../mock/configuration';
+import { fieldsetsFormsBusiness } from '../../mock/configuration';
 import { consultingCEP, handleNotification } from '../../../../Util/Util';
 import { Connection } from '../../../../Connection/Connection';
 import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
 import { useMyContext } from '../../../../Context/MainContext';
 
 
-/**
- * @description Este é um formulário dinâmico gerado a partir de um objeto JSON. Ele permite adicionar novos campos de forma simples, bastando alterar o arquivo de configuração.
- * 
- * O arquivo de configuração onde os campos podem ser modificados ou adicionados encontra-se em: 
- * @path ./mock/configuration.ts.
- * 
- * Ao atualizar esse arquivo, o formulário será automaticamente atualizado com os novos campos definidos no JSON.
- * 
- * Isso proporciona flexibilidade e escalabilidade para a criação de formulários sem a necessidade de modificar diretamente o código-fonte do componente.
- * 
- * e com isso voce tem que configurar o arquivo por aqui seguindo as referencias do projeto.
- */
 const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm, setData }) => {
 
   const defaultFunction = (value: string) => {};
@@ -38,7 +26,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
 
   const isNewStore = !data?.id;
 
-  const filter = fildsetsFormsBusiness(
+  const filter = fieldsetsFormsBusiness(
     handleFildCNPJ, 
     handleFieldName, 
     handleFieldStreet,
@@ -52,10 +40,11 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     searchCEP,
   );
 
+  
   function searchCEP () {
     return consultingCEP(data?.zip_code, setData, setLoading)
   }
-
+  
   async function postStore(obj: any, conn:any = new Connection('18')) {
     try {
       setLoading(true);
@@ -129,7 +118,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
           className='p-3'
           notButton={false}
           fieldsets={filter}
-          searchCEP={searchCEP} />
+          />
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
             <button className={`btn btn-success w-100`} onClick={editorSendData}>

@@ -47,10 +47,6 @@ label, h1 {
     border: 1px solid #e1e3e2;
 }
 
-.heightlite_screen {
-    max-height: 90vh;
-    flex: auto;
-}
 
 .border_none {
     border: none;
@@ -70,6 +66,12 @@ label, h1 {
         white-space: nowrap;
         overflow: hidden;
     }
+
+    .heightlite_screen {
+        max-height: 90vh;
+        flex: auto;
+    }
+    
 
     .cardTest {
         max-width: 31%;
@@ -91,6 +93,10 @@ label, h1 {
         width: 100%;
         height: fit-content;
     }
+
+    .heightlite_screen {
+        max-height: 90vh;
+    }
 }
 
 /* LAPTOP */
@@ -106,7 +112,7 @@ label, h1 {
     }
 
     .heightlite_screen {
-        max-height: 80vh;
+        max-height: 94vh;
     }
 }
 

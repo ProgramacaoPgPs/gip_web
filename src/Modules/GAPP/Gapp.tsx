@@ -22,7 +22,7 @@ const Gapp: React.FC = () => {
         status_store: 1,
     });
     const [hiddenNav, setHiddeNav] = useState(false);
-    const [hiddenForm, setHiddeForm] = useState(true);
+    const [hiddenForm, setHiddeForm] = useState(false);
     const [visibilityTrash, setVisibilityTrash] = useState(true);
     const [visibilityList, setVisibilityList] = useState(false);
     const { isTablet, isMobile, isDesktop } = useWindowSize();
