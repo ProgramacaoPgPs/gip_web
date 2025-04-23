@@ -12,7 +12,7 @@ export const fieldsetsFormsBusiness = (
   searchCEP: any
 ) => [
   {
-      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'Nome:',
@@ -30,7 +30,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'CNPJ:',
@@ -49,7 +49,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-12 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'CEP:',
@@ -68,7 +68,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-12 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: '',
@@ -86,7 +86,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'Cidade:',
@@ -105,7 +105,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'Estado:',
@@ -136,7 +136,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'Distrito:',
@@ -155,7 +155,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' },
 
       item: {
           label: 'Numero:',
@@ -174,7 +174,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-6 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-6 col-lg-12 col-md-4 col-sm-3' },
 
       item: {
           label: 'Rua:',
@@ -193,7 +193,7 @@ export const fieldsetsFormsBusiness = (
       }
   },
   {
-      attributes: { className: 'col-12 col-lg-6 col-md-4 col-sm-3' }, // col-4 col-lg-6 col-md-3 col-sm-3
+      attributes: { className: 'col-12 col-lg-12 col-md-4 col-sm-3' },
 
       item: {
           label: 'Complemento:',

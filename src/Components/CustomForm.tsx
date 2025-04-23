@@ -54,7 +54,7 @@ function CustomForm({ fieldsets, onAction, classRender, classButton, notButton =
   return (
     <form {...formProps}>
       <div className='container'>
-        <div className='row'>
+        <div className='row w-100 m-auto'>
           {fieldsets.map((fieldset: any, fieldsetIndex: any) => (
             <div key={fieldsetIndex} {...fieldset.attributes}>
               <legend className={fieldset.legend?.style}>{fieldset.legend?.text}</legend>

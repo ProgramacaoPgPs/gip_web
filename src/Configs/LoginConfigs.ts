@@ -1,6 +1,6 @@
 export const fieldsetsData = [
     {
-        attributes: { id: 'personal-info', className: 'row  col-8 my-2', },
+        attributes: { id: 'personal-info', className: 'row  col-12 my-2', },
         item: {
             label: 'Login',
             mandatory: true,
@@ -22,7 +22,7 @@ export const fieldsetsData = [
     },
 
     {
-        attributes: { id: 'contact-info', className: 'row col-8 my-2' },
+        attributes: { id: 'contact-info', className: 'row col-12 my-2' },
         item: {
             label: 'Senha',
             mandatory: true,
