@@ -62,7 +62,7 @@ function CustomForm({ fieldsets, onAction, classRender, classButton, notButton=t
               {fieldset.item.mandatory ? ' *' : ''}
             </b>
           </label>
-          <div className={`d-flex align-items-center gap-4 ${classRender}`}>{renderField(fieldset.item.captureValue)}</div>
+          {renderField(fieldset.item.captureValue)}
         </fieldset>
       ))}
       {notButton && 
