@@ -1,13 +1,9 @@
 import { Store } from "react-notifications-component";
-import { Connection } from "../Connection/Connection";
-import { iReqConn } from "../Interface/iConnection";
+import { iReqConn } from "../Interface/iConnection"
 import Translator from "./Translate";
-
-const connection = new Connection("18", true);
 
 export const convertdate = (date: string): string | null => {
     if (!date) return null;
-
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) {
         console.error(`Data inválida: ${date}`);
@@ -15,6 +11,49 @@ export const convertdate = (date: string): string | null => {
     }
 
     return parsedDate.toLocaleDateString('pt-BR');
+};
+
+export const fetchCEPData = async (cep: string, loading: any) => {
+    try {
+        loading(true);
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        if (!response.ok) {
+            const responseStatus = new Error(`CEP encontrado!`);
+            handleNotification("Sucesso", responseStatus.message, "success");
+        } 
+        
+        const data = await response.json();
+        if (data.erro) {
+            const responseStatus = new Error("CEP não encontrado.");
+            handleNotification("Erro", responseStatus.message, "danger");
+        }
+        return data;
+    } catch (error) {
+        handleNotification("Error", "", "danger");
+    } finally {
+        loading(false);
+    }
+};
+
+export const consultingCEP = async (cep: any, setData: any, loading: any) => {
+    if (cep.length !== 8) {
+        console.warn("CEP inválido. Deve conter 8 dígitos.");
+        return;
+    }
+
+    try {
+        const data = await fetchCEPData(cep, loading);
+
+        setData((prevData: any) => ({
+        ...prevData,
+        street: data.logradouro || '',
+        district: data.bairro || '',
+        city: data.localidade || '',
+        state: data.uf || '',
+        }));
+    } catch (error: any) {
+        console.error("Erro ao consultar o CEP:", error.message || error);
+    }
 };
 
 export function convertTime(date: string) {

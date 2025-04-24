@@ -57,6 +57,7 @@ export interface IFormProps {
   ];
   resetDataStore?: () => void;
   resetForm?: () => void;
+  setData?:any;
 }
 
 export interface ICardInfoProps {
