@@ -1,26 +1,16 @@
 import React from 'react';
 import CustomForm from '../../../../Components/CustomForm';
-import { fildsetsFormsBusiness } from '../../mock/configuration';
-import { handleNotification } from '../../../../Util/Util';
+import { fieldsetsFormsBusiness } from '../../mock/configuration';
+import { consultingCEP, handleNotification } from '../../../../Util/Util';
 import { Connection } from '../../../../Connection/Connection';
 import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
+import { useMyContext } from '../../../../Context/MainContext';
 
 
-/**
- * @description Este é um formulário dinâmico gerado a partir de um objeto JSON. Ele permite adicionar novos campos de forma simples, bastando alterar o arquivo de configuração.
- * 
- * O arquivo de configuração onde os campos podem ser modificados ou adicionados encontra-se em: 
- * @path ./mock/configuration.ts.
- * 
- * Ao atualizar esse arquivo, o formulário será automaticamente atualizado com os novos campos definidos no JSON.
- * 
- * Isso proporciona flexibilidade e escalabilidade para a criação de formulários sem a necessidade de modificar diretamente o código-fonte do componente.
- * 
- * e com isso voce tem que configurar o arquivo por aqui seguindo as referencias do projeto.
- */
-const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm }) => {
+const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm, setData }) => {
 
   const defaultFunction = (value: string) => {};
+  const { setLoading } = useMyContext();
 
   const [
     handleFildCNPJ = defaultFunction,
@@ -36,7 +26,7 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
 
   const isNewStore = !data?.id;
 
-  const filter = fildsetsFormsBusiness(
+  const filter = fieldsetsFormsBusiness(
     handleFildCNPJ, 
     handleFieldName, 
     handleFieldStreet,
@@ -47,17 +37,47 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
     handleFieldZipCode, 
     handleFieldComplement,
     data,
+    searchCEP,
   );
 
-  function validateData(data: IFormData | undefined) {
-    return data?.name && data?.street && data?.district &&
-         data?.city && data?.state && data?.number && data?.zip_code;
+  
+  function searchCEP () {
+    return consultingCEP(data?.zip_code, setData, setLoading)
+  }
+  
+  async function postStore(obj: any, conn:any = new Connection('18')) {
+    try {
+      setLoading(true);
+      const {success} = await conn.post(obj, 'GAPP/Store.php');
+      success ? 
+        handleNotification("Sucesso", "Loja salva com sucesso!", "success") : 
+        handleNotification("Erro", "Loja não foi salva!", "danger");
+      
+      return success;
+    } catch (error) {
+      handleNotification("Erro", `${error}`, "danger");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const handleSubmit2 = async () => {
-    if(!validateData(data)) return handleNotification("Error", "Prencha os campos antes de enviar", "danger");
-    const conn = new Connection('18');
-    let obj = {
+  async function putStore(obj:any, conn: any = new Connection('18')) {
+    try {
+      setLoading(true);
+      const {success} = await conn.put(obj, 'GAPP/Store.php');
+      success ? 
+        handleNotification("Sucesso", "Loja atualizada com sucesso!", "success") : 
+        handleNotification("Erro", "Loja não foi atualizada!", "danger");
+      return success;
+    } catch (error) {
+      handleNotification("Erro", `${error}`, "danger");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function formatStoreData (data: any) {
+    return {
       cnpj: data?.cnpj.replace(/[^a-z0-9]/gi, ""),
       name: data?.name,
       street: data?.street,
@@ -69,34 +89,39 @@ const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, rese
       complement: data?.complement,
       status_store: data?.status_store,
       ...(isNewStore ? {} : { id: data.id }),
-    }
-    const resp: any = isNewStore ? await conn.post(obj,'GAPP/Store.php') : await conn.put(obj,'GAPP/Store.php');
-    if(resp) {
-      console.log(resp.message);
-    }
-  
-    if(resetDataStore) {
-      resetDataStore();
-    }
-    
-    if(resetForm){
-      resetForm();
+    };
+  };
+
+  const editorSendData = async () => {
+    try {
+      let result;
+      if(isNewStore) {
+        result = await postStore(formatStoreData(data));
+      } else {
+        result = await putStore(formatStoreData(data));
+      }
+      if(result) {
+        if(resetDataStore) resetDataStore();
+        if(resetForm) resetForm();
+      }
+    } catch (error) {
+      handleNotification("Error", String(error).toLowerCase(), "danger");
     }
   };
 
   return (
     <React.Fragment>
-      <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between'>
+      <div className='col-12 form-control bg-white bg-opacity-75 shadow m-2 w-100 d-flex flex-column justify-content-between form-style-modal'>
         <CustomForm
-          classRender='col-4 w-100 flex-wrap'
+          classRender='w-100'
           classButton='btn btn-success'
           className='p-3'
           notButton={false}
           fieldsets={filter}
-        />
+          />
         <div className='row'>
           <div className="d-flex justify-content-center p-2">
-            <button className={`btn btn-success w-100`} onClick={handleSubmit2}>
+            <button className={`btn btn-success w-100`} onClick={editorSendData}>
               <i className={`fa-sharp fa-solid ${isNewStore ? 'fa-paper-plane' : 'fa-arrows-rotate'} text-white`}></i>
             </button>
           </div>

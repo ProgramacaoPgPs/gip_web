@@ -5,7 +5,7 @@ type Props = {
 }
 export default function RenderedModules(props: Props): JSX.Element {
     return (
-        <div className='d-flex flex-row w-100 h-100'>
+        <div className='d-flex flex-row w-100 h-100 overflow-hidden'>
             {props.children}
             <Clpp />
         </div>

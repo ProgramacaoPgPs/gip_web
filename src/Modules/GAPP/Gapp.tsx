@@ -6,7 +6,8 @@ import { listPath } from '../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
 import { Connection } from '../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
-
+import { consultingCEP, handleNotification } from '../../Util/Util';
+import { useMyContext } from '../../Context/MainContext';
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",
@@ -20,82 +21,39 @@ const Gapp: React.FC = () => {
         complement: "",
         status_store: 1,
     });
-    const [erro, setErro] = useState<string | null>(null);
-    
     const [hiddenNav, setHiddeNav] = useState(false);
-    const [hiddenForm, setHiddeForm] = useState(true);
+    const [hiddenForm, setHiddeForm] = useState(false);
     const [visibilityTrash, setVisibilityTrash] = useState(true);
     const [visibilityList, setVisibilityList] = useState(false);
     const { isTablet, isMobile, isDesktop } = useWindowSize();
-
     const [dataStore, setDataStore] = useState<IFormData | []>([]);
     const [dataStoreTrash, setDataStoreTrash] = useState<IFormData | []>([]);
 
-    const consultingCEP = async (cep: string) => {
-        if (cep.length !== 8) {
-            setErro('O CEP deve conter 8 dígitos.');
-            return;
-        }
-        setErro(null);
-        try {
-            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-            const data = await response.json();
-            if (data.erro) {
-                console.log('Erro no CEP');
-            } else {
-                setData(prevData => ({
-                    ...prevData,
-                    street: data.logradouro || '',
-                    district: data.bairro || '',
-                    city: data.localidade || '',
-                    state: data.uf || ''
-                }));
-            }
-        } catch (error) {
-            setErro('Erro ao consultar o CEP.');
-        }
-    };
+    const { setLoading } = useMyContext();
 
-    useEffect(() => {
-        if (data.zip_code.length === 8) {
-            consultingCEP(data.zip_code);
-        }
-    }, [data.zip_code]);
-
-
-    const connectionBusiness = async () => {
-        try {
-            const response = await new Connection("18");
-            let data:any = await response.get('&status_store=1', 'GAPP/Store.php');
-            if (data && data.data) {
-                setDataStore(data.data);
-            } else {
-                console.error("No valid data returned from the server.");
-            }
-        } catch (error) {
-            console.error("An error occurred while fetching the data:", error);
-        }
-    };
-      
-    const connectionBusinessTrash = async () => {
+    const connectionBusinessGeneric = async (
+        status: "0" | "1", 
+        setData: (data: any) => void
+      ) => {
+        setLoading(true);
         const response = await new Connection("18");
-        let data: any = await response.get('&status_store=0', 'GAPP/Store.php');
-        setDataStoreTrash(data.data);
-    };
-    
+        const data: any = await response.get(`&status_store=${status}`, 'GAPP/Store.php');
+        setData(data.data);
+        setLoading(false);
+      };
+      
       useEffect(() => {
-        connectionBusiness();
-        connectionBusinessTrash();
+        connectionBusinessGeneric("1", setDataStore);
+        connectionBusinessGeneric("0", setDataStoreTrash);
       }, []);
 
     function resetStore() {
         setDataStore([]);
-        connectionBusiness();
+        connectionBusinessGeneric("1", setDataStore);
 
         setDataStoreTrash([]);
-        connectionBusinessTrash();
+        connectionBusinessGeneric("0", setDataStoreTrash);
     }
-
     const resetForm = () => {
         setData({
             cnpj: "",
@@ -110,9 +68,8 @@ const Gapp: React.FC = () => {
             status_store: 1,
         });
     };
-
     const FormComponent = () => (
-        <div className="d-flex col-12 col-sm-12 col-lg-2">
+        <div className={`d-flex col-12 col-sm-12 col-lg-${isTablet ? '3' : '4'}`}>
             <Form
                 handleFunction={[
                     (value: string) => setData(x => ({ ...x, cnpj: value })),
@@ -128,12 +85,11 @@ const Gapp: React.FC = () => {
                 ]}
                 resetDataStore={resetStore}
                 resetForm={resetForm}
-                data={data} 
+                data={data}
+                setData={setData}
             />
         </div>
     );
-
-    /* filtro de botão */
     function menuButtonFilter() {
         return (
             <React.Fragment>
@@ -156,8 +112,6 @@ const Gapp: React.FC = () => {
             </React.Fragment>
         )
     }
-
-
     function visibilityInterleave() {
         function CardInfoSimplify() {
             return <CardInfo resetDataStore={resetStore} visibilityTrash={visibilityTrash} dataStore={dataStore} dataStoreTrash={dataStoreTrash} setData={setData} setHiddenForm={setHiddeForm} />
@@ -174,16 +128,15 @@ const Gapp: React.FC = () => {
             </React.Fragment>
         )
     }
-
-
     return (
         <React.Fragment>
             {(isMobile || isTablet) && hiddenNav ? (
                 <NavBar list={listPath} />
             ) : isDesktop ? (
-                <NavBar list={listPath} />
+                <React.Fragment>
+                    <NavBar list={listPath} />
+                </React.Fragment>
             ) : null}
-
             <div className='container'>
                 <div className='justify-content-between align-items-center px-2 position-relative'>
                     {!isMobile && (
@@ -205,5 +158,4 @@ const Gapp: React.FC = () => {
         </React.Fragment>
     );
 };
-
 export default Gapp;

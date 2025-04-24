@@ -21,6 +21,12 @@ legend {
   font-size: clamp(20px, calc(0.2rem + 0.5vw + 0.5vh), 26px);
 }
 
+@media screen and (max-width: 460px) {
+  input {
+    font-size: clamp(5px, 100%, 16px) !important; 
+  }
+}
+
 body {
   font-size: var(--font-size-body);
   height: 100dvh;
@@ -199,44 +205,4 @@ button>label {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-/* Define a classe para a animação */
-.spinner-grow-img {
-  display: inline-block;
-  width: 100px;
-  /* Ajuste o tamanho conforme necessário */
-  height: 100px;
-  animation: spinner-grow 2s infinite ease-in-out;
-  /* Animação aplicada */
-}
-
-.photoCircle {
-  width: clamp(50px, calc(0.8rem + 4vw + 4vh), 55px);
-  height: clamp(50px, calc(0.8rem + 4vw + 4vh), 55px);
-}
-
-/* Keyframes para a animação */
-@keyframes spinner-grow {
-  0% {
-    transform: scale(0);
-    /* Começa invisível e muito pequeno */
-    opacity: 0;
-    /* Totalmente transparente */
-  }
-
-  50% {
-    transform: scale(1);
-    /* Cresce ao tamanho original */
-    opacity: 1;
-    /* Totalmente visível */
-  }
-
-  100% {
-    transform: scale(0);
-    /* Diminui até desaparecer */
-    opacity: 0;
-    /* Totalmente transparente novamente */
-  }
-
 }
