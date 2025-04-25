@@ -10,7 +10,6 @@ export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     const [onDetailsTimeRecords, setOnDetailsTimeRecords] = useState(false);
     const [journeyCode, setJourneyCode] = useState<string>('');
 
-
     useEffect(() => {
         (async () => {
             await loadRecordType();
