@@ -4,17 +4,21 @@ export interface NavItem {
   onAction?: (value: any) => void;
 }
 
-export const navItems = (setRegister: () => void, setCalculation: () => void): NavItem[] => [
+export const navItems = (setRefNav: (value:string) => void): NavItem[] => [
   {
     label: 'Registrar',
-    onAction: (value: any) => setRegister()
+    onAction: (value: any) => setRefNav('register')
   },
   {
     label: 'Funcionários',
     subItems: [
       {
-        onAction: (value: any) => { setCalculation() },
+        onAction: (value: any) => { setRefNav('reports') },
         label: 'Relatórios',
+      },
+      {
+        onAction: (value: any) => { setRefNav('payments') },
+        label: 'Pagamentos',
       },
     ],
   }
