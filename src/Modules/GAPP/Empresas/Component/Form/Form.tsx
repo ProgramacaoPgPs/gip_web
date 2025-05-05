@@ -1,10 +1,10 @@
 import React from 'react';
-import CustomForm from '../../../../Components/CustomForm';
+import CustomForm from '../../../../../Components/CustomForm';
 import { fieldsetsFormsBusiness } from '../../mock/configuration';
-import { consultingCEP, handleNotification } from '../../../../Util/Util';
-import { Connection } from '../../../../Connection/Connection';
+import { consultingCEP, handleNotification } from '../../../../../Util/Util';
+import { Connection } from '../../../../../Connection/Connection';
 import { IFormData, IFormProps } from '../../Interfaces/IFormGender';
-import { useMyContext } from '../../../../Context/MainContext';
+import { useMyContext } from '../../../../../Context/MainContext';
 
 
 const Form: React.FC<IFormProps> = ({ data, handleFunction, resetDataStore, resetForm, setData }) => {

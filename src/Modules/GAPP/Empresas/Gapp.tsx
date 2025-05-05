@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import CardInfo from './Component/CardInfo/CardInfo';
 import Form from './Component/Form/Form';
-import NavBar from '../../Components/NavBar';
-import { listPath } from '../GTPP/mock/configurationfile';
+import NavBar from '../../../Components/NavBar';
+import { listPath } from '../../GTPP/mock/configurationfile';
 import useWindowSize from './hook/useWindowSize';
-import { Connection } from '../../Connection/Connection';
+import { Connection } from '../../../Connection/Connection';
 import { IFormData, IFormGender } from './Interfaces/IFormGender';
-import { consultingCEP, handleNotification } from '../../Util/Util';
-import { useMyContext } from '../../Context/MainContext';
+import { useMyContext } from '../../../Context/MainContext';
 const Gapp: React.FC = () => {
     const [data, setData] = useState<IFormGender>({
         cnpj: "",

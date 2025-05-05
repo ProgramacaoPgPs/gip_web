@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Connection } from '../../../../Connection/Connection';
-import ModalConfirm from '../../../../Components/ModalConfirm';
+import { Connection } from '../../../../../Connection/Connection';
+import ModalConfirm from '../../../../../Components/ModalConfirm';
 import { ICardInfoProps, IFormData } from '../../Interfaces/IFormGender';
 import '../style/style.css';
-import { handleNotification } from '../../../../Util/Util';
-import { useMyContext } from '../../../../Context/MainContext';
+import { handleNotification } from '../../../../../Util/Util';
+import { useMyContext } from '../../../../../Context/MainContext';
 
 /**
  * @description O card é o ponto principal para trabalhar com a edição e o desativamento de um 
