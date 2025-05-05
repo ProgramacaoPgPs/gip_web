@@ -126,7 +126,7 @@ const Gapp: React.FC = () => {
                 {CardInfoSimplify()}
             </React.Fragment>
         )
-    }
+    } 
     return (
         <React.Fragment>
             {(isMobile || isTablet) && hiddenNav ? (
