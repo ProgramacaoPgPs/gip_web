@@ -4,11 +4,13 @@ import TableComponent from "../../../Components/CustomTable";
 import ListRegister from "./ListRegister";
 import { useMyContext } from "../../../Context/MainContext";
 import DetailsTimeRecords from "./DetailsTimesRecords";
+import { useCfppContext } from "../Context/CfppContex";
 
-export default function Calculation({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadTokenCFPP: () => Promise<void> }) {
+export default function Calculation() {
     const [payments, setPayments] = useState<any[]>([]);
     const [onDetailsTimeRecords, setOnDetailsTimeRecords] = useState(false);
     const [journeyCode, setJourneyCode] = useState<string>('');
+    const { tokenCFPP, loadTokenCFPP } = useCfppContext();
 
     useEffect(() => {
         (async () => {

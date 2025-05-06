@@ -21,7 +21,7 @@ export default function TableComponent(props: TableComponentProps) {
   const [filters, setFilters] = useState<{ [key: string]: string }>({});
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<tItemTable[]>(props.selectedItems || []);
-
+  
   // Função para verificar se uma linha deve ser selecionada
   const isRowSelected = (row: tItemTable): boolean => {
     if (!props.selectionList || !props.selectionKey || !row[props.selectionKey]) return false;
@@ -36,7 +36,7 @@ export default function TableComponent(props: TableComponentProps) {
   const tableRef = useRef<HTMLTableElement>(null);
 
   // Função para gerar o PDF
-  function handleDownloadPDF(){
+  function handleDownloadPDF() {
     if (tableRef.current) {
       const doc = new jsPDF({
         orientation: 'landscape',
@@ -153,6 +153,10 @@ export default function TableComponent(props: TableComponentProps) {
     );
   };
 
+  function setSelectedAllRows(){
+    setSelectedRows([...props.list]); 
+  }
+
   return (
     <div className="d-flex flex-column w-100 h-100">
       <div className="overflow-auto h-100">
@@ -202,14 +206,18 @@ export default function TableComponent(props: TableComponentProps) {
         </table>
       </div>
       {!props.hiddenButton && (
-        <div className="w-100 d-flex justify-content-around">
-          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3" onClick={() => { props.onConfirmList(selectedRows); setSelectedRows([]); }}>
+        <div className="w-100 d-flex justify-content-between gap-4">
+          <button title={selectedRows.length > 0 ? "Confirmar seleção atual" : "Voltar para tela anterior"} className="btn btn-primary mt-3 w-25" onClick={() => { props.onConfirmList(selectedRows); setSelectedRows([]); }}>
             {selectedRows.length > 0 ? 'Confirmar Seleção' : 'Voltar'}
           </button>
-          <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3" onClick={() => setSelectedRows([])}>
+          {
+            !props.maxSelection && <button title={"Selecionar todo o conteúdo da tabela"} className="btn btn-primary mt-3 w-25" onClick={() => { setSelectedAllRows();props.onConfirmList(selectedRows); }}> Selecionar tudo</button>
+          }
+          
+          <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3 w-25" onClick={() => setSelectedRows([])}>
             Limpar Seleção
           </button>
-          <button className="btn btn-success mt-3" type="button" onClick={handleDownloadPDF} title='Baixar'>Download</button>
+          <button className="btn btn-success mt-3 w-25" type="button" onClick={handleDownloadPDF} title='Baixar'>Download</button>
         </div>
       )}
     </div>

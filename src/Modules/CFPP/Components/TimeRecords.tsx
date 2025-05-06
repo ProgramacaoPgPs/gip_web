@@ -6,8 +6,9 @@ import SearchUserCFPP from './SearchUserCFPP';
 import TableComponent from '../../../Components/CustomTable';
 import ListRegister from './ListRegister';
 import DetailsTimeRecords from './DetailsTimesRecords';
+import { useCfppContext } from '../Context/CfppContex';
 
-export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadTokenCFPP: () => Promise<void> }) {
+export default function TimeRecords() {
     const [listRegister, setListRegister] = useState<{ id_record_type_fk: string; times: string }[]>([]);
     const [date, setDate] = useState<string>('');
     const [hour, setHour] = useState<string>('');
@@ -16,6 +17,7 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
     const [recordType, setRecordType] = useState<any[]>([]);
     const [openSelectEmployee, setOpenSelectEmployee] = useState<boolean>(false);
     const [onDetailsTimesRecords, setOnDetailsTimesRecords] = useState<string>('');
+    const { tokenCFPP, loadTokenCFPP } = useCfppContext();
     const [employee, setEmployee] = useState<{ EmployeeID: string, EmployeeName: string, CostCenterDescription: string, BranchName: string, BranchCode: string }>({ EmployeeID: '', EmployeeName: '', CostCenterDescription: '', BranchName: '', BranchCode: '' });
     const { setLoading } = useMyContext();
     const list: { classItem: string, textLabel: string, textValue: string, disabled: boolean, typeInput: string, onAction?: (value: any) => void, max?: string }[] = [
@@ -201,7 +203,7 @@ export default function TimeRecords({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: s
                     timeRecords.length > 0 &&
                     <TableComponent
                         maxSelection={1}
-                        list={convertForTable(timeRecords)}
+                        list={convertForTable(timeRecords, { ocultColumns: ['totalPages'] })}
                         onConfirmList={(item) => { setOnDetailsTimesRecords(item[0]['Jornada']['value']); }}
                     />
                 }

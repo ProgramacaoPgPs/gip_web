@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { listPath } from '../GTPP/mock/configurationfile';
 import NavBar from '../../Components/NavBar';
-import { convertForTable, fetchNodeDataFull } from '../../Util/Util';
+import { convertForTable, fetchNodeDataFull, handleNotification } from '../../Util/Util';
 import CustomNavbar from './Components/CustomNavbar';
 import { navItems } from './Data/configs';
 import { useMyContext } from '../../Context/MainContext';
@@ -9,25 +9,12 @@ import TimeRecords from './Components/TimeRecords';
 import Calculation from './Components/Calculation';
 import CustomForm from '../../Components/CustomForm';
 import TableComponent from '../../Components/CustomTable';
-
+import { CfppProvider, useCfppContext } from './Context/CfppContex';
 
 export default function Cfpp() {
     const { setTitleHead } = useMyContext();
-    const [tokenCFPP, setTokenCFPP] = useState<string>('');
     const [refNav, setRefNav] = useState<string>('reports');
     useEffect(() => {
-        (
-            async () => {
-                try {
-                    await loadTokenCFPP();
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    setTokenCFPP(sessionStorage.tokenCFPP);
-                }
-
-            }
-        )();
         setTitleHead({
             title: "Controle de Folgas Peg Pese - CFPP",
             simpleTitle: "CFPP",
@@ -35,41 +22,43 @@ export default function Cfpp() {
         });
     }, []);
 
-    async function loadTokenCFPP() {
-        if (!sessionStorage.tokenCFPP) {
-            const data = await fetchNodeDataFull({
-                method: 'POST',
-                params: { session: localStorage.tokenGIPP },
-                pathFile: '/api/auth/login',
-                port: "5000",
-            }, { 'Content-Type': 'application/json' });
-            if (data.error) throw new Error(data.message);
-            sessionStorage.setItem("tokenCFPP", data?.data);
-        }
-    }
+
     return (
-        <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
-            <NavBar list={listPath} />
-
-            <section className='d-none d-sm-flex flex-column overflow-hidden h-100 w-100 p-2'>
-                <CustomNavbar items={navItems(setRefNav)} />
-                {refNav.includes('register') && <TimeRecords tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
-                {refNav.includes('payments') && <Calculation tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
-                {refNav.includes('reports') && <ReportsCFPP tokenCFPP={tokenCFPP} loadTokenCFPP={loadTokenCFPP} />}
-            </section>
-
-            <section className='d-flex d-sm-none align-items-center justify-content-center'>
-                <h1 className='w-75'>Ops! Não é possível acesso via mobile</h1>
-            </section>
-        </div>
+        <CfppProvider>
+            <div className='d-flex flex-row w-100 h-100 container-fluid p-0 m-0'>
+                <NavBar list={listPath} />
+                <section className='d-none d-sm-flex flex-column overflow-hidden h-100 w-100 p-2'>
+                    <CustomNavbar items={navItems(setRefNav)} />
+                    {refNav.includes('register') && <TimeRecords />}
+                    {refNav.includes('payments') && <Calculation />}
+                    {refNav.includes('reports') && <ReportsCFPP />}
+                </section>
+                <section className='d-flex d-sm-none align-items-center justify-content-center'>
+                    <h1 className='w-75'>Ops! Não é possível acesso via mobile</h1>
+                </section>
+            </div>
+        </CfppProvider>
     );
 }
 
-function ReportsCFPP({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadTokenCFPP: () => Promise<void> }): JSX.Element {
+interface Iurl {
+    pageNumber: number;
+    pageSize: number;
+    statusCod: number;
+    name?: string | '',
+    codWorkSchedule?: string | '',
+    branch?: number | "" ,
+    costCenter?: number | "" ,
+}
+
+const formInitial:Iurl = { pageNumber: 1, pageSize: 10, statusCod: 0, name:'', branch:"",costCenter:'' };
+function ReportsCFPP(): JSX.Element {
     const [status, setStatus] = useState<any[]>([]);
-    const [statusSelected, setStatusSelected] = useState<number>(0);
+    const [pageLimit, setPageLimit] = useState<number>(0);
     const [list, setList] = useState<any[]>([]);
+    const [urlParam, setUrlParam] = useState<Iurl>(formInitial);
     const { setLoading } = useMyContext();
+    const { tokenCFPP, loadTokenCFPP, branch, costCenter } = useCfppContext();
     useEffect(() => {
         (async () => {
             try {
@@ -99,19 +88,7 @@ function ReportsCFPP({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadToke
         (async () => {
             try {
                 setLoading(true);
-                if (tokenCFPP) {
-                    console.log(statusSelected, "Aqui estou eu");
-                    const reqStatus: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
-                        method: 'GET',
-                        params: null,
-                        pathFile: `/api/GIPP/GET/CFS/trfs`,
-                        port: "5000",
-                        urlComplement: statusSelected != 0 ? `?statusCod=${statusSelected}` : ''
-                    }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
-                    if ('message' in reqStatus && reqStatus.error) throw new Error(reqStatus.message);
-                    console.log(reqStatus);
-                    if (reqStatus.data) setList(reqStatus.data);
-                }
+                await reloadList();
             } catch (error: any) {
                 if (error.message.includes('Invalid or expired token')) {
                     sessionStorage.removeItem('tokenCFPP');
@@ -120,47 +97,185 @@ function ReportsCFPP({ tokenCFPP, loadTokenCFPP }: { tokenCFPP: string, loadToke
             } finally {
                 setLoading(false);
             }
-
         })();
-    }, [statusSelected, tokenCFPP]);
+    }, [tokenCFPP, urlParam['pageNumber']]);
 
     return (
-        <div className='d-flex flex-grow-1 overflow-hidden'>
-            <div className='col-2 col-md-3 col-lg-3  col-xxl-2 h-100'>
+        <div className="row flex-grow-1 overflow-auto">
+            <div className="col-3 h-100">
                 <CustomForm
-                    classButton='btn btn-success my-2'
-                    titleButton='Buscar'
-                    fieldsets={
-                        [{
-                            attributes: { className: 'col-6 overflow-hidden', },
+                    classButton="btn btn-success my-4"
+                    titleButton="Buscar"
+                    onSubmit={handleSubmit}
+                    className="row m-0"
+                    fieldsets={[
+                        {
+                            attributes: { className: "col-12 overflow-hidden" },
                             item: {
-                                label: 'Comp.',
+                                label: "Nome:",
                                 captureValue: {
-                                    type: 'select',
-                                    className: 'form-control',
-                                    options: status,
-                                    value: statusSelected,
-                                    onChange: (e: any) => { setStatusSelected(parseInt(e.target.value)) }
-                                    // required: true,
+                                    type: "text",
+                                    name: "name",
+                                    className: "form-control",
+                                    value: urlParam["name"],
+                                    onChange: changeUrl,
                                 },
-                            }
-                        }]
-                    } />
+                            },
+                        },
+                        {
+                            attributes: { className: "col-12 overflow-hidden" },
+                            item: {
+                                label: "Cód. Jornada:",
+                                captureValue: {
+                                    type: "text",
+                                    name: "codWorkSchedule",
+                                    className: "form-control",
+                                    value: urlParam["codWorkSchedule"],
+                                    onChange: changeUrl,
+                                },
+                            },
+                        },
+                        {
+                            attributes: { className: "col-12 overflow-hidden" },
+                            item: {
+                                label: "Filial:",
+                                captureValue: {
+                                    type: "select",
+                                    name: "branch",
+                                    className: "form-control",
+                                    options: branch,
+                                    value: urlParam["branch"],
+                                    onChange: changeUrl,
+                                },
+                            },
+                        },
+                        {
+                            attributes: { className: "col-12 overflow-hidden" },
+                            item: {
+                                label: "C.C:",
+                                captureValue: {
+                                    type: "select",
+                                    name: "costCenter",
+                                    className: "form-control",
+                                    options: costCenter,
+                                    value: urlParam["costCenter"],
+                                    onChange: changeUrl,
+                                },
+                            },
+                        },
+                        {
+                            attributes: { className: "col-6 overflow-hidden" },
+                            item: {
+                                label: "Status:",
+                                captureValue: {
+                                    type: "select",
+                                    name: "statusCod",
+                                    className: "form-control",
+                                    options: status,
+                                    value: urlParam["statusCod"],
+                                    onChange: changeUrl,
+                                },
+                            },
+                        },
+                        {
+                            attributes: { className: "col-6 overflow-hidden" },
+                            item: {
+                                label: "Páginas:",
+                                captureValue: {
+                                    type: "select",
+                                    className: "form-control",
+                                    name: "pageSize",
+                                    options: [
+                                        { label: "10 itens", value: 10 },
+                                        { label: "20 itens", value: 20 },
+                                        { label: "40 itens", value: 40 },
+                                    ],
+                                    value: urlParam["pageSize"],
+                                    onChange: changeUrl,
+                                },
+                            },
+                        },
+                    ]}
+                />
             </div>
-            <div className='col-10 col-lg-9  col-xxl-10 h-100'>
-                {
-                    list.length > 0 &&
-                    <TableComponent
-                        maxSelection={1}
-                        list={convertForTable(list)}
-                        onConfirmList={(items: any) => {
-                            if (items.length > 0) {
-                                console.log(items);
-                            }
-                        }}
-                    />
-                }
+            <div className="col-9 h-100 d-flex flex-column justify-content-between">
+                <div className="w-100 overflow-auto">
+                    {
+                        list.length > 0 &&
+                        <TableComponent
+                            maxSelection={1}
+                            list={convertForTable(list, { ocultColumns: ['totalPages'] })}
+                            onConfirmList={(items: any) => {
+                                if (items.length > 0) {
+                                    console.log(items);
+                                }
+                            }}
+                        />
+                    }
+                </div>
+                <div className='d-flex align-items-center justify-content-center gap-4 my-4'>
+                    <button type='button' className='btn btn-danger fa-solid fa-backward' onClick={() => { changePage(false) }}> </button>
+                    <span className='h5'>{urlParam['pageNumber'].toString().padStart(2, '0')} / {pageLimit.toString().padStart(2, '0')}</span>
+                    <button type='button' className='btn btn-success fa-solid fa-forward' onClick={() => { changePage(true) }}></button>
+                </div>
             </div>
         </div>
     );
+
+    function changePage(value: boolean) {
+        let newPage = value ? urlParam['pageNumber'] + 1 : urlParam['pageNumber'] - 1;
+        if (newPage <= pageLimit && newPage > 0) {
+            let newUrlParam = urlParam;
+            newUrlParam['pageNumber'] = newPage;
+            setUrlParam({ ...newUrlParam });
+        }
+    }
+
+    function changeUrl(e: any) {
+        const { name, value } = e.target;
+        setUrlParam(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        try {
+            setLoading(true);
+            event.preventDefault();
+            await reloadList();
+            handleNotification("Sucesso!", "Dados encontrados com sucesso", "success");
+            setUrlParam(formInitial);
+        } catch (error: any) {
+            console.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    function buildUrl(items: Iurl): string {
+        return '?' + (
+            //Recupera as craves do objeto Json
+            Object.keys(items) as (keyof Iurl)[])
+            .filter(key => items[key] !== undefined && items[key] !== null && items[key] !== 0)
+            .map(
+                //Percorre cada chave do objeto criando um novo array onde cada posição possuí "key=value";
+                (key) => `${key}=${items[key]}`
+            ).join('&'); // uni as posições do array, trocando a "," por "&"
+    }
+
+    async function reloadList() {
+        if (tokenCFPP) {
+            const reqStatus: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
+                method: 'GET',
+                params: null,
+                pathFile: `/api/GIPP/GET/CFS/trfs`,
+                port: "5000",
+                urlComplement: buildUrl(urlParam)
+            }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
+            if ('message' in reqStatus && reqStatus.error) throw new Error(reqStatus.message);
+            if (reqStatus.data) setList(reqStatus.data);
+            if (reqStatus.data && reqStatus.data?.length > 0) setPageLimit(reqStatus.data[0]['totalPages']);
+        }
+    }
 }
