@@ -1,5 +1,6 @@
 import React, { useContext, createContext, useState, useEffect } from "react";
 import { fetchNodeDataFull } from "../../../Util/Util";
+import { TSelectForm } from "../Components/TypesReportsCFPP";
 
 // Definindo a interface para o contexto
 interface CfppContextType {
@@ -20,8 +21,8 @@ type TypeCfppProvider = {
 
 export function CfppProvider({ children }: TypeCfppProvider) {
     const [tokenCFPP, setTokenCFPP] = useState<string>('');
-    const [branch, setBranch] = useState<{ label: string; value: string }[]>([]);
-    const [costCenter, setCostCenter] = useState<{ label: string; value: string }[]>([]);
+    const [branch, setBranch] = useState<TSelectForm[]>([]);
+    const [costCenter, setCostCenter] = useState<TSelectForm[]>([]);
 
     useEffect(() => {
         (async () => {
