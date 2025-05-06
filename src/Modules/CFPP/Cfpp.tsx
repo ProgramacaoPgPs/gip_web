@@ -11,7 +11,7 @@ import ReportsCFPP from './Components/ReportsCFPP';
 
 export default function Cfpp() {
     const { setTitleHead } = useMyContext();
-    const [refNav, setRefNav] = useState<string>('reports');
+    const [refNav, setRefNav] = useState<string>('register');
     useEffect(() => {
         setTitleHead({
             title: "Controle de Folgas Peg Pese - CFPP",

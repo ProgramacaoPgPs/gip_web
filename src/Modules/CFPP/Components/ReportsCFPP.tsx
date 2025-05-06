@@ -7,7 +7,7 @@ import TableComponent from '../../../Components/CustomTable';
 import { Iurl } from './TypesReportsCFPP';
 import { formReports } from './ConfigsReportsCFPP';
 
-const formInitial:Iurl = { pageNumber: 1, pageSize: 10, statusCod: 0, name:'', branch:"",costCenter:'' };
+const formInitial: Iurl = { pageNumber: 1, pageSize: 10, statusCod: 0, name: '', branch: "", costCenter: '' };
 export default function ReportsCFPP(): JSX.Element {
     const [status, setStatus] = useState<any[]>([]);
     const [pageLimit, setPageLimit] = useState<number>(0);
@@ -57,15 +57,18 @@ export default function ReportsCFPP(): JSX.Element {
     }, [tokenCFPP, urlParam['pageNumber']]);
 
     return (
-        <div className="row flex-grow-1 overflow-auto">
-            <div className="col-3 h-100">
+        <div className="row flex-grow-1 overflow-auto mx-2">
+            <div className="col-3 h-100 bg-white p-2 shadow border rounded">
+                <div className='d-flex algin-items-center justify-content-between'>
+                    <h1><strong>Filtrar marcações</strong></h1>
+                    <button type='button' onClick={()=>setUrlParam(formInitial)} className='btn btn-danger fas fa-eraser'></button>
+                </div>
                 <CustomForm
                     classButton="btn btn-success my-4"
                     titleButton="Buscar"
                     onSubmit={handleSubmit}
                     className="row m-0"
-                    fieldsets={formReports(changeUrl,urlParam,branch,costCenter,status)}
-                    
+                    fieldsets={formReports(changeUrl, urlParam, branch, costCenter, status)}
                 />
             </div>
             <div className="col-9 h-100 d-flex flex-column justify-content-between">
@@ -115,7 +118,6 @@ export default function ReportsCFPP(): JSX.Element {
             event.preventDefault();
             await reloadList();
             handleNotification("Sucesso!", "Dados encontrados com sucesso", "success");
-            setUrlParam(formInitial);
         } catch (error: any) {
             console.error(error.message);
         } finally {
