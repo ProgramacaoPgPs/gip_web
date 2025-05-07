@@ -14,7 +14,7 @@ export const navItems = (setRefNav: (value:string) => void): NavItem[] => [
     subItems: [
       {
         onAction: (value: any) => { setRefNav('reports') },
-        label: 'Registros',
+        label: 'Histórico',
       },
       {
         onAction: (value: any) => { setRefNav('payments') },

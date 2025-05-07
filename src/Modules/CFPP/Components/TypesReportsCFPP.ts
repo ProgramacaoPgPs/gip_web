@@ -1,4 +1,4 @@
-export interface Iurl {
+export type TUrl ={
     pageNumber: number;
     pageSize: number;
     statusCod: number;

@@ -4,15 +4,15 @@ import { useCfppContext } from '../Context/CfppContex';
 import { convertForTable, fetchNodeDataFull, handleNotification } from '../../../Util/Util';
 import CustomForm from '../../../Components/CustomForm';
 import TableComponent from '../../../Components/CustomTable';
-import { Iurl } from './TypesReportsCFPP';
+import { TUrl } from './TypesReportsCFPP';
 import { formReports } from './ConfigsReportsCFPP';
 
-const formInitial: Iurl = { pageNumber: 1, pageSize: 10, statusCod: 0, name: '', branch: "", costCenter: '' };
+const formInitial: TUrl = { pageNumber: 1, pageSize: 10, statusCod: 0, name: '', branch: "", costCenter: '' };
 export default function ReportsCFPP(): JSX.Element {
     const [status, setStatus] = useState<any[]>([]);
     const [pageLimit, setPageLimit] = useState<number>(0);
     const [list, setList] = useState<any[]>([]);
-    const [urlParam, setUrlParam] = useState<Iurl>(formInitial);
+    const [urlParam, setUrlParam] = useState<TUrl>(formInitial);
     const { setLoading } = useMyContext();
     const { tokenCFPP, loadTokenCFPP, branch, costCenter } = useCfppContext();
     useEffect(() => {
@@ -125,10 +125,10 @@ export default function ReportsCFPP(): JSX.Element {
         }
     };
 
-    function buildUrl(items: Iurl): string {
+    function buildUrl(items: TUrl): string {
         return '?' + (
             //Recupera as craves do objeto Json
-            Object.keys(items) as (keyof Iurl)[])
+            Object.keys(items) as (keyof TUrl)[])
             .filter(key => items[key] !== undefined && items[key] !== null && items[key] !== 0)
             .map(
                 //Percorre cada chave do objeto criando um novo array onde cada posição possuí "key=value";

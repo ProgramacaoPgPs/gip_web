@@ -1,6 +1,6 @@
-import { Iurl, TSelectForm } from "./TypesReportsCFPP"
+import { TUrl, TSelectForm } from "./TypesReportsCFPP"
 
-export const formReports = (changeUrl: (e: any) => void, urlParam: Iurl, branch: TSelectForm[], costCenter: TSelectForm[], status: any[]) =>  [
+export const formReports = (changeUrl: (e: any) => void, urlParam: TUrl, branch: TSelectForm[], costCenter: TSelectForm[], status: any[]) =>  [
         {
             attributes: { className: "col-12 overflow-hidden" },
             item: {
