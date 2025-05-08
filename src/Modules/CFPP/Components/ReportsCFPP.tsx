@@ -141,7 +141,7 @@ export default function ReportsCFPP(): JSX.Element {
             const reqStatus: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                 method: 'GET',
                 params: null,
-                pathFile: `/api/GIPP/GET/CFS/trfs`,
+                pathFile: `/api/GIPP/GET/Employees/trfs`,
                 port: "5000",
                 urlComplement: buildUrl(urlParam)
             }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
