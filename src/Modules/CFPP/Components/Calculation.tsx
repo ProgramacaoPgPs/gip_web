@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { convertForTable, fetchNodeDataFull } from "../../../Util/Util";
+import { convertForTable, fetchNodeDataFull, handleNotification } from "../../../Util/Util";
 import TableComponent from "../../../Components/CustomTable";
 import DetailsTimeRecords from "./DetailsTimesRecords";
 import { useCfppContext } from "../Context/CfppContex";
@@ -27,25 +27,17 @@ export default function Calculation() {
 
     useEffect(() => {
         (async () => {
-            await loadRecordType();
+            await loadPayments();
         })();
-    }, [tokenCFPP]);
+    }, [tokenCFPP, journeyCode]);
 
-    useEffect(() => {
-        (async () => {
-            if (!journeyCode) {
-                await loadRecordType();
-            }
-        })();
-    }, [journeyCode]);
-
-    async function loadRecordType() {
+    async function loadPayments() {
         try {
             if (tokenCFPP) {
                 const reqPayment: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                     method: 'GET',
                     params: null,
-                    pathFile: `/api/GIPP/GET/Employees/payment`,
+                    pathFile: `/api/GIPP/GET/TR/payment`,
                     port: "5000",
                 }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
                 if ('message' in reqPayment && reqPayment.error) throw new Error(reqPayment.message);
@@ -57,6 +49,29 @@ export default function Calculation() {
                 await loadTokenCFPP();
             }
             console.error(error);
+        }
+    }
+    async function insertRegister() {
+        let data;
+        try {
+            const params = {
+                codWorkSchedules: journeyCode
+            }
+            data = await fetchNodeDataFull({
+                method: 'POST',
+                params: params,
+                pathFile: '/api/GIPP/POST/payments',
+                port: "5000",
+            }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
+            if (data.error) throw new Error(data.message);
+            setJourneyCode([]);
+            console.log(data);
+            handleNotification('Sucesso',data.message || 'Sucesso!',"success");
+            await loadPayments();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            return data
         }
     }
 
@@ -77,7 +92,8 @@ export default function Calculation() {
                                             payments.filter(payment => journeyCode.includes(payment["cod_work_schedule_fk"])), {
                                             ocultColumns: ['cod_work_schedule_fk', 'month_salary', 'total_hours', 'normal_hour', 'extra_hour', 'night_hour', 'registration'],
                                             customTags
-                                        })
+                                            }
+                                        )
                                     }
                                     onConfirmList={(items: any) => {
                                         if (items.length > 0) {
@@ -87,8 +103,10 @@ export default function Calculation() {
                                 />
                             </div>
                             <div className="d-flex justify-content-around p-2">
-                                <button onClick={() => {
-                                    if (window.confirm("Deseje realmente encerrar as marcações?")) console.warn("registros finalizados com sucesso")
+                                <button onClick={async() => {
+                                    if (window.confirm("Deseje realmente encerrar as marcações?")) {
+                                        await insertRegister();
+                                    }
                                 }
                                 } type="button" className="btn btn-success">Finalizar</button>
                                 <button onClick={() => setJourneyCode([])} type="button" className="btn btn-danger">Fechar</button>
@@ -100,7 +118,9 @@ export default function Calculation() {
                 <div className="my-4 h-75">
                     {payments.length > 0 &&
                         <TableComponent
-                            list={convertForTable(payments, {customTags})}
+                            list={convertForTable(payments, {
+                                customTags
+                            })}
                             onConfirmList={(items: any) => {
                                 if (items.length > 0) {
                                     setJourneyCode(items.map((item: any) => item["cod_work_schedule_fk"]["value"]));

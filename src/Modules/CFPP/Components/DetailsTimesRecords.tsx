@@ -31,7 +31,7 @@ export default function DetailsTimeRecords(props: { onClose: () => void; journey
                 const reqTimeRecords: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                     method: 'GET',
                     params: null,
-                    pathFile: `/api/GIPP/GET/Employees/timeRecords`,
+                    pathFile: `/api/GIPP/GET/TR/timeRecords`,
                     port: "5000",
                     urlComplement: `?codWorkSchedule=${props.journeyCode}`
                 }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${sessionStorage.tokenCFPP}` });
@@ -55,7 +55,7 @@ export default function DetailsTimeRecords(props: { onClose: () => void; journey
                 const reqTimeRecords: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                     method: 'PUT',
                     params: { times: `${alterDate} ${alterHour}`, id_time_records },
-                    pathFile: `/api/GIPP/PUT/Employees/timeRecords`,
+                    pathFile: `/api/GIPP/PUT/TR/timeRecords`,
                     port: "5000",
                 }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${sessionStorage.tokenCFPP}` });
                 if ('message' in reqTimeRecords && reqTimeRecords.error) throw new Error(reqTimeRecords.message);
@@ -75,14 +75,10 @@ export default function DetailsTimeRecords(props: { onClose: () => void; journey
                 const reqTimeRecords: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                     method: 'PUT',
                     params: { cod_work_schedule: props.journeyCode },
-                    pathFile: `/api/GIPP/PUT/Employees/timeRecords`,
+                    pathFile: `/api/GIPP/PUT/TR/timeRecords`,
                     port: "5000"
                 }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${sessionStorage.tokenCFPP}` });
                 if ('message' in reqTimeRecords && reqTimeRecords.error) throw new Error(reqTimeRecords.message);
-                if (reqTimeRecords.data) {
-                    setTimeRecords(reqTimeRecords.data);
-                    setUser(reqTimeRecords.data[0]);
-                }
                 props.onClose();
             }
         } catch (error) {

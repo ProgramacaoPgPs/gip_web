@@ -57,7 +57,7 @@ export default function SearchUserCFPP({ tokenCFPP, onCallBack }: SearchUserCFPP
                 const reqRecordType: { error: boolean; message?: string; data?: [{ id_record_type: number; description: string; status: number }] } = await fetchNodeDataFull({
                     method: 'GET',
                     params: null,
-                    pathFile: `/api/GIPP/GET/Employees/recordType`,
+                    pathFile: `/api/GIPP/GET/TR/recordType`,
                     port: "5000",
                 }, { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenCFPP}` });
                 if ('message' in reqRecordType && reqRecordType.error) throw new Error(reqRecordType.message);

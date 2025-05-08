@@ -61,7 +61,7 @@ export default function ReportsCFPP(): JSX.Element {
             <div className="col-3 h-100 bg-white p-2 shadow border rounded">
                 <div className='d-flex algin-items-center justify-content-between'>
                     <h1><strong>Filtrar marcações</strong></h1>
-                    <button type='button' onClick={()=>setUrlParam(formInitial)} className='btn btn-danger fas fa-eraser'></button>
+                    <button type='button' onClick={() => setUrlParam(formInitial)} className='btn btn-danger fas fa-eraser'></button>
                 </div>
                 <CustomForm
                     classButton="btn btn-success my-4"
@@ -141,7 +141,7 @@ export default function ReportsCFPP(): JSX.Element {
             const reqStatus: { error: boolean; message?: string; data?: any[] } = await fetchNodeDataFull({
                 method: 'GET',
                 params: null,
-                pathFile: `/api/GIPP/GET/Employees/trfs`,
+                pathFile: `/api/GIPP/GET/TR/trfs`,
                 port: "5000",
                 urlComplement: buildUrl(urlParam)
             }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });

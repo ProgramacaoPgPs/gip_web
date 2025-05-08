@@ -211,7 +211,7 @@ export default function TableComponent(props: TableComponentProps) {
             {selectedRows.length > 0 ? 'Confirmar Seleção' : 'Voltar'}
           </button>
           {
-            !props.maxSelection && <button title={"Selecionar todo o conteúdo da tabela"} className="btn btn-primary mt-3 w-25" onClick={() => { setSelectedAllRows();props.onConfirmList(selectedRows); }}> Selecionar tudo</button>
+            !props.maxSelection && <button title={"Selecionar todo o conteúdo da tabela"} className="btn btn-primary mt-3 w-25" onClick={() => { setSelectedAllRows(); }}> Selecionar tudo</button>
           }
           
           <button title="Limpar seleção atual" className="btn btn-secondary text-white mt-3 w-25" onClick={() => setSelectedRows([])}>
