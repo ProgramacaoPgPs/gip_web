@@ -1,0 +1,23 @@
+@import url(./Root-font.css);
+
+:root {
+    /* Tamanhos responsivos para o modal */
+    /* --modal-width-xsmall: clamp(100px, 40vw, 200px); */
+    --modal-width-xsmall: clamp(100px, 60vw, 200px);
+    --modal-width-small: clamp(200px, 40vw, 300px);
+    --modal-width-medium: clamp(300px, 50vw, 600px);
+    --modal-width-large: clamp(400px, 60vw, 900px);
+    
+    --modal-height-xsmall: clamp(50px, 40vh, 100px);
+    --modal-height-small: clamp(200px, 40vh, 300px);
+    --modal-height-medium: clamp(300px, 50vh, 500px);
+    --modal-height-large: clamp(400px, 60vh, 700px);
+
+    --space-default-padding: clamp(60px, 100%, 25px);
+    
+    /* Cores e espaçamentos */
+    --modal-bg-color: #fff;
+    --modal-overlay-color: rgba(0, 0, 0, 0.5);
+    --modal-border-radius: 8px;
+    --modal-padding: 16px;
+  }

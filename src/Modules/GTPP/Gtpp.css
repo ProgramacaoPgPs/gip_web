@@ -1,0 +1,118 @@
+* {
+    text-decoration: none;
+}
+
+.form-register {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bodyCard {
+    /* width: clamp(300px, 100%, calc(100% - 1250px)) !important;
+    height: clamp(400px, 100%, calc(100% - 1250px)) !important; */
+}
+
+.bodyCard button {
+    margin: 0px !important;
+    margin-top: 5px !important;
+}
+
+.filter-style {
+    padding: 0px;
+    margin-left: 15px;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-style {
+        padding: 0px;
+        margin-left: 30px;
+    }
+}
+
+.form-register label {
+    width: 100%;
+}
+
+.filter-modal {
+    z-index: 1;
+    max-width: 300px;
+    width: 50vw;
+}
+
+.z-index-modal {
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+}
+
+.box-pdf {
+    position: absolute;
+    left: 47%;
+    top: 90%;
+}
+
+.header-menu{
+    height: 10%;
+}
+
+.menu-link {
+    width: 10vw !important;
+}
+
+.filter-checks {
+    position: absolute;
+    z-index: 3;
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+}
+
+.border-dark {
+    border: 1px solid #000;
+    padding: 0.5vw;
+}
+
+.border-secondary {
+    border: 2px solid #cecece !important;
+    padding: 0.5vw;
+}
+
+.container-fluid {
+    max-width: 1920px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.menu-gtpp {
+    width: 6vw;
+    padding: 0.5vw;
+}
+
+.menu-task {
+
+}
+
+
+.menu-task {
+    height: 100%;
+    width: 94%;
+}
+
+.menu-task .tasks-container {
+    height: 93%;
+    width: 100%;
+}
+
+.d-flex .gap-5.overflow-auto {
+    height: 100%;
+}
+
+
+#task-description {
+    overflow: auto;
+}
