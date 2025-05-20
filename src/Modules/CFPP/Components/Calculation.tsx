@@ -23,6 +23,7 @@ const customTags = {
 export default function Calculation() {
     const [payments, setPayments] = useState<any[]>([]);
     const [journeyCode, setJourneyCode] = useState<any[]>([]);
+    const [controller, setController] = useState<0 | 1 | 2 | 3>(0);
     const { tokenCFPP, loadTokenCFPP } = useCfppContext();
 
     useEffect(() => {
@@ -65,8 +66,8 @@ export default function Calculation() {
             }, { 'Content-Type': 'application/json', 'Accept-Encoding': 'gzip, compress, br', 'Authorization': `Bearer ${tokenCFPP}` });
             if (data.error) throw new Error(data.message);
             setJourneyCode([]);
-            console.log(data);
-            handleNotification('Sucesso',data.message || 'Sucesso!',"success");
+            setController(0);
+            handleNotification('Sucesso', data.message || 'Sucesso!', "success");
             await loadPayments();
         } catch (error) {
             console.error(error);
@@ -78,10 +79,14 @@ export default function Calculation() {
     return (
         <React.Fragment>
             <div className="flex-grow-1 overflow-hidden">
-                {journeyCode.length == 1 && <DetailsTimeRecords onClose={() => { setJourneyCode([]) }} journeyCode={journeyCode[0]} />}
+                {controller == 1 && <ControllerRegister changeController={changeController} onClose={() => {
+                    setJourneyCode([]);
+                    setController(0);
+                }} />}
+                {controller == 3 && <DetailsTimeRecords onClose={() => { setJourneyCode([]); setController(0) }} journeyCode={journeyCode[0]} />}
                 {
-                    journeyCode.length > 1 &&
-                    <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-25 position-absolute z-1 start-0 top-0 h-100 w-100 col-12 overflow-hidden">
+                    (controller == 2 || journeyCode.length > 1) &&
+                    <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-25 position-absolute z-1 start-0 top-0 h-100 w-100  overflow-hidden">
                         <div className="d-flex flex-column bg-white p-2 rounded col-10 h-75">
                             <h1>Deseja encerrar as marcações selecionadas? </h1>
                             <div className="flex-grow-1 overflow-auto">
@@ -92,7 +97,7 @@ export default function Calculation() {
                                             payments.filter(payment => journeyCode.includes(payment["cod_work_schedule_fk"])), {
                                             ocultColumns: ['cod_work_schedule_fk', 'month_salary', 'total_hours', 'normal_hour', 'extra_hour', 'night_hour', 'registration'],
                                             customTags
-                                            }
+                                        }
                                         )
                                     }
                                     onConfirmList={(items: any) => {
@@ -103,13 +108,15 @@ export default function Calculation() {
                                 />
                             </div>
                             <div className="d-flex justify-content-around p-2">
-                                <button onClick={async() => {
+                                <button onClick={async () => {
                                     if (window.confirm("Deseje realmente encerrar as marcações?")) {
                                         await insertRegister();
                                     }
                                 }
                                 } type="button" className="btn btn-success">Finalizar</button>
-                                <button onClick={() => setJourneyCode([])} type="button" className="btn btn-danger">Fechar</button>
+                                <button onClick={() => {
+                                    setController(0); setJourneyCode([])
+                                }} type="button" className="btn btn-danger">Fechar</button>
                             </div>
                         </div>
                     </div>
@@ -124,6 +131,7 @@ export default function Calculation() {
                             onConfirmList={(items: any) => {
                                 if (items.length > 0) {
                                     setJourneyCode(items.map((item: any) => item["cod_work_schedule_fk"]["value"]));
+                                    changeController(items.length > 1 ? 2 : 1);
                                 }
                             }}
                         />
@@ -132,4 +140,27 @@ export default function Calculation() {
             </div>
         </React.Fragment>
     )
+    function changeController(value: 1 | 2 | 3) {
+        setController(value);
+    }
 }
+
+function ControllerRegister({ changeController, onClose }: { changeController: (value: 2 | 3) => void, onClose: () => void }) {
+    return (
+        <div className="d-flex align-items-center justify-content-center bg-dark bg-opacity-25 position-absolute z-1 start-0 top-0 h-100 w-100  overflow-hidden">
+            <div className="d-flex flex-column bg-white p-2 rounded">
+                <div id="controllerRegister" className="d-flex flex-column align-items-center  ">
+                    <div className="d-flex justify-content-between align-items-center w-100">
+                        <h1>O que você deseja Fazer?</h1>
+                        <button type="button" onClick={()=>onClose()} className="btn btn-danger">X</button>
+                    </div>
+                    <div className="d-flex m-4 gap-2">
+                        <button type="button" onClick={() => changeController(2)} className="btn btn-secondary">Encerrar marcação</button>
+                        <button type="button" onClick={() => changeController(3)} className="btn btn-secondary">Ajustar Marcação</button>
+                    </div>
+                </div>
+            </div>
+        </div >
+    )
+}
+

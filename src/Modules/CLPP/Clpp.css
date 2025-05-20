@@ -98,9 +98,9 @@
     max-width: 70%;
 }
 
-#divChatWindow> section > div > strong{
+#divChatWindow>section>div>strong {
     font-size: 14px;
-    color:#919295;
+    color: #919295;
 }
 
 #divChatWindow>section>.messageSent>div {
@@ -120,4 +120,8 @@
 
 #divMessageFile>a>i {
     font-size: clamp(25px, calc(1.5rem + 3vw + 3vh), 75px) !important;
+}
+
+#controllerRegister button:hover {
+    box-shadow: 0px 0px 8px 1px #ffc107
 }
